@@ -1,0 +1,130 @@
+CREATE TABLE users (
+  id BIGINT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
+  name VARCHAR(160) NOT NULL,
+  phone VARCHAR(40) UNIQUE,
+  email VARCHAR(190) UNIQUE,
+  password VARCHAR(255) NOT NULL,
+  role ENUM('customer','seller','admin') NOT NULL DEFAULT 'customer',
+  created_at TIMESTAMP NULL,
+  updated_at TIMESTAMP NULL
+);
+
+CREATE TABLE categories (
+  id BIGINT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
+  slug VARCHAR(120) UNIQUE NOT NULL,
+  name_ar VARCHAR(160) NOT NULL,
+  name_en VARCHAR(160) NOT NULL,
+  image VARCHAR(255) NULL,
+  active BOOLEAN NOT NULL DEFAULT TRUE,
+  created_at TIMESTAMP NULL,
+  updated_at TIMESTAMP NULL
+);
+
+CREATE TABLE sellers (
+  id BIGINT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
+  user_id BIGINT UNSIGNED NULL,
+  category_id BIGINT UNSIGNED NULL,
+  name_ar VARCHAR(160) NOT NULL,
+  name_en VARCHAR(160) NOT NULL,
+  image VARCHAR(255) NULL,
+  rating DECIMAL(2,1) NOT NULL DEFAULT 0,
+  status ENUM('pending','active','suspended') NOT NULL DEFAULT 'pending',
+  created_at TIMESTAMP NULL,
+  updated_at TIMESTAMP NULL,
+  FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE SET NULL,
+  FOREIGN KEY (category_id) REFERENCES categories(id) ON DELETE SET NULL
+);
+
+CREATE TABLE products (
+  id BIGINT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
+  seller_id BIGINT UNSIGNED NULL,
+  category_id BIGINT UNSIGNED NULL,
+  name_ar VARCHAR(200) NOT NULL,
+  name_en VARCHAR(200) NOT NULL,
+  description_ar TEXT NULL,
+  description_en TEXT NULL,
+  image VARCHAR(255) NULL,
+  price DECIMAL(10,2) NOT NULL DEFAULT 5.75,
+  stock INT UNSIGNED NOT NULL DEFAULT 0,
+  featured BOOLEAN NOT NULL DEFAULT FALSE,
+  active BOOLEAN NOT NULL DEFAULT TRUE,
+  created_at TIMESTAMP NULL,
+  updated_at TIMESTAMP NULL,
+  FOREIGN KEY (seller_id) REFERENCES sellers(id) ON DELETE SET NULL,
+  FOREIGN KEY (category_id) REFERENCES categories(id) ON DELETE SET NULL
+);
+
+CREATE TABLE favorites (
+  id BIGINT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
+  user_id BIGINT UNSIGNED NOT NULL,
+  product_id BIGINT UNSIGNED NOT NULL,
+  created_at TIMESTAMP NULL,
+  UNIQUE KEY favorite_unique (user_id, product_id),
+  FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE,
+  FOREIGN KEY (product_id) REFERENCES products(id) ON DELETE CASCADE
+);
+
+CREATE TABLE orders (
+  id BIGINT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
+  user_id BIGINT UNSIGNED NULL,
+  number VARCHAR(80) UNIQUE NOT NULL,
+  status ENUM('new','preparing','shipped','delivered','cancelled') NOT NULL DEFAULT 'new',
+  subtotal DECIMAL(10,2) NOT NULL DEFAULT 0,
+  delivery_fee DECIMAL(10,2) NOT NULL DEFAULT 0,
+  total DECIMAL(10,2) NOT NULL DEFAULT 0,
+  payment_method VARCHAR(50) NOT NULL DEFAULT 'cod',
+  payment_status VARCHAR(50) NOT NULL DEFAULT 'pending',
+  customer_name VARCHAR(160) NOT NULL,
+  customer_phone VARCHAR(40) NOT NULL,
+  city VARCHAR(120) NOT NULL,
+  address TEXT NOT NULL,
+  notes TEXT NULL,
+  created_at TIMESTAMP NULL,
+  updated_at TIMESTAMP NULL,
+  FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE SET NULL
+);
+
+CREATE TABLE order_items (
+  id BIGINT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
+  order_id BIGINT UNSIGNED NOT NULL,
+  product_id BIGINT UNSIGNED NULL,
+  seller_id BIGINT UNSIGNED NULL,
+  quantity INT UNSIGNED NOT NULL DEFAULT 1,
+  unit_price DECIMAL(10,2) NOT NULL,
+  total DECIMAL(10,2) NOT NULL,
+  created_at TIMESTAMP NULL,
+  updated_at TIMESTAMP NULL,
+  FOREIGN KEY (order_id) REFERENCES orders(id) ON DELETE CASCADE,
+  FOREIGN KEY (product_id) REFERENCES products(id) ON DELETE SET NULL,
+  FOREIGN KEY (seller_id) REFERENCES sellers(id) ON DELETE SET NULL
+);
+
+CREATE TABLE seller_applications (
+  id BIGINT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
+  user_id BIGINT UNSIGNED NULL,
+  store_name VARCHAR(180) NOT NULL,
+  phone VARCHAR(40) NOT NULL,
+  category_id BIGINT UNSIGNED NULL,
+  status ENUM('pending','approved','rejected') NOT NULL DEFAULT 'pending',
+  notes TEXT NULL,
+  created_at TIMESTAMP NULL,
+  updated_at TIMESTAMP NULL,
+  FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE SET NULL,
+  FOREIGN KEY (category_id) REFERENCES categories(id) ON DELETE SET NULL
+);
+
+CREATE TABLE sliders (
+  id BIGINT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
+  title_ar VARCHAR(200) NOT NULL,
+  title_en VARCHAR(200) NOT NULL,
+  text_ar TEXT NULL,
+  text_en TEXT NULL,
+  cta_ar VARCHAR(100) NULL,
+  cta_en VARCHAR(100) NULL,
+  image VARCHAR(255) NULL,
+  tone VARCHAR(30) NOT NULL DEFAULT 'green',
+  sort_order INT NOT NULL DEFAULT 0,
+  active BOOLEAN NOT NULL DEFAULT TRUE,
+  created_at TIMESTAMP NULL,
+  updated_at TIMESTAMP NULL
+);

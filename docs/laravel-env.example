@@ -1,0 +1,14 @@
+APP_NAME="Everything 5.75 API"
+APP_ENV=production
+APP_DEBUG=false
+APP_URL=https://api.example.com
+
+DB_CONNECTION=mysql
+DB_HOST=your-rds-endpoint.amazonaws.com
+DB_PORT=3306
+DB_DATABASE=all575
+DB_USERNAME=all575_app
+DB_PASSWORD=change-me
+
+SANCTUM_STATEFUL_DOMAINS=your-web-domain.com
+SESSION_DOMAIN=.your-web-domain.com

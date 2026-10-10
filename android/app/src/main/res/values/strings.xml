@@ -1,0 +1,7 @@
+<?xml version='1.0' encoding='utf-8'?>
+<resources>
+    <string name="app_name">Everything 5.75</string>
+    <string name="title_activity_main">Everything 5.75</string>
+    <string name="package_name">com.all575.app</string>
+    <string name="custom_url_scheme">com.all575.app</string>
+</resources>
