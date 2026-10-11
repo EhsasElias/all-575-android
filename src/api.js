@@ -1,7 +1,4 @@
-import {
-  Capacitor,
-  CapacitorHttp,
-} from '@capacitor/core';
+import '@capacitor/core';
 
 const API_BASE = (
   import.meta.env.VITE_API_BASE_URL || ''
@@ -66,16 +63,16 @@ async function request(
 
     ...(options.body
       ? {
-          'Content-Type':
-            'application/json',
-        }
+        'Content-Type':
+          'application/json',
+      }
       : {}),
 
     ...(accessToken
       ? {
-          Authorization:
-            `Bearer ${accessToken}`,
-        }
+        Authorization:
+          `Bearer ${accessToken}`,
+      }
       : {}),
 
     ...(options.headers || {}),
@@ -102,11 +99,11 @@ async function request(
 
         ...(options.body
           ? {
-              data:
-                JSON.parse(
-                  options.body
-                ),
-            }
+            data:
+              JSON.parse(
+                options.body
+              ),
+          }
           : {}),
       });
 
@@ -140,7 +137,6 @@ async function request(
 
     return body;
   }
-
   /*
   |--------------------------------------------------------------------------
   | Browser
