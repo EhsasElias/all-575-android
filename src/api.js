@@ -1,3 +1,8 @@
+import {
+  Capacitor,
+  CapacitorHttp,
+} from '@capacitor/core';
+
 const API_BASE = (
   import.meta.env.VITE_API_BASE_URL || ''
 ).replace(/\/$/, '');
@@ -52,32 +57,104 @@ async function request(
   path,
   options = {}
 ) {
-  const response = await fetch(
-    `${API_BASE}${path}`,
-    {
-      ...options,
+  const url =
+    `${API_BASE}${path}`;
 
-      headers: {
-        Accept: 'application/json',
+  const headers = {
+    Accept:
+      'application/json',
+
+    ...(options.body
+      ? {
+          'Content-Type':
+            'application/json',
+        }
+      : {}),
+
+    ...(accessToken
+      ? {
+          Authorization:
+            `Bearer ${accessToken}`,
+        }
+      : {}),
+
+    ...(options.headers || {}),
+  };
+
+  /*
+  |--------------------------------------------------------------------------
+  | Android / iOS
+  |--------------------------------------------------------------------------
+  */
+
+  if (
+    Capacitor.isNativePlatform()
+  ) {
+    const response =
+      await CapacitorHttp.request({
+        url,
+
+        method:
+          options.method ||
+          'GET',
+
+        headers,
 
         ...(options.body
           ? {
-            'Content-Type':
-              'application/json',
-          }
+              data:
+                JSON.parse(
+                  options.body
+                ),
+            }
           : {}),
+      });
 
-        ...(accessToken
-          ? {
-            Authorization:
-              `Bearer ${accessToken}`,
-          }
-          : {}),
+    const body =
+      response.data;
 
-        ...(options.headers || {}),
-      },
+    if (
+      response.status < 200 ||
+      response.status >= 300
+    ) {
+      const error =
+        new Error(
+          body?.message ||
+          `API request failed: ${response.status}`
+        );
+
+      error.status =
+        response.status;
+
+      error.errors =
+        body?.errors || null;
+
+      throw error;
     }
-  );
+
+    if (
+      response.status === 204
+    ) {
+      return null;
+    }
+
+    return body;
+  }
+
+  /*
+  |--------------------------------------------------------------------------
+  | Browser
+  |--------------------------------------------------------------------------
+  */
+
+  const response =
+    await fetch(
+      url,
+      {
+        ...options,
+        headers,
+      }
+    );
 
   const body =
     await response
@@ -85,10 +162,11 @@ async function request(
       .catch(() => null);
 
   if (!response.ok) {
-    const error = new Error(
-      body?.message ||
-      `API request failed: ${response.status}`
-    );
+    const error =
+      new Error(
+        body?.message ||
+        `API request failed: ${response.status}`
+      );
 
     error.status =
       response.status;
@@ -99,7 +177,9 @@ async function request(
     throw error;
   }
 
-  if (response.status === 204) {
+  if (
+    response.status === 204
+  ) {
     return null;
   }
 
