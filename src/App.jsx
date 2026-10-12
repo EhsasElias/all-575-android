@@ -113,10 +113,13 @@ function App() {
     sellerForm,
     setSellerForm,
   ] = useState({
-    storeName: '',
+    store_name_ar: '',
+    store_name_en: '',
     phone: '',
-    category: 'food',
   });
+
+  const [sellerSubmitting, setSellerSubmitting] = useState(false);
+  const [sellerError, setSellerError] = useState('');
 
   const [
     selectedSellerProduct,
@@ -966,9 +969,19 @@ function App() {
   ) {
     event.preventDefault();
 
+    if (sellerSubmitting) return;
+    setSellerError('');
+
+    if (shouldUseApi() && !currentUser) {
+      showToast(lang === 'ar' ? 'سجّل الدخول لإرسال طلب البائع' : 'Sign in to submit a seller application');
+      go('login');
+      return;
+    }
+
     if (
-      !sellerForm.storeName ||
-      !sellerForm.phone
+      !sellerForm.store_name_ar.trim() ||
+      !sellerForm.store_name_en.trim() ||
+      !sellerForm.phone.trim()
     ) {
       showToast(
         lang === 'ar'
@@ -980,64 +993,55 @@ function App() {
     }
 
     const application = {
-      id:
-        Date.now(),
-
-      ...sellerForm,
-
-      status:
-        'pending',
-
-      createdAt:
-        new Date()
-          .toISOString(),
+      store_name_ar: sellerForm.store_name_ar.trim(),
+      store_name_en: sellerForm.store_name_en.trim(),
+      phone: sellerForm.phone.trim(),
     };
 
-    if (shouldUseApi()) {
-      try {
-        await api
-          .createSellerApplication(
-            application
-          );
-      } catch (error) {
-        console.error(
-          'Seller application error:',
-          error
-        );
+    setSellerSubmitting(true);
+    try {
+      if (shouldUseApi()) {
+        await api.createSellerApplication(application);
+      } else {
+        setStore(
+          (current) => ({
+            ...current,
 
-        showToast(
-          lang === 'ar'
-            ? 'تعذر إرسال الطلب'
-            : 'Could not send application'
+            sellerApplications: [
+              {
+                ...application,
+                id: Date.now(),
+                status: 'pending',
+                createdAt: new Date().toISOString(),
+              },
+              ...current
+                .sellerApplications,
+            ],
+          })
         );
-
-        return;
       }
-    } else {
-      setStore(
-        (current) => ({
-          ...current,
 
-          sellerApplications: [
-            application,
-            ...current
-              .sellerApplications,
-          ],
-        })
+      setSellerForm({
+        store_name_ar: '',
+        store_name_en: '',
+        phone: '',
+      });
+
+      showToast(
+        t.applicationSent
       );
+
+      go('settings');
+    } catch (error) {
+      console.error('Seller application error:', error);
+      setSellerError(
+        Object.values(error.errors || {}).flat().join(' ') ||
+        error.message ||
+        (lang === 'ar' ? 'تعذر إرسال الطلب' : 'Could not send application')
+      );
+    } finally {
+      setSellerSubmitting(false);
     }
-
-    setSellerForm({
-      storeName: '',
-      phone: '',
-      category: 'food',
-    });
-
-    showToast(
-      t.applicationSent
-    );
-
-    go('settings');
   }
 
   /*
@@ -3301,20 +3305,32 @@ function App() {
 
                 <FormInput
                   label={
-                    t.storeName
+                    lang === 'ar' ? 'اسم المتجر بالعربية' : 'Store name (Arabic)'
                   }
                   value={
                     sellerForm
-                      .storeName
+                      .store_name_ar
                   }
                   onChange={
                     (value) =>
                       setSellerForm({
                         ...sellerForm,
-                        storeName:
+                        store_name_ar:
                           value,
                       })
                   }
+                  required
+                  maxLength={255}
+                  dir="rtl"
+                />
+
+                <FormInput
+                  label={lang === 'ar' ? 'اسم المتجر بالإنجليزية' : 'Store name (English)'}
+                  value={sellerForm.store_name_en}
+                  onChange={(value) => setSellerForm({ ...sellerForm, store_name_en: value })}
+                  required
+                  maxLength={255}
+                  dir="ltr"
                 />
 
                 <FormInput
@@ -3333,59 +3349,22 @@ function App() {
                       })
                   }
                   type="tel"
+                  required
+                  maxLength={50}
                 />
 
-                <label className="field">
-
-                  <span>
-                    {t.sellerCategory}
-                  </span>
-
-                  <select
-                    value={
-                      sellerForm
-                        .category
-                    }
-                    onChange={
-                      (event) =>
-                        setSellerForm({
-                          ...sellerForm,
-                          category:
-                            event
-                              .target
-                              .value,
-                        })
-                    }
-                  >
-
-                    {store.categories.map(
-                      (
-                        item
-                      ) => (
-                        <option
-                          key={
-                            item.id
-                          }
-                          value={
-                            item.id
-                          }
-                        >
-                          {lang === 'ar'
-                            ? item.nameAr
-                            : item.nameEn}
-                        </option>
-                      )
-                    )}
-
-                  </select>
-
-                </label>
+                {sellerError && (
+                  <p role="alert" className="page-lead">{sellerError}</p>
+                )}
 
                 <button
                   className="primary-btn"
                   type="submit"
+                  disabled={sellerSubmitting}
                 >
-                  {t.submitApplication}
+                  {sellerSubmitting
+                    ? (lang === 'ar' ? 'جارٍ إرسال الطلب...' : 'Submitting...')
+                    : t.submitApplication}
                 </button>
 
               </form>
@@ -3643,6 +3622,7 @@ function FormInput({
   value,
   onChange,
   type = 'text',
+  ...inputProps
 }) {
   return (
     <label className="field">
@@ -3652,6 +3632,7 @@ function FormInput({
       </span>
 
       <input
+        {...inputProps}
         type={type}
         value={value}
         onChange={
