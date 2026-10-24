@@ -5,9 +5,9 @@ import styles from './TextField.module.css';
 
 type TextFieldProps = Omit<ComponentProps<'input'>, 'id'> & {
   label: string;
-  hint?: string;
-  error?: string;
-  id?: string;
+  hint?: string | undefined;
+  error?: string | undefined;
+  id?: string | undefined;
 };
 
 export function TextField({ label, hint, error, id, className, ...rest }: TextFieldProps) {

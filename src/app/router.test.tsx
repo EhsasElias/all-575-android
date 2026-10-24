@@ -1,9 +1,21 @@
 import { screen, within } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
-import { describe, expect, it } from 'vitest';
+import { beforeEach, describe, expect, it } from 'vitest';
+import { installFakeApi } from '@/test/fakeApi';
+import { testStore } from '@/test/fixtures';
 import { renderApp } from '@/test/render';
 
 const TAB_BAR = { name: 'Main navigation' };
+
+// These tests are about routing and the shell. What each screen does is tested next to the screen,
+// so here the server only has to answer with an empty catalog.
+beforeEach(() => {
+  installFakeApi({
+    'GET /store': { body: { data: testStore } },
+    'GET /categories': { body: { data: [] } },
+    'GET /products': { body: { data: [], links: { next: null }, meta: { next_cursor: null } } },
+  });
+});
 
 describe('first launch', () => {
   it('opens the welcome screen on a fresh install', async () => {
@@ -18,7 +30,7 @@ describe('first launch', () => {
 
     expect(router.state.location.pathname).toBe('/home');
     expect(
-      screen.getByRole('heading', { level: 1, name: 'Products are on the way' }),
+      await screen.findByRole('heading', { level: 1, name: 'What do you need today?' }),
     ).toBeInTheDocument();
   });
 });
@@ -41,24 +53,21 @@ describe('app shell', () => {
     await user.click(tabs.getByRole('link', { name: 'Cart' }));
 
     expect(router.state.location.pathname).toBe('/cart');
-    expect(
-      screen.getByRole('heading', { level: 1, name: 'Your cart is empty' }),
-    ).toBeInTheDocument();
+    expect(await screen.findByRole('heading', { level: 1, name: 'Cart' })).toBeInTheDocument();
     expect(tabs.getByRole('link', { name: 'Cart' })).toHaveAttribute('aria-current', 'page');
     expect(tabs.getByRole('link', { name: 'Home' })).not.toHaveAttribute('aria-current');
   });
 
   it.each([
-    ['/categories', 'No categories to show yet'],
-    ['/cart', 'Your cart is empty'],
-    ['/account', 'Sign in to manage your account'],
-    ['/sign-in', 'Sign-in is not available yet'],
-  ])('%s shows an empty state with a next step', async (route, title) => {
+    ['/categories', 'Categories'],
+    ['/cart', 'Cart'],
+    ['/account', 'Your account'],
+    ['/sign-in', 'Sign in'],
+  ])('%s opens its screen for a guest', async (route, title) => {
     await renderApp({ route, seenWelcome: true });
 
     const main = screen.getByRole('main');
-    expect(within(main).getByRole('heading', { level: 1, name: title })).toBeInTheDocument();
-    expect(within(main).getAllByRole('link')).toHaveLength(1);
+    expect(await within(main).findByRole('heading', { level: 1, name: title })).toBeInTheDocument();
   });
 
   it.each(['/checkout', '/orders'])(
