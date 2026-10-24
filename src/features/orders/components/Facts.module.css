@@ -1,0 +1,27 @@
+.facts {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+  margin: 0;
+}
+
+.fact {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  justify-content: space-between;
+  column-gap: var(--space-4);
+}
+
+.label {
+  color: var(--color-text-muted);
+}
+
+.value {
+  margin: 0;
+  text-align: end;
+}
+
+.strong {
+  font-weight: var(--font-weight-bold);
+}

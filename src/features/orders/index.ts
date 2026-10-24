@@ -1,3 +1,3 @@
 export { ordersLocales } from './locales';
-export { OrdersScreen } from './OrdersScreen';
+export { OrdersScreen } from './list/OrdersScreen';
 export { ordersRoutes } from './routes';

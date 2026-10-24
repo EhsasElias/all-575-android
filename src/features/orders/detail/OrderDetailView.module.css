@@ -1,0 +1,15 @@
+.page {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4);
+}
+
+.back {
+  align-self: flex-start;
+}
+
+.live {
+  color: var(--color-text-muted);
+  font-size: var(--font-size-small);
+  text-align: center;
+}

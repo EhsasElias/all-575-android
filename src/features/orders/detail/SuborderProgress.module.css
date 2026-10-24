@@ -1,0 +1,36 @@
+.progress {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-1);
+}
+
+.bar {
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  gap: var(--space-1);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.segment {
+  block-size: 8px;
+  border: 1px solid var(--color-border-strong);
+  border-radius: var(--radius-pill);
+  background: var(--color-surface);
+}
+
+.done {
+  border-color: var(--color-brand);
+  background: var(--color-brand);
+}
+
+.current {
+  border-color: var(--color-brand);
+  background: var(--color-surface-mint);
+}
+
+.caption {
+  color: var(--color-text-muted);
+  font-size: var(--font-size-small);
+}
