@@ -1,15 +1,15 @@
 import { Preferences } from '@capacitor/preferences';
 
-export type PreferenceKey = 'language' | 'welcomeSeen';
+export type PreferenceKey = 'language' | 'welcomeSeen' | 'guestCart' | 'deliveryZone';
 
 export type PreferenceBackend = {
   get: (key: PreferenceKey) => Promise<string | null>;
   set: (key: PreferenceKey, value: string) => Promise<void>;
 };
 
-const KEYS: readonly PreferenceKey[] = ['language', 'welcomeSeen'];
+const KEYS: readonly PreferenceKey[] = ['language', 'welcomeSeen', 'guestCart', 'deliveryZone'];
 
-// Preferences are non-sensitive (language, onboarding flags). Never store tokens here.
+// Preferences are non-sensitive (language, onboarding flags, the guest's cart lines and chosen delivery area). Never store tokens here.
 const capacitorBackend: PreferenceBackend = {
   get: async (key) => (await Preferences.get({ key })).value,
   set: (key, value) => Preferences.set({ key, value }),

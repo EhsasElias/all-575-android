@@ -1,5 +1,5 @@
 import { Outlet } from 'react-router';
-import { useCartItemCount } from '@/features/cart';
+import { GuestCartMerger, useCartItemCount } from '@/features/cart';
 import { BottomNav } from './BottomNav';
 import { MAIN_CONTENT_ID } from './SkipLink';
 import { TopBar } from './TopBar';
@@ -15,6 +15,7 @@ export function ShellLayout() {
         <Outlet />
       </main>
       <BottomNav badges={{ cart: cartCount }} />
+      <GuestCartMerger />
     </div>
   );
 }

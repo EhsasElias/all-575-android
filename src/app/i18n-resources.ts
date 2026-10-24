@@ -1,4 +1,5 @@
 import { accountLocales } from '@/features/account';
+import { addressesLocales } from '@/features/addresses';
 import { authLocales } from '@/features/auth';
 import { cartLocales } from '@/features/cart';
 import { catalogLocales } from '@/features/catalog';
@@ -16,6 +17,7 @@ export const appResources = {
     checkout: checkoutLocales.en,
     orders: ordersLocales.en,
     account: accountLocales.en,
+    addresses: addressesLocales.en,
     auth: authLocales.en,
   },
   ar: {
@@ -26,6 +28,7 @@ export const appResources = {
     checkout: checkoutLocales.ar,
     orders: ordersLocales.ar,
     account: accountLocales.ar,
+    addresses: addressesLocales.ar,
     auth: authLocales.ar,
   },
 };

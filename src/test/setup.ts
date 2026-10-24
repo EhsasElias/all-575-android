@@ -3,6 +3,7 @@ import { cleanup } from '@testing-library/react';
 import i18next from 'i18next';
 import { afterEach, beforeAll, beforeEach, vi } from 'vitest';
 import { appResources } from '@/app/i18n-resources';
+import { tokenStore } from '@/shared/api';
 import { initI18n } from '@/shared/i18n';
 import { loadPreferences } from '@/shared/storage';
 import { installBrowserStubs, resetBrowserStubs } from './browserStubs';
@@ -20,6 +21,8 @@ beforeEach(async () => {
 afterEach(async () => {
   cleanup();
   vi.useRealTimers();
+  vi.unstubAllGlobals();
+  await tokenStore.clear();
   resetBrowserStubs();
   await i18next.changeLanguage('en');
 });
