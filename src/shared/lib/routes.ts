@@ -7,7 +7,7 @@ export const routePaths = {
   welcome: '/welcome',
   home: '/home',
   categories: '/categories',
-  categoryProducts: '/categories/:categoryId',
+  categoryProducts: '/categories/:slug',
   search: '/search',
   product: '/products/:slug',
   seller: '/sellers/:slug',
@@ -31,7 +31,7 @@ export const routePaths = {
 const segment = (value: string | number): string => encodeURIComponent(String(value));
 
 export const routeTo = {
-  categoryProducts: (categoryId: string | number) => `/categories/${segment(categoryId)}`,
+  categoryProducts: (slug: string) => `/categories/${segment(slug)}`,
   product: (slug: string) => `/products/${segment(slug)}`,
   seller: (slug: string) => `/sellers/${segment(slug)}`,
   checkoutPayment: (orderId: string | number) => `/checkout/payment/${segment(orderId)}`,

@@ -1,3 +1,4 @@
+export { AddToCart } from './AddToCart';
 export { cartLocales } from './locales';
 export { CartScreen } from './CartScreen';
 export { cartRoutes } from './routes';
