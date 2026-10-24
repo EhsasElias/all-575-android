@@ -9,7 +9,14 @@ import tseslint from 'typescript-eslint';
 const layerImportMessage = 'Respect the layer direction: app -> features -> shared.';
 
 export default defineConfig([
-  globalIgnores(['dist', 'android', 'src/shared/api/schema.d.ts', 'coverage', 'playwright-report', 'test-results']),
+  globalIgnores([
+    'dist',
+    'android',
+    'src/shared/api/schema.d.ts',
+    'coverage',
+    'playwright-report',
+    'test-results',
+  ]),
 
   js.configs.recommended,
   tseslint.configs.strictTypeChecked,

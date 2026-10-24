@@ -4,2242 +4,2235 @@
  */
 
 export interface paths {
-  '/v1/addresses': {
-    parameters: {
-      query?: never;
-      header?: never;
-      path?: never;
-      cookie?: never;
+    "/v1/addresses": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["address.index"];
+        put?: never;
+        post: operations["address.store"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
     };
-    get: operations['address.index'];
-    put?: never;
-    post: operations['address.store'];
-    delete?: never;
-    options?: never;
-    head?: never;
-    patch?: never;
-    trace?: never;
-  };
-  '/v1/addresses/{address}': {
-    parameters: {
-      query?: never;
-      header?: never;
-      path?: never;
-      cookie?: never;
+    "/v1/addresses/{address}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["address.show"];
+        put: operations["address.update"];
+        post?: never;
+        delete: operations["address.destroy"];
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
     };
-    get: operations['address.show'];
-    put: operations['address.update'];
-    post?: never;
-    delete: operations['address.destroy'];
-    options?: never;
-    head?: never;
-    patch?: never;
-    trace?: never;
-  };
-  '/v1/addresses/{address}/default': {
-    parameters: {
-      query?: never;
-      header?: never;
-      path?: never;
-      cookie?: never;
+    "/v1/addresses/{address}/default": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put: operations["address.makeDefault"];
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
     };
-    get?: never;
-    put: operations['address.makeDefault'];
-    post?: never;
-    delete?: never;
-    options?: never;
-    head?: never;
-    patch?: never;
-    trace?: never;
-  };
-  '/v1/auth/otp/request': {
-    parameters: {
-      query?: never;
-      header?: never;
-      path?: never;
-      cookie?: never;
+    "/v1/auth/otp/request": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** Send a one-time code. The answer is the same whether or not the number already has an account */
+        post: operations["auth.requestOtp"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
     };
-    get?: never;
-    put?: never;
-    /** Send a one-time code. The answer is the same whether or not the number already has an account */
-    post: operations['auth.requestOtp'];
-    delete?: never;
-    options?: never;
-    head?: never;
-    patch?: never;
-    trace?: never;
-  };
-  '/v1/auth/otp/verify': {
-    parameters: {
-      query?: never;
-      header?: never;
-      path?: never;
-      cookie?: never;
+    "/v1/auth/otp/verify": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** Check the code and sign in. A new account must also send the current Terms and Privacy versions */
+        post: operations["auth.verifyOtp"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
     };
-    get?: never;
-    put?: never;
-    /** Check the code and sign in. A new account must also send the current Terms and Privacy versions */
-    post: operations['auth.verifyOtp'];
-    delete?: never;
-    options?: never;
-    head?: never;
-    patch?: never;
-    trace?: never;
-  };
-  '/v1/auth/session': {
-    parameters: {
-      query?: never;
-      header?: never;
-      path?: never;
-      cookie?: never;
+    "/v1/auth/session": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post?: never;
+        delete: operations["auth.logout"];
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
     };
-    get?: never;
-    put?: never;
-    post?: never;
-    delete: operations['auth.logout'];
-    options?: never;
-    head?: never;
-    patch?: never;
-    trace?: never;
-  };
-  '/v1/cart': {
-    parameters: {
-      query?: never;
-      header?: never;
-      path?: never;
-      cookie?: never;
+    "/v1/cart": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Optional `address_id` adds per-line availability for that address's delivery zone */
+        get: operations["cart.show"];
+        put?: never;
+        post?: never;
+        delete: operations["cart.clear"];
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
     };
-    /** Optional `address_id` adds per-line availability for that address's delivery zone */
-    get: operations['cart.show'];
-    put?: never;
-    post?: never;
-    delete: operations['cart.clear'];
-    options?: never;
-    head?: never;
-    patch?: never;
-    trace?: never;
-  };
-  '/v1/cart/merge': {
-    parameters: {
-      query?: never;
-      header?: never;
-      path?: never;
-      cookie?: never;
+    "/v1/cart/merge": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post: operations["cart.merge"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
     };
-    get?: never;
-    put?: never;
-    post: operations['cart.merge'];
-    delete?: never;
-    options?: never;
-    head?: never;
-    patch?: never;
-    trace?: never;
-  };
-  '/v1/cart/items/{variant}': {
-    parameters: {
-      query?: never;
-      header?: never;
-      path?: never;
-      cookie?: never;
+    "/v1/cart/items/{variant}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put: operations["cart.setItem"];
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
     };
-    get?: never;
-    put: operations['cart.setItem'];
-    post?: never;
-    delete?: never;
-    options?: never;
-    head?: never;
-    patch?: never;
-    trace?: never;
-  };
-  '/v1/categories': {
-    parameters: {
-      query?: never;
-      header?: never;
-      path?: never;
-      cookie?: never;
+    "/v1/categories": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["category.index"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
     };
-    get: operations['category.index'];
-    put?: never;
-    post?: never;
-    delete?: never;
-    options?: never;
-    head?: never;
-    patch?: never;
-    trace?: never;
-  };
-  '/v1/checkout': {
-    parameters: {
-      query?: never;
-      header?: never;
-      path?: never;
-      cookie?: never;
+    "/v1/checkout": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * Creates the unpaid order and the payment attempt. The order is only confirmed later, by the provider's callback.
+         *     Repeating the request with the same Idempotency-Key returns the same order instead of creating another
+         */
+        post: operations["checkout.store"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
     };
-    get?: never;
-    put?: never;
-    /**
-     * Creates the unpaid order and the payment attempt. The order is only confirmed later, by the provider's callback.
-     *     Repeating the request with the same Idempotency-Key returns the same order instead of creating another
-     */
-    post: operations['checkout.store'];
-    delete?: never;
-    options?: never;
-    head?: never;
-    patch?: never;
-    trace?: never;
-  };
-  '/v1/orders/{order}/suborders/{suborder}/delivery-code': {
-    parameters: {
-      query?: never;
-      header?: never;
-      path?: never;
-      cookie?: never;
+    "/v1/orders/{order}/suborders/{suborder}/delivery-code": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** The customer's own hand-over code, available only while that delivery is on its way */
+        get: operations["deliveryCode.show"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
     };
-    /** The customer's own hand-over code, available only while that delivery is on its way */
-    get: operations['deliveryCode.show'];
-    put?: never;
-    post?: never;
-    delete?: never;
-    options?: never;
-    head?: never;
-    patch?: never;
-    trace?: never;
-  };
-  '/v1/me': {
-    parameters: {
-      query?: never;
-      header?: never;
-      path?: never;
-      cookie?: never;
+    "/v1/me": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["me.show"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch: operations["me.update"];
+        trace?: never;
     };
-    get: operations['me.show'];
-    put?: never;
-    post?: never;
-    delete?: never;
-    options?: never;
-    head?: never;
-    patch: operations['me.update'];
-    trace?: never;
-  };
-  '/v1/me/consents/marketing': {
-    parameters: {
-      query?: never;
-      header?: never;
-      path?: never;
-      cookie?: never;
+    "/v1/me/consents/marketing": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put: operations["me.updateMarketingConsent"];
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
     };
-    get?: never;
-    put: operations['me.updateMarketingConsent'];
-    post?: never;
-    delete?: never;
-    options?: never;
-    head?: never;
-    patch?: never;
-    trace?: never;
-  };
-  '/v1/orders': {
-    parameters: {
-      query?: never;
-      header?: never;
-      path?: never;
-      cookie?: never;
+    "/v1/orders": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["order.index"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
     };
-    get: operations['order.index'];
-    put?: never;
-    post?: never;
-    delete?: never;
-    options?: never;
-    head?: never;
-    patch?: never;
-    trace?: never;
-  };
-  '/v1/orders/{order}': {
-    parameters: {
-      query?: never;
-      header?: never;
-      path?: never;
-      cookie?: never;
+    "/v1/orders/{order}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["order.show"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
     };
-    get: operations['order.show'];
-    put?: never;
-    post?: never;
-    delete?: never;
-    options?: never;
-    head?: never;
-    patch?: never;
-    trace?: never;
-  };
-  '/v1/orders/{order}/cancel': {
-    parameters: {
-      query?: never;
-      header?: never;
-      path?: never;
-      cookie?: never;
+    "/v1/orders/{order}/cancel": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post: operations["orderCancellation.store"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
     };
-    get?: never;
-    put?: never;
-    post: operations['orderCancellation.store'];
-    delete?: never;
-    options?: never;
-    head?: never;
-    patch?: never;
-    trace?: never;
-  };
-  '/v1/payments/{payment}': {
-    parameters: {
-      query?: never;
-      header?: never;
-      path?: never;
-      cookie?: never;
+    "/v1/payments/{payment}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** The app polls this after the customer returns from the provider. "Paid" here comes only from a verified callback */
+        get: operations["payment.show"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
     };
-    /** The app polls this after the customer returns from the provider. "Paid" here comes only from a verified callback */
-    get: operations['payment.show'];
-    put?: never;
-    post?: never;
-    delete?: never;
-    options?: never;
-    head?: never;
-    patch?: never;
-    trace?: never;
-  };
-  '/v1/orders/{order}/payments': {
-    parameters: {
-      query?: never;
-      header?: never;
-      path?: never;
-      cookie?: never;
+    "/v1/orders/{order}/payments": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post: operations["payment.retry"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
     };
-    get?: never;
-    put?: never;
-    post: operations['payment.retry'];
-    delete?: never;
-    options?: never;
-    head?: never;
-    patch?: never;
-    trace?: never;
-  };
-  '/v1/products': {
-    parameters: {
-      query?: never;
-      header?: never;
-      path?: never;
-      cookie?: never;
+    "/v1/products": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["product.index"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
     };
-    get: operations['product.index'];
-    put?: never;
-    post?: never;
-    delete?: never;
-    options?: never;
-    head?: never;
-    patch?: never;
-    trace?: never;
-  };
-  '/v1/products/{slug}': {
-    parameters: {
-      query?: never;
-      header?: never;
-      path?: never;
-      cookie?: never;
+    "/v1/products/{slug}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["product.show"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
     };
-    get: operations['product.show'];
-    put?: never;
-    post?: never;
-    delete?: never;
-    options?: never;
-    head?: never;
-    patch?: never;
-    trace?: never;
-  };
-  '/v1/quotes': {
-    parameters: {
-      query?: never;
-      header?: never;
-      path?: never;
-      cookie?: never;
+    "/v1/quotes": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** Price the cart for an address. Prices and VAT come from the server; the quote expires after a few minutes */
+        post: operations["quote.store"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
     };
-    get?: never;
-    put?: never;
-    /** Price the cart for an address. Prices and VAT come from the server; the quote expires after a few minutes */
-    post: operations['quote.store'];
-    delete?: never;
-    options?: never;
-    head?: never;
-    patch?: never;
-    trace?: never;
-  };
-  '/v1/products/{slug}/reviews': {
-    parameters: {
-      query?: never;
-      header?: never;
-      path?: never;
-      cookie?: never;
+    "/v1/products/{slug}/reviews": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["review.index"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
     };
-    get: operations['review.index'];
-    put?: never;
-    post?: never;
-    delete?: never;
-    options?: never;
-    head?: never;
-    patch?: never;
-    trace?: never;
-  };
-  '/v1/orders/{order}/reviews': {
-    parameters: {
-      query?: never;
-      header?: never;
-      path?: never;
-      cookie?: never;
+    "/v1/orders/{order}/reviews": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post: operations["review.store"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
     };
-    get?: never;
-    put?: never;
-    post: operations['review.store'];
-    delete?: never;
-    options?: never;
-    head?: never;
-    patch?: never;
-    trace?: never;
-  };
-  '/v1/reviews/{review}': {
-    parameters: {
-      query?: never;
-      header?: never;
-      path?: never;
-      cookie?: never;
+    "/v1/reviews/{review}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch: operations["review.update"];
+        trace?: never;
     };
-    get?: never;
-    put?: never;
-    post?: never;
-    delete?: never;
-    options?: never;
-    head?: never;
-    patch: operations['review.update'];
-    trace?: never;
-  };
-  '/v1/sellers/{slug}': {
-    parameters: {
-      query?: never;
-      header?: never;
-      path?: never;
-      cookie?: never;
+    "/v1/sellers/{slug}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["seller.show"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
     };
-    get: operations['seller.show'];
-    put?: never;
-    post?: never;
-    delete?: never;
-    options?: never;
-    head?: never;
-    patch?: never;
-    trace?: never;
-  };
-  '/v1/me/sessions': {
-    parameters: {
-      query?: never;
-      header?: never;
-      path?: never;
-      cookie?: never;
+    "/v1/me/sessions": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["session.index"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
     };
-    get: operations['session.index'];
-    put?: never;
-    post?: never;
-    delete?: never;
-    options?: never;
-    head?: never;
-    patch?: never;
-    trace?: never;
-  };
-  '/v1/me/sessions/{session}': {
-    parameters: {
-      query?: never;
-      header?: never;
-      path?: never;
-      cookie?: never;
+    "/v1/me/sessions/{session}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post?: never;
+        delete: operations["session.destroy"];
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
     };
-    get?: never;
-    put?: never;
-    post?: never;
-    delete: operations['session.destroy'];
-    options?: never;
-    head?: never;
-    patch?: never;
-    trace?: never;
-  };
-  '/v1/delivery/slots': {
-    parameters: {
-      query?: never;
-      header?: never;
-      path?: never;
-      cookie?: never;
+    "/v1/delivery/slots": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["slot.index"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
     };
-    get: operations['slot.index'];
-    put?: never;
-    post?: never;
-    delete?: never;
-    options?: never;
-    head?: never;
-    patch?: never;
-    trace?: never;
-  };
-  '/v1/me/reports/spending': {
-    parameters: {
-      query?: never;
-      header?: never;
-      path?: never;
-      cookie?: never;
+    "/v1/me/reports/spending": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["spendingReport.show"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
     };
-    get: operations['spendingReport.show'];
-    put?: never;
-    post?: never;
-    delete?: never;
-    options?: never;
-    head?: never;
-    patch?: never;
-    trace?: never;
-  };
-  '/v1/me/reports/spending.csv': {
-    parameters: {
-      query?: never;
-      header?: never;
-      path?: never;
-      cookie?: never;
+    "/v1/me/reports/spending.csv": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["spendingReport.csv"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
     };
-    get: operations['spendingReport.csv'];
-    put?: never;
-    post?: never;
-    delete?: never;
-    options?: never;
-    head?: never;
-    patch?: never;
-    trace?: never;
-  };
-  '/v1/store': {
-    parameters: {
-      query?: never;
-      header?: never;
-      path?: never;
-      cookie?: never;
+    "/v1/store": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Platform constants the app shows or sends back: the one price, the VAT rate and the current legal text versions */
+        get: operations["store.show"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
     };
-    /** Platform constants the app shows or sends back: the one price, the VAT rate and the current legal text versions */
-    get: operations['store.show'];
-    put?: never;
-    post?: never;
-    delete?: never;
-    options?: never;
-    head?: never;
-    patch?: never;
-    trace?: never;
-  };
-  '/v1/welcome': {
-    parameters: {
-      query?: never;
-      header?: never;
-      path?: never;
-      cookie?: never;
+    "/v1/welcome": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["welcome.index"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
     };
-    get: operations['welcome.index'];
-    put?: never;
-    post?: never;
-    delete?: never;
-    options?: never;
-    head?: never;
-    patch?: never;
-    trace?: never;
-  };
-  '/v1/zones/resolve': {
-    parameters: {
-      query?: never;
-      header?: never;
-      path?: never;
-      cookie?: never;
+    "/v1/zones/resolve": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Tells the app whether we deliver to a point, and which zone it belongs to */
+        get: operations["zone.resolve"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
     };
-    /** Tells the app whether we deliver to a point, and which zone it belongs to */
-    get: operations['zone.resolve'];
-    put?: never;
-    post?: never;
-    delete?: never;
-    options?: never;
-    head?: never;
-    patch?: never;
-    trace?: never;
-  };
 }
 export type webhooks = Record<string, never>;
 export interface components {
-  schemas: {
-    /** AddressRequest */
-    AddressRequest: {
-      label?: string | null;
-      recipient_name: string;
-      recipient_phone: string;
-      region: string;
-      city: string;
-      district: string;
-      street: string;
-      /**
-       * @description Saudi National Address (SPL): building and additional number are 4 digits, postal code 5,
-       *     short address is 4 letters followed by 4 digits.
-       */
-      building_number: string;
-      additional_number: string;
-      postal_code: string;
-      short_address?: string | null;
-      unit?: string | null;
-      floor?: string | null;
-      delivery_notes?: string | null;
-      lat: number;
-      lng: number;
-      is_default?: boolean | null;
-    };
-    /** AddressResource */
-    AddressResource: {
-      id: number;
-      label: string | null;
-      recipient_name: string;
-      recipient_phone: string;
-      region: string;
-      city: string;
-      district: string;
-      street: string;
-      building_number: string;
-      additional_number: string;
-      postal_code: string;
-      short_address: string | null;
-      unit: string | null;
-      floor: string | null;
-      delivery_notes: string | null;
-      lat: number;
-      lng: number;
-      is_default: boolean;
-      serviceable: boolean;
-      service_zone_id: number | null;
-    };
-    /** CartResource */
-    CartResource: {
-      lines: {
-        variant_id: number;
-        product_slug: string;
-        name: {
-          ar: string;
-          en: string;
+    schemas: {
+        /** AddressRequest */
+        AddressRequest: {
+            label?: string | null;
+            recipient_name: string;
+            recipient_phone: string;
+            region: string;
+            city: string;
+            district: string;
+            street: string;
+            /**
+             * @description Saudi National Address (SPL): building and additional number are 4 digits, postal code 5,
+             *     short address is 4 letters followed by 4 digits.
+             */
+            building_number: string;
+            additional_number: string;
+            postal_code: string;
+            short_address?: string | null;
+            unit?: string | null;
+            floor?: string | null;
+            delivery_notes?: string | null;
+            lat: number;
+            lng: number;
+            is_default?: boolean | null;
         };
-        variant_name: {
-          ar: string | null;
-          en: string | null;
-        } | null;
-        image_url: string | null;
-        quantity: number;
-        unit_price: number;
-        line_price: number;
-        /** @enum {string} */
-        availability: 'unknown' | 'out_of_stock' | 'low_stock' | 'in_stock';
-      }[];
-      items_count: number;
-      subtotal: number;
-      currency: string;
-    };
-    /** CategoryResource */
-    CategoryResource: {
-      id: number;
-      slug: string;
-      name: {
-        ar: string;
-        en: string;
-      };
-      image_url: string | null;
-      children?: components['schemas']['CategoryResource'][];
-    };
-    /** CheckoutRequest */
-    CheckoutRequest: {
-      /** @description Sent by the app for each checkout attempt, so a retried request can never create a second order. */
-      idempotency_key: string;
-      quote_id: string;
-      slot_id: number;
-      /** @enum {string} */
-      payment_method: 'mada' | 'card' | 'apple_pay';
-      notes?: string | null;
-    };
-    /** CreateQuoteRequest */
-    CreateQuoteRequest: {
-      address_id: number;
-      promo_code?: string | null;
-    };
-    /** MergeCartRequest */
-    MergeCartRequest: {
-      items: {
-        variant_id: number;
-        quantity: number;
-      }[];
-    };
-    /** OrderDetailResource */
-    OrderDetailResource: {
-      id: string;
-      number: string;
-      /** @enum {string} */
-      status: 'pending_payment' | 'confirmed' | 'cancelled' | 'completed';
-      placed_at: string;
-      paid_at: string | null;
-      total: number;
-      currency: string;
-      items_count: number;
-      preview_images: string[];
-      slot: {
-        starts_at: string | null;
-        ends_at: string | null;
-      };
-      payment_status: string | null;
-      address: {
-        recipient_name: string;
-        recipient_phone: string;
-        region: string;
-        city: string;
-        district: string;
-        street: string;
-        building_number: string;
-        additional_number: string;
-        postal_code: string;
-        short_address: string | null;
-        unit: string | null;
-        floor: string | null;
-        delivery_notes: string | null;
-        lat: number;
-        lng: number;
-      };
-      amounts: {
-        subtotal: number;
-        discount: number;
-        delivery_fee: number;
-        total: number;
-        vat_included: number;
-        vat: {
-          vat_class: string;
-          rate_basis_points: number;
-          taxable_net: number;
-          vat: number;
-          gross: number;
-        }[];
-      };
-      promo_code: string | null;
-      customer_notes: string | null;
-      cancelled_at: string | null;
-      cancel_reason: string | null;
-      can_cancel: boolean;
-      suborders: {
-        id: string;
-        /** @enum {string} */
-        status:
-          | 'awaiting_payment'
-          | 'awaiting_seller'
-          | 'preparing'
-          | 'ready'
-          | 'on_the_way'
-          | 'delivered'
-          | 'cancelled';
-        seller: components['schemas']['SellerResource'];
-        eta: {
-          at: string | null;
-          reason: string | null;
+        /** AddressResource */
+        AddressResource: {
+            id: number;
+            label: string | null;
+            recipient_name: string;
+            recipient_phone: string;
+            region: string;
+            city: string;
+            district: string;
+            street: string;
+            building_number: string;
+            additional_number: string;
+            postal_code: string;
+            short_address: string | null;
+            unit: string | null;
+            floor: string | null;
+            delivery_notes: string | null;
+            lat: number;
+            lng: number;
+            is_default: boolean;
+            serviceable: boolean;
+            service_zone_id: number | null;
         };
-        items: {
-          product_slug: string;
-          name: {
-            ar: string;
-            en: string;
-          };
-          variant_name: {
-            ar: string | null;
-            en: string | null;
-          } | null;
-          image_url: string | null;
-          quantity: number;
-          unit_price: number;
-          line_total: number;
-        }[];
-      }[];
-      timeline: {
-        type: string;
-        at: string;
-        suborder_id: string | null;
-        note: string | null;
-      }[];
-      payments: {
-        id: string;
-        order_id: string;
-        /** @enum {string} */
-        status: 'pending' | 'paid' | 'failed' | 'expired';
-        /** @enum {string} */
-        method: 'mada' | 'card' | 'apple_pay' | 'none';
-        amount: number;
-        currency: string;
-        expires_at: string;
-        paid_at: string | null;
-        failure_code: string | null;
-        action: {
-          redirect_url: string | null;
-          client_secret: string | null;
-        } | null;
-      }[];
-      refunds: {
-        id: string;
-        /** @enum {string} */
-        status: 'pending' | 'succeeded' | 'failed';
-        amount: number;
-        reason: string;
-        credit_note_number: string | null;
-        requested_at: string;
-        completed_at: string | null;
-      }[];
-    };
-    /** OrderResource */
-    OrderResource: {
-      id: string;
-      number: string;
-      status: components['schemas']['OrderStatus'];
-      /** Format: date-time */
-      placed_at: string;
-      /** Format: date-time */
-      paid_at: string | null;
-      total: number;
-      currency: string;
-      items_count: number;
-      preview_images: string[];
-      slot: {
-        /** Format: date-time */
-        starts_at: string | null;
-        /** Format: date-time */
-        ends_at: string | null;
-      };
-      payment_status: components['schemas']['PaymentStatus'] | null;
-    };
-    /**
-     * OrderStatus
-     * @enum {string}
-     */
-    OrderStatus: 'pending_payment' | 'confirmed' | 'cancelled' | 'completed';
-    /**
-     * OtpChannel
-     * @enum {string}
-     */
-    OtpChannel: 'phone' | 'email';
-    /**
-     * PaymentMethod
-     * @description Cash on delivery, SADAD, BNPL and bank transfer need separate approval (roadmap D-06) and are not listed.
-     *     | |
-     *     |---|
-     *     | `mada` <br/>  |
-     *     | `card` <br/>  |
-     *     | `apple_pay` <br/>  |
-     *     | `none` <br/> Order fully covered by a promo code: nothing to charge. |
-     * @enum {string}
-     */
-    PaymentMethod: 'mada' | 'card' | 'apple_pay' | 'none';
-    /** PaymentResource */
-    PaymentResource: {
-      id: string;
-      order_id: string;
-      status: components['schemas']['PaymentStatus'];
-      method: components['schemas']['PaymentMethod'];
-      amount: number;
-      currency: string;
-      /** Format: date-time */
-      expires_at: string;
-      /** Format: date-time */
-      paid_at: string | null;
-      failure_code: string | null;
-      /** @description Only present on the response that creates the charge; the provider session is not stored. */
-      action: {
-        redirect_url: string | null;
-        client_secret: string | null;
-      } | null;
-    };
-    /**
-     * PaymentStatus
-     * @enum {string}
-     */
-    PaymentStatus: 'pending' | 'paid' | 'failed' | 'expired';
-    /** ProductDetailResource */
-    ProductDetailResource: {
-      id: number;
-      slug: string;
-      name: {
-        ar: string;
-        en: string;
-      };
-      image_url: string | null;
-      seller: components['schemas']['SellerResource'];
-      category: {
-        slug: string;
-        name: {
-          ar: string;
-          en: string;
-        };
-      };
-      price: {
-        gross: number;
-        net: number;
-        vat: number;
-        currency: string;
-      };
-      rating: {
-        average: number;
-        count: number;
-      };
-      /** @enum {string} */
-      availability: 'unknown' | 'out_of_stock' | 'low_stock' | 'in_stock';
-      description: {
-        ar: string | null;
-        en: string | null;
-      };
-      vat_class: components['schemas']['VatClass'];
-      variants: components['schemas']['VariantResource'][];
-    };
-    /** ProductListResource */
-    ProductListResource: {
-      id: number;
-      slug: string;
-      name: {
-        ar: string;
-        en: string;
-      };
-      image_url: string | null;
-      seller: components['schemas']['SellerResource'];
-      category: {
-        slug: string;
-        name: {
-          ar: string;
-          en: string;
-        };
-      };
-      price: {
-        gross: number;
-        net: number;
-        vat: number;
-        currency: string;
-      };
-      rating: {
-        average: number;
-        count: number;
-      };
-      /** @enum {string} */
-      availability: 'unknown' | 'out_of_stock' | 'low_stock' | 'in_stock';
-    };
-    /** RequestOtpRequest */
-    RequestOtpRequest: {
-      channel: components['schemas']['OtpChannel'];
-      destination: string;
-    };
-    /** RetryPaymentRequest */
-    RetryPaymentRequest: {
-      /** @enum {string} */
-      payment_method: 'mada' | 'card' | 'apple_pay';
-    };
-    /** ReviewResource */
-    ReviewResource: {
-      id: number;
-      rating: number;
-      body: string | null;
-      reviewer: string | null;
-      /** Format: date-time */
-      created_at: string | null;
-      /** Format: date-time */
-      editable_until?: string;
-    };
-    /** SellerResource */
-    SellerResource: {
-      slug: string;
-      name: {
-        ar: string;
-        en: string;
-      };
-      logo_url: string | null;
-    };
-    /** SessionResource */
-    SessionResource: {
-      id: number;
-      device_name: string;
-      /** Format: date-time */
-      created_at: string | null;
-      /** Format: date-time */
-      last_used_at: string | null;
-      /** Format: date-time */
-      expires_at: string | null;
-      is_current: boolean;
-    };
-    /** SetCartItemRequest */
-    SetCartItemRequest: {
-      quantity: number;
-    };
-    /** SlotResource */
-    SlotResource: {
-      id: number;
-      /** Format: date-time */
-      starts_at: string;
-      /** Format: date-time */
-      ends_at: string;
-      remaining: number;
-      available: boolean;
-    };
-    /** StoreReviewRequest */
-    StoreReviewRequest: {
-      product_slug: string;
-      rating: number;
-      body?: string | null;
-    };
-    /** UpdateMarketingConsentRequest */
-    UpdateMarketingConsentRequest: {
-      granted: boolean;
-    };
-    /** UpdateMeRequest */
-    UpdateMeRequest: {
-      name?: string | null;
-      /** @enum {string} */
-      locale?: 'ar' | 'en';
-    };
-    /** UpdateReviewRequest */
-    UpdateReviewRequest: {
-      rating?: number;
-      body?: string | null;
-    };
-    /** UserResource */
-    UserResource: {
-      id: number;
-      name: string | null;
-      phone: string | null;
-      email: string | null;
-      locale: string;
-      phone_verified: boolean;
-      email_verified: boolean;
-      consents: {
-        terms_version: string | null;
-        privacy_version: string | null;
-        marketing: boolean;
-        needs_update: boolean;
-      };
-    };
-    /** VariantResource */
-    VariantResource: {
-      id: number;
-      sku: string;
-      name: {
-        ar: string | null;
-        en: string | null;
-      } | null;
-      price: {
-        gross: number;
-        net: number;
-        vat: number;
-        currency: string;
-      };
-      /** @enum {string} */
-      availability: 'unknown' | 'out_of_stock' | 'low_stock' | 'in_stock';
-    };
-    /**
-     * VatClass
-     * @description Kept distinct on purpose: zero-rated and exempt both charge 0% but are reported differently.
-     * @enum {string}
-     */
-    VatClass: 'standard' | 'zero' | 'exempt';
-    /** VerifyOtpRequest */
-    VerifyOtpRequest: {
-      challenge_id: string;
-      code: string;
-      device_name?: string | null;
-      consents?: {
-        terms_version?: string | null;
-        privacy_version?: string | null;
-        marketing?: boolean | null;
-      };
-    };
-    /** WelcomeSlideResource */
-    WelcomeSlideResource: {
-      id: number;
-      image_url: string | null;
-      title: {
-        ar: string;
-        en: string;
-      };
-    };
-    /** ZoneResource */
-    ZoneResource: {
-      id: number;
-      name: {
-        ar: string;
-        en: string;
-      };
-      delivery_fee: number;
-      free_delivery_threshold: number | null;
-      currency: string;
-    };
-  };
-  responses: {
-    /** @description Validation error */
-    ValidationException: {
-      headers: {
-        [name: string]: unknown;
-      };
-      content: {
-        'application/json': {
-          /** @description Errors overview. */
-          message: string;
-          /** @description A detailed description of each field that failed validation. */
-          errors: {
-            [key: string]: string[];
-          };
-        };
-      };
-    };
-    /** @description Unauthenticated */
-    AuthenticationException: {
-      headers: {
-        [name: string]: unknown;
-      };
-      content: {
-        'application/json': {
-          /** @description Error overview. */
-          message: string;
-        };
-      };
-    };
-  };
-  parameters: never;
-  requestBodies: never;
-  headers: never;
-  pathItems: never;
-}
-export type $defs = Record<string, never>;
-export interface operations {
-  'address.index': {
-    parameters: {
-      query?: never;
-      header?: never;
-      path?: never;
-      cookie?: never;
-    };
-    requestBody?: never;
-    responses: {
-      /** @description Array of `AddressResource` */
-      200: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content: {
-          'application/json': {
-            data: components['schemas']['AddressResource'][];
-          };
-        };
-      };
-      401: components['responses']['AuthenticationException'];
-    };
-  };
-  'address.store': {
-    parameters: {
-      query?: never;
-      header?: never;
-      path?: never;
-      cookie?: never;
-    };
-    requestBody: {
-      content: {
-        'application/json': components['schemas']['AddressRequest'];
-      };
-    };
-    responses: {
-      /** @description `AddressResource` */
-      201: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content: {
-          'application/json': {
-            data: components['schemas']['AddressResource'];
-          };
-        };
-      };
-      401: components['responses']['AuthenticationException'];
-      422: components['responses']['ValidationException'];
-    };
-  };
-  'address.show': {
-    parameters: {
-      query?: never;
-      header?: never;
-      path: {
-        address: number;
-      };
-      cookie?: never;
-    };
-    requestBody?: never;
-    responses: {
-      /** @description `AddressResource` */
-      200: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content: {
-          'application/json': {
-            data: components['schemas']['AddressResource'];
-          };
-        };
-      };
-      401: components['responses']['AuthenticationException'];
-    };
-  };
-  'address.update': {
-    parameters: {
-      query?: never;
-      header?: never;
-      path: {
-        address: number;
-      };
-      cookie?: never;
-    };
-    requestBody: {
-      content: {
-        'application/json': components['schemas']['AddressRequest'];
-      };
-    };
-    responses: {
-      /** @description `AddressResource` */
-      200: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content: {
-          'application/json': {
-            data: components['schemas']['AddressResource'];
-          };
-        };
-      };
-      401: components['responses']['AuthenticationException'];
-      422: components['responses']['ValidationException'];
-    };
-  };
-  'address.destroy': {
-    parameters: {
-      query?: never;
-      header?: never;
-      path: {
-        address: number;
-      };
-      cookie?: never;
-    };
-    requestBody?: never;
-    responses: {
-      /** @description No content */
-      204: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content?: never;
-      };
-      401: components['responses']['AuthenticationException'];
-    };
-  };
-  'address.makeDefault': {
-    parameters: {
-      query?: never;
-      header?: never;
-      path: {
-        address: number;
-      };
-      cookie?: never;
-    };
-    requestBody?: never;
-    responses: {
-      /** @description `AddressResource` */
-      200: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content: {
-          'application/json': {
-            data: components['schemas']['AddressResource'];
-          };
-        };
-      };
-      401: components['responses']['AuthenticationException'];
-    };
-  };
-  'auth.requestOtp': {
-    parameters: {
-      query?: never;
-      header?: never;
-      path?: never;
-      cookie?: never;
-    };
-    requestBody: {
-      content: {
-        'application/json': components['schemas']['RequestOtpRequest'];
-      };
-    };
-    responses: {
-      200: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content: {
-          'application/json': {
-            data: {
-              challenge_id: string;
-              expires_in: number;
-              resend_after: number;
-            };
-          };
-        };
-      };
-      422: components['responses']['ValidationException'];
-    };
-  };
-  'auth.verifyOtp': {
-    parameters: {
-      query?: never;
-      header?: never;
-      path?: never;
-      cookie?: never;
-    };
-    requestBody: {
-      content: {
-        'application/json': components['schemas']['VerifyOtpRequest'];
-      };
-    };
-    responses: {
-      200: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content: {
-          'application/json': {
-            data: {
-              token: string;
-              token_type: string;
-              expires_at: string;
-              is_new_user: boolean;
-              user: components['schemas']['UserResource'];
-            };
-          };
-        };
-      };
-      422: components['responses']['ValidationException'];
-    };
-  };
-  'auth.logout': {
-    parameters: {
-      query?: never;
-      header?: never;
-      path?: never;
-      cookie?: never;
-    };
-    requestBody?: never;
-    responses: {
-      /** @description No content */
-      204: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content?: never;
-      };
-      401: components['responses']['AuthenticationException'];
-    };
-  };
-  'cart.show': {
-    parameters: {
-      query?: never;
-      header?: never;
-      path?: never;
-      cookie?: never;
-    };
-    requestBody?: never;
-    responses: {
-      /** @description `CartResource` */
-      200: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content: {
-          'application/json': {
-            data: components['schemas']['CartResource'];
-          };
-        };
-      };
-      401: components['responses']['AuthenticationException'];
-    };
-  };
-  'cart.clear': {
-    parameters: {
-      query?: never;
-      header?: never;
-      path?: never;
-      cookie?: never;
-    };
-    requestBody?: never;
-    responses: {
-      /** @description No content */
-      204: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content?: never;
-      };
-      401: components['responses']['AuthenticationException'];
-    };
-  };
-  'cart.merge': {
-    parameters: {
-      query?: never;
-      header?: never;
-      path?: never;
-      cookie?: never;
-    };
-    requestBody: {
-      content: {
-        'application/json': components['schemas']['MergeCartRequest'];
-      };
-    };
-    responses: {
-      /** @description `CartResource` */
-      200: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content: {
-          'application/json': {
-            data: components['schemas']['CartResource'];
-          };
-        };
-      };
-      401: components['responses']['AuthenticationException'];
-      422: components['responses']['ValidationException'];
-    };
-  };
-  'cart.setItem': {
-    parameters: {
-      query?: never;
-      header?: never;
-      path: {
-        variant: number;
-      };
-      cookie?: never;
-    };
-    requestBody: {
-      content: {
-        'application/json': components['schemas']['SetCartItemRequest'];
-      };
-    };
-    responses: {
-      /** @description `CartResource` */
-      200: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content: {
-          'application/json': {
-            data: components['schemas']['CartResource'];
-          };
-        };
-      };
-      401: components['responses']['AuthenticationException'];
-      422: components['responses']['ValidationException'];
-    };
-  };
-  'category.index': {
-    parameters: {
-      query?: never;
-      header?: never;
-      path?: never;
-      cookie?: never;
-    };
-    requestBody?: never;
-    responses: {
-      /** @description Array of `CategoryResource` */
-      200: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content: {
-          'application/json': {
-            data: (components['schemas']['CategoryResource'] & Record<string, never>)[];
-          };
-        };
-      };
-    };
-  };
-  'checkout.store': {
-    parameters: {
-      query?: never;
-      header?: never;
-      path?: never;
-      cookie?: never;
-    };
-    requestBody: {
-      content: {
-        'application/json': components['schemas']['CheckoutRequest'];
-      };
-    };
-    responses: {
-      200: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content: {
-          'application/json': {
-            data: {
-              order: components['schemas']['OrderDetailResource'];
-              payment: components['schemas']['PaymentResource'] | null;
-              replayed: boolean;
-            };
-          };
-        };
-      };
-      401: components['responses']['AuthenticationException'];
-      422: components['responses']['ValidationException'];
-    };
-  };
-  'deliveryCode.show': {
-    parameters: {
-      query?: never;
-      header?: never;
-      path: {
-        order: string;
-        suborder: string;
-      };
-      cookie?: never;
-    };
-    requestBody?: never;
-    responses: {
-      200: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content: {
-          'application/json': {
-            data: {
-              code: string;
-              expires_at: string;
-            };
-          };
-        };
-      };
-      401: components['responses']['AuthenticationException'];
-    };
-  };
-  'me.show': {
-    parameters: {
-      query?: never;
-      header?: never;
-      path?: never;
-      cookie?: never;
-    };
-    requestBody?: never;
-    responses: {
-      /** @description `UserResource` */
-      200: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content: {
-          'application/json': {
-            data: components['schemas']['UserResource'];
-          };
-        };
-      };
-      401: components['responses']['AuthenticationException'];
-    };
-  };
-  'me.update': {
-    parameters: {
-      query?: never;
-      header?: never;
-      path?: never;
-      cookie?: never;
-    };
-    requestBody?: {
-      content: {
-        'application/json': components['schemas']['UpdateMeRequest'];
-      };
-    };
-    responses: {
-      /** @description `UserResource` */
-      200: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content: {
-          'application/json': {
-            data: components['schemas']['UserResource'];
-          };
-        };
-      };
-      401: components['responses']['AuthenticationException'];
-      422: components['responses']['ValidationException'];
-    };
-  };
-  'me.updateMarketingConsent': {
-    parameters: {
-      query?: never;
-      header?: never;
-      path?: never;
-      cookie?: never;
-    };
-    requestBody: {
-      content: {
-        'application/json': components['schemas']['UpdateMarketingConsentRequest'];
-      };
-    };
-    responses: {
-      /** @description `UserResource` */
-      200: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content: {
-          'application/json': {
-            data: components['schemas']['UserResource'];
-          };
-        };
-      };
-      401: components['responses']['AuthenticationException'];
-      422: components['responses']['ValidationException'];
-    };
-  };
-  'order.index': {
-    parameters: {
-      query?: never;
-      header?: never;
-      path?: never;
-      cookie?: never;
-    };
-    requestBody?: never;
-    responses: {
-      /** @description Paginated set of `OrderResource` */
-      200: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content: {
-          'application/json': {
-            data: components['schemas']['OrderResource'][];
-            links: {
-              first: string | null;
-              last: string | null;
-              prev: string | null;
-              next: string | null;
-            };
-            meta: {
-              /** @description Base path for paginator generated URLs. */
-              path: string | null;
-              /** @description Number of items shown per page. */
-              per_page: number;
-              /** @description The "cursor" that points to the next set of items. */
-              next_cursor: string | null;
-              /** @description The "cursor" that points to the previous set of items. */
-              prev_cursor: string | null;
-            };
-          };
-        };
-      };
-      401: components['responses']['AuthenticationException'];
-    };
-  };
-  'order.show': {
-    parameters: {
-      query?: never;
-      header?: never;
-      path: {
-        order: string;
-      };
-      cookie?: never;
-    };
-    requestBody?: never;
-    responses: {
-      /** @description `OrderDetailResource` */
-      200: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content: {
-          'application/json': {
-            data: components['schemas']['OrderDetailResource'];
-          };
-        };
-      };
-      401: components['responses']['AuthenticationException'];
-    };
-  };
-  'orderCancellation.store': {
-    parameters: {
-      query?: never;
-      header?: never;
-      path: {
-        order: string;
-      };
-      cookie?: never;
-    };
-    requestBody?: never;
-    responses: {
-      /** @description `OrderDetailResource` */
-      200: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content: {
-          'application/json': {
-            data: components['schemas']['OrderDetailResource'];
-          };
-        };
-      };
-      401: components['responses']['AuthenticationException'];
-    };
-  };
-  'payment.show': {
-    parameters: {
-      query?: never;
-      header?: never;
-      path: {
-        payment: string;
-      };
-      cookie?: never;
-    };
-    requestBody?: never;
-    responses: {
-      /** @description `PaymentResource` */
-      200: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content: {
-          'application/json': {
-            data: components['schemas']['PaymentResource'];
-          };
-        };
-      };
-      401: components['responses']['AuthenticationException'];
-    };
-  };
-  'payment.retry': {
-    parameters: {
-      query?: never;
-      header?: never;
-      path: {
-        order: string;
-      };
-      cookie?: never;
-    };
-    requestBody: {
-      content: {
-        'application/json': components['schemas']['RetryPaymentRequest'];
-      };
-    };
-    responses: {
-      /** @description `PaymentResource` */
-      201: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content: {
-          'application/json': {
-            data: components['schemas']['PaymentResource'];
-          };
-        };
-      };
-      401: components['responses']['AuthenticationException'];
-      422: components['responses']['ValidationException'];
-    };
-  };
-  'product.index': {
-    parameters: {
-      query?: {
-        category?: string | null;
-        seller?: string | null;
-        q?: string | null;
-        zone_id?: number | null;
-        per_page?: number | null;
-      };
-      header?: never;
-      path?: never;
-      cookie?: never;
-    };
-    requestBody?: never;
-    responses: {
-      /** @description Paginated set of `ProductListResource` */
-      200: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content: {
-          'application/json': {
-            data: components['schemas']['ProductListResource'][];
-            links: {
-              first: string | null;
-              last: string | null;
-              prev: string | null;
-              next: string | null;
-            };
-            meta: {
-              /** @description Base path for paginator generated URLs. */
-              path: string | null;
-              /** @description Number of items shown per page. */
-              per_page: number;
-              /** @description The "cursor" that points to the next set of items. */
-              next_cursor: string | null;
-              /** @description The "cursor" that points to the previous set of items. */
-              prev_cursor: string | null;
-            };
-          };
-        };
-      };
-      422: components['responses']['ValidationException'];
-    };
-  };
-  'product.show': {
-    parameters: {
-      query?: never;
-      header?: never;
-      path: {
-        slug: string;
-      };
-      cookie?: never;
-    };
-    requestBody?: never;
-    responses: {
-      /** @description `ProductDetailResource` */
-      200: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content: {
-          'application/json': {
-            data: components['schemas']['ProductDetailResource'];
-          };
-        };
-      };
-    };
-  };
-  'quote.store': {
-    parameters: {
-      query?: never;
-      header?: never;
-      path?: never;
-      cookie?: never;
-    };
-    requestBody: {
-      content: {
-        'application/json': components['schemas']['CreateQuoteRequest'];
-      };
-    };
-    responses: {
-      200: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content: {
-          'application/json': {
-            data: {
-              id: string;
-              expires_at: string;
-            } & {
-              currency: string;
-              lines: {
+        /** CartResource */
+        CartResource: {
+            lines: {
                 variant_id: number;
-                product_id: number;
-                seller_id: number;
                 product_slug: string;
                 name: {
-                  ar: string | null;
-                  en: string | null;
+                    ar: string;
+                    en: string;
                 };
                 variant_name: {
-                  ar: string | null;
-                  en: string | null;
+                    ar: string | null;
+                    en: string | null;
                 } | null;
                 image_url: string | null;
                 quantity: number;
                 unit_price: number;
                 line_price: number;
-                discount: number;
-                line_total: number;
-                vat_class: string;
-                vat_rate_basis_points: number;
-                available: boolean;
-                available_units: number;
-              }[];
-              subtotal: number;
-              discount: number;
-              delivery_fee: number;
-              total: number;
-              vat_included: number;
-              vat: {
-                vat_class: string;
-                rate_basis_points: number;
-                taxable_net: number;
-                vat: number;
-                gross: number;
-              }[];
-              promo_code: string | null;
-              address_id: number;
-              zone_id: number;
-              issues: {
+                /** @enum {string} */
+                availability: "unknown" | "out_of_stock" | "low_stock" | "in_stock";
+            }[];
+            items_count: number;
+            subtotal: number;
+            currency: string;
+        };
+        /** CategoryResource */
+        CategoryResource: {
+            id: number;
+            slug: string;
+            name: {
+                ar: string;
+                en: string;
+            };
+            image_url: string | null;
+            children?: components["schemas"]["CategoryResource"][];
+        };
+        /** CheckoutRequest */
+        CheckoutRequest: {
+            /** @description Sent by the app for each checkout attempt, so a retried request can never create a second order. */
+            idempotency_key: string;
+            quote_id: string;
+            slot_id: number;
+            /** @enum {string} */
+            payment_method: "mada" | "card" | "apple_pay";
+            notes?: string | null;
+        };
+        /** CreateQuoteRequest */
+        CreateQuoteRequest: {
+            address_id: number;
+            promo_code?: string | null;
+        };
+        /** MergeCartRequest */
+        MergeCartRequest: {
+            items: {
                 variant_id: number;
-                code: string;
-                available_units: number;
-              }[];
-              can_checkout: boolean;
+                quantity: number;
+            }[];
+        };
+        /** OrderDetailResource */
+        OrderDetailResource: {
+            id: string;
+            number: string;
+            /** @enum {string} */
+            status: "pending_payment" | "confirmed" | "cancelled" | "completed";
+            placed_at: string;
+            paid_at: string | null;
+            total: number;
+            currency: string;
+            items_count: number;
+            preview_images: string[];
+            slot: {
+                starts_at: string | null;
+                ends_at: string | null;
             };
-          };
-        };
-      };
-      401: components['responses']['AuthenticationException'];
-      422: components['responses']['ValidationException'];
-    };
-  };
-  'review.index': {
-    parameters: {
-      query?: never;
-      header?: never;
-      path: {
-        slug: string;
-      };
-      cookie?: never;
-    };
-    requestBody?: never;
-    responses: {
-      /** @description Paginated set of `ReviewResource` */
-      200: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content: {
-          'application/json': {
-            data: components['schemas']['ReviewResource'][];
-            links: {
-              first: string | null;
-              last: string | null;
-              prev: string | null;
-              next: string | null;
+            payment_status: string | null;
+            address: {
+                recipient_name: string;
+                recipient_phone: string;
+                region: string;
+                city: string;
+                district: string;
+                street: string;
+                building_number: string;
+                additional_number: string;
+                postal_code: string;
+                short_address: string | null;
+                unit: string | null;
+                floor: string | null;
+                delivery_notes: string | null;
+                lat: number;
+                lng: number;
             };
-            meta: {
-              /** @description Base path for paginator generated URLs. */
-              path: string | null;
-              /** @description Number of items shown per page. */
-              per_page: number;
-              /** @description The "cursor" that points to the next set of items. */
-              next_cursor: string | null;
-              /** @description The "cursor" that points to the previous set of items. */
-              prev_cursor: string | null;
-            };
-          };
-        };
-      };
-    };
-  };
-  'review.store': {
-    parameters: {
-      query?: never;
-      header?: never;
-      path: {
-        order: string;
-      };
-      cookie?: never;
-    };
-    requestBody: {
-      content: {
-        'application/json': components['schemas']['StoreReviewRequest'];
-      };
-    };
-    responses: {
-      /** @description `ReviewResource` */
-      201: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content: {
-          'application/json': {
-            data: components['schemas']['ReviewResource'];
-          };
-        };
-      };
-      401: components['responses']['AuthenticationException'];
-      422: components['responses']['ValidationException'];
-    };
-  };
-  'review.update': {
-    parameters: {
-      query?: never;
-      header?: never;
-      path: {
-        review: number;
-      };
-      cookie?: never;
-    };
-    requestBody?: {
-      content: {
-        'application/json': components['schemas']['UpdateReviewRequest'];
-      };
-    };
-    responses: {
-      /** @description `ReviewResource` */
-      200: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content: {
-          'application/json': {
-            data: components['schemas']['ReviewResource'];
-          };
-        };
-      };
-      401: components['responses']['AuthenticationException'];
-      422: components['responses']['ValidationException'];
-    };
-  };
-  'seller.show': {
-    parameters: {
-      query?: never;
-      header?: never;
-      path: {
-        slug: string;
-      };
-      cookie?: never;
-    };
-    requestBody?: never;
-    responses: {
-      /** @description `SellerResource` */
-      200: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content: {
-          'application/json': {
-            data: components['schemas']['SellerResource'];
-          };
-        };
-      };
-    };
-  };
-  'session.index': {
-    parameters: {
-      query?: never;
-      header?: never;
-      path?: never;
-      cookie?: never;
-    };
-    requestBody?: never;
-    responses: {
-      /** @description Array of `SessionResource` */
-      200: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content: {
-          'application/json': {
-            data: components['schemas']['SessionResource'][];
-          };
-        };
-      };
-      401: components['responses']['AuthenticationException'];
-    };
-  };
-  'session.destroy': {
-    parameters: {
-      query?: never;
-      header?: never;
-      path: {
-        session: number;
-      };
-      cookie?: never;
-    };
-    requestBody?: never;
-    responses: {
-      /** @description No content */
-      204: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content?: never;
-      };
-      401: components['responses']['AuthenticationException'];
-    };
-  };
-  'slot.index': {
-    parameters: {
-      query: {
-        address_id: number;
-      };
-      header?: never;
-      path?: never;
-      cookie?: never;
-    };
-    requestBody?: never;
-    responses: {
-      /** @description Array of `SlotResource` */
-      200: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content: {
-          'application/json': {
-            data: components['schemas']['SlotResource'][];
-          };
-        };
-      };
-      401: components['responses']['AuthenticationException'];
-      422: components['responses']['ValidationException'];
-    };
-  };
-  'spendingReport.show': {
-    parameters: {
-      query?: {
-        from?: string | null;
-        to?: string | null;
-      };
-      header?: never;
-      path?: never;
-      cookie?: never;
-    };
-    requestBody?: never;
-    responses: {
-      200: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content: {
-          'application/json': {
-            data: {
-              summary: {
-                orders: number;
-                paid: number;
-                refunded: number;
-                net_spent: number;
-                savings: number;
-                vat_included: number;
-                delivery_fees: number;
-              };
-              rows: {
-                order_number: string;
-                status: string;
-                order_date: string;
-                payment_date: string | null;
-                refund_date: string | null;
+            amounts: {
                 subtotal: number;
                 discount: number;
                 delivery_fee: number;
-                vat_included: number;
                 total: number;
-                refunded: number;
-                net_spent: number;
-              }[];
-              currency: string;
-              timezone: string;
-              from: string;
-              to: string;
+                vat_included: number;
+                vat: {
+                    vat_class: string;
+                    rate_basis_points: number;
+                    taxable_net: number;
+                    vat: number;
+                    gross: number;
+                }[];
             };
-          };
+            promo_code: string | null;
+            customer_notes: string | null;
+            cancelled_at: string | null;
+            cancel_reason: string | null;
+            can_cancel: boolean;
+            suborders: {
+                id: string;
+                /** @enum {string} */
+                status: "awaiting_payment" | "awaiting_seller" | "preparing" | "ready" | "on_the_way" | "delivered" | "cancelled";
+                seller: components["schemas"]["SellerResource"];
+                eta: {
+                    at: string | null;
+                    reason: string | null;
+                };
+                items: {
+                    product_slug: string;
+                    name: {
+                        ar: string;
+                        en: string;
+                    };
+                    variant_name: {
+                        ar: string | null;
+                        en: string | null;
+                    } | null;
+                    image_url: string | null;
+                    quantity: number;
+                    unit_price: number;
+                    line_total: number;
+                }[];
+            }[];
+            timeline: {
+                type: string;
+                at: string;
+                suborder_id: string | null;
+                note: string | null;
+            }[];
+            payments: {
+                id: string;
+                order_id: string;
+                /** @enum {string} */
+                status: "pending" | "paid" | "failed" | "expired";
+                /** @enum {string} */
+                method: "mada" | "card" | "apple_pay" | "none";
+                amount: number;
+                currency: string;
+                expires_at: string;
+                paid_at: string | null;
+                failure_code: string | null;
+                action: {
+                    redirect_url: string | null;
+                    client_secret: string | null;
+                } | null;
+            }[];
+            refunds: {
+                id: string;
+                /** @enum {string} */
+                status: "pending" | "succeeded" | "failed";
+                amount: number;
+                reason: string;
+                credit_note_number: string | null;
+                requested_at: string;
+                completed_at: string | null;
+            }[];
         };
-      };
-      401: components['responses']['AuthenticationException'];
-      422: components['responses']['ValidationException'];
-    };
-  };
-  'spendingReport.csv': {
-    parameters: {
-      query?: {
-        from?: string | null;
-        to?: string | null;
-      };
-      header?: never;
-      path?: never;
-      cookie?: never;
-    };
-    requestBody?: never;
-    responses: {
-      200: {
-        headers: {
-          'Content-Disposition'?: string;
-          [name: string]: unknown;
+        /** OrderResource */
+        OrderResource: {
+            id: string;
+            number: string;
+            status: components["schemas"]["OrderStatus"];
+            /** Format: date-time */
+            placed_at: string;
+            /** Format: date-time */
+            paid_at: string | null;
+            total: number;
+            currency: string;
+            items_count: number;
+            preview_images: string[];
+            slot: {
+                /** Format: date-time */
+                starts_at: string | null;
+                /** Format: date-time */
+                ends_at: string | null;
+            };
+            payment_status: components["schemas"]["PaymentStatus"] | null;
         };
-        content: {
-          'text/csv; charset=UTF-8': string;
+        /**
+         * OrderStatus
+         * @enum {string}
+         */
+        OrderStatus: "pending_payment" | "confirmed" | "cancelled" | "completed";
+        /**
+         * OtpChannel
+         * @enum {string}
+         */
+        OtpChannel: "phone" | "email";
+        /**
+         * PaymentMethod
+         * @description Cash on delivery, SADAD, BNPL and bank transfer need separate approval (roadmap D-06) and are not listed.
+         *     | |
+         *     |---|
+         *     | `mada` <br/>  |
+         *     | `card` <br/>  |
+         *     | `apple_pay` <br/>  |
+         *     | `none` <br/> Order fully covered by a promo code: nothing to charge. |
+         * @enum {string}
+         */
+        PaymentMethod: "mada" | "card" | "apple_pay" | "none";
+        /** PaymentResource */
+        PaymentResource: {
+            id: string;
+            order_id: string;
+            status: components["schemas"]["PaymentStatus"];
+            method: components["schemas"]["PaymentMethod"];
+            amount: number;
+            currency: string;
+            /** Format: date-time */
+            expires_at: string;
+            /** Format: date-time */
+            paid_at: string | null;
+            failure_code: string | null;
+            /** @description Only present on the response that creates the charge; the provider session is not stored. */
+            action: {
+                redirect_url: string | null;
+                client_secret: string | null;
+            } | null;
         };
-      };
-      401: components['responses']['AuthenticationException'];
-      422: components['responses']['ValidationException'];
-    };
-  };
-  'store.show': {
-    parameters: {
-      query?: never;
-      header?: never;
-      path?: never;
-      cookie?: never;
-    };
-    requestBody?: never;
-    responses: {
-      200: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content: {
-          'application/json': {
-            data: {
-              currency: string;
-              price: {
+        /**
+         * PaymentStatus
+         * @enum {string}
+         */
+        PaymentStatus: "pending" | "paid" | "failed" | "expired";
+        /** ProductDetailResource */
+        ProductDetailResource: {
+            id: number;
+            slug: string;
+            name: {
+                ar: string;
+                en: string;
+            };
+            image_url: string | null;
+            seller: components["schemas"]["SellerResource"];
+            category: {
+                slug: string;
+                name: {
+                    ar: string;
+                    en: string;
+                };
+            };
+            price: {
                 gross: number;
                 net: number;
                 vat: number;
-              };
-              vat_rate_basis_points: number;
-              terms_version: string;
-              privacy_version: string;
+                currency: string;
             };
-          };
-        };
-      };
-    };
-  };
-  'welcome.index': {
-    parameters: {
-      query?: never;
-      header?: never;
-      path?: never;
-      cookie?: never;
-    };
-    requestBody?: never;
-    responses: {
-      /** @description Array of `WelcomeSlideResource` */
-      200: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content: {
-          'application/json': {
-            data: components['schemas']['WelcomeSlideResource'][];
-          };
-        };
-      };
-    };
-  };
-  'zone.resolve': {
-    parameters: {
-      query: {
-        lat: number;
-        lng: number;
-      };
-      header?: never;
-      path?: never;
-      cookie?: never;
-    };
-    requestBody?: never;
-    responses: {
-      200: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content: {
-          'application/json': {
-            data: {
-              serviceable: boolean;
-              zone: components['schemas']['ZoneResource'] | null;
+            rating: {
+                average: number;
+                count: number;
             };
-          };
+            /** @enum {string} */
+            availability: "unknown" | "out_of_stock" | "low_stock" | "in_stock";
+            description: {
+                ar: string | null;
+                en: string | null;
+            };
+            vat_class: components["schemas"]["VatClass"];
+            variants: components["schemas"]["VariantResource"][];
         };
-      };
-      422: components['responses']['ValidationException'];
+        /** ProductListResource */
+        ProductListResource: {
+            id: number;
+            slug: string;
+            name: {
+                ar: string;
+                en: string;
+            };
+            image_url: string | null;
+            seller: components["schemas"]["SellerResource"];
+            category: {
+                slug: string;
+                name: {
+                    ar: string;
+                    en: string;
+                };
+            };
+            price: {
+                gross: number;
+                net: number;
+                vat: number;
+                currency: string;
+            };
+            rating: {
+                average: number;
+                count: number;
+            };
+            /** @enum {string} */
+            availability: "unknown" | "out_of_stock" | "low_stock" | "in_stock";
+        };
+        /** RequestOtpRequest */
+        RequestOtpRequest: {
+            channel: components["schemas"]["OtpChannel"];
+            destination: string;
+        };
+        /** RetryPaymentRequest */
+        RetryPaymentRequest: {
+            /** @enum {string} */
+            payment_method: "mada" | "card" | "apple_pay";
+        };
+        /** ReviewResource */
+        ReviewResource: {
+            id: number;
+            rating: number;
+            body: string | null;
+            reviewer: string | null;
+            /** Format: date-time */
+            created_at: string | null;
+            /** Format: date-time */
+            editable_until?: string;
+        };
+        /** SellerResource */
+        SellerResource: {
+            slug: string;
+            name: {
+                ar: string;
+                en: string;
+            };
+            logo_url: string | null;
+        };
+        /** SessionResource */
+        SessionResource: {
+            id: number;
+            device_name: string;
+            /** Format: date-time */
+            created_at: string | null;
+            /** Format: date-time */
+            last_used_at: string | null;
+            /** Format: date-time */
+            expires_at: string | null;
+            is_current: boolean;
+        };
+        /** SetCartItemRequest */
+        SetCartItemRequest: {
+            quantity: number;
+        };
+        /** SlotResource */
+        SlotResource: {
+            id: number;
+            /** Format: date-time */
+            starts_at: string;
+            /** Format: date-time */
+            ends_at: string;
+            remaining: number;
+            available: boolean;
+        };
+        /** StoreReviewRequest */
+        StoreReviewRequest: {
+            product_slug: string;
+            rating: number;
+            body?: string | null;
+        };
+        /** UpdateMarketingConsentRequest */
+        UpdateMarketingConsentRequest: {
+            granted: boolean;
+        };
+        /** UpdateMeRequest */
+        UpdateMeRequest: {
+            name?: string | null;
+            /** @enum {string} */
+            locale?: "ar" | "en";
+        };
+        /** UpdateReviewRequest */
+        UpdateReviewRequest: {
+            rating?: number;
+            body?: string | null;
+        };
+        /** UserResource */
+        UserResource: {
+            id: number;
+            name: string | null;
+            phone: string | null;
+            email: string | null;
+            locale: string;
+            phone_verified: boolean;
+            email_verified: boolean;
+            consents: {
+                terms_version: string | null;
+                privacy_version: string | null;
+                marketing: boolean;
+                needs_update: boolean;
+            };
+        };
+        /** VariantResource */
+        VariantResource: {
+            id: number;
+            sku: string;
+            name: {
+                ar: string | null;
+                en: string | null;
+            } | null;
+            price: {
+                gross: number;
+                net: number;
+                vat: number;
+                currency: string;
+            };
+            /** @enum {string} */
+            availability: "unknown" | "out_of_stock" | "low_stock" | "in_stock";
+        };
+        /**
+         * VatClass
+         * @description Kept distinct on purpose: zero-rated and exempt both charge 0% but are reported differently.
+         * @enum {string}
+         */
+        VatClass: "standard" | "zero" | "exempt";
+        /** VerifyOtpRequest */
+        VerifyOtpRequest: {
+            challenge_id: string;
+            code: string;
+            device_name?: string | null;
+            consents?: {
+                terms_version?: string | null;
+                privacy_version?: string | null;
+                marketing?: boolean | null;
+            };
+        };
+        /** WelcomeSlideResource */
+        WelcomeSlideResource: {
+            id: number;
+            image_url: string | null;
+            title: {
+                ar: string;
+                en: string;
+            };
+        };
+        /** ZoneResource */
+        ZoneResource: {
+            id: number;
+            name: {
+                ar: string;
+                en: string;
+            };
+            delivery_fee: number;
+            free_delivery_threshold: number | null;
+            currency: string;
+        };
     };
-  };
+    responses: {
+        /** @description Validation error */
+        ValidationException: {
+            headers: {
+                [name: string]: unknown;
+            };
+            content: {
+                "application/json": {
+                    /** @description Errors overview. */
+                    message: string;
+                    /** @description A detailed description of each field that failed validation. */
+                    errors: {
+                        [key: string]: string[];
+                    };
+                };
+            };
+        };
+        /** @description Unauthenticated */
+        AuthenticationException: {
+            headers: {
+                [name: string]: unknown;
+            };
+            content: {
+                "application/json": {
+                    /** @description Error overview. */
+                    message: string;
+                };
+            };
+        };
+    };
+    parameters: never;
+    requestBodies: never;
+    headers: never;
+    pathItems: never;
+}
+export type $defs = Record<string, never>;
+export interface operations {
+    "address.index": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Array of `AddressResource` */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        data: components["schemas"]["AddressResource"][];
+                    };
+                };
+            };
+            401: components["responses"]["AuthenticationException"];
+        };
+    };
+    "address.store": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["AddressRequest"];
+            };
+        };
+        responses: {
+            /** @description `AddressResource` */
+            201: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        data: components["schemas"]["AddressResource"];
+                    };
+                };
+            };
+            401: components["responses"]["AuthenticationException"];
+            422: components["responses"]["ValidationException"];
+        };
+    };
+    "address.show": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                address: number;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description `AddressResource` */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        data: components["schemas"]["AddressResource"];
+                    };
+                };
+            };
+            401: components["responses"]["AuthenticationException"];
+        };
+    };
+    "address.update": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                address: number;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["AddressRequest"];
+            };
+        };
+        responses: {
+            /** @description `AddressResource` */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        data: components["schemas"]["AddressResource"];
+                    };
+                };
+            };
+            401: components["responses"]["AuthenticationException"];
+            422: components["responses"]["ValidationException"];
+        };
+    };
+    "address.destroy": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                address: number;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description No content */
+            204: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            401: components["responses"]["AuthenticationException"];
+        };
+    };
+    "address.makeDefault": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                address: number;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description `AddressResource` */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        data: components["schemas"]["AddressResource"];
+                    };
+                };
+            };
+            401: components["responses"]["AuthenticationException"];
+        };
+    };
+    "auth.requestOtp": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["RequestOtpRequest"];
+            };
+        };
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        data: {
+                            challenge_id: string;
+                            expires_in: number;
+                            resend_after: number;
+                        };
+                    };
+                };
+            };
+            422: components["responses"]["ValidationException"];
+        };
+    };
+    "auth.verifyOtp": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["VerifyOtpRequest"];
+            };
+        };
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        data: {
+                            token: string;
+                            token_type: string;
+                            expires_at: string;
+                            is_new_user: boolean;
+                            user: components["schemas"]["UserResource"];
+                        };
+                    };
+                };
+            };
+            422: components["responses"]["ValidationException"];
+        };
+    };
+    "auth.logout": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description No content */
+            204: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            401: components["responses"]["AuthenticationException"];
+        };
+    };
+    "cart.show": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description `CartResource` */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        data: components["schemas"]["CartResource"];
+                    };
+                };
+            };
+            401: components["responses"]["AuthenticationException"];
+        };
+    };
+    "cart.clear": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description No content */
+            204: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            401: components["responses"]["AuthenticationException"];
+        };
+    };
+    "cart.merge": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["MergeCartRequest"];
+            };
+        };
+        responses: {
+            /** @description `CartResource` */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        data: components["schemas"]["CartResource"];
+                    };
+                };
+            };
+            401: components["responses"]["AuthenticationException"];
+            422: components["responses"]["ValidationException"];
+        };
+    };
+    "cart.setItem": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                variant: number;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["SetCartItemRequest"];
+            };
+        };
+        responses: {
+            /** @description `CartResource` */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        data: components["schemas"]["CartResource"];
+                    };
+                };
+            };
+            401: components["responses"]["AuthenticationException"];
+            422: components["responses"]["ValidationException"];
+        };
+    };
+    "category.index": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Array of `CategoryResource` */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        data: (components["schemas"]["CategoryResource"] & Record<string, never>)[];
+                    };
+                };
+            };
+        };
+    };
+    "checkout.store": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["CheckoutRequest"];
+            };
+        };
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        data: {
+                            order: components["schemas"]["OrderDetailResource"];
+                            payment: components["schemas"]["PaymentResource"] | null;
+                            replayed: boolean;
+                        };
+                    };
+                };
+            };
+            401: components["responses"]["AuthenticationException"];
+            422: components["responses"]["ValidationException"];
+        };
+    };
+    "deliveryCode.show": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                order: string;
+                suborder: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        data: {
+                            code: string;
+                            expires_at: string;
+                        };
+                    };
+                };
+            };
+            401: components["responses"]["AuthenticationException"];
+        };
+    };
+    "me.show": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description `UserResource` */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        data: components["schemas"]["UserResource"];
+                    };
+                };
+            };
+            401: components["responses"]["AuthenticationException"];
+        };
+    };
+    "me.update": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: {
+            content: {
+                "application/json": components["schemas"]["UpdateMeRequest"];
+            };
+        };
+        responses: {
+            /** @description `UserResource` */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        data: components["schemas"]["UserResource"];
+                    };
+                };
+            };
+            401: components["responses"]["AuthenticationException"];
+            422: components["responses"]["ValidationException"];
+        };
+    };
+    "me.updateMarketingConsent": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["UpdateMarketingConsentRequest"];
+            };
+        };
+        responses: {
+            /** @description `UserResource` */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        data: components["schemas"]["UserResource"];
+                    };
+                };
+            };
+            401: components["responses"]["AuthenticationException"];
+            422: components["responses"]["ValidationException"];
+        };
+    };
+    "order.index": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Paginated set of `OrderResource` */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        data: components["schemas"]["OrderResource"][];
+                        links: {
+                            first: string | null;
+                            last: string | null;
+                            prev: string | null;
+                            next: string | null;
+                        };
+                        meta: {
+                            /** @description Base path for paginator generated URLs. */
+                            path: string | null;
+                            /** @description Number of items shown per page. */
+                            per_page: number;
+                            /** @description The "cursor" that points to the next set of items. */
+                            next_cursor: string | null;
+                            /** @description The "cursor" that points to the previous set of items. */
+                            prev_cursor: string | null;
+                        };
+                    };
+                };
+            };
+            401: components["responses"]["AuthenticationException"];
+        };
+    };
+    "order.show": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                order: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description `OrderDetailResource` */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        data: components["schemas"]["OrderDetailResource"];
+                    };
+                };
+            };
+            401: components["responses"]["AuthenticationException"];
+        };
+    };
+    "orderCancellation.store": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                order: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description `OrderDetailResource` */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        data: components["schemas"]["OrderDetailResource"];
+                    };
+                };
+            };
+            401: components["responses"]["AuthenticationException"];
+        };
+    };
+    "payment.show": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                payment: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description `PaymentResource` */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        data: components["schemas"]["PaymentResource"];
+                    };
+                };
+            };
+            401: components["responses"]["AuthenticationException"];
+        };
+    };
+    "payment.retry": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                order: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["RetryPaymentRequest"];
+            };
+        };
+        responses: {
+            /** @description `PaymentResource` */
+            201: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        data: components["schemas"]["PaymentResource"];
+                    };
+                };
+            };
+            401: components["responses"]["AuthenticationException"];
+            422: components["responses"]["ValidationException"];
+        };
+    };
+    "product.index": {
+        parameters: {
+            query?: {
+                category?: string | null;
+                seller?: string | null;
+                q?: string | null;
+                zone_id?: number | null;
+                per_page?: number | null;
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Paginated set of `ProductListResource` */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        data: components["schemas"]["ProductListResource"][];
+                        links: {
+                            first: string | null;
+                            last: string | null;
+                            prev: string | null;
+                            next: string | null;
+                        };
+                        meta: {
+                            /** @description Base path for paginator generated URLs. */
+                            path: string | null;
+                            /** @description Number of items shown per page. */
+                            per_page: number;
+                            /** @description The "cursor" that points to the next set of items. */
+                            next_cursor: string | null;
+                            /** @description The "cursor" that points to the previous set of items. */
+                            prev_cursor: string | null;
+                        };
+                    };
+                };
+            };
+            422: components["responses"]["ValidationException"];
+        };
+    };
+    "product.show": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                slug: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description `ProductDetailResource` */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        data: components["schemas"]["ProductDetailResource"];
+                    };
+                };
+            };
+        };
+    };
+    "quote.store": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["CreateQuoteRequest"];
+            };
+        };
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        data: {
+                            id: string;
+                            expires_at: string;
+                        } & {
+                            currency: string;
+                            lines: {
+                                variant_id: number;
+                                product_id: number;
+                                seller_id: number;
+                                product_slug: string;
+                                name: {
+                                    ar: string | null;
+                                    en: string | null;
+                                };
+                                variant_name: {
+                                    ar: string | null;
+                                    en: string | null;
+                                } | null;
+                                image_url: string | null;
+                                quantity: number;
+                                unit_price: number;
+                                line_price: number;
+                                discount: number;
+                                line_total: number;
+                                vat_class: string;
+                                vat_rate_basis_points: number;
+                                available: boolean;
+                                available_units: number;
+                            }[];
+                            subtotal: number;
+                            discount: number;
+                            delivery_fee: number;
+                            total: number;
+                            vat_included: number;
+                            vat: {
+                                vat_class: string;
+                                rate_basis_points: number;
+                                taxable_net: number;
+                                vat: number;
+                                gross: number;
+                            }[];
+                            promo_code: string | null;
+                            address_id: number;
+                            zone_id: number;
+                            issues: {
+                                variant_id: number;
+                                code: string;
+                                available_units: number;
+                            }[];
+                            can_checkout: boolean;
+                        };
+                    };
+                };
+            };
+            401: components["responses"]["AuthenticationException"];
+            422: components["responses"]["ValidationException"];
+        };
+    };
+    "review.index": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                slug: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Paginated set of `ReviewResource` */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        data: components["schemas"]["ReviewResource"][];
+                        links: {
+                            first: string | null;
+                            last: string | null;
+                            prev: string | null;
+                            next: string | null;
+                        };
+                        meta: {
+                            /** @description Base path for paginator generated URLs. */
+                            path: string | null;
+                            /** @description Number of items shown per page. */
+                            per_page: number;
+                            /** @description The "cursor" that points to the next set of items. */
+                            next_cursor: string | null;
+                            /** @description The "cursor" that points to the previous set of items. */
+                            prev_cursor: string | null;
+                        };
+                    };
+                };
+            };
+        };
+    };
+    "review.store": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                order: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["StoreReviewRequest"];
+            };
+        };
+        responses: {
+            /** @description `ReviewResource` */
+            201: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        data: components["schemas"]["ReviewResource"];
+                    };
+                };
+            };
+            401: components["responses"]["AuthenticationException"];
+            422: components["responses"]["ValidationException"];
+        };
+    };
+    "review.update": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                review: number;
+            };
+            cookie?: never;
+        };
+        requestBody?: {
+            content: {
+                "application/json": components["schemas"]["UpdateReviewRequest"];
+            };
+        };
+        responses: {
+            /** @description `ReviewResource` */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        data: components["schemas"]["ReviewResource"];
+                    };
+                };
+            };
+            401: components["responses"]["AuthenticationException"];
+            422: components["responses"]["ValidationException"];
+        };
+    };
+    "seller.show": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                slug: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description `SellerResource` */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        data: components["schemas"]["SellerResource"];
+                    };
+                };
+            };
+        };
+    };
+    "session.index": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Array of `SessionResource` */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        data: components["schemas"]["SessionResource"][];
+                    };
+                };
+            };
+            401: components["responses"]["AuthenticationException"];
+        };
+    };
+    "session.destroy": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                session: number;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description No content */
+            204: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            401: components["responses"]["AuthenticationException"];
+        };
+    };
+    "slot.index": {
+        parameters: {
+            query: {
+                address_id: number;
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Array of `SlotResource` */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        data: components["schemas"]["SlotResource"][];
+                    };
+                };
+            };
+            401: components["responses"]["AuthenticationException"];
+            422: components["responses"]["ValidationException"];
+        };
+    };
+    "spendingReport.show": {
+        parameters: {
+            query?: {
+                from?: string | null;
+                to?: string | null;
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        data: {
+                            summary: {
+                                orders: number;
+                                paid: number;
+                                refunded: number;
+                                net_spent: number;
+                                savings: number;
+                                vat_included: number;
+                                delivery_fees: number;
+                            };
+                            rows: {
+                                order_number: string;
+                                status: string;
+                                order_date: string;
+                                payment_date: string | null;
+                                refund_date: string | null;
+                                subtotal: number;
+                                discount: number;
+                                delivery_fee: number;
+                                vat_included: number;
+                                total: number;
+                                refunded: number;
+                                net_spent: number;
+                            }[];
+                            currency: string;
+                            timezone: string;
+                            from: string;
+                            to: string;
+                        };
+                    };
+                };
+            };
+            401: components["responses"]["AuthenticationException"];
+            422: components["responses"]["ValidationException"];
+        };
+    };
+    "spendingReport.csv": {
+        parameters: {
+            query?: {
+                from?: string | null;
+                to?: string | null;
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    "Content-Disposition"?: string;
+                    [name: string]: unknown;
+                };
+                content: {
+                    "text/csv; charset=UTF-8": string;
+                };
+            };
+            401: components["responses"]["AuthenticationException"];
+            422: components["responses"]["ValidationException"];
+        };
+    };
+    "store.show": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        data: {
+                            currency: string;
+                            price: {
+                                gross: number;
+                                net: number;
+                                vat: number;
+                            };
+                            vat_rate_basis_points: number;
+                            terms_version: string;
+                            privacy_version: string;
+                        };
+                    };
+                };
+            };
+        };
+    };
+    "welcome.index": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Array of `WelcomeSlideResource` */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        data: components["schemas"]["WelcomeSlideResource"][];
+                    };
+                };
+            };
+        };
+    };
+    "zone.resolve": {
+        parameters: {
+            query: {
+                lat: number;
+                lng: number;
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        data: {
+                            serviceable: boolean;
+                            zone: components["schemas"]["ZoneResource"] | null;
+                        };
+                    };
+                };
+            };
+            422: components["responses"]["ValidationException"];
+        };
+    };
 }
