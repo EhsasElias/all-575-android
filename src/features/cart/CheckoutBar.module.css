@@ -1,0 +1,9 @@
+.bar {
+  position: sticky;
+  inset-block-end: calc(var(--size-tabbar) + var(--safe-bottom));
+  z-index: var(--z-sticky);
+  margin-block-start: var(--space-3);
+  padding-block: var(--space-3);
+  background: var(--color-bg);
+  box-shadow: 0 -1px 0 var(--color-border);
+}
