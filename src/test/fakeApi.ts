@@ -18,7 +18,16 @@ export type FakeRequest = {
   params: Record<string, string>;
 };
 
-type Reply = { status?: number; body?: unknown; headers?: Record<string, string> } | 'offline';
+type Reply =
+  | {
+      status?: number;
+      /** JSON body. */
+      body?: unknown;
+      /** Raw body, for files such as a CSV; wins over `body`. */
+      text?: string;
+      headers?: Record<string, string>;
+    }
+  | 'offline';
 type Handler = Reply | ((request: FakeRequest) => Reply);
 
 /** Keys are "METHOD /path"; `:name` segments match any value, e.g. "GET /orders/:id". */
@@ -87,7 +96,7 @@ function createResponder(routes: FakeRoutes) {
       typeof raw === 'function' ? raw({ ...request, params: match?.params ?? {} }) : raw;
     if (reply === 'offline') return Promise.reject(new TypeError('Failed to fetch'));
     return Promise.resolve(
-      new Response(reply.body === undefined ? null : JSON.stringify(reply.body), {
+      new Response(reply.text ?? (reply.body === undefined ? null : JSON.stringify(reply.body)), {
         status: reply.status ?? 200,
         headers: { 'Content-Type': 'application/json', ...reply.headers },
       }),
