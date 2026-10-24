@@ -1,0 +1,13 @@
+.root {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--space-3);
+  margin-block-start: var(--space-4);
+}
+
+.failure {
+  color: var(--color-danger);
+  font-weight: var(--font-weight-strong);
+  text-align: center;
+}

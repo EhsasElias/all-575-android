@@ -1,0 +1,29 @@
+.content {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+  padding-block-end: var(--space-4);
+}
+
+.note {
+  color: var(--color-text-muted);
+  font-size: var(--font-size-small);
+}
+
+.status {
+  min-block-size: 1.5rem;
+  color: var(--color-text-muted);
+}
+
+.failure {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--space-2);
+  color: var(--color-danger);
+  font-weight: var(--font-weight-strong);
+}
+
+.failure svg {
+  flex: none;
+  margin-block-start: 2px;
+}

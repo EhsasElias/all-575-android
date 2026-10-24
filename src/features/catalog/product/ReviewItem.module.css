@@ -1,0 +1,39 @@
+.review {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+  padding-block: var(--space-3);
+  border-block-end: 1px solid var(--color-border);
+}
+
+.head {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--space-2);
+}
+
+.reviewer {
+  font-weight: var(--font-weight-strong);
+}
+
+.date {
+  margin-inline-start: auto;
+  color: var(--color-text-muted);
+  font-size: var(--font-size-small);
+}
+
+/* Reviews are customers' words: plain text, keeping their line breaks. */
+.body {
+  white-space: pre-line;
+  overflow-wrap: anywhere;
+}
+
+.review:focus {
+  outline: none;
+}
+
+.review:focus-visible {
+  outline: 3px solid var(--color-focus);
+  outline-offset: 2px;
+}

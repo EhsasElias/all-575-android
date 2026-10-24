@@ -1,0 +1,49 @@
+.section {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+}
+
+.sectionHeader {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-3);
+}
+
+.sectionTitle {
+  font-size: var(--font-size-title);
+  font-weight: var(--font-weight-bold);
+}
+
+.seeAll {
+  display: inline-flex;
+  align-items: center;
+  min-block-size: var(--size-target);
+  font-weight: var(--font-weight-strong);
+}
+
+.strip {
+  display: flex;
+  gap: var(--space-3);
+  margin: 0;
+  padding-block: var(--space-1);
+  padding-inline: 0;
+  overflow-x: auto;
+  list-style: none;
+  scroll-snap-type: x proximity;
+}
+
+.stripItem {
+  display: flex;
+  flex: none;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--space-2);
+  inline-size: 5.5rem;
+  scroll-snap-align: start;
+}
+
+.stripItem > * {
+  max-inline-size: 100%;
+}

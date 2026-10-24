@@ -1,0 +1,23 @@
+.frame {
+  display: grid;
+  place-items: center;
+  aspect-ratio: 1;
+  overflow: hidden;
+  border-radius: var(--radius-md);
+  background: var(--color-surface-mint);
+}
+
+.round {
+  border-radius: 50%;
+}
+
+.picture {
+  inline-size: 100%;
+  block-size: 100%;
+  object-fit: contain;
+}
+
+.placeholder {
+  color: var(--color-brand-text);
+  opacity: 0.7;
+}

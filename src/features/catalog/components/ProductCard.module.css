@@ -1,0 +1,76 @@
+.card {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  block-size: 100%;
+  overflow: hidden;
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-lg);
+  background: var(--color-surface);
+  transition: transform var(--motion-fast) var(--ease-standard);
+}
+
+.card:active {
+  transform: scale(0.98);
+}
+
+.card:has(.link:focus-visible) {
+  outline: 3px solid var(--color-focus);
+  outline-offset: 2px;
+}
+
+.card .image {
+  border-radius: 0;
+}
+
+.body {
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: var(--space-1);
+  padding: var(--space-3);
+}
+
+.name {
+  display: -webkit-box;
+  overflow: hidden;
+  font-weight: var(--font-weight-strong);
+  line-height: var(--line-height-tight);
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 2;
+  line-clamp: 2;
+}
+
+/* The whole card is the tap target, but the link's own name stays short for screen readers. */
+.link {
+  color: var(--color-text);
+  text-decoration: none;
+}
+
+.link::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+}
+
+.link:focus-visible {
+  outline: none;
+}
+
+.seller {
+  overflow: hidden;
+  max-inline-size: 100%;
+  color: var(--color-text-muted);
+  font-size: var(--font-size-small);
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.price {
+  margin-block-start: auto;
+  padding-block-start: var(--space-1);
+  color: var(--color-brand-text);
+  font-size: var(--font-size-lead);
+  font-weight: var(--font-weight-bold);
+}

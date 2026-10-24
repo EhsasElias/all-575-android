@@ -1,0 +1,38 @@
+.box {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  min-block-size: 52px;
+  padding-inline: var(--space-4) var(--space-2);
+  border: 2px solid var(--color-border-strong);
+  border-radius: var(--radius-pill);
+  background: var(--color-surface);
+}
+
+.box:focus-within {
+  border-color: var(--color-focus);
+}
+
+.icon {
+  flex: none;
+  color: var(--color-brand-text);
+}
+
+.input {
+  flex: 1;
+  min-inline-size: 0;
+  min-block-size: var(--size-target);
+  border: 0;
+  background: transparent;
+  color: var(--color-text);
+  text-align: start;
+}
+
+/* The box shows its own focus ring, and the clear button replaces the browser's. */
+.input:focus-visible {
+  outline: none;
+}
+
+.input::-webkit-search-cancel-button {
+  appearance: none;
+}
