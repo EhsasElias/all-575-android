@@ -38,7 +38,7 @@ export function TextField({ label, hint, error, id, className, ...rest }: TextFi
       <p id={errorId} className={styles.error} aria-live="polite">
         {error && (
           <>
-            <Icon name="alert-circle" size={18} />
+            <Icon name="alert-circle" size={20} />
             <span>{error}</span>
           </>
         )}

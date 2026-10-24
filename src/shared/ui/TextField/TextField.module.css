@@ -1,45 +1,75 @@
 .field {
   display: flex;
   flex-direction: column;
-  gap: var(--space-1);
+  gap: var(--space-2);
 }
 
 .label {
-  font-size: var(--font-size-small);
-  font-weight: var(--font-weight-strong);
+  font-size: var(--font-size-lead);
+  font-weight: var(--font-weight-bold);
+  line-height: var(--line-height-tight);
   color: var(--color-text);
 }
 
 .input {
-  min-block-size: 48px;
-  padding-block: var(--space-2);
+  inline-size: 100%;
+  min-block-size: 56px;
+  padding-block: var(--space-3);
   padding-inline: var(--space-4);
   border: 2px solid var(--color-border-strong);
   border-radius: var(--radius-md);
   background: var(--color-surface);
   color: var(--color-text);
+  /* 18px: easy to read, and above the 16px where mobile browsers stop zooming into a focused field. */
+  font-size: var(--font-size-lead);
+  line-height: var(--line-height-tight);
   text-align: start;
+  transition: border-color var(--motion-fast) var(--ease-standard);
+}
+
+.input::placeholder {
+  color: var(--color-text-muted);
+  opacity: 1;
+}
+
+.input:hover:not(:disabled) {
+  border-color: var(--color-text-muted);
 }
 
 .input:focus-visible {
   border-color: var(--color-focus);
 }
 
+/* A thicker edge, not only a color change, marks the field that needs attention. */
 .input[aria-invalid='true'] {
   border-color: var(--color-danger);
+  box-shadow: inset 0 0 0 1px var(--color-danger);
+}
+
+.input:disabled {
+  background: var(--color-surface-sunken);
+  color: var(--color-text-muted);
+  cursor: not-allowed;
 }
 
 .hint {
-  font-size: var(--font-size-small);
+  font-size: var(--font-size-body);
+  line-height: var(--line-height-body);
   color: var(--color-text-muted);
 }
 
 .error {
   display: flex;
-  align-items: center;
-  gap: var(--space-1);
+  align-items: flex-start;
+  gap: var(--space-2);
   min-block-size: 0;
-  font-size: var(--font-size-small);
+  font-size: var(--font-size-body);
   font-weight: var(--font-weight-strong);
+  line-height: var(--line-height-body);
   color: var(--color-danger);
+}
+
+.error svg {
+  flex-shrink: 0;
+  margin-block-start: 2px;
 }
