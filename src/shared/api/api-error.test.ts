@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { createApiError, isApiError, parseRetryAfter } from './api-error';
+import { createApiError, errorCode, isApiError, parseRetryAfter } from './api-error';
 
 describe('parseRetryAfter', () => {
   it('reads a number of seconds', () => {
@@ -50,6 +50,28 @@ describe('createApiError', () => {
       phone: ['The phone field is required.'],
       code: ['Too short', 'Digits only'],
     });
+  });
+
+  it('keeps the business code and the extra fields of a refusal', () => {
+    const error = createApiError({
+      status: 422,
+      body: { message: 'The code is incorrect.', code: 'otp_invalid', attempts_remaining: 3 },
+      retryAfter: null,
+    });
+
+    expect(error.code).toBe('otp_invalid');
+    expect(error.details).toEqual({ attempts_remaining: 3 });
+    expect(errorCode(error)).toBe('otp_invalid');
+  });
+
+  it('has no code for plain failures', () => {
+    const error = createApiError({ status: 500, body: { message: 'Boom' }, retryAfter: null });
+
+    expect(error.code).toBeNull();
+    expect(error.details).toEqual({});
+    expect(errorCode(error)).toBeNull();
+    expect(errorCode(new Error('x'))).toBeNull();
+    expect(errorCode(undefined)).toBeNull();
   });
 
   it('falls back to a generic message and ignores malformed bodies', () => {

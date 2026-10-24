@@ -1,4 +1,4 @@
-export { ApiError, isApiError } from './api-error';
+export { ApiError, errorCode, isApiError } from './api-error';
 export { authEvents } from './auth-events';
 export type { ApiErrorKind, FieldErrors } from './api-error';
 export { http, tokenStore } from './client';
