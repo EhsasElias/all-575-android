@@ -183,6 +183,26 @@ describe('errors', () => {
     await expect(tokenStore.get()).resolves.toBeNull();
   });
 
+  it('tells the app when a token it sent is rejected, but not when a guest gets 401', async () => {
+    const onUnauthorized = vi.fn();
+    const fetchFn = vi.fn<typeof fetch>(() => Promise.resolve(jsonResponse({}, { status: 401 })));
+    const tokenStore = createMemoryTokenStore();
+    const http = createHttpClient({
+      baseUrl: 'https://api.example.test/api/',
+      tokenStore,
+      getLanguage: () => 'en',
+      fetchFn,
+      onUnauthorized,
+    });
+
+    await http.get('/me').catch(() => undefined);
+    expect(onUnauthorized).not.toHaveBeenCalled();
+
+    await tokenStore.set('stale-token');
+    await http.get('/me').catch(() => undefined);
+    expect(onUnauthorized).toHaveBeenCalledTimes(1);
+  });
+
   it('keeps no token around that it never had when a guest gets 401', async () => {
     const { error, tokenStore } = await failWith(jsonResponse({}, { status: 401 }));
 

@@ -51,8 +51,6 @@ describe('app shell', () => {
   it.each([
     ['/categories', 'No categories to show yet'],
     ['/cart', 'Your cart is empty'],
-    ['/checkout', 'Nothing to check out yet'],
-    ['/orders', 'No orders yet'],
     ['/account', 'Sign in to manage your account'],
     ['/sign-in', 'Sign-in is not available yet'],
   ])('%s shows an empty state with a next step', async (route, title) => {
@@ -62,6 +60,16 @@ describe('app shell', () => {
     expect(within(main).getByRole('heading', { level: 1, name: title })).toBeInTheDocument();
     expect(within(main).getAllByRole('link')).toHaveLength(1);
   });
+
+  it.each(['/checkout', '/orders'])(
+    '%s needs an account: a guest is sent to sign in and brought back afterwards',
+    async (route) => {
+      const { router } = await renderApp({ route, seenWelcome: true });
+
+      expect(router.state.location.pathname).toBe('/sign-in');
+      expect(router.state.location.search).toBe(`?next=${encodeURIComponent(route)}`);
+    },
+  );
 
   it('says the page is missing for an unknown address, and offers a way home', async () => {
     await renderApp({ route: '/nowhere', seenWelcome: true });
@@ -110,8 +118,8 @@ describe('accessibility basics', () => {
     await renderApp({ route: '/home', seenWelcome: true });
     expect(document.title).toBe('Home · ALL 5.75');
 
-    await user.click(screen.getByRole('link', { name: 'Orders' }));
-    expect(document.title).toBe('Orders · ALL 5.75');
+    await user.click(screen.getByRole('link', { name: 'Cart' }));
+    expect(document.title).toBe('Cart · ALL 5.75');
   });
 
   it('titles screens in Arabic', async () => {

@@ -27,6 +27,8 @@ export type HttpClientConfig = {
   baseUrl: string;
   tokenStore: TokenStore;
   getLanguage: () => Language;
+  /** Called after a request that carried a token was answered 401, once the token has been dropped. */
+  onUnauthorized?: () => void;
   timeoutMs?: number;
   /** Replaceable for tests. */
   fetchFn?: typeof fetch;
@@ -123,7 +125,10 @@ export function createHttpClient(config: HttpClientConfig): HttpClient {
 
     if (!response.ok) {
       // An expired or revoked token is useless from now on; drop it.
-      if (response.status === 401 && hasToken) await config.tokenStore.clear();
+      if (response.status === 401 && hasToken) {
+        await config.tokenStore.clear();
+        config.onUnauthorized?.();
+      }
       throw createApiError({
         status: response.status,
         body: tryParseJson(text),
