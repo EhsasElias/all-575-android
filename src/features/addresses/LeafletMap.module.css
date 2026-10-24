@@ -1,0 +1,47 @@
+.root {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+}
+
+/* Leaflet stacks its panes up to z-index 1000: its own stacking context keeps them below sheets and bars. */
+.frame {
+  position: relative;
+  z-index: var(--z-base);
+  isolation: isolate;
+  overflow: hidden;
+  border: 2px solid var(--color-border-strong);
+  border-radius: var(--radius-md);
+}
+
+.map {
+  inline-size: 100%;
+  block-size: 20rem;
+  background: var(--color-surface-sunken);
+}
+
+/* Leaflet's zoom buttons are 30px; touch targets are at least 44px. */
+.frame .map :global(.leaflet-bar) a {
+  inline-size: var(--size-target);
+  block-size: var(--size-target);
+  line-height: var(--size-target);
+}
+
+.frame .map :global(.leaflet-control-attribution) {
+  font-size: var(--font-size-small);
+}
+
+.pinIcon {
+  background: none;
+  border: 0;
+}
+
+.pinBody {
+  fill: var(--color-accent);
+  stroke: var(--color-surface);
+  stroke-width: 2.5;
+}
+
+.pinDot {
+  fill: var(--color-surface);
+}

@@ -1,0 +1,84 @@
+.card {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+  padding: var(--space-4);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-lg);
+  background: var(--color-surface);
+}
+
+.header {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: var(--space-2);
+}
+
+.name {
+  font-size: var(--font-size-lead);
+  font-weight: var(--font-weight-bold);
+}
+
+/* The badge sits in the flow next to the name, so it can never overlap the card edge. */
+.badge {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-1);
+  padding-block: var(--space-1);
+  padding-inline: var(--space-3);
+  border-radius: var(--radius-pill);
+  background: var(--color-surface-pill);
+  color: var(--color-brand-text);
+  font-size: var(--font-size-small);
+  font-weight: var(--font-weight-bold);
+}
+
+.recipient {
+  font-weight: var(--font-weight-strong);
+}
+
+.details {
+  color: var(--color-text-muted);
+}
+
+.good,
+.warn {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  font-weight: var(--font-weight-strong);
+}
+
+.good {
+  color: var(--color-success);
+}
+
+.warn {
+  color: var(--color-danger);
+}
+
+.actions {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--space-2);
+  margin-block-start: var(--space-2);
+}
+
+.link {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-2);
+  min-block-size: var(--size-target);
+  padding-inline: var(--space-4);
+  border-radius: var(--radius-pill);
+  color: var(--color-brand-text);
+  font-weight: var(--font-weight-strong);
+  text-decoration: none;
+}
+
+.link:hover {
+  background: var(--color-surface-mint);
+}

@@ -1,0 +1,51 @@
+.totals {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+  margin: 0;
+}
+
+.row {
+  display: flex;
+  justify-content: space-between;
+  gap: var(--space-3);
+}
+
+.row dt {
+  color: var(--color-text-muted);
+}
+
+.row dd {
+  margin: 0;
+  font-weight: var(--font-weight-strong);
+  font-variant-numeric: tabular-nums;
+}
+
+.row dd.muted {
+  color: var(--color-text-muted);
+  font-weight: var(--font-weight-regular);
+}
+
+.saving {
+  color: var(--color-success);
+}
+
+.note {
+  display: block;
+  font-size: var(--font-size-small);
+}
+
+.total {
+  padding-block-start: var(--space-3);
+  border-block-start: 1px solid var(--color-border);
+  font-size: var(--font-size-lead);
+}
+
+.total dt {
+  color: var(--color-text);
+  font-weight: var(--font-weight-bold);
+}
+
+.total dd {
+  font-weight: var(--font-weight-bold);
+}

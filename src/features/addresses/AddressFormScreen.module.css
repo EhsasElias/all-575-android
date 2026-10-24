@@ -1,0 +1,10 @@
+.screen {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4);
+}
+
+.title {
+  font-size: var(--font-size-headline);
+  font-weight: var(--font-weight-bold);
+}

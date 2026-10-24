@@ -1,0 +1,103 @@
+/* Radio cards shared by the address, delivery time and payment method pickers. */
+.group {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+  min-inline-size: 0;
+  margin: 0;
+  padding: 0;
+  border: 0;
+}
+
+.card {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+  padding-block: var(--space-3);
+  padding-inline: var(--space-4);
+  border: 2px solid var(--color-border);
+  border-radius: var(--radius-lg);
+  background: var(--color-surface);
+}
+
+.card:has(.input:checked) {
+  border-color: var(--color-brand);
+  background: var(--color-surface-mint);
+}
+
+.label {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--space-3);
+  min-block-size: var(--size-target);
+  cursor: pointer;
+}
+
+.input {
+  flex: none;
+  inline-size: 24px;
+  block-size: 24px;
+  margin: 0;
+  margin-block-start: var(--space-1);
+  accent-color: var(--color-brand);
+}
+
+.input:disabled,
+.label:has(.input:disabled) {
+  cursor: not-allowed;
+}
+
+.body {
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  gap: var(--space-1);
+  min-inline-size: 0;
+}
+
+.title {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--space-2);
+  font-weight: var(--font-weight-strong);
+}
+
+.card:has(.input:disabled) .title {
+  color: var(--color-text-muted);
+}
+
+.meta {
+  color: var(--color-text-muted);
+  font-size: var(--font-size-small);
+}
+
+.badge {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-1);
+  padding-block: 2px;
+  padding-inline: var(--space-2);
+  border-radius: var(--radius-pill);
+  background: var(--color-surface-pill);
+  color: var(--color-brand-text);
+  font-size: var(--font-size-caption);
+  font-weight: var(--font-weight-bold);
+}
+
+.reason {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  color: var(--color-danger);
+  font-size: var(--font-size-small);
+  font-weight: var(--font-weight-strong);
+}
+
+.link {
+  align-self: flex-start;
+  display: inline-flex;
+  align-items: center;
+  min-block-size: var(--size-target);
+  font-weight: var(--font-weight-strong);
+}

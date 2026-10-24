@@ -1,11 +1,4 @@
-import type { Translations } from '@/shared/i18n';
-
-const en = {
-  placeholderTitle: 'Addresses are coming soon',
-};
-
-const ar: Translations<typeof en> = {
-  placeholderTitle: 'العناوين قادمة قريبًا',
-};
+import { ar } from './locales.ar';
+import { en } from './locales.en';
 
 export const addressesLocales = { en, ar };
