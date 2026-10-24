@@ -1,0 +1,10 @@
+.message {
+  color: var(--color-text-muted);
+  text-wrap: pretty;
+}
+
+.error {
+  margin-block-start: var(--space-3);
+  color: var(--color-danger);
+  font-weight: var(--font-weight-strong);
+}

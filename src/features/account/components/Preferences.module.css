@@ -1,0 +1,75 @@
+.row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-4);
+  min-block-size: var(--size-target);
+}
+
+.text {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-1);
+}
+
+.label {
+  font-weight: var(--font-weight-strong);
+}
+
+.hint {
+  color: var(--color-text-muted);
+  font-size: var(--font-size-small);
+  text-wrap: pretty;
+}
+
+/* A native checkbox drawn as a switch: it keeps keyboard and screen reader behaviour for free.
+   The knob moves along the inline axis, so it flips with the reading direction. */
+.switch {
+  position: relative;
+  flex: none;
+  inline-size: 3.25rem;
+  block-size: 2rem;
+  margin: 0;
+  border: 2px solid var(--color-border-strong);
+  border-radius: var(--radius-pill);
+  background: var(--color-surface-sunken);
+  appearance: none;
+  cursor: pointer;
+  transition: background-color var(--motion-fast) var(--ease-standard);
+}
+
+.switch::before {
+  content: '';
+  position: absolute;
+  inset-block-start: 50%;
+  inset-inline-start: 3px;
+  inline-size: 1.25rem;
+  block-size: 1.25rem;
+  margin-block-start: -0.625rem;
+  border-radius: 50%;
+  background: var(--color-text);
+  transition: inset-inline-start var(--motion-fast) var(--ease-standard);
+}
+
+.switch:checked {
+  border-color: var(--color-brand);
+  background: var(--color-brand);
+}
+
+.switch:checked::before {
+  inset-inline-start: calc(100% - 1.25rem - 5px);
+  background: var(--color-on-brand);
+}
+
+.switch:disabled {
+  opacity: 0.6;
+  cursor: progress;
+}
+
+/* The switch is 32px tall; this invisible margin makes the tappable area 44px. */
+.switch::after {
+  content: '';
+  position: absolute;
+  inset-block: -8px;
+  inset-inline: -4px;
+}

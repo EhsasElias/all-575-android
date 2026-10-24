@@ -1,0 +1,59 @@
+.card {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--space-3);
+  padding: var(--space-4);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-lg);
+  background: var(--color-surface);
+}
+
+.icon {
+  display: inline-flex;
+  flex: none;
+  align-items: center;
+  justify-content: center;
+  inline-size: 2.5rem;
+  block-size: 2.5rem;
+  border-radius: 50%;
+  background: var(--color-surface-mint);
+  color: var(--color-brand-text);
+}
+
+.body {
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  gap: var(--space-1);
+  min-inline-size: 0;
+}
+
+.name {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--space-2);
+  font-weight: var(--font-weight-bold);
+  overflow-wrap: anywhere;
+}
+
+/* The words "This device" carry the meaning; the color only supports them. */
+.badge {
+  padding-block: 2px;
+  padding-inline: var(--space-2);
+  border-radius: var(--radius-pill);
+  background: var(--color-surface-mint);
+  color: var(--color-brand-text);
+  font-size: var(--font-size-caption);
+  font-weight: var(--font-weight-strong);
+}
+
+.meta {
+  color: var(--color-text-muted);
+  font-size: var(--font-size-small);
+}
+
+.revoke {
+  align-self: flex-start;
+  margin-block-start: var(--space-2);
+}

@@ -1,0 +1,62 @@
+.details {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+  padding: var(--space-4);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-lg);
+  background: var(--color-surface);
+}
+
+.title {
+  font-size: var(--font-size-lead);
+  font-weight: var(--font-weight-bold);
+}
+
+.list {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+  margin: 0;
+}
+
+.detail {
+  display: flex;
+  flex-direction: column;
+}
+
+.label {
+  color: var(--color-text-muted);
+  font-size: var(--font-size-small);
+}
+
+.value {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--space-2);
+  margin: 0;
+  font-weight: var(--font-weight-strong);
+  overflow-wrap: anywhere;
+}
+
+/* The word says it; the color only helps. */
+.badge {
+  padding-block: 2px;
+  padding-inline: var(--space-2);
+  border-radius: var(--radius-pill);
+  background: var(--color-surface-mint);
+  color: var(--color-brand-text);
+  font-size: var(--font-size-caption);
+}
+
+.badge[data-verified='false'] {
+  background: var(--color-danger-surface);
+  color: var(--color-danger);
+}
+
+.note {
+  color: var(--color-text-muted);
+  font-size: var(--font-size-small);
+  text-wrap: pretty;
+}

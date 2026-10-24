@@ -1,0 +1,14 @@
+.list {
+  display: flex;
+  flex-direction: column;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.link {
+  display: flex;
+  align-items: center;
+  min-block-size: var(--size-target);
+  font-weight: var(--font-weight-strong);
+}

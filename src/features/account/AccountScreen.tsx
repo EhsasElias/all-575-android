@@ -1,17 +1,20 @@
 import { useTranslation } from 'react-i18next';
-import { routePaths } from '@/shared/lib';
-import { ButtonLink, EmptyState } from '@/shared/ui';
+import { useSession } from '@/shared/session';
+import { Skeleton } from '@/shared/ui';
+import { GuestAccount } from './components/GuestAccount';
+import { SignedInAccount } from './components/SignedInAccount';
 
+/** One screen for everyone: a guest is invited to sign in, a signed-in customer manages the account. */
 export function AccountScreen() {
   const { t } = useTranslation('account');
+  const { status, user } = useSession();
+
+  if (status === 'signed-in' && user !== null) return <SignedInAccount user={user} />;
+  if (status === 'guest') return <GuestAccount />;
 
   return (
-    <EmptyState
-      headingLevel={1}
-      icon="user"
-      title={t('guestTitle')}
-      message={t('guestMessage')}
-      action={<ButtonLink to={routePaths.signIn}>{t('signIn')}</ButtonLink>}
-    />
+    <div role="status" aria-busy="true" aria-label={t('loading')}>
+      <Skeleton height="2rem" width="50%" />
+    </div>
   );
 }

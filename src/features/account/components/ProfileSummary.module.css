@@ -1,0 +1,44 @@
+.summary {
+  display: flex;
+  align-items: center;
+  gap: var(--space-4);
+  padding: var(--space-4);
+  border-radius: var(--radius-lg);
+  background: var(--color-surface-mint);
+}
+
+.avatar {
+  display: inline-flex;
+  flex: none;
+  align-items: center;
+  justify-content: center;
+  inline-size: 4rem;
+  block-size: 4rem;
+  border-radius: 50%;
+  background: var(--color-surface);
+  color: var(--color-brand-text);
+}
+
+.details {
+  display: flex;
+  flex-direction: column;
+  min-inline-size: 0;
+}
+
+.name {
+  font-size: var(--font-size-title);
+  font-weight: var(--font-weight-bold);
+  overflow-wrap: anywhere;
+}
+
+.contact {
+  color: var(--color-text-muted);
+  overflow-wrap: anywhere;
+}
+
+.addName {
+  display: inline-flex;
+  align-items: center;
+  align-self: flex-start;
+  min-block-size: var(--size-target);
+}

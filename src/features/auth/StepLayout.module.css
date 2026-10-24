@@ -1,0 +1,46 @@
+.step {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4);
+}
+
+.stepTitle {
+  font-size: var(--font-size-title);
+  font-weight: var(--font-weight-bold);
+}
+
+.lead {
+  color: var(--color-text-muted);
+  text-wrap: pretty;
+}
+
+.form {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4);
+}
+
+.actions {
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  gap: var(--space-2);
+}
+
+.alert {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--space-2);
+  padding-block: var(--space-3);
+  padding-inline: var(--space-4);
+  border: 1px solid var(--color-danger);
+  border-radius: var(--radius-md);
+  background: var(--color-danger-surface);
+  color: var(--color-danger);
+  font-weight: var(--font-weight-strong);
+}
+
+.alert svg {
+  flex: none;
+  margin-block-start: 2px;
+}

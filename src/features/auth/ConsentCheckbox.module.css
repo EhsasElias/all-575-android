@@ -1,0 +1,55 @@
+.item {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-1);
+}
+
+.row {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--space-3);
+  min-block-size: var(--size-target);
+  padding-block: var(--space-2);
+  cursor: pointer;
+}
+
+.box {
+  flex: none;
+  inline-size: 1.5rem;
+  block-size: 1.5rem;
+  margin: 0;
+  margin-block-start: 2px;
+  accent-color: var(--color-brand);
+  cursor: pointer;
+}
+
+.box[aria-invalid='true'] {
+  outline: 2px solid var(--color-danger);
+  outline-offset: 2px;
+}
+
+.text {
+  line-height: var(--line-height-body);
+}
+
+.hint {
+  padding-inline-start: calc(1.5rem + var(--space-3));
+  color: var(--color-text-muted);
+  font-size: var(--font-size-small);
+}
+
+.error {
+  display: flex;
+  align-items: center;
+  gap: var(--space-1);
+  padding-inline-start: calc(1.5rem + var(--space-3));
+  color: var(--color-danger);
+  font-size: var(--font-size-small);
+  font-weight: var(--font-weight-strong);
+}
+
+/* Declared after the invalid outline so keyboard focus is always shown the same way. */
+.box:focus-visible {
+  outline: 3px solid var(--color-focus);
+  outline-offset: 2px;
+}
