@@ -1,0 +1,86 @@
+.stage {
+  position: relative;
+}
+
+.card {
+  aspect-ratio: 343 / 312;
+  border: 1px solid var(--color-border);
+  border-radius: 26px;
+}
+
+.slide {
+  display: block;
+}
+
+.layer {
+  position: absolute;
+  inset: 0;
+}
+
+.image {
+  position: absolute;
+  inset-block: 3%;
+  inset-inline: 0;
+  inline-size: auto;
+  max-inline-size: 92%;
+  block-size: 94%;
+  margin-inline: auto;
+  object-fit: contain;
+  -webkit-user-drag: none;
+}
+
+/* Hugs the top-left corner; the card's own rounding shapes the outer corner. */
+.badge {
+  position: absolute;
+  inset-block-start: 0;
+  inset-inline-start: 0;
+  display: grid;
+  place-items: center;
+  inline-size: 52px;
+  block-size: 48px;
+  border-end-end-radius: 16px;
+  color: #ffffff;
+}
+
+.arrows {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+}
+
+.arrowLeft,
+.arrowRight {
+  position: absolute;
+  inset-block-start: 50%;
+  transform: translateY(-50%);
+  pointer-events: auto;
+}
+
+/* Half of the 44px target sits outside the card. */
+.arrowLeft {
+  inset-inline-start: -22px;
+}
+
+.arrowRight {
+  inset-inline-end: -22px;
+}
+
+.caption {
+  display: grid;
+  margin-block-start: 9px;
+  justify-items: center;
+  color: var(--color-text-muted);
+  font-size: var(--font-size-body);
+  line-height: 1.5;
+  text-align: center;
+}
+
+.captionItem {
+  grid-area: 1 / 1;
+  opacity: 0;
+  transition: opacity var(--motion-slow) var(--ease-standard);
+}
+
+.captionItem[data-active='true'] {
+  opacity: 1;
+}

@@ -1,0 +1,3 @@
+# Test artifacts that the repository root .gitignore does not cover
+playwright-report/
+test-results/

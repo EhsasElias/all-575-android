@@ -1,0 +1,83 @@
+.viewport {
+  position: relative;
+  overflow: hidden;
+  /* Vertical gestures still scroll the page; horizontal ones are read as swipes. */
+  touch-action: pan-y;
+  user-select: none;
+}
+
+.slide {
+  position: absolute;
+  inset: 0;
+  opacity: 0;
+  transition: opacity var(--motion-slow) var(--ease-standard);
+}
+
+.slide[data-active='true'] {
+  opacity: 1;
+}
+
+.arrow,
+.pause,
+.dash {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  inline-size: var(--size-target);
+  block-size: var(--size-target);
+  padding: 0;
+  border: 0;
+  background: transparent;
+  cursor: pointer;
+}
+
+.arrowFace {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  inline-size: 32px;
+  block-size: 32px;
+  border: 1px solid var(--color-border);
+  border-radius: 50%;
+  background: var(--color-card-surface);
+  color: var(--color-on-card);
+  box-shadow: var(--shadow-raised);
+  transition: transform var(--motion-fast) var(--ease-standard);
+}
+
+.arrow:active .arrowFace {
+  transform: scale(0.92);
+}
+
+.pauseFace {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  inline-size: 32px;
+  block-size: 32px;
+  border-radius: 50%;
+  background: var(--color-surface-pill);
+  color: var(--color-brand-text);
+}
+
+.dashes {
+  display: flex;
+  align-items: center;
+}
+
+.dashMark {
+  display: block;
+  inline-size: 8px;
+  block-size: 5px;
+  border-radius: var(--radius-pill);
+  background: var(--color-dash-inactive);
+  transition:
+    inline-size var(--motion-base) var(--ease-standard),
+    background-color var(--motion-base) var(--ease-standard);
+}
+
+/* The current dash is longer as well as darker, so it does not rely on color alone. */
+.dash[aria-current='true'] .dashMark {
+  inline-size: 24px;
+  background: var(--color-brand);
+}

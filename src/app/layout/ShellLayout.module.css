@@ -1,0 +1,21 @@
+.shell {
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+}
+
+.main {
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  inline-size: 100%;
+  max-inline-size: var(--size-content-max);
+  margin-inline: auto;
+  padding-block: var(--space-4) calc(var(--size-tabbar) + var(--safe-bottom) + var(--space-4));
+  padding-inline: max(var(--space-4), var(--safe-inline-start))
+    max(var(--space-4), var(--safe-inline-end));
+}
+
+.main:focus {
+  outline: none;
+}

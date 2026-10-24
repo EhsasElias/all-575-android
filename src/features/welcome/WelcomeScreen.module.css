@@ -1,0 +1,104 @@
+.screen {
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  gap: var(--space-3);
+  inline-size: 100%;
+  max-inline-size: var(--size-content-max);
+  margin-inline: auto;
+  padding-block: calc(var(--safe-top) + 18px) calc(var(--safe-bottom) + 40px);
+  padding-inline: max(24px, var(--safe-inline-start)) max(24px, var(--safe-inline-end));
+  background: var(--color-bg-soft);
+}
+
+.screen:focus {
+  outline: none;
+}
+
+.slideshow {
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+}
+
+.headline {
+  margin-block-start: 19px;
+  font-weight: var(--font-weight-regular);
+  text-align: center;
+}
+
+.headlineLead,
+.headlineAccent {
+  display: block;
+  font-size: 1.875rem;
+  line-height: 2.5rem;
+}
+
+.headlineLead {
+  color: var(--color-text);
+}
+
+.headlineAccent {
+  color: var(--color-heading-accent);
+}
+
+/* The long English second line is set a size smaller so it stays on one line. */
+:global(:root[lang='en']) .headlineAccent {
+  font-size: 1.5rem;
+}
+
+/* Arabic letters run narrower at the same size. */
+:global(:root[lang='ar']) .headlineLead,
+:global(:root[lang='ar']) .headlineAccent {
+  font-size: 2rem;
+}
+
+.subline {
+  margin-block-start: 6px;
+  color: var(--color-text-muted);
+  font-size: var(--font-size-small);
+  text-align: center;
+}
+
+.slideshow .cta {
+  margin-block-start: 33px;
+  min-block-size: 60px;
+  border-radius: 14px;
+  font-size: var(--font-size-body);
+  font-weight: var(--font-weight-regular);
+}
+
+.signIn {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: center;
+  column-gap: var(--space-1);
+  margin-block-start: var(--space-1);
+  color: var(--color-text-muted);
+  font-size: var(--font-size-small);
+}
+
+.signInLink {
+  display: inline-flex;
+  align-items: center;
+  min-block-size: var(--size-target);
+  padding-inline: var(--space-1);
+  color: var(--color-text-muted);
+}
+
+.controls {
+  display: grid;
+  margin-block-start: auto;
+  grid-template-columns: 1fr auto 1fr;
+  align-items: center;
+}
+
+.dashes {
+  grid-column: 2;
+}
+
+.pause {
+  grid-column: 3;
+  justify-self: start;
+}
