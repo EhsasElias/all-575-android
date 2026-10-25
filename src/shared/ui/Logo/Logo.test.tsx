@@ -1,7 +1,7 @@
 import { render, screen } from '@testing-library/react';
 import i18next from 'i18next';
 import { describe, expect, it } from 'vitest';
-import brandLogo from '../../../../../../brand/logo.svg?raw';
+import brandLogo from '../../../../brand/logo.svg?raw';
 import faviconLogo from '../../../../public/favicon.svg?raw';
 import { Logo } from './Logo';
 import { LOGO_HEIGHT, LOGO_WIDTH } from './logoArt';

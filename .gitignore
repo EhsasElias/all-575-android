@@ -1,3 +1,33 @@
-# Test artifacts that the repository root .gitignore does not cover
+# Dependencies
+node_modules/
+
+# Environment and secrets
+.env
+.env.*
+!.env.example
+*.pem
+*.key
+*.jks
+*.keystore
+google-services.json
+
+# Build output
+dist/
+build/
+android/app/build/
+android/.gradle/
+android/local.properties
+android/app/src/main/assets/public/
+android/app/src/main/assets/capacitor*.json
+
+# Test artifacts
+coverage/
 playwright-report/
 test-results/
+*.log
+
+# Editors and OS
+.idea/
+.vscode/
+.DS_Store
+Thumbs.db

@@ -1,0 +1,60 @@
+# ALL 5.75 customer app
+
+The customer app of ALL 5.75 (كل شيء بـ 5.75): a Saudi marketplace where everything costs 5.75 SAR, VAT included.
+React 19 and TypeScript, built with Vite, wrapped by Capacitor for Android. Arabic (right-to-left, the default) and English.
+
+## The two repositories
+
+|                                       | Repository                                                                              | Branch |
+| ------------------------------------- | --------------------------------------------------------------------------------------- | ------ |
+| **Front end** (this repo)             | [EhsasElias/all-575-android](https://github.com/EhsasElias/all-575-android)             | `v2`   |
+| **Backend**                           | [EhsasElias/all-575-api](https://github.com/EhsasElias/all-575-api)                     | `v2`   |
+| Plan, roadmap and the combined source | [EhsasElias/all-575-platform](https://github.com/EhsasElias/all-575-platform) (private) | `main` |
+
+The only thing the two share is the **API contract**, `docs/api/openapi.json`. The backend owns it. This app keeps a
+copy, and [`api-contract.json`](api-contract.json) pins the exact backend commit and the SHA-256 of that copy.
+The TypeScript types in `src/shared/api/schema.d.ts` are generated from it, so a backend change cannot break the app silently.
+
+```
+npm run api:check    # the copy matches the pin, and the pin matches the backend at that commit (CI runs this)
+npm run api:latest   # has the backend published a newer contract?
+npm run api:update   # take the backend's newest contract, then regenerate the types
+```
+
+When the backend changes its contract: run `npm run api:update`, fix what the type checker reports, commit the three changed files
+(`api-contract.json`, `docs/api/openapi.json`, `src/shared/api/schema.d.ts`).
+
+## Run it
+
+Needs Node 22. The backend must be running (see its README: `composer setup`, `php artisan serve`).
+
+```
+npm ci
+VITE_API_BASE_URL=http://localhost:8000/api/v1 npm run dev
+```
+
+| Command                                                       | What it does                                        |
+| ------------------------------------------------------------- | --------------------------------------------------- |
+| `npm test`                                                    | unit and screen tests (Vitest, Testing Library)     |
+| `npm run lint` / `npm run typecheck` / `npm run format:check` | the quality gates CI runs                           |
+| `npm run build`                                               | production build into `dist/`                       |
+| `npm run test:e2e`                                            | browser tests (Playwright)                          |
+| `npm run cap:sync`                                            | build and copy the web app into the Android project |
+
+## Testing on a phone
+
+The API address can be set after the build in `public/config.js` (`apiBaseUrl`), so one build can be pointed at any server.
+A build made with `VITE_TEST_PANEL=true` shows buttons that play the payment provider on a test server; ordinary builds do not contain them.
+Static hosts need the included `public/_redirects` so page links work.
+
+## How it is organised
+
+```
+src/app/       the shell: router, providers, tab bar
+src/features/  one folder per feature (catalog, cart, auth, account, addresses, checkout, orders, welcome); features import each other only through their index file
+src/shared/    API client, session, i18n, design tokens, UI kit; never imports from features or app
+brand/         the exact logo and brand images
+```
+
+Rules the linters enforce: strict TypeScript with no `as` casts, no default exports, files of at most 250 lines, logical CSS properties only (so right-to-left is correct by default).
+The sign-in token is never kept in web storage (memory on the web, secure storage on Android).

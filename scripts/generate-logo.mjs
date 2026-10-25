@@ -2,7 +2,7 @@
 // Run it with `npm run logo:generate` after the brand logo changes.
 import { readFileSync, writeFileSync } from 'node:fs';
 
-const SOURCE = new URL('../../../brand/logo.svg', import.meta.url);
+const SOURCE = new URL('../brand/logo.svg', import.meta.url);
 const TARGET = new URL('../src/shared/ui/Logo/logoArt.tsx', import.meta.url);
 
 const svg = readFileSync(SOURCE, 'utf8');

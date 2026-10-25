@@ -20,7 +20,10 @@
     "test:e2e": "playwright test",
     "cap:sync": "npm run build && cap sync android",
     "logo:generate": "node scripts/generate-logo.mjs && prettier --write src/shared/ui/Logo/logoArt.tsx",
-    "api:types": "openapi-typescript ../../docs/api/openapi.json -o src/shared/api/schema.d.ts"
+    "api:types": "openapi-typescript docs/api/openapi.json -o src/shared/api/schema.d.ts",
+    "api:check": "node scripts/api-contract.mjs check",
+    "api:update": "node scripts/api-contract.mjs update && npm run api:types",
+    "api:latest": "node scripts/api-contract.mjs latest"
   },
   "dependencies": {
     "@aparajita/capacitor-secure-storage": "^8.0.1",

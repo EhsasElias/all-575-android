@@ -1,0 +1,52 @@
+name: CI
+
+on:
+  pull_request:
+  push:
+    branches: [main, v2]
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  app:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci
+      - name: API contract is the backend's, at the version api-contract.json pins
+        run: npm run api:check
+      - name: Is the pinned contract still the newest? (a warning, not a failure)
+        continue-on-error: true
+        run: npm run api:latest
+      - name: Generated API types match the contract
+        run: npm run api:types && git diff --exit-code -- src/shared/api/schema.d.ts
+      - run: npm run format:check
+      - run: npm run lint
+      - run: npm run typecheck
+      - run: npm test
+      - run: npm run build
+      - run: npm audit --omit=dev --audit-level=high
+
+  secret-scan:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      # The container image is used directly: the gitleaks GitHub Action needs a paid
+      # license for organization repositories, the binary does not.
+      - name: Scan the whole history for secrets
+        run: |
+          docker run --rm --user "$(id -u):$(id -g)" -v "$PWD:/repo" \
+            ghcr.io/gitleaks/gitleaks:v8.28.0 detect --source /repo --redact --verbose --no-banner

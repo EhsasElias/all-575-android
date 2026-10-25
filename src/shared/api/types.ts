@@ -1,6 +1,6 @@
 import type { components } from './schema';
 
-/** Every response object of the customer API, generated from docs/api/openapi.json (`npm run api:types`). */
+/** Every response object of the customer API, generated from docs/api/openapi.json, the backend's contract at the version pinned in api-contract.json (`npm run api:types`). */
 export type Schemas = components['schemas'];
 
 /** The common wrapper around a single resource. */

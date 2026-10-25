@@ -94,6 +94,11 @@ export default defineConfig([
     extends: [tseslint.configs.disableTypeChecked],
   },
   {
+    // Command-line scripts talk to the terminal.
+    files: ['scripts/**/*.mjs'],
+    rules: { 'no-console': 'off' },
+  },
+  {
     files: ['**/*.config.{js,ts}'],
     rules: { 'no-restricted-exports': 'off' },
   },
