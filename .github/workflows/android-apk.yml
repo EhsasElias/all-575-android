@@ -1,0 +1,62 @@
+name: Build Android APK
+
+# A test build you install by hand on an Android phone. Run it from the Actions tab: "Run workflow", then
+# give the address of the backend API (HTTPS only: the app refuses plain HTTP). The APK is attached to the
+# run as an artifact for 14 days. It is signed with the debug key, so it is for testing, not for the Play Store.
+on:
+  workflow_dispatch:
+    inputs:
+      api_base_url:
+        description: 'Backend API address, for example https://xxxx.trycloudflare.com/api/v1'
+        required: true
+        default: 'https://example.invalid/api/v1'
+      test_panel:
+        description: 'Show the buttons that play the payment provider (only works against a test server)'
+        type: boolean
+        default: true
+
+permissions:
+  contents: read
+
+jobs:
+  apk:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: 21
+      - run: npm ci
+      - name: Put the API address in public/config.js
+        env:
+          API_BASE_URL: ${{ inputs.api_base_url }}
+        run: |
+          case "$API_BASE_URL" in
+            https://*) ;;
+            *) echo "The API address must start with https://" >&2; exit 1 ;;
+          esac
+          node -e "require('fs').writeFileSync('public/config.js', 'window.ALL575_CONFIG = ' + JSON.stringify({ apiBaseUrl: process.env.API_BASE_URL }) + ';\n')"
+          cat public/config.js
+      - name: Build the web app
+        run: npm run build
+        env:
+          VITE_TEST_PANEL: ${{ inputs.test_panel && 'true' || '' }}
+      - run: npx cap sync android
+      - name: Build the debug APK
+        working-directory: android
+        run: |
+          chmod +x gradlew
+          ./gradlew assembleDebug --no-daemon
+      - name: Keep the APK
+        uses: actions/upload-artifact@v4
+        with:
+          name: all-575-test-apk
+          path: android/app/build/outputs/apk/debug/app-debug.apk
+          retention-days: 14
+          if-no-files-found: error
