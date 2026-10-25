@@ -8,7 +8,7 @@ type Outcome = 'succeed' | 'fail';
 
 /**
  * Plays the payment provider on the local server (`POST /dev/payments/{id}/simulate`). The route does not exist
- * anywhere else, and this module is only ever loaded when `import.meta.env.DEV` is true, so it never ships.
+ * anywhere else, and this module is only loaded in development or in a tester's build (`VITE_TEST_PANEL=true`).
  */
 export function DevPaymentPanel({ paymentId }: { paymentId: string }) {
   const queryClient = useQueryClient();

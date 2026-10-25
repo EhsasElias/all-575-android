@@ -8,8 +8,11 @@ import { PaymentPending } from './PaymentPending';
 import { PaymentRetry } from './PaymentRetry';
 import { usePaymentFlow } from './usePaymentFlow';
 
-// Only in development; in a production build this whole branch (and the panel's code) is removed.
-const DevPaymentPanel = import.meta.env.DEV
+// Only in development, or in a build made on purpose for testers with VITE_TEST_PANEL=true (the server's simulate
+// route exists only on a local or testing server, so the buttons do nothing anywhere else). In an ordinary
+// production build this whole branch, and the panel's code, is removed.
+const showTestPanel = import.meta.env.DEV || import.meta.env.VITE_TEST_PANEL === 'true';
+const DevPaymentPanel = showTestPanel
   ? lazy(() => import('./DevPaymentPanel').then((module) => ({ default: module.DevPaymentPanel })))
   : null;
 
