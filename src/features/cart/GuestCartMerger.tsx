@@ -22,8 +22,8 @@ export function GuestCartMerger() {
       onMerged: () => {
         showToast({ message: t('merge.done'), variant: 'success' });
       },
-      onFailed: () => {
-        showToast({ message: t('merge.failed'), variant: 'error' });
+      onFailed: (_reason, willRetry) => {
+        showToast({ message: t(willRetry ? 'merge.failed' : 'merge.dropped'), variant: 'error' });
       },
     });
   });

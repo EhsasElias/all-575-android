@@ -1,6 +1,6 @@
 import type { QueryClient } from '@tanstack/react-query';
 import { useSyncExternalStore } from 'react';
-import { refusalFromError } from './cartRefusal';
+import { isPermanentRefusal, refusalFromError } from './cartRefusal';
 import type { CartRefusal } from './cartTypes';
 import { toMergeItems } from './guestCartRules';
 import { guestCartStore } from './guestCartStore';
@@ -10,7 +10,8 @@ import { mergeCartItems } from './serverCart';
 export type MergeEffects = {
   queryClient: QueryClient;
   onMerged: () => void;
-  onFailed: (reason: CartRefusal) => void;
+  /** `willRetry`: the lines stay on the device and are tried again on the next mount. */
+  onFailed: (reason: CartRefusal, willRetry: boolean) => void;
 };
 
 // Whether the last attempt failed. The lines then stay on the device and are tried again on the next mount.
@@ -50,8 +51,14 @@ async function mergeNow({ queryClient, onMerged, onFailed }: MergeEffects): Prom
   try {
     await mergeCartItems(toMergeItems(lines));
   } catch (error) {
+    if (isPermanentRefusal(error)) {
+      // Trying again would be refused again, and the lines would sit on the device for ever, out of sight.
+      guestCartStore.clear();
+      onFailed(refusalFromError(error), false);
+      return;
+    }
     setLastAttemptFailed(true);
-    onFailed(refusalFromError(error));
+    onFailed(refusalFromError(error), true);
     return;
   }
 

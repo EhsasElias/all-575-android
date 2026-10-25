@@ -165,6 +165,28 @@ describe('when the merge fails', () => {
     expect(screen.queryByText('Boom')).not.toBeInTheDocument();
   });
 
+  it('does not keep the lines for ever when the server refuses them for good, and says to add them again', async () => {
+    const user = userEvent.setup();
+    const { api } = serveCart({
+      'POST /cart/merge': {
+        status: 422,
+        body: { message: 'Invalid', code: 'variant_unavailable' },
+      },
+    });
+    guestCartStore.write([guestLine(BISCUITS, 2)]);
+    await renderCartPart(page);
+
+    await user.click(signInButton());
+
+    expect(
+      await screen.findByText(
+        'We could not add the items you chose before signing in. Please add them to your cart again.',
+      ),
+    ).toBeInTheDocument();
+    expect(guestCartStore.getSnapshot()).toEqual([]);
+    expect(mergeCalls(api)).toHaveLength(1);
+  });
+
   it('keeps the lines when the network is down', async () => {
     const user = userEvent.setup();
     serveCart({ 'POST /cart/merge': 'offline' });

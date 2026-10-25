@@ -22,3 +22,13 @@ export function refusalFromError(error: unknown): CartRefusal {
   }
   return (isApiError(error) ? REFUSALS_BY_KIND[error.kind] : undefined) ?? 'unknown';
 }
+
+/**
+ * A refusal that asking again will not change (the request itself is wrong), as opposed to a bad connection, a
+ * server error, a refused session or a rate limit, which are worth another try.
+ */
+export function isPermanentRefusal(error: unknown): boolean {
+  if (!isApiError(error) || error.status === null) return false;
+  const retryable = [401, 408, 429].includes(error.status);
+  return error.status >= 400 && error.status < 500 && !retryable;
+}

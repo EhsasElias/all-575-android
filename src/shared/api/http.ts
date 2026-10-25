@@ -116,19 +116,19 @@ export function createHttpClient(config: HttpClientConfig): HttpClient {
   async function buildHeaders(
     hasBody: boolean,
     extra: Record<string, string> = {},
-  ): Promise<{ headers: Headers; hasToken: boolean }> {
+  ): Promise<{ headers: Headers; token: string | null }> {
     const headers = new Headers({ Accept: 'application/json', ...extra });
     headers.set('Accept-Language', config.getLanguage());
     if (hasBody) headers.set('Content-Type', 'application/json');
     headers.delete('Authorization');
     const token = await config.tokenStore.get();
     if (token !== null) headers.set('Authorization', `Bearer ${token}`);
-    return { headers, hasToken: token !== null };
+    return { headers, token };
   }
 
   async function request<T>(method: string, path: string, options: SendOptions): Promise<T> {
     const hasBody = options.body !== undefined;
-    const { headers, hasToken } = await buildHeaders(hasBody, options.headers);
+    const { headers, token } = await buildHeaders(hasBody, options.headers);
     const { response, body: text } = await sendWithTimeout(
       fetchFn,
       buildUrl(config.baseUrl, path, options.query),
@@ -138,7 +138,7 @@ export function createHttpClient(config: HttpClientConfig): HttpClient {
       (res) => res.text(),
     );
 
-    if (!response.ok) await rejectWith(response, text, hasToken);
+    if (!response.ok) await rejectWith(response, text, token);
 
     try {
       // eslint-disable-next-line @typescript-eslint/consistent-type-assertions -- The caller names the response type; the generated OpenAPI client will provide it per endpoint.
@@ -153,7 +153,7 @@ export function createHttpClient(config: HttpClientConfig): HttpClient {
   }
 
   async function download(path: string, options: RequestOptions): Promise<Download> {
-    const { headers, hasToken } = await buildHeaders(false, options.headers);
+    const { headers, token } = await buildHeaders(false, options.headers);
     headers.set('Accept', '*/*');
     const { response, body: blob } = await sendWithTimeout(
       fetchFn,
@@ -164,16 +164,31 @@ export function createHttpClient(config: HttpClientConfig): HttpClient {
       (res) => res.blob(),
     );
 
-    if (!response.ok) await rejectWith(response, await blob.text(), hasToken);
+    if (!response.ok) await rejectWith(response, await blob.text(), token);
     return { blob, filename: readFilename(response.headers.get('Content-Disposition')) };
   }
 
-  async function rejectWith(response: Response, text: string, hasToken: boolean): Promise<never> {
-    // An expired or revoked token is useless from now on; drop it.
-    if (response.status === 401 && hasToken) {
+  /**
+   * An expired or revoked token is useless from now on: drop it and tell the app. But only the token this request
+   * carried. If the customer signed in again while it was on its way, the new token is not the one that was refused.
+   */
+  async function dropRefusedToken(sentToken: string): Promise<void> {
+    try {
+      if ((await config.tokenStore.get()) !== sentToken) return;
       await config.tokenStore.clear();
-      config.onUnauthorized?.();
+    } catch {
+      // Storage trouble must not hide the real answer. The customer is signed out either way, and the next start
+      // asks the server about the leftover token again.
     }
+    config.onUnauthorized?.();
+  }
+
+  async function rejectWith(
+    response: Response,
+    text: string,
+    sentToken: string | null,
+  ): Promise<never> {
+    if (response.status === 401 && sentToken !== null) await dropRefusedToken(sentToken);
     throw createApiError({
       status: response.status,
       body: tryParseJson(text),

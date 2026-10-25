@@ -57,6 +57,8 @@ const en = {
     done: 'We added the items you chose before signing in',
     failed:
       'We could not add the items you chose before signing in. They are saved on this device and we will try again next time.',
+    dropped:
+      'We could not add the items you chose before signing in. Please add them to your cart again.',
   },
 };
 
@@ -115,6 +117,8 @@ const ar: Translations<typeof en> = {
     done: 'أضفنا المنتجات التي اخترتها قبل تسجيل الدخول',
     failed:
       'تعذّرت إضافة المنتجات التي اخترتها قبل تسجيل الدخول. هي محفوظة على هذا الجهاز وسنعيد المحاولة لاحقًا.',
+    dropped:
+      'تعذّرت إضافة المنتجات التي اخترتها قبل تسجيل الدخول. يُرجى إضافتها إلى السلة مرة أخرى.',
   },
 };
 

@@ -3,11 +3,13 @@ import { useCallback, useEffect, useMemo, useState, type ReactNode } from 'react
 import {
   authEvents,
   http as defaultHttp,
+  isApiError,
   tokenStore as defaultTokenStore,
   type Data,
   type HttpClient,
   type TokenStore,
 } from '@/shared/api';
+import { RESTORE_RETRY_DELAYS_MS, waitBeforeRetry } from './restoreRetry';
 import {
   SessionContext,
   type Session,
@@ -44,19 +46,38 @@ export function SessionProvider({
   useEffect(() => {
     const controller = new AbortController();
 
+    // Storage that cannot be read (a locked or damaged keystore) is treated like no token: the customer can still sign in.
+    async function hasStoredToken(): Promise<boolean> {
+      try {
+        return (await store.get()) !== null;
+      } catch {
+        return false;
+      }
+    }
+
     async function restore() {
-      if ((await store.get()) === null) {
+      if (!(await hasStoredToken())) {
         setStatus('guest');
         return;
       }
-      try {
-        const { data } = await client.get<Data<SessionUser>>('/me', { signal: controller.signal });
-        setUser(data);
-        setStatus('signed-in');
-      } catch {
-        if (controller.signal.aborted) return;
-        // A 401 has already made the client drop the token; an offline failure leaves it for the next start.
-        setStatus('guest');
+      for (let attempt = 0; ; attempt++) {
+        try {
+          const { data } = await client.get<Data<SessionUser>>('/me', {
+            signal: controller.signal,
+          });
+          setUser(data);
+          setStatus('signed-in');
+          return;
+        } catch (error) {
+          if (controller.signal.aborted) return;
+          // Meanwhile the customer can browse as a guest. A 401 has already made the client drop the token, so
+          // that is final; anything else (offline, a timeout, a server error) leaves the token and asks again.
+          setStatus('guest');
+          const delay = RESTORE_RETRY_DELAYS_MS[attempt];
+          if ((isApiError(error) && error.kind === 'unauthenticated') || delay === undefined)
+            return;
+          if (!(await waitBeforeRetry(delay, controller.signal))) return;
+        }
       }
     }
 

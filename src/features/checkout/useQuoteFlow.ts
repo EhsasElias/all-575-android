@@ -57,7 +57,8 @@ export function useQuoteFlow(addressId: number | null) {
         event.type === 'updated' &&
         event.action.type === 'invalidate' &&
         matchQuery({ queryKey: cartQueryKey }, event.query);
-      if (cartInvalidated) void refetch();
+      // One invalidation reports once per cart query; asking for the quote again must not restart a request already on its way.
+      if (cartInvalidated) void refetch({ cancelRefetch: false });
     });
   }, [queryClient, addressId, refetch]);
 
