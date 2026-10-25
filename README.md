@@ -47,6 +47,18 @@ The API address can be set after the build in `public/config.js` (`apiBaseUrl`),
 A build made with `VITE_TEST_PANEL=true` shows buttons that play the payment provider on a test server; ordinary builds do not contain them.
 Static hosts need the included `public/_redirects` so page links work.
 
+## Deploy on Railway
+
+`nixpacks.toml` and `railway.json` are all Railway needs: it builds the app (`npm run build`) and serves `dist/` as a static site, sending unknown paths to `index.html`.
+In a Railway project: **New > GitHub repo > this repository, branch `v2`**, open **Settings > Networking > Generate Domain**, then set these variables (they are used while building, so a change redeploys):
+
+| Variable            | Value                                                                                                                                                  |
+| ------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| `VITE_API_BASE_URL` | the backend's public address plus `/api/v1`, for example `https://${{Backend.RAILWAY_PUBLIC_DOMAIN}}/api/v1` (`Backend` is the backend service's name) |
+| `VITE_TEST_PANEL`   | `true` only on a test server that plays the payment provider; leave it out otherwise                                                                   |
+
+Then add this app's address to the backend's `CORS_ALLOWED_ORIGINS`. The Android test build uses the same backend address: Actions > Build Android APK > Run workflow.
+
 ## How it is organised
 
 ```

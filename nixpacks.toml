@@ -1,0 +1,10 @@
+# How Railway builds and serves the app (a static site: the build output is served as it is).
+[variables]
+NIXPACKS_NODE_VERSION = "22"
+
+[phases.build]
+cmds = ["npm run build"]
+
+# -s sends every unknown path to index.html, so links like /products/milk work after a reload.
+[start]
+cmd = "npx --yes serve@14 -s dist -l $PORT"
