@@ -32,6 +32,21 @@
   overflow-x: auto;
   list-style: none;
   scroll-snap-type: x proximity;
+
+  /* A swipe or the trackpad scrolls the row, and a tile that gets focus scrolls into view: no bar is needed. */
+  overscroll-behavior-inline: contain;
+  scrollbar-width: none;
+  -webkit-overflow-scrolling: touch;
+}
+
+.strip::-webkit-scrollbar {
+  display: none;
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .strip {
+    scroll-behavior: smooth;
+  }
 }
 
 .stripItem {
