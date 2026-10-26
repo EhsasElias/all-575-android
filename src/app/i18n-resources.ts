@@ -5,6 +5,7 @@ import { cartLocales } from '@/features/cart';
 import { catalogLocales } from '@/features/catalog';
 import { checkoutLocales } from '@/features/checkout';
 import { ordersLocales } from '@/features/orders';
+import { testServerLocales } from '@/features/testserver';
 import { welcomeLocales } from '@/features/welcome';
 import { commonLocales } from '@/shared/i18n';
 
@@ -19,6 +20,7 @@ export const appResources = {
     account: accountLocales.en,
     addresses: addressesLocales.en,
     auth: authLocales.en,
+    testserver: testServerLocales.en,
   },
   ar: {
     common: commonLocales.ar,
@@ -30,5 +32,6 @@ export const appResources = {
     account: accountLocales.ar,
     addresses: addressesLocales.ar,
     auth: authLocales.ar,
+    testserver: testServerLocales.ar,
   },
 };

@@ -47,6 +47,17 @@ The API address can be set after the build in `public/config.js` (`apiBaseUrl`),
 A build made with `VITE_TEST_PANEL=true` shows buttons that play the payment provider on a test server; ordinary builds do not contain them.
 Static hosts need the included `public/_redirects` so page links work.
 
+### A test build with the server address typed in the app
+
+A build made with `VITE_TEST_PANEL=true` also shows a bar at the top of every screen with the server it talks to and a **Change server** link.
+The screen behind it takes an address such as `192.168.1.23:8000` (the API path is added), can check that the server answers, and saves it on the device.
+That is how the Android test app is pointed at a laptop on the same Wi-Fi without building it again.
+A saved address wins over `config.js` and the built-in address. A build without `VITE_TEST_PANEL` has no such screen, no bar and ignores any saved address.
+
+For Android, run **Actions > Build Android APK > Run workflow** with the API address left empty and "test build" ticked.
+A test build also allows plain `http` to a server on your network (`usesCleartextTraffic` and mixed content are off in every other build), so never give it to customers.
+The backend then needs `APP_URL=http://<laptop address>:8000`, `CORS_ALLOWED_ORIGINS` containing `https://localhost` (the origin of the Android app) and `php artisan serve --host=0.0.0.0`.
+
 ## Deploy on Railway
 
 `nixpacks.toml` and `railway.json` are all Railway needs: it builds the app (`npm run build`) and serves `dist/` as a static site, sending unknown paths to `index.html`.

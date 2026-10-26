@@ -26,6 +26,7 @@ export const routePaths = {
   terms: '/legal/terms',
   privacy: '/legal/privacy',
   signIn: '/sign-in',
+  testServer: '/test-server',
 } as const;
 
 const segment = (value: string | number): string => encodeURIComponent(String(value));

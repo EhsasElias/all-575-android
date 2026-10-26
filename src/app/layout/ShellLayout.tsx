@@ -1,5 +1,6 @@
 import { Outlet } from 'react-router';
 import { GuestCartMerger, useCartItemCount } from '@/features/cart';
+import { TestBuildBanner } from '@/features/testserver';
 import { BottomNav } from './BottomNav';
 import { MAIN_CONTENT_ID } from './SkipLink';
 import { TopBar } from './TopBar';
@@ -10,6 +11,7 @@ export function ShellLayout() {
 
   return (
     <div className={styles.shell}>
+      <TestBuildBanner />
       <TopBar />
       <main id={MAIN_CONTENT_ID} tabIndex={-1} className={styles.main}>
         <Outlet />

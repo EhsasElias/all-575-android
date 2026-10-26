@@ -1,17 +1,18 @@
 name: Build Android APK
 
-# A test build you install by hand on an Android phone. Run it from the Actions tab: "Run workflow", then
-# give the address of the backend API (HTTPS only: the app refuses plain HTTP). The APK is attached to the
-# run as an artifact for 14 days. It is signed with the debug key, so it is for testing, not for the Play Store.
+# A test build you install by hand on an Android phone. Run it from the Actions tab: "Run workflow".
+# Either give the address of the backend API (HTTPS only), or leave it empty and tick "test build": the app then has
+# a screen where the tester types the server address (for example a laptop on the same Wi-Fi). The APK is attached
+# to the run as an artifact for 14 days. It is signed with the debug key, so it is for testing, not for the Play Store.
 on:
   workflow_dispatch:
     inputs:
       api_base_url:
-        description: 'Backend API address, for example https://xxxx.trycloudflare.com/api/v1'
-        required: true
-        default: 'https://example.invalid/api/v1'
+        description: 'Backend API address (https only), for example https://xxxx.trycloudflare.com/api/v1. Empty: type it inside the app (needs the test build)'
+        required: false
+        default: ''
       test_panel:
-        description: 'Show the buttons that play the payment provider (only works against a test server)'
+        description: 'Test build: payment-simulation buttons, a bar to change the server address inside the app, and plain http to a server on your network. Never for customers'
         type: boolean
         default: true
 
@@ -36,7 +37,16 @@ jobs:
       - name: Put the API address in public/config.js
         env:
           API_BASE_URL: ${{ inputs.api_base_url }}
+          TEST_BUILD: ${{ inputs.test_panel && 'true' || '' }}
         run: |
+          if [ -z "$API_BASE_URL" ]; then
+            if [ "$TEST_BUILD" != "true" ]; then
+              echo "Give the API address, or tick the test build so the server can be typed inside the app." >&2
+              exit 1
+            fi
+            echo "No address built in: the tester types it inside the app."
+            exit 0
+          fi
           case "$API_BASE_URL" in
             https://*) ;;
             *) echo "The API address must start with https://" >&2; exit 1 ;;
@@ -47,7 +57,14 @@ jobs:
         run: npm run build
         env:
           VITE_TEST_PANEL: ${{ inputs.test_panel && 'true' || '' }}
+      - name: Allow plain http to a local server (test build only)
+        if: ${{ inputs.test_panel }}
+        run: |
+          sed -i 's/android:usesCleartextTraffic="false"/android:usesCleartextTraffic="true"/' android/app/src/main/AndroidManifest.xml
+          grep -q 'usesCleartextTraffic="true"' android/app/src/main/AndroidManifest.xml
       - run: npx cap sync android
+        env:
+          ALL575_TEST_BUILD: ${{ inputs.test_panel && 'true' || '' }}
       - name: Build the debug APK
         working-directory: android
         run: |

@@ -8,7 +8,8 @@ const config: CapacitorConfig = {
     cleartext: false,
   },
   android: {
-    allowMixedContent: false,
+    // Only the manual test build (see android-apk.yml) may talk plain http to a server on the local network.
+    allowMixedContent: process.env.ALL575_TEST_BUILD === 'true',
   },
 };
 

@@ -6,6 +6,7 @@ import { cartRoutes } from '@/features/cart';
 import { catalogRoutes } from '@/features/catalog';
 import { checkoutRoutes } from '@/features/checkout';
 import { ordersRoutes } from '@/features/orders';
+import { testServerRoutes } from '@/features/testserver';
 import { WelcomeScreen, hasSeenWelcome } from '@/features/welcome';
 import { routePaths, titled } from '@/shared/lib';
 import { RequireAuth } from '@/shared/session';
@@ -38,6 +39,7 @@ export const appRoutes: RouteObject[] = [
           ...cartRoutes,
           ...accountRoutes,
           ...authRoutes,
+          ...testServerRoutes,
           {
             element: <RequireAuth />,
             children: [
