@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { traceImageFailure } from '@/shared/api';
 import { cx } from '@/shared/lib';
 import { Icon } from '@/shared/ui';
 import styles from './CatalogImage.module.css';
@@ -39,6 +40,7 @@ export function CatalogImage({
           decoding="async"
           className={styles.picture}
           onError={() => {
+            traceImageFailure(src);
             setFailed(true);
           }}
         />

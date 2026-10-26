@@ -56,7 +56,7 @@ A saved address wins over `config.js` and the built-in address. A build without 
 
 For Android, run **Actions > Build Android APK > Run workflow** with the API address left empty and "test build" ticked.
 A test build also allows plain `http` to a server on your network (`usesCleartextTraffic` and mixed content are off in every other build), so never give it to customers.
-The backend then needs `APP_URL=http://<laptop address>:8000`, `CORS_ALLOWED_ORIGINS` containing `https://localhost` (the origin of the Android app) and `php artisan serve --host=0.0.0.0`.
+The backend then needs `APP_URL=http://<laptop address>:8000`, `CORS_ALLOWED_ORIGINS` containing `https://localhost` (the origin of the Android app; the test build runs from `http://localhost`, which a server with `APP_ENV=local` accepts by itself) and `php artisan serve --host=0.0.0.0`.
 
 ## Deploy on Railway
 

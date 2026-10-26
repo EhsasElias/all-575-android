@@ -8,5 +8,6 @@ export { createMemoryTokenStore, createTokenStore, readToken } from './token-sto
 export type { TokenReadProblem, TokenStore } from './token-store';
 export { getTraceSnapshot, subscribeToTrace } from './requestTrace';
 export { describeCause } from './traceDetails';
+export { traceImageFailure } from './traceImage';
 export type { TraceEntry, TraceStage } from './requestTrace';
 export type { Data, Page, Schemas } from './types';
