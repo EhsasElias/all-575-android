@@ -1,5 +1,5 @@
 import { afterEach, describe, expect, it, vi } from 'vitest';
-import { readToken, type TokenStore } from './token-store';
+import { readToken, TOKEN_READ_TIMEOUT_MS, type TokenStore } from './token-store';
 
 const storeWith = (get: TokenStore['get']): TokenStore => ({
   get,
@@ -48,7 +48,7 @@ describe('readToken', () => {
       onProblem,
     );
 
-    await vi.advanceTimersByTimeAsync(4_999);
+    await vi.advanceTimersByTimeAsync(TOKEN_READ_TIMEOUT_MS - 1);
     expect(onProblem).not.toHaveBeenCalled();
     await vi.advanceTimersByTimeAsync(1);
 

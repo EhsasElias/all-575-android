@@ -20,6 +20,8 @@ type ApiErrorInit = {
   retryAfterSeconds?: number;
   code?: string;
   details?: Readonly<Record<string, unknown>>;
+  /** What actually went wrong underneath (e.g. the fetch failure); for diagnosis only, never shown to customers. */
+  cause?: unknown;
 };
 
 export class ApiError extends Error {
@@ -41,8 +43,9 @@ export class ApiError extends Error {
     retryAfterSeconds,
     code,
     details,
+    cause,
   }: ApiErrorInit) {
-    super(message);
+    super(message, cause === undefined ? undefined : { cause });
     this.name = 'ApiError';
     this.kind = kind;
     this.status = status ?? null;

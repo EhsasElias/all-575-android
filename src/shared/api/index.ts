@@ -7,5 +7,6 @@ export type { HttpClient, HttpClientConfig, RequestOptions } from './http';
 export { createMemoryTokenStore, createTokenStore, readToken } from './token-store';
 export type { TokenReadProblem, TokenStore } from './token-store';
 export { getTraceSnapshot, subscribeToTrace } from './requestTrace';
+export { describeCause } from './traceDetails';
 export type { TraceEntry, TraceStage } from './requestTrace';
 export type { Data, Page, Schemas } from './types';

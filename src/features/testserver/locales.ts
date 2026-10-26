@@ -36,6 +36,17 @@ const en = {
     done: '{{status}}, {{ms}} ms',
     failed: 'failed: {{reason}}, {{ms}} ms',
   },
+  storage: {
+    title: 'Secure storage',
+    lead: 'Where the sign-in is kept on this phone. Every request reads it first.',
+    check: 'Check secure storage',
+    checking: 'Checking…',
+    answered: 'Answered in {{ms}} ms: {{token}}.',
+    noToken: 'no sign-in saved',
+    hasToken: 'a sign-in is saved',
+    failed: 'Failed in {{ms}} ms: {{reason}}',
+    silent: 'No answer after {{seconds}} s.',
+  },
 };
 
 const ar: Translations<typeof en> = {
@@ -73,6 +84,17 @@ const ar: Translations<typeof en> = {
     sending: 'ينتظر الخادم، {{seconds}} ث',
     done: '{{status}}، {{ms}} ملي ثانية',
     failed: 'فشل: {{reason}}، {{ms}} ملي ثانية',
+  },
+  storage: {
+    title: 'التخزين الآمن',
+    lead: 'المكان الذي يُحفظ فيه تسجيل الدخول على هذا الهاتف. كل طلب يقرأ منه أولًا.',
+    check: 'افحص التخزين الآمن',
+    checking: 'جارٍ الفحص…',
+    answered: 'ردّ خلال {{ms}} ملي ثانية: {{token}}.',
+    noToken: 'لا يوجد تسجيل دخول محفوظ',
+    hasToken: 'يوجد تسجيل دخول محفوظ',
+    failed: 'فشل خلال {{ms}} ملي ثانية: {{reason}}',
+    silent: 'لا رد بعد {{seconds}} ث.',
   },
 };
 

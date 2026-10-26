@@ -31,7 +31,7 @@ export function createTokenStore(): TokenStore {
   return Capacitor.isNativePlatform() ? createSecureTokenStore() : createMemoryTokenStore();
 }
 
-const TOKEN_READ_TIMEOUT_MS = 5_000;
+export const TOKEN_READ_TIMEOUT_MS = 3_000;
 const TIMED_OUT = Symbol('timed out');
 
 export type TokenReadProblem = 'unreadable' | 'timeout';

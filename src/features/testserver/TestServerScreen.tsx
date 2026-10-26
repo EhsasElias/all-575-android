@@ -2,6 +2,7 @@ import { useTranslation } from 'react-i18next';
 import { env } from '@/shared/lib';
 import { Button, TextField } from '@/shared/ui';
 import { RequestLog } from './RequestLog';
+import { StorageCheck } from './StorageCheck';
 import { useServerForm } from './useServerForm';
 import styles from './TestServerScreen.module.css';
 
@@ -71,6 +72,8 @@ export function TestServerScreen() {
           {t('reset')}
         </Button>
       </form>
+
+      <StorageCheck />
 
       <RequestLog />
     </div>

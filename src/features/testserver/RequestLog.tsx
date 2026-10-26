@@ -10,12 +10,11 @@ function seconds(entry: TraceEntry, now: number): number {
 
 function outcome(entry: TraceEntry, now: number, t: TFunction<'testserver'>): string {
   const ms = (entry.endedAt ?? now) - entry.startedAt;
-  const note = entry.stage === 'sending' && entry.detail !== '' ? ` (${entry.detail})` : '';
   switch (entry.stage) {
     case 'preparing':
       return t('log.preparing', { seconds: seconds(entry, now) });
     case 'sending':
-      return t('log.sending', { seconds: seconds(entry, now) }) + note;
+      return t('log.sending', { seconds: seconds(entry, now) });
     case 'done':
       return t('log.done', { status: entry.detail, ms });
     case 'failed':
@@ -51,6 +50,11 @@ export function RequestLog() {
                 {entry.method} {entry.path}
               </bdi>
               <span>{outcome(entry, log.now, t)}</span>
+              {entry.note !== '' && (
+                <bdi dir="ltr" className={styles.note}>
+                  {entry.note}
+                </bdi>
+              )}
             </li>
           ))}
         </ul>

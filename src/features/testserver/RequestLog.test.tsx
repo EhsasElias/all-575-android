@@ -59,13 +59,16 @@ describe('Test build: the recent requests', () => {
     });
 
     act(() => {
-      requestTracer.begin('GET', '/categories').sending('secure storage timeout');
+      const trace = requestTracer.begin('GET', '/categories');
+      trace.note('secure storage timeout');
+      trace.sending();
     });
     await act(async () => {
       await vi.advanceTimersByTimeAsync(7_000);
     });
 
-    expect(screen.getByText('waiting for the server, 7 s (secure storage timeout)')).toBeVisible();
+    expect(screen.getByText('waiting for the server, 7 s')).toBeVisible();
+    expect(screen.getByText('secure storage timeout')).toBeVisible();
   });
 
   it('is available in Arabic', async () => {

@@ -10,15 +10,18 @@ export type TraceEntry = {
   method: string;
   path: string;
   stage: TraceStage;
-  /** The status once done, the reason once failed, or what went wrong while getting ready. */
+  /** The status once done, or the reason once failed. */
   detail: string;
+  /** Anything worth knowing about how it went: a storage problem, the cause of a failure, the start of a bad reply. */
+  note: string;
   startedAt: number;
   endedAt: number | null;
 };
 
 export type RequestTrace = {
-  /** Getting ready is over (the token was read) and the request goes out. `note` says if that had a problem. */
-  sending: (note?: string) => void;
+  /** Getting ready is over (the token was read) and the request goes out. */
+  sending: () => void;
+  note: (text: string) => void;
   done: (status: number) => void;
   failed: (reason: string) => void;
 };
@@ -45,11 +48,23 @@ export const requestTracer: RequestTracer = {
     const id = nextId++;
     publish([
       ...entries.slice(-(MAX_ENTRIES - 1)),
-      { id, method, path, stage: 'preparing', detail: '', startedAt: Date.now(), endedAt: null },
+      {
+        id,
+        method,
+        path,
+        stage: 'preparing',
+        detail: '',
+        note: '',
+        startedAt: Date.now(),
+        endedAt: null,
+      },
     ]);
     return {
-      sending: (note = '') => {
-        update(id, { stage: 'sending', detail: note });
+      sending: () => {
+        update(id, { stage: 'sending' });
+      },
+      note: (text) => {
+        update(id, { note: text });
       },
       done: (status) => {
         update(id, { stage: 'done', detail: String(status), endedAt: Date.now() });

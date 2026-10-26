@@ -52,3 +52,8 @@
 .row[data-stage='sending'] {
   border-inline-start: 4px solid var(--color-accent);
 }
+
+.note {
+  color: var(--color-text-muted);
+  font-size: var(--font-size-small);
+}

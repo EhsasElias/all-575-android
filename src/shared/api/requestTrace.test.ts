@@ -23,11 +23,12 @@ describe('the request trace', () => {
   it('records why a request failed and what went wrong while getting ready', () => {
     requestTracer.begin('POST', '/checkout').failed('timeout');
     const slow = requestTracer.begin('GET', '/store');
-    slow.sending('secure storage timeout');
+    slow.note('secure storage timeout');
+    slow.sending();
 
     expect(getTraceSnapshot()).toMatchObject([
       { path: '/checkout', stage: 'failed', detail: 'timeout' },
-      { path: '/store', stage: 'sending', detail: 'secure storage timeout' },
+      { path: '/store', stage: 'sending', note: 'secure storage timeout' },
     ]);
   });
 

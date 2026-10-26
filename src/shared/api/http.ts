@@ -1,6 +1,7 @@
 import type { Language } from '@/shared/i18n';
 import { ApiError, createApiError } from './api-error';
 import type { RequestTrace, RequestTracer } from './requestTrace';
+import { describeFailure, describeReply } from './traceDetails';
 import { readToken, type TokenStore } from './token-store';
 
 const DEFAULT_TIMEOUT_MS = 15_000;
@@ -66,12 +67,6 @@ function readFilename(contentDisposition: string | null): string | null {
   return match?.[1] ?? null;
 }
 
-/** What went wrong, for the test build's request log: the kind of failure, never the message. */
-function describeFailure(error: unknown): string {
-  if (!(error instanceof ApiError)) return 'error';
-  return error.status === null ? error.kind : `${error.kind} ${error.status}`;
-}
-
 function tryParseJson(text: string): unknown {
   try {
     return parseJson(text);
@@ -111,7 +106,7 @@ async function sendWithTimeout<Body>(
       throw new ApiError({ kind: 'timeout', message: `Request timed out after ${timeoutMs} ms` });
     }
     if (callerSignal?.aborted) throw error;
-    throw new ApiError({ kind: 'network', message: 'The network request failed' });
+    throw new ApiError({ kind: 'network', message: 'The network request failed', cause: error });
   } finally {
     clearTimeout(timer);
     callerSignal?.removeEventListener('abort', forwardAbort);
@@ -141,7 +136,9 @@ export function createHttpClient(config: HttpClientConfig): HttpClient {
     try {
       return await send<T>(method, path, options, trace);
     } catch (error) {
-      trace?.failed(describeFailure(error));
+      const { reason, note } = describeFailure(error);
+      if (note !== '') trace?.note(note);
+      trace?.failed(reason);
       throw error;
     }
   }
@@ -153,11 +150,10 @@ export function createHttpClient(config: HttpClientConfig): HttpClient {
     trace: RequestTrace | undefined,
   ): Promise<T> {
     const hasBody = options.body !== undefined;
-    let note = '';
     const { headers, token } = await buildHeaders(hasBody, options.headers, (problem) => {
-      note = `secure storage ${problem}`;
+      trace?.note(`secure storage ${problem}`);
     });
-    trace?.sending(note);
+    trace?.sending();
     const { response, body: text } = await sendWithTimeout(
       fetchFn,
       buildUrl(config.baseUrl, path, options.query),
@@ -175,6 +171,7 @@ export function createHttpClient(config: HttpClientConfig): HttpClient {
       trace?.done(response.status);
       return parsed;
     } catch {
+      trace?.note(describeReply(response, text));
       throw new ApiError({
         kind: 'unexpected',
         status: response.status,

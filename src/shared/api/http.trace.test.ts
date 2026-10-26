@@ -1,7 +1,7 @@
 import { afterEach, describe, expect, it, vi } from 'vitest';
 import { createHttpClient } from './http';
 import { clearTrace, getTraceSnapshot, requestTracer } from './requestTrace';
-import type { TokenStore } from './token-store';
+import { TOKEN_READ_TIMEOUT_MS, type TokenStore } from './token-store';
 
 const json = (status: number, body: unknown) =>
   Promise.resolve(new Response(JSON.stringify(body), { status }));
@@ -62,12 +62,12 @@ describe('http client: the request trace', () => {
     const http = client({ fetchFn, get: () => new Promise<never>(() => undefined) });
 
     const pending = http.get('/store');
-    await vi.advanceTimersByTimeAsync(1_000);
+    await vi.advanceTimersByTimeAsync(TOKEN_READ_TIMEOUT_MS - 1_000);
 
     expect(getTraceSnapshot()[0]).toMatchObject({ stage: 'preparing' });
     expect(fetchFn).not.toHaveBeenCalled();
 
-    await vi.advanceTimersByTimeAsync(4_000);
+    await vi.advanceTimersByTimeAsync(1_000);
     await pending;
   });
 
@@ -83,18 +83,71 @@ describe('http client: the request trace', () => {
     const http = client({ fetchFn, get: () => new Promise<never>(() => undefined) });
 
     const pending = http.get('/categories');
-    await vi.advanceTimersByTimeAsync(5_000);
+    await vi.advanceTimersByTimeAsync(TOKEN_READ_TIMEOUT_MS);
 
     expect(fetchFn).toHaveBeenCalledTimes(1);
     const sent = new Headers(fetchFn.mock.calls[0]?.[1]?.headers);
     expect(sent.has('Authorization')).toBe(false);
     expect(getTraceSnapshot()[0]).toMatchObject({
       stage: 'sending',
-      detail: 'secure storage timeout',
+      note: 'secure storage timeout',
     });
 
     answer(new Response('{"data":[]}', { status: 200 }));
     await expect(pending).resolves.toEqual({ data: [] });
+  });
+
+  it('notes what the browser said when a request never reached the server', async () => {
+    const http = client({
+      fetchFn: () =>
+        Promise.reject(new TypeError('Failed to fetch: net::ERR_CLEARTEXT_NOT_PERMITTED')),
+    });
+
+    await expect(http.get('/store')).rejects.toBeDefined();
+
+    expect(getTraceSnapshot()[0]).toMatchObject({
+      detail: 'network',
+      note: 'TypeError: Failed to fetch: net::ERR_CLEARTEXT_NOT_PERMITTED',
+    });
+  });
+
+  it('notes the start of an answer that is not JSON, with its content type', async () => {
+    const http = client({
+      fetchFn: () =>
+        Promise.resolve(
+          new Response('<!doctype html>\n<html>   <head>', {
+            status: 200,
+            headers: { 'Content-Type': 'text/html' },
+          }),
+        ),
+    });
+
+    await expect(http.get('/store')).rejects.toBeDefined();
+
+    expect(getTraceSnapshot()[0]).toMatchObject({
+      detail: 'unexpected 200',
+      note: 'reply text/html: "<!doctype html> <html> <head>"',
+    });
+  });
+
+  it('notes the error of a request that was cancelled by the caller', async () => {
+    const controller = new AbortController();
+    const http = client({
+      fetchFn: (_input, init) =>
+        // Like the real fetch: a signal that is already aborted rejects at once.
+        init?.signal?.aborted
+          ? Promise.reject(new DOMException('The user aborted a request.', 'AbortError'))
+          : new Promise<Response>(() => undefined),
+    });
+
+    const pending = http.get('/categories', { signal: controller.signal });
+    controller.abort();
+    await expect(pending).rejects.toBeDefined();
+
+    expect(getTraceSnapshot()[0]).toMatchObject({
+      detail: 'error',
+      note: 'AbortError: The user aborted a request.',
+    });
   });
 
   it('keeps working without a trace', async () => {

@@ -2,6 +2,7 @@ import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { act, render, screen } from '@testing-library/react';
 import { afterEach, describe, expect, it, vi } from 'vitest';
 import { createMemoryTokenStore, type TokenStore } from '@/shared/api';
+import { TOKEN_READ_TIMEOUT_MS } from '@/shared/api/token-store';
 import { fakeApi } from '@/test/fakeApi';
 import { testUser } from '@/test/fixtures';
 import { SessionProvider } from './SessionProvider';
@@ -39,7 +40,7 @@ describe('SessionProvider: restoring the session at start-up', () => {
     mount(api, silentStore);
     expect(screen.queryByText('guest:nobody')).not.toBeInTheDocument();
     await act(async () => {
-      await vi.advanceTimersByTimeAsync(5_000);
+      await vi.advanceTimersByTimeAsync(TOKEN_READ_TIMEOUT_MS);
     });
 
     expect(screen.getByText('guest:nobody')).toBeInTheDocument();
