@@ -19,6 +19,7 @@ const en = {
     label: 'Language',
     ar: 'العربية',
     en: 'English',
+    fr: 'Français',
   },
   actions: {
     retry: 'Try again',
@@ -70,6 +71,7 @@ const ar: Translations<typeof en> = {
     label: 'اللغة',
     ar: 'العربية',
     en: 'English',
+    fr: 'Français',
   },
   actions: {
     retry: 'حاول مرة أخرى',
@@ -102,4 +104,56 @@ const ar: Translations<typeof en> = {
   },
 };
 
-export const commonLocales = { en, ar };
+const fr: Translations<typeof en> = {
+  appName: 'TOUT à 5,75',
+  skipToContent: 'Aller au contenu principal',
+  nav: {
+    label: 'Navigation principale',
+    home: 'Accueil',
+    categories: 'Catégories',
+    cart: 'Panier',
+    orders: 'Commandes',
+    account: 'Compte',
+    checkout: 'Commande',
+    signIn: 'Se connecter',
+    cartBadge: 'Articles dans le panier : {{total}}',
+    tabWithBadge: '{{label}}, {{badge}}',
+  },
+  language: {
+    label: 'Langue',
+    ar: 'العربية',
+    en: 'English',
+    fr: 'Français',
+  },
+  actions: {
+    retry: 'Réessayer',
+    close: 'Fermer',
+    dismiss: 'Ignorer',
+    backToHome: "Retour à l'accueil",
+    startShopping: 'Commencer vos achats',
+    continueShopping: 'Continuer vos achats',
+  },
+  carousel: {
+    slides: 'Diapositives',
+    pause: 'Mettre le diaporama en pause',
+    play: 'Lancer le diaporama',
+    slide: 'Diapositive {{current}} sur {{total}}',
+    previous: 'Diapositive précédente',
+    next: 'Diapositive suivante',
+  },
+  states: {
+    loading: 'Chargement',
+    errorTitle: "Une erreur s'est produite",
+    errorMessage: 'Impossible de charger ce contenu. Vérifiez votre connexion et réessayez.',
+  },
+  notFound: {
+    title: 'Page introuvable',
+    message: "La page que vous cherchez n'existe pas ou a été déplacée.",
+  },
+  routeError: {
+    title: "Cette page n'a pas pu se charger",
+    message: "Une erreur s'est produite lors de l'affichage de cette page. Veuillez réessayer.",
+  },
+};
+
+export const commonLocales = { en, ar, fr };

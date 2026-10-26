@@ -1,4 +1,4 @@
-export const LANGUAGES = ['ar', 'en'] as const;
+export const LANGUAGES = ['ar', 'en', 'fr'] as const;
 
 export type Language = (typeof LANGUAGES)[number];
 export type Direction = 'rtl' | 'ltr';
@@ -11,6 +11,16 @@ export function isLanguage(value: unknown): value is Language {
 
 export function getDirection(language: Language): Direction {
   return language === 'ar' ? 'rtl' : 'ltr';
+}
+
+/**
+ * Where to look for a text that the server sends in Arabic and English only: the chosen language first, then
+ * English, then Arabic. French has no server text yet, so it reads English until the server has French.
+ */
+export function textLanguages(language: Language): readonly Language[] {
+  if (language === 'ar') return ['ar', 'en'];
+  if (language === 'en') return ['en', 'ar'];
+  return [language, 'en', 'ar'];
 }
 
 type InitialLanguageInput = {

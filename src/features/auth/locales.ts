@@ -139,4 +139,77 @@ const ar: Translations<typeof en> = {
   },
 };
 
-export const authLocales = { en, ar };
+const fr: Translations<typeof en> = {
+  title: 'Connexion',
+  intro:
+    "Saisissez votre numéro de mobile et nous vous enverrons un code. Il n'y a pas de mot de passe. Nouveau ici ? Votre compte est créé après la saisie du code.",
+  continueAsGuest: 'Continuer en tant que visiteur',
+  loading: 'Chargement',
+  contact: {
+    phoneTitle: 'Votre numéro de mobile',
+    phoneLabel: 'Numéro de mobile',
+    phoneHint: 'Un numéro de mobile saoudien, par exemple 0512345678.',
+    phoneRequired: 'Saisissez votre numéro de mobile.',
+    phoneInvalid: 'Saisissez un numéro de mobile saoudien, par exemple 0512345678.',
+    emailTitle: 'Votre e-mail',
+    emailLabel: 'Adresse e-mail',
+    emailHint: 'Nous enverrons le code à cette adresse.',
+    emailRequired: 'Saisissez votre adresse e-mail.',
+    emailInvalid: 'Saisissez une adresse e-mail valide, par exemple nom@exemple.com.',
+    useEmail: "Utiliser plutôt l'e-mail",
+    usePhone: 'Utiliser plutôt le numéro de mobile',
+    send: 'Envoyer le code',
+  },
+  code: {
+    title: 'Saisissez votre code',
+    sentTo: 'Nous avons envoyé un code à 6 chiffres à :',
+    changePhone: 'Changer de numéro',
+    changeEmail: "Changer d'e-mail",
+    label: 'Code à 6 chiffres',
+    hint: 'Saisissez le code de votre message, ou collez-le ici.',
+    incomplete: 'Saisissez le code à 6 chiffres.',
+    verify: 'Continuer',
+    resendIn: "Vous ne l'avez pas reçu ? Vous pourrez demander un nouveau code dans {{time}}.",
+    resend: 'Envoyer un nouveau code',
+    resent: 'Nous vous avons envoyé un nouveau code.',
+    alreadySent: 'Nous vous avons déjà envoyé un code il y a un instant. Saisissez-le ci-dessous.',
+  },
+  consent: {
+    title: 'Acceptez pour continuer',
+    lead: "Veuillez lire nos conditions et les accepter pour continuer. Votre code est toujours valable, vous n'avez donc pas besoin d'en demander un nouveau.",
+    terms: "J'ai lu et j'accepte les <document>Conditions d'utilisation</document>",
+    privacy: "J'ai lu et j'accepte la <document>Politique de confidentialité</document>",
+    version: 'Version {{version}}',
+    termsRequired: "Acceptez les Conditions d'utilisation pour continuer.",
+    privacyRequired: 'Acceptez la Politique de confidentialité pour continuer.',
+    marketing: 'Je souhaite recevoir des offres et des actualités (facultatif)',
+    marketingHint: 'Vous pouvez modifier ce choix à tout moment dans votre compte.',
+    accept: 'Accepter et continuer',
+    back: 'Retour',
+    loadingVersions: 'Chargement des conditions en vigueur',
+    versionsChanged:
+      "Nos conditions viennent d'être mises à jour. Veuillez les lire et les accepter de nouveau.",
+  },
+  failure: {
+    otpInvalid: "Ce code n'est pas correct. Tentatives restantes : {{attempts}}.",
+    otpInvalidUnknown: "Ce code n'est pas correct. Réessayez.",
+    otpExpired: 'Ce code a expiré. Envoyez un nouveau code pour continuer.',
+    otpLocked: 'Trop de codes erronés. Envoyez un nouveau code pour continuer.',
+    cooldown:
+      'Un code a été envoyé il y a un instant. Vous pourrez en demander un nouveau dans {{time}}.',
+    cooldownUnknown:
+      'Un code a été envoyé il y a un instant. Patientez un peu, puis demandez-en un nouveau.',
+    rateLimited: 'Trop de tentatives. Attendez {{time}} et réessayez.',
+    rateLimitedUnknown: 'Trop de tentatives. Attendez un peu et réessayez.',
+    accountInactive:
+      "Ce compte n'est pas actif, vous ne pouvez donc pas vous connecter. Veuillez contacter le service client.",
+    offline: 'Impossible de joindre le serveur. Vérifiez votre connexion et réessayez.',
+    unknown: "Une erreur s'est produite. Veuillez réessayer.",
+  },
+  welcome: {
+    returning: 'Vous êtes connecté. Content de vous revoir !',
+    newAccount: 'Votre compte est prêt. Bienvenue sur TOUT à 5,75 !',
+  },
+};
+
+export const authLocales = { en, ar, fr };

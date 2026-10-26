@@ -13,6 +13,10 @@ describe('language switching', () => {
     await changeLanguage('en');
     expect(document.documentElement).toHaveAttribute('lang', 'en');
     expect(document.documentElement).toHaveAttribute('dir', 'ltr');
+
+    await changeLanguage('fr');
+    expect(document.documentElement).toHaveAttribute('lang', 'fr');
+    expect(document.documentElement).toHaveAttribute('dir', 'ltr');
   });
 
   it('translates into the chosen language and reports it', async () => {
@@ -23,6 +27,10 @@ describe('language switching', () => {
     await changeLanguage('en');
     expect(i18next.t('nav.cart')).toBe('Cart');
     expect(getCurrentLanguage()).toBe('en');
+
+    await changeLanguage('fr');
+    expect(i18next.t('nav.cart')).toBe('Panier');
+    expect(getCurrentLanguage()).toBe('fr');
   });
 
   it('remembers the choice for the next launch', async () => {
@@ -32,5 +40,9 @@ describe('language switching', () => {
     await changeLanguage('ar');
 
     await expect(preferences.get('language')).resolves.toBe('ar');
+
+    await changeLanguage('fr');
+
+    await expect(preferences.get('language')).resolves.toBe('fr');
   });
 });

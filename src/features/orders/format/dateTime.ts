@@ -8,32 +8,41 @@ export const DISPLAY_TIME_ZONE = 'Asia/Riyadh';
 const LOCALE_TAGS: Record<Language, string> = {
   ar: 'ar-SA-u-ca-gregory-nu-latn',
   en: 'en-GB-u-ca-gregory-nu-latn',
+  fr: 'fr-FR-u-ca-gregory-nu-latn',
 };
 
 type Style = 'date' | 'dateTime';
 
 const DATE_FIELDS: Intl.DateTimeFormatOptions = { day: 'numeric', month: 'short', year: 'numeric' };
-const TIME_FIELDS: Intl.DateTimeFormatOptions = {
+// French is read on a 24-hour clock; Arabic and English in Saudi Arabia on a 12-hour one.
+const timeFields = (language: Language): Intl.DateTimeFormatOptions => ({
   hour: 'numeric',
   minute: '2-digit',
-  hour12: true,
-};
+  hour12: language !== 'fr',
+});
 
-const STYLE_OPTIONS: Record<Style, Intl.DateTimeFormatOptions> = {
-  date: DATE_FIELDS,
-  dateTime: { ...DATE_FIELDS, ...TIME_FIELDS },
-};
+function styleOptions(language: Language, style: Style): Intl.DateTimeFormatOptions {
+  return style === 'date' ? DATE_FIELDS : { ...DATE_FIELDS, ...timeFields(language) };
+}
 
 function createFormatter(language: Language, style: Style): Intl.DateTimeFormat {
   return new Intl.DateTimeFormat(LOCALE_TAGS[language], {
     timeZone: DISPLAY_TIME_ZONE,
-    ...STYLE_OPTIONS[style],
+    ...styleOptions(language, style),
   });
 }
 
 const formatters = {
-  date: { ar: createFormatter('ar', 'date'), en: createFormatter('en', 'date') },
-  dateTime: { ar: createFormatter('ar', 'dateTime'), en: createFormatter('en', 'dateTime') },
+  date: {
+    ar: createFormatter('ar', 'date'),
+    en: createFormatter('en', 'date'),
+    fr: createFormatter('fr', 'date'),
+  },
+  dateTime: {
+    ar: createFormatter('ar', 'dateTime'),
+    en: createFormatter('en', 'dateTime'),
+    fr: createFormatter('fr', 'dateTime'),
+  },
 };
 
 function parse(iso: string): Date | null {
@@ -75,6 +84,7 @@ export function formatDateTimeRange(
 const relativeFormatters: Record<Language, Intl.RelativeTimeFormat> = {
   ar: new Intl.RelativeTimeFormat(LOCALE_TAGS.ar, { numeric: 'always' }),
   en: new Intl.RelativeTimeFormat(LOCALE_TAGS.en, { numeric: 'always' }),
+  fr: new Intl.RelativeTimeFormat(LOCALE_TAGS.fr, { numeric: 'always' }),
 };
 
 const MS_PER_MINUTE = 60_000;

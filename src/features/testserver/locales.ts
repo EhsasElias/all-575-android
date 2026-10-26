@@ -98,4 +98,53 @@ const ar: Translations<typeof en> = {
   },
 };
 
-export const testServerLocales = { en, ar };
+const fr: Translations<typeof en> = {
+  banner: {
+    label: 'Version de test',
+    server: 'Serveur :',
+    noServer: 'Aucun serveur choisi',
+    change: 'Changer de serveur',
+  },
+  title: 'Adresse du serveur',
+  lead: 'Ceci est une version de test. Choisissez le serveur auquel elle se connecte. Un serveur de votre propre réseau ressemble à 192.168.1.23:8000.',
+  field: {
+    label: 'Adresse du serveur',
+    hint: "Le chemin de l'API est ajouté pour vous.",
+  },
+  invalid: "Ce n'est pas une adresse web. Essayez quelque chose comme 192.168.1.23:8000.",
+  current: 'Utilise actuellement :',
+  noneYet: "Aucune adresse de serveur n'est encore définie.",
+  check: 'Tester la connexion',
+  checking: 'Vérification…',
+  save: 'Enregistrer et redémarrer',
+  reset: "Utiliser l'adresse intégrée",
+  connected: 'Connecté. Ce serveur répond.',
+  unreachable:
+    "Impossible de joindre ce serveur. Vérifiez l'adresse, que le serveur fonctionne et que ce téléphone est sur le même Wi-Fi.",
+  notSaved: "Cet appareil n'a pas conservé l'adresse.",
+  log: {
+    title: 'Dernières requêtes',
+    lead: "Ce que l'application a demandé au serveur à l'instant. Si un écran ne se charge pas, envoyez une capture de cette liste.",
+    empty: 'Aucune requête pour le moment.',
+    state: 'Réseau : {{browser}}, gestionnaire de requêtes : {{queries}}, session : {{session}}',
+    online: 'en ligne',
+    offline: 'hors ligne',
+    preparing: 'attente du stockage sécurisé, {{seconds}} s',
+    sending: 'attente du serveur, {{seconds}} s',
+    done: '{{status}}, {{ms}} ms',
+    failed: 'échec : {{reason}}, {{ms}} ms',
+  },
+  storage: {
+    title: 'Stockage sécurisé',
+    lead: 'Où la connexion est conservée sur ce téléphone. Chaque requête le lit en premier.',
+    check: 'Tester le stockage sécurisé',
+    checking: 'Vérification…',
+    answered: 'A répondu en {{ms}} ms : {{token}}.',
+    noToken: 'aucune connexion enregistrée',
+    hasToken: 'une connexion est enregistrée',
+    failed: 'Échec en {{ms}} ms : {{reason}}',
+    silent: 'Aucune réponse après {{seconds}} s.',
+  },
+};
+
+export const testServerLocales = { en, ar, fr };

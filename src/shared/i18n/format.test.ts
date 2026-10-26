@@ -7,9 +7,21 @@ function visible(text: string): string {
 }
 
 describe('formatMoney', () => {
-  it('turns 575 halalas into 5.75 in both languages', () => {
+  it('turns 575 halalas into 5.75 in Arabic and English, and 5,75 in French', () => {
     expect(formatMoney(575, 'en')).toContain('5.75');
     expect(formatMoney(575, 'ar')).toContain('5.75');
+    expect(formatMoney(575, 'fr')).toContain('5,75');
+  });
+
+  it('shows SAR in French, after the amount, with a comma for the decimals', () => {
+    expect(visible(formatMoney(575, 'fr'))).toBe('5,75 SAR');
+    expect(visible(formatMoney(5, 'fr'))).toBe('0,05 SAR');
+  });
+
+  it('groups thousands with a space in French and keeps the amount and SAR together', () => {
+    expect(visible(formatMoney(123_456_789, 'fr'))).toBe('1 234 567,89 SAR');
+    expect(formatMoney(575, 'fr')).toContain('\u00a0');
+    expect(formatMoney(575, 'fr')).not.toMatch(/[٠-٩]/);
   });
 
   it('shows SAR in English, after the amount', () => {
@@ -56,5 +68,9 @@ describe('formatNumber', () => {
     expect(formatNumber(1234, 'ar')).toBe('1,234');
     expect(formatNumber(1234, 'en')).toBe('1,234');
     expect(formatNumber(7, 'ar')).toBe('7');
+  });
+
+  it('uses a space for thousands in French', () => {
+    expect(visible(formatNumber(1234, 'fr'))).toBe('1 234');
   });
 });

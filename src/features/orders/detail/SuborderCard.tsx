@@ -7,6 +7,7 @@ import { formatDateTime } from '../format/dateTime';
 import { SUBORDER_STATUS_LOOK } from '../status/statusLook';
 import type { Suborder } from '../types';
 import { DeliveryCode } from './DeliveryCode';
+import { localized } from './localized';
 import { SuborderItems } from './SuborderItems';
 import { SuborderProgress } from './SuborderProgress';
 import styles from './SuborderCard.module.css';
@@ -53,7 +54,7 @@ export function SuborderCard({ orderId, suborder }: SuborderCardProps) {
     <article aria-labelledby={titleId} className={styles.card}>
       <header className={styles.header}>
         <h3 id={titleId} className={styles.seller}>
-          {t('suborder.from', { seller: suborder.seller.name[language] })}
+          {t('suborder.from', { seller: localized(suborder.seller.name, language) ?? '' })}
         </h3>
         <StatusChip icon={look.icon} tone={look.tone}>
           {t(`status.suborder.${suborder.status}`)}

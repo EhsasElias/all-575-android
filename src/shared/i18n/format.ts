@@ -4,17 +4,19 @@ const HALALAS_PER_RIYAL = 100;
 const NO_BREAK_SPACE = ' ';
 
 // Latin digits in both languages so a number looks the same everywhere in the app.
-const LOCALES: Record<Language, string> = { ar: 'ar-SA', en: 'en-SA' };
-const CURRENCY_LABELS: Record<Language, string> = { ar: 'ر.س', en: 'SAR' };
+const LOCALES: Record<Language, string> = { ar: 'ar-SA', en: 'en-SA', fr: 'fr-FR' };
+const CURRENCY_LABELS: Record<Language, string> = { ar: 'ر.س', en: 'SAR', fr: 'SAR' };
 
 const amountFormatters: Record<Language, Intl.NumberFormat> = {
   ar: createAmountFormatter('ar'),
   en: createAmountFormatter('en'),
+  fr: createAmountFormatter('fr'),
 };
 
 const numberFormatters: Record<Language, Intl.NumberFormat> = {
   ar: new Intl.NumberFormat(LOCALES.ar, { numberingSystem: 'latn' }),
   en: new Intl.NumberFormat(LOCALES.en, { numberingSystem: 'latn' }),
+  fr: new Intl.NumberFormat(LOCALES.fr, { numberingSystem: 'latn' }),
 };
 
 function createAmountFormatter(language: Language): Intl.NumberFormat {

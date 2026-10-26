@@ -4,11 +4,13 @@ import type { Language } from '@/shared/i18n';
 const LOCALES: Record<Language, string> = {
   ar: 'ar-SA-u-ca-gregory-nu-latn',
   en: 'en-SA-u-ca-gregory-nu-latn',
+  fr: 'fr-FR-u-ca-gregory-nu-latn',
 };
 
 const formatters: Record<Language, Intl.DateTimeFormat> = {
   ar: createFormatter('ar'),
   en: createFormatter('en'),
+  fr: createFormatter('fr'),
 };
 
 function createFormatter(language: Language): Intl.DateTimeFormat {

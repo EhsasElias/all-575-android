@@ -49,3 +49,28 @@ export const reviewsAr: Translations<typeof reviewsEn> = {
     },
   },
 };
+
+export const reviewsFr: Translations<typeof reviewsEn> = {
+  reviews: {
+    ratingLegend: 'Noter {{item}}',
+    starLabel: 'Note de {{rating}} sur {{max}}',
+    rated: 'Noté {{rating}} sur {{max}}',
+    commentLabel: 'Commentaire (facultatif)',
+    commentHint: '{{max}} caractères maximum.',
+    submit: "Envoyer l'avis",
+    save: 'Enregistrer les modifications',
+    cancel: 'Annuler',
+    edit: "Modifier l'avis",
+    editUntil: "Vous pouvez modifier cet avis jusqu'au {{date}} ({{left}}).",
+    editClosed: 'Le délai pour modifier cet avis est dépassé.',
+    exists: 'Vous avez déjà donné votre avis sur cet article. Merci !',
+    seeOnProduct: 'Le voir sur la page du produit',
+    errors: {
+      ratingRequired: 'Choisissez une note de 1 à 5 étoiles.',
+      notAllowed: "Vous ne pouvez donner votre avis sur un article qu'après sa livraison.",
+      windowClosed: 'Le délai pour modifier cet avis est dépassé.',
+      invalid: 'Vérifiez votre note et votre commentaire, puis réessayez.',
+      failed: "Impossible d'enregistrer votre avis. Vérifiez votre connexion et réessayez.",
+    },
+  },
+};

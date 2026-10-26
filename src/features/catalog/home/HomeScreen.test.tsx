@@ -1,11 +1,12 @@
 import { act, screen, waitFor, within } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { describe, expect, it, vi } from 'vitest';
+import type { Language } from '@/shared/i18n';
 import { renderApp } from '@/test/render';
 import { installCatalogApi, queriesOf } from '../testApi';
 import { biscuits, makeProduct, page } from '../testData';
 
-function renderHome(language: 'en' | 'ar' = 'en') {
+function renderHome(language: Language = 'en') {
   return renderApp({ route: '/home', seenWelcome: true, language });
 }
 
@@ -183,5 +184,27 @@ describe('Home', () => {
 
     expect(screen.queryByText('Availability unknown')).not.toBeInTheDocument();
     expect(screen.getByRole('button', { name: 'Choose your delivery area' })).toBeVisible();
+  });
+});
+
+describe('Home in French', () => {
+  it('shows French texts, prices with a comma, and falls back to English product names', async () => {
+    installCatalogApi();
+    await renderHome('fr');
+
+    expect(
+      screen.getByRole('heading', { level: 1, name: /^De quoi avez-vous besoin aujourd'hui\s\?$/ }),
+    ).toBeVisible();
+    expect(await screen.findByText(/Chaque article coûte 5,75\s+SAR, TVA comprise/)).toBeVisible();
+
+    const categories = screen.getByRole('region', { name: 'Catégories' });
+    expect(await within(categories).findByRole('link', { name: 'Food' })).toBeVisible();
+    expect(within(categories).getByRole('link', { name: 'Tout voir' })).toBeVisible();
+
+    const popular = screen.getByRole('region', { name: 'Populaires' });
+    expect(await within(popular).findByRole('link', { name: 'Biscuits' })).toBeVisible();
+    expect(within(popular).getAllByText(/5,75\s+SAR/)).toHaveLength(3);
+    expect(document.documentElement).toHaveAttribute('lang', 'fr');
+    expect(document.documentElement).toHaveAttribute('dir', 'ltr');
   });
 });

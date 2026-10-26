@@ -34,4 +34,16 @@ export const appResources = {
     auth: authLocales.ar,
     testserver: testServerLocales.ar,
   },
+  fr: {
+    common: commonLocales.fr,
+    welcome: welcomeLocales.fr,
+    catalog: catalogLocales.fr,
+    cart: cartLocales.fr,
+    checkout: checkoutLocales.fr,
+    orders: ordersLocales.fr,
+    account: accountLocales.fr,
+    addresses: addressesLocales.fr,
+    auth: authLocales.fr,
+    testserver: testServerLocales.fr,
+  },
 };

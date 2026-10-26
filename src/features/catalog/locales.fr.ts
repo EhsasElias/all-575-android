@@ -1,0 +1,120 @@
+import type { Translations } from '@/shared/i18n';
+import type { en } from './locales.en';
+
+export const fr: Translations<typeof en> = {
+  titles: {
+    search: 'Recherche',
+    category: 'Catégorie',
+    product: 'Produit',
+    seller: 'Vendeur',
+  },
+  delivery: {
+    chipLabel: 'Livrer à',
+    chipChoose: 'Choisissez votre zone de livraison',
+    sheetTitle: 'Zone de livraison',
+    introNone: 'Choisissez votre zone pour voir ce qui est disponible à la livraison.',
+    introZone: 'Voici ce qui est disponible à {{zone}}.',
+    fromAddress:
+      "Il s'agit de la zone de votre adresse par défaut. Changez votre adresse par défaut pour la modifier.",
+    manageAddresses: 'Gérer mes adresses',
+    useLocation: 'Utiliser ma position actuelle',
+    locating: 'Recherche de votre position…',
+    checking: 'Vérification de votre zone…',
+    privacyNote:
+      "Nous utilisons votre position une seule fois pour trouver votre zone de livraison et nous ne l'enregistrons pas.",
+    saved: 'Livraison à {{zone}}',
+    errors: {
+      denied:
+        "L'accès à la position est désactivé pour cette application. Autorisez-le dans les réglages de votre téléphone et réessayez.",
+      unavailable:
+        "Nous n'avons pas pu trouver votre position. Vérifiez que la localisation est activée et réessayez.",
+      timeout: 'La recherche de votre position a pris trop de temps. Réessayez.',
+      notServiceable:
+        'Nous ne livrons pas encore à votre position. Vous pouvez tout de même tout parcourir.',
+      failed: "Nous n'avons pas pu vérifier votre zone. Vérifiez votre connexion et réessayez.",
+    },
+  },
+  home: {
+    heading: "De quoi avez-vous besoin aujourd'hui ?",
+    priceLine: 'Chaque article coûte {{price}}, TVA comprise',
+    categoriesTitle: 'Catégories',
+    seeAll: 'Tout voir',
+    popularTitle: 'Populaires',
+    emptyTitle: 'Aucun produit pour le moment',
+    emptyMessage:
+      'De nouveaux produits sont ajoutés régulièrement. En attendant, parcourez les catégories.',
+    browseCategories: 'Parcourir les catégories',
+  },
+  categories: {
+    title: 'Catégories',
+    emptyTitle: 'Aucune catégorie à afficher pour le moment',
+    emptyMessage: "Revenez bientôt, ou allez à la page d'accueil.",
+    subcategories: 'Sous-catégories de {{name}}',
+  },
+  categoryProducts: {
+    fallbackTitle: 'Produits',
+    notFoundTitle: "Nous n'avons pas trouvé cette catégorie",
+    notFoundMessage: 'Elle a peut-être été supprimée. Vous pouvez parcourir toutes les catégories.',
+    emptyTitle: 'Aucun produit dans cette catégorie pour le moment',
+    emptyMessage: 'Essayez une autre catégorie, ou recherchez ce dont vous avez besoin.',
+    subcategories: 'Sous-catégories',
+    backTo: 'Retour à {{name}}',
+  },
+  search: {
+    title: 'Recherche',
+    label: 'Rechercher des produits',
+    placeholder: 'Rechercher par nom de produit',
+    clear: 'Effacer la recherche',
+    tooShort: 'Saisissez au moins 2 lettres pour rechercher.',
+    startMessage: 'Recherchez un produit par son nom, ou parcourez une catégorie.',
+    results: 'Résultats pour « {{query}} »',
+    noResultsTitle: 'Aucun résultat pour « {{query}} »',
+    noResultsMessage:
+      "Vérifiez l'orthographe, essayez un mot plus court, ou parcourez une catégorie.",
+    browseCategory: 'Parcourir une catégorie',
+    browseAll: 'Parcourir toutes les catégories',
+  },
+  list: {
+    loadMore: 'Charger plus',
+    loadingMore: 'Chargement…',
+    loadMoreFailed: "Nous n'avons pas pu charger plus de résultats.",
+    productsErrorTitle: "Nous n'avons pas pu charger les produits",
+  },
+  availability: {
+    in_stock: 'En stock',
+    low_stock: "Il n'en reste que quelques-uns",
+    out_of_stock: 'Rupture de stock',
+    unknown: 'Disponibilité inconnue',
+    chooseArea: 'Choisissez votre zone pour voir si cet article est disponible à la livraison.',
+  },
+  rating: {
+    outOf: 'Noté {{value}} sur 5',
+    count: "Nombre d'avis : {{total}}",
+    none: "Pas encore d'avis",
+  },
+  product: {
+    notFoundTitle: "Nous n'avons pas trouvé ce produit",
+    notFoundMessage: "Il a peut-être été supprimé, ou le lien n'est pas correct.",
+    browse: 'Parcourir les catégories',
+    soldBy: 'Vendu par',
+    category: 'Catégorie',
+    vatIncluded: 'TVA comprise',
+    vatNone: 'Pas de TVA sur cet article',
+    optionsLegend: 'Choisissez une option',
+    aboutTitle: 'À propos de ce produit',
+  },
+  reviews: {
+    title: 'Avis',
+    emptyTitle: "Pas encore d'avis",
+    emptyMessage: 'Les avis des clients qui ont reçu ce produit apparaîtront ici.',
+    errorTitle: "Nous n'avons pas pu charger les avis",
+    anonymous: 'Un client',
+  },
+  seller: {
+    notFoundTitle: "Nous n'avons pas trouvé ce vendeur",
+    notFoundMessage: "Le vendeur n'est peut-être plus sur TOUT à 5,75.",
+    productsTitle: 'Produits',
+    emptyTitle: 'Aucun produit de ce vendeur pour le moment',
+    emptyMessage: 'Revenez bientôt, ou parcourez les catégories.',
+  },
+};

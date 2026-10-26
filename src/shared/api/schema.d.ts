@@ -983,7 +983,7 @@ export interface components {
         UpdateMeRequest: {
             name?: string | null;
             /** @enum {string} */
-            locale?: "ar" | "en";
+            locale?: "ar" | "en" | "fr";
         };
         /** UpdateReviewRequest */
         UpdateReviewRequest: {

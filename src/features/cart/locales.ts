@@ -122,4 +122,68 @@ const ar: Translations<typeof en> = {
   },
 };
 
-export const cartLocales = { en, ar };
+const fr: Translations<typeof en> = {
+  title: 'Panier',
+  listLabel: 'Articles de votre panier',
+  emptyTitle: 'Votre panier est vide',
+  emptyMessage: 'Ajoutez les produits que vous aimez, ils apparaîtront ici.',
+  browseCategories: 'Parcourir les catégories',
+  unavailableNotice:
+    'Certains articles ne sont pas disponibles. Retirez-les pour continuer ; ils ne sont pas inclus dans le sous-total.',
+  error: {
+    title: 'Impossible de charger votre panier',
+    message: 'Vérifiez votre connexion et réessayez.',
+  },
+  lines: {
+    each: "{{price}} l'unité",
+    outOfStock: 'En rupture de stock pour votre adresse de livraison.',
+    gone: "Cet article n'est plus disponible.",
+    remove: 'Retirer',
+    removeNamed: 'Retirer {{name}} du panier',
+    removed: '{{name}} a été retiré de votre panier.',
+  },
+  stepper: {
+    label: 'Quantité de {{name}}',
+    decrease: 'Diminuer la quantité de {{name}}',
+    increase: 'Augmenter la quantité de {{name}}',
+  },
+  summary: {
+    title: 'Récapitulatif de la commande',
+    items: 'Articles',
+    subtotal: 'Sous-total',
+    vatIncluded: 'Les prix incluent {{rate}} % de TVA',
+    decidedAtCheckout:
+      'Les frais de livraison et le code promo éventuel sont calculés au moment de la commande.',
+    guestNote: 'La disponibilité est vérifiée à la commande, où vous vous connectez pour payer.',
+    checkout: 'Commander',
+  },
+  add: {
+    button: 'Ajouter au panier',
+    outOfStock: 'Rupture de stock',
+    outOfStockHint:
+      'Cet article est actuellement en rupture de stock dans votre zone de livraison.',
+    limit: "Vous pouvez commander jusqu'à {{max}} exemplaires de chaque article.",
+    added: 'Ajouté à votre panier : {{name}}. Quantité dans le panier : {{quantity}}.',
+    capped:
+      "Vous pouvez commander au maximum {{max}} exemplaires d'un article. {{name}} est maintenant à {{max}} dans votre panier.",
+    addedInline: 'Ajouté à votre panier',
+    viewCart: 'Voir le panier',
+  },
+  refusal: {
+    quantity_out_of_range: 'Choisissez une quantité de 1 à {{max}}.',
+    variant_unavailable: "Cet article n'est pas disponible pour le moment.",
+    cart_full: 'Votre panier est plein. Retirez un article pour en ajouter un autre.',
+    session_expired: 'Votre session est terminée. Reconnectez-vous et réessayez.',
+    network: 'Pas de connexion. Vérifiez votre accès à Internet et réessayez.',
+    unknown: "Une erreur s'est produite. Veuillez réessayer.",
+  },
+  merge: {
+    done: 'Nous avons ajouté les articles choisis avant votre connexion',
+    failed:
+      "Nous n'avons pas pu ajouter les articles choisis avant votre connexion. Ils sont enregistrés sur cet appareil et nous réessaierons la prochaine fois.",
+    dropped:
+      "Nous n'avons pas pu ajouter les articles choisis avant votre connexion. Veuillez les ajouter de nouveau à votre panier.",
+  },
+};
+
+export const cartLocales = { en, ar, fr };

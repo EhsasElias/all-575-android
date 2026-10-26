@@ -34,4 +34,21 @@ const ar: Translations<typeof en> = {
   },
 };
 
-export const welcomeLocales = { en, ar };
+const fr: Translations<typeof en> = {
+  headlineLead: 'Bienvenue,',
+  headlineAccent: 'partenaire de réussite',
+  subline: 'Tout ce dont vous avez besoin, au même endroit',
+  cta: 'Touchez le logo pour acheter',
+  skip: 'Passer',
+  signInPrompt: 'Déjà client ?',
+  signInLink: 'Se connecter',
+  priceLine: 'Tout à {{amount}}',
+  carouselLabel: 'Acheter par catégorie',
+  slides: {
+    fruit: 'Fruits et légumes',
+    household: 'Articles ménagers essentiels',
+    clothing: 'Vêtements',
+  },
+};
+
+export const welcomeLocales = { en, ar, fr };

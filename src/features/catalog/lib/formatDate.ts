@@ -5,6 +5,7 @@ const RIYADH = 'Asia/Riyadh';
 const formatters: Record<Language, Intl.DateTimeFormat> = {
   ar: createFormatter('ar-SA'),
   en: createFormatter('en-SA'),
+  fr: createFormatter('fr-FR'),
 };
 
 // The Gregorian calendar and Latin digits, so a date reads the same as every other number in the app.

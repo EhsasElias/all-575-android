@@ -91,3 +91,53 @@ export const deliveriesAr: Translations<typeof deliveriesEn> = {
     locked: 'بدأ البائع بتجهيز هذا الطلب، ولا يمكن إلغاؤه من هنا الآن.',
   },
 };
+
+export const deliveriesFr: Translations<typeof deliveriesEn> = {
+  deliveries: {
+    title: 'Livraisons',
+    separate:
+      'Cette commande provient de plusieurs vendeurs. Chaque vendeur livre séparément, les parties peuvent donc arriver à des moments différents.',
+  },
+  suborder: {
+    from: 'De {{seller}}',
+    progress: 'Suivi de la livraison',
+    step: 'Étape {{current}} sur {{total}}',
+    state: { done: 'terminée', current: 'étape en cours', next: 'pas commencée' },
+    eta: 'Prévue {{time}}',
+    etaPending: "L'heure prévue s'affichera ici dès que le vendeur aura confirmé.",
+    etaRevised: "L'heure a changé : {{reason}}",
+  },
+  items: {
+    quantityPrice: '{{quantity}} × {{price}}',
+  },
+  code: {
+    show: 'Afficher mon code de livraison',
+    warning:
+      "Ne donnez ce code qu'au livreur devant votre porte. Ne le communiquez jamais par téléphone ou par message.",
+    validUntil: "Valable jusqu'à {{time}}.",
+    autoHide: "Il se masque tout seul au bout d'une minute.",
+    hide: 'Masquer le code',
+    unavailable:
+      'Aucun code à afficher pour le moment. Il apparaît lorsque votre livreur est en route.',
+    failed: "Impossible d'obtenir votre code. Vérifiez votre connexion et réessayez.",
+  },
+  cancel: {
+    button: 'Annuler la commande',
+    title: 'Annuler cette commande ?',
+    unpaidExplanation:
+      "Vous n'avez pas encore payé, rien ne sera donc débité. Les articles et votre créneau de livraison seront libérés.",
+    paidExplanation:
+      'Vous récupérerez la totalité des {{amount}} payés, sur le même moyen de paiement.',
+    refundNote:
+      "Le remboursement apparaît comme « En cours » jusqu'à ce que votre prestataire de paiement le confirme. Ce n'est qu'alors que nous le marquons comme remboursé.",
+    confirm: 'Oui, annuler ma commande',
+    keep: 'Conserver ma commande',
+    close: 'Fermer',
+    done: 'Votre commande a été annulée.',
+    failed: "Impossible d'annuler la commande. Vérifiez votre connexion et réessayez.",
+    notCancellable:
+      "Cette commande est déjà en préparation, elle ne peut donc plus être annulée ici. Contactez l'assistance si vous avez besoin d'aide.",
+    locked:
+      'Le vendeur a commencé à préparer cette commande, elle ne peut donc plus être annulée ici.',
+  },
+};

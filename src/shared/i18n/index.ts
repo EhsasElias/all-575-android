@@ -6,6 +6,7 @@ export {
   getDirection,
   isLanguage,
   resolveInitialLanguage,
+  textLanguages,
 } from './languages';
 export type { Direction, Language } from './languages';
 export { commonLocales } from './locales/common';

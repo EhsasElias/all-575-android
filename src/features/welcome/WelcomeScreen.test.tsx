@@ -107,7 +107,7 @@ describe('Welcome price pill', () => {
 });
 
 describe('Welcome header', () => {
-  it.each(['en', 'ar'] as const)(
+  it.each(['en', 'fr', 'ar'] as const)(
     'puts Skip on the left, the language switch in the middle and the logo on the right (%s)',
     async (language) => {
       await renderApp({ route: '/welcome', language });
@@ -122,7 +122,7 @@ describe('Welcome header', () => {
         within(header)
           .getAllByRole('radio')
           .map((radio) => radio.getAttribute('value')),
-      ).toEqual(['en', 'ar']);
+      ).toEqual(['en', 'fr', 'ar']);
     },
   );
 
@@ -161,6 +161,7 @@ describe('Welcome language choice', () => {
 
     expect(screen.getByRole('radio', { name: /AR/ })).toBeChecked();
     expect(screen.getByRole('radio', { name: /EN/ })).not.toBeChecked();
+    expect(screen.getByRole('radio', { name: /FR/ })).not.toBeChecked();
   });
 });
 

@@ -87,3 +87,48 @@ export const paymentsAr: Translations<typeof paymentsEn> = {
     vatIncluded: 'جميع الأسعار شاملة ضريبة القيمة المضافة.',
   },
 };
+
+export const paymentsFr: Translations<typeof paymentsEn> = {
+  shipping: {
+    title: 'Détails de la livraison',
+    slot: 'Créneau de livraison',
+    noSlot: 'Non planifiée',
+    recipient: 'Destinataire',
+    phone: 'Téléphone',
+    address: 'Adresse',
+    notes: 'Notes pour le livreur',
+    unit: 'Appartement',
+    floor: 'Étage',
+  },
+  payments: {
+    title: 'Paiement et remboursements',
+    paymentsLabel: 'Paiements',
+    paidOn: 'Payé le {{date}}',
+    refundsTitle: 'Remboursements',
+    requestedOn: 'Demandé le {{date}}',
+    refundedOn: 'Remboursé le {{date}}',
+    creditNote: 'Avoir {{number}}',
+    reason: {
+      customer_cancelled: 'Remboursement de la commande que vous avez annulée',
+      late_payment: "Remboursement d'un paiement arrivé après l'expiration de la commande",
+      other: 'Remboursement',
+    },
+    refundNote: {
+      pending:
+        "En attente de la confirmation de votre prestataire de paiement. Tant qu'elle n'a pas eu lieu, il n'est pas remboursé.",
+      succeeded: 'Confirmé par votre prestataire de paiement.',
+      failed: "Le remboursement n'a pas pu être effectué. Contactez l'assistance.",
+    },
+  },
+  totals: {
+    title: 'Récapitulatif',
+    subtotal: 'Articles',
+    discount: 'Remise',
+    discountWithCode: 'Remise ({{code}})',
+    delivery: 'Livraison',
+    free: 'Gratuite',
+    total: 'Total',
+    vat: 'TVA incluse',
+    vatIncluded: 'Tous les prix incluent la TVA.',
+  },
+};

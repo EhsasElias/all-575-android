@@ -17,8 +17,9 @@
   list-style: none;
 }
 
+/* Sized by the label first, then equal shares of the rest: a long word like "Commandes" stays on one line. */
 .item {
-  flex: 1;
+  flex: 1 1 auto;
   min-inline-size: 0;
 }
 

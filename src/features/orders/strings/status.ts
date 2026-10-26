@@ -127,3 +127,67 @@ export const statusAr: Translations<typeof statusEn> = {
     },
   },
 };
+
+export const statusFr: Translations<typeof statusEn> = {
+  titles: {
+    list: 'Mes commandes',
+    detail: 'Détails de la commande',
+    spending: 'Mes dépenses',
+  },
+  status: {
+    order: {
+      pending_payment: 'En attente de paiement',
+      confirmed: 'Confirmée',
+      completed: 'Terminée',
+      cancelled: 'Annulée',
+    },
+    suborder: {
+      awaiting_payment: 'En attente de paiement',
+      awaiting_seller: 'En attente du vendeur',
+      preparing: 'En préparation',
+      ready: 'Prête pour le livreur',
+      on_the_way: 'En route',
+      delivered: 'Livrée',
+      cancelled: 'Annulée',
+    },
+    payment: {
+      pending: 'En attente de paiement',
+      paid: 'Payé',
+      failed: 'Échoué',
+      expired: 'Expiré',
+    },
+    method: {
+      mada: 'mada',
+      card: 'Carte bancaire',
+      apple_pay: 'Apple Pay',
+      none: 'Rien à payer',
+    },
+    refund: {
+      pending: 'En cours',
+      succeeded: 'Remboursé',
+      failed: 'Échoué',
+    },
+  },
+  timeline: {
+    title: 'Historique de la commande',
+    reason: 'Motif : {{reason}}',
+    events: {
+      order_placed: 'Commande passée',
+      payment_confirmed: 'Paiement reçu',
+      order_confirmed: 'Commande confirmée',
+      preparing: 'En préparation',
+      ready: 'Prête pour le livreur',
+      on_the_way: 'En route vers vous',
+      delivered: 'Livrée',
+      cancelled: 'Livraison annulée',
+      eta_revised: 'Heure de livraison mise à jour',
+      order_completed: 'Commande terminée',
+      order_cancelled: 'Commande annulée',
+      refund_succeeded: 'Remboursement effectué',
+      refund_failed: 'Échec du remboursement',
+      late_payment_refunded: 'Paiement tardif remboursé',
+      payment_failed: 'Échec du paiement',
+      unknown: 'Mise à jour de la commande',
+    },
+  },
+};

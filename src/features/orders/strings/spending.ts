@@ -82,3 +82,51 @@ export const spendingAr: Translations<typeof spendingEn> = {
     },
   },
 };
+
+export const spendingFr: Translations<typeof spendingEn> = {
+  spending: {
+    title: 'Mes dépenses',
+    back: 'Retour au compte',
+    intro:
+      "Ce que vous avez payé, récupéré et économisé sur vos commandes. Les dates sont en heure d'Arabie saoudite.",
+    period: 'Période',
+    periods: {
+      week: '7 derniers jours',
+      month: '30 derniers jours',
+      custom: 'Période personnalisée',
+    },
+    from: 'Du',
+    to: 'Au',
+    endBeforeStart: 'La date de fin doit être égale ou postérieure à la date de début.',
+    pickDates: 'Choisissez une date de début et une date de fin pour voir vos dépenses.',
+    summaryTitle: 'Du {{from}} au {{to}}',
+    netSpent: 'Dépenses nettes',
+    netSpentHint: 'Ce que vous avez payé, moins les remboursements confirmés.',
+    orders: 'Commandes',
+    paid: 'Payé',
+    refunded: 'Remboursé',
+    refundedHint: 'Uniquement les remboursements confirmés.',
+    vat: 'TVA incluse',
+    savings: 'Économies grâce aux remises',
+    deliveryFees: 'Frais de livraison',
+    rowsTitle: 'Commandes de cette période',
+    none: '—',
+    emptyTitle: 'Aucune commande payée sur cette période',
+    emptyMessage:
+      'Essayez une période plus longue ou passez une commande. Les commandes jamais payées ne sont pas comptées.',
+    errorTitle: 'Impossible de charger vos dépenses',
+    errorMessage: 'Vérifiez votre connexion et réessayez.',
+    badDates: 'Ces dates ne sont pas valides. Vérifiez-les et réessayez.',
+  },
+  export: {
+    button: 'Télécharger le CSV',
+    done: '{{filename}} téléchargé.',
+    nativeNote: "L'export d'un fichier CSV est pour l'instant disponible sur la version web.",
+    errors: {
+      invalidDates: 'Ces dates ne sont pas valides. Vérifiez-les et réessayez.',
+      tooManyRequests:
+        'Vous avez téléchargé beaucoup de fichiers. Attendez une minute et réessayez.',
+      failed: 'Impossible de préparer le fichier. Vérifiez votre connexion et réessayez.',
+    },
+  },
+};

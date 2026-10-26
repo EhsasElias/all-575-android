@@ -4,6 +4,7 @@ import { Icon } from '@/shared/ui';
 import { Section } from '../components/Section';
 import { formatDateTime } from '../format/dateTime';
 import type { Suborder, TimelineEvent } from '../types';
+import { localized } from './localized';
 import { isKnownTimelineEvent, timelineIcon } from './timelineEvents';
 import styles from './OrderTimeline.module.css';
 
@@ -25,7 +26,8 @@ export function OrderTimeline({ events, suborders }: OrderTimelineProps) {
 
   const sellerOf = (suborderId: string | null): string | null => {
     if (!separateDeliveries || suborderId === null) return null;
-    return suborders.find((suborder) => suborder.id === suborderId)?.seller.name[language] ?? null;
+    const seller = suborders.find((suborder) => suborder.id === suborderId)?.seller;
+    return seller === undefined ? null : localized(seller.name, language);
   };
 
   return (

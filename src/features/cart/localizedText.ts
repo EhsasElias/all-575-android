@@ -1,4 +1,4 @@
-import type { Language } from '@/shared/i18n';
+import { textLanguages, type Language } from '@/shared/i18n';
 import type { LocalizedText } from './cartTypes';
 
 /** How the API sends an optional name: either language can be missing, and the whole name can be null. */
@@ -12,9 +12,12 @@ export function fromApiName(name: ApiName): LocalizedText | null {
   return ar === '' && en === '' ? null : { ar, en };
 }
 
-/** The text in the customer's language, falling back to the other language if one side is empty. */
+/** The text in the customer's language, falling back to the next language that has it. */
 export function pickText(text: LocalizedText, language: Language): string {
-  const preferred = text[language];
-  if (preferred.trim() !== '') return preferred;
-  return language === 'ar' ? text.en : text.ar;
+  const texts: Readonly<Partial<Record<Language, string>>> = text;
+  for (const candidate of textLanguages(language)) {
+    const value = texts[candidate];
+    if (value !== undefined && value.trim() !== '') return value;
+  }
+  return texts.en ?? texts.ar ?? '';
 }

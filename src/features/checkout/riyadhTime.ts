@@ -2,7 +2,10 @@ import type { Language } from '@/shared/i18n';
 
 /** Every time the server sends is UTC; customers read it in Saudi time. */
 const TIME_ZONE = 'Asia/Riyadh';
-const LOCALES: Record<Language, string> = { ar: 'ar-SA', en: 'en-SA' };
+const LOCALES: Record<Language, string> = { ar: 'ar-SA', en: 'en-SA', fr: 'fr-FR' };
+
+/** French is read on a 24-hour clock; Arabic and English in Saudi Arabia on a 12-hour one. */
+const uses12Hours = (language: Language): boolean => language !== 'fr';
 
 const formatters = new Map<string, Intl.DateTimeFormat>();
 
@@ -26,9 +29,11 @@ function formatterFor(
 
 /** "9:00 AM" / "9:00 ص" */
 export function formatRiyadhTime(value: string | number, language: Language): string {
-  return formatterFor(language, { hour: 'numeric', minute: '2-digit', hour12: true }).format(
-    new Date(value),
-  );
+  return formatterFor(language, {
+    hour: 'numeric',
+    minute: '2-digit',
+    hour12: uses12Hours(language),
+  }).format(new Date(value));
 }
 
 /** "Sunday, October 25" / "الأحد، 25 أكتوبر" */

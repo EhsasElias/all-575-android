@@ -66,4 +66,35 @@ const ar: Translations<typeof en> = {
   },
 };
 
-export const legalLocales = { en, ar };
+const fr: Translations<typeof en> = {
+  version: 'Version {{version}}',
+  versionUnavailable: "La version actuelle n'a pas pu être chargée.",
+  noticeTitle: 'Le texte complet arrive bientôt',
+  noticeMessage:
+    "Cette page est provisoire. Le texte complet attend la validation juridique et sera publié ici avant le lancement de l'application.",
+  outline: 'Ce que ce document couvrira',
+  terms: {
+    title: "Conditions d'utilisation",
+    lead: "Les règles d'utilisation de TOUT à 5,75.",
+    topics: {
+      using: "Qui peut utiliser l'application, et comment",
+      orders: 'Passer et payer une commande',
+      delivery: 'Livraison et réception de votre commande',
+      returns: 'Annulations, retours et remboursements',
+      changes: 'Modifications de ces conditions',
+    },
+  },
+  privacy: {
+    title: 'Politique de confidentialité',
+    lead: 'Comment TOUT à 5,75 traite vos données personnelles.',
+    topics: {
+      collect: 'Les données personnelles que nous collectons',
+      use: 'Pourquoi nous les utilisons',
+      share: 'Avec qui nous les partageons',
+      keep: 'Combien de temps nous les conservons',
+      rights: 'Vos choix et comment nous joindre',
+    },
+  },
+};
+
+export const legalLocales = { en, ar, fr };

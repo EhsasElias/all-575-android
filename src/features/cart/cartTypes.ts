@@ -1,8 +1,8 @@
 import type { Schemas } from '@/shared/api';
-import type { Language } from '@/shared/i18n';
 
 /** A name in both languages; the screen shows the one the customer reads. */
-export type LocalizedText = Record<Language, string>;
+/** A name the server sends in Arabic and English; French reads the English one (see `textLanguages`). */
+export type LocalizedText = { ar: string; en: string };
 
 export type LineAvailability = Schemas['CartResource']['lines'][number]['availability'];
 

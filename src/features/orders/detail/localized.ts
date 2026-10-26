@@ -1,10 +1,13 @@
-import type { Language } from '@/shared/i18n';
+import { textLanguages, type Language } from '@/shared/i18n';
 
-type Pair<T> = { ar: T; en: T };
+type Pair<T> = Readonly<Partial<Record<Language, T>>>;
 
-/** A bilingual value in the language on screen, falling back to the other one if it is empty. */
+/** A bilingual value in the language on screen, falling back to the next language that has it. */
 export function localized(pair: Pair<string | null> | null, language: Language): string | null {
   if (pair === null) return null;
-  const other = language === 'ar' ? 'en' : 'ar';
-  return pair[language] ?? pair[other];
+  for (const candidate of textLanguages(language)) {
+    const value = pair[candidate];
+    if (value !== undefined && value !== null) return value;
+  }
+  return null;
 }

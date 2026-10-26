@@ -5,8 +5,8 @@ import { cx } from '@/shared/lib';
 import { VisuallyHidden } from '../VisuallyHidden/VisuallyHidden';
 import styles from './LanguageSwitch.module.css';
 
-// The order on screen is fixed, whatever the language: EN on the left, AR on the right.
-const DISPLAY_ORDER: readonly Language[] = ['en', 'ar'];
+// The order on screen is fixed, whatever the language: EN, FR, then AR on the right.
+const DISPLAY_ORDER: readonly Language[] = ['en', 'fr', 'ar'];
 
 type LanguageSwitchProps = {
   value: Language;
@@ -14,7 +14,7 @@ type LanguageSwitchProps = {
   className?: string | undefined;
 };
 
-/** EN | AR as a native radio group, so arrow keys and screen readers work without extra code. */
+/** EN | FR | AR as a native radio group, so arrow keys and screen readers work without extra code. */
 export function LanguageSwitch({ value, onChange, className }: LanguageSwitchProps) {
   const { t } = useTranslation();
   const groupName = useId();
