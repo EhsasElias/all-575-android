@@ -1,6 +1,7 @@
 import type { Language } from '@/shared/i18n';
 import { ApiError, createApiError } from './api-error';
-import type { TokenStore } from './token-store';
+import type { RequestTrace, RequestTracer } from './requestTrace';
+import { readToken, type TokenStore } from './token-store';
 
 const DEFAULT_TIMEOUT_MS = 15_000;
 const TIMEOUT = Symbol('timeout');
@@ -38,6 +39,8 @@ export type HttpClientConfig = {
   timeoutMs?: number;
   /** Replaceable for tests. */
   fetchFn?: typeof fetch;
+  /** Set in a test build only: records each request so a tester can see where one is stuck. */
+  trace?: RequestTracer;
 };
 
 type RawResponse<Body> = { response: Response; body: Body };
@@ -61,6 +64,12 @@ function parseJson(text: string): unknown {
 function readFilename(contentDisposition: string | null): string | null {
   const match = /filename="?([^";]+)"?/i.exec(contentDisposition ?? '');
   return match?.[1] ?? null;
+}
+
+/** What went wrong, for the test build's request log: the kind of failure, never the message. */
+function describeFailure(error: unknown): string {
+  if (!(error instanceof ApiError)) return 'error';
+  return error.status === null ? error.kind : `${error.kind} ${error.status}`;
 }
 
 function tryParseJson(text: string): unknown {
@@ -116,19 +125,39 @@ export function createHttpClient(config: HttpClientConfig): HttpClient {
   async function buildHeaders(
     hasBody: boolean,
     extra: Record<string, string> = {},
+    onStorageProblem?: (problem: string) => void,
   ): Promise<{ headers: Headers; token: string | null }> {
     const headers = new Headers({ Accept: 'application/json', ...extra });
     headers.set('Accept-Language', config.getLanguage());
     if (hasBody) headers.set('Content-Type', 'application/json');
     headers.delete('Authorization');
-    const token = await config.tokenStore.get();
+    const token = await readToken(config.tokenStore, onStorageProblem);
     if (token !== null) headers.set('Authorization', `Bearer ${token}`);
     return { headers, token };
   }
 
   async function request<T>(method: string, path: string, options: SendOptions): Promise<T> {
+    const trace = config.trace?.begin(method, path);
+    try {
+      return await send<T>(method, path, options, trace);
+    } catch (error) {
+      trace?.failed(describeFailure(error));
+      throw error;
+    }
+  }
+
+  async function send<T>(
+    method: string,
+    path: string,
+    options: SendOptions,
+    trace: RequestTrace | undefined,
+  ): Promise<T> {
     const hasBody = options.body !== undefined;
-    const { headers, token } = await buildHeaders(hasBody, options.headers);
+    let note = '';
+    const { headers, token } = await buildHeaders(hasBody, options.headers, (problem) => {
+      note = `secure storage ${problem}`;
+    });
+    trace?.sending(note);
     const { response, body: text } = await sendWithTimeout(
       fetchFn,
       buildUrl(config.baseUrl, path, options.query),
@@ -142,7 +171,9 @@ export function createHttpClient(config: HttpClientConfig): HttpClient {
 
     try {
       // eslint-disable-next-line @typescript-eslint/consistent-type-assertions -- The caller names the response type; the generated OpenAPI client will provide it per endpoint.
-      return parseJson(text) as T;
+      const parsed = parseJson(text) as T;
+      trace?.done(response.status);
+      return parsed;
     } catch {
       throw new ApiError({
         kind: 'unexpected',

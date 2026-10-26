@@ -11,10 +11,15 @@ function shouldRetry(failureCount: number, error: unknown): boolean {
   return failureCount < MAX_RETRIES;
 }
 
+// By default a request is held back for ever while the browser believes the device is offline, which a phone on a
+// Wi-Fi without internet, or switching networks, can believe wrongly: the customer then sees a loading screen that
+// never ends. Always try: a failure shows an error with a way to retry.
 export function createQueryClient(): QueryClient {
   return new QueryClient({
     defaultOptions: {
+      mutations: { networkMode: 'always' },
       queries: {
+        networkMode: 'always',
         retry: shouldRetry,
         staleTime: 30_000,
         refetchOnWindowFocus: false,

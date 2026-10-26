@@ -4,6 +4,7 @@ import {
   authEvents,
   http as defaultHttp,
   isApiError,
+  readToken,
   tokenStore as defaultTokenStore,
   type Data,
   type HttpClient,
@@ -46,13 +47,10 @@ export function SessionProvider({
   useEffect(() => {
     const controller = new AbortController();
 
-    // Storage that cannot be read (a locked or damaged keystore) is treated like no token: the customer can still sign in.
+    // Storage that cannot be read, or does not answer (a locked or damaged keystore), is treated like no token: the
+    // customer can still sign in.
     async function hasStoredToken(): Promise<boolean> {
-      try {
-        return (await store.get()) !== null;
-      } catch {
-        return false;
-      }
+      return (await readToken(store)) !== null;
     }
 
     async function restore() {

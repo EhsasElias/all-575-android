@@ -24,6 +24,18 @@ const en = {
   unreachable:
     'Could not reach this server. Check the address, that the server is running and that this phone is on the same Wi-Fi.',
   notSaved: 'This device would not keep the address.',
+  log: {
+    title: 'Recent requests',
+    lead: 'What this app asked the server just now. If a screen does not load, send a screenshot of this list.',
+    empty: 'No requests yet.',
+    state: 'Network: {{browser}}, query manager: {{queries}}, session: {{session}}',
+    online: 'online',
+    offline: 'offline',
+    preparing: 'waiting for secure storage, {{seconds}} s',
+    sending: 'waiting for the server, {{seconds}} s',
+    done: '{{status}}, {{ms}} ms',
+    failed: 'failed: {{reason}}, {{ms}} ms',
+  },
 };
 
 const ar: Translations<typeof en> = {
@@ -50,6 +62,18 @@ const ar: Translations<typeof en> = {
   unreachable:
     'تعذّر الوصول إلى هذا الخادم. تحقق من العنوان ومن أن الخادم يعمل وأن هذا الهاتف على نفس شبكة الواي فاي.',
   notSaved: 'لم يقبل هذا الجهاز حفظ العنوان.',
+  log: {
+    title: 'آخر الطلبات',
+    lead: 'ما طلبه التطبيق من الخادم قبل قليل. إن لم تُحمَّل شاشة فأرسل لقطة لهذه القائمة.',
+    empty: 'لا توجد طلبات بعد.',
+    state: 'الشبكة: {{browser}}، مدير الطلبات: {{queries}}، الجلسة: {{session}}',
+    online: 'متصل',
+    offline: 'غير متصل',
+    preparing: 'ينتظر التخزين الآمن، {{seconds}} ث',
+    sending: 'ينتظر الخادم، {{seconds}} ث',
+    done: '{{status}}، {{ms}} ملي ثانية',
+    failed: 'فشل: {{reason}}، {{ms}} ملي ثانية',
+  },
 };
 
 export const testServerLocales = { en, ar };

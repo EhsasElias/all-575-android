@@ -27,6 +27,24 @@ afterEach(() => {
 });
 
 describe('SessionProvider: restoring the session at start-up', () => {
+  it('becomes a guest, instead of loading for ever, when the keystore never answers', async () => {
+    vi.useFakeTimers();
+    const api = fakeApi();
+    const silentStore: TokenStore = {
+      get: () => new Promise<never>(() => undefined),
+      set: createMemoryTokenStore().set,
+      clear: createMemoryTokenStore().clear,
+    };
+
+    mount(api, silentStore);
+    expect(screen.queryByText('guest:nobody')).not.toBeInTheDocument();
+    await act(async () => {
+      await vi.advanceTimersByTimeAsync(5_000);
+    });
+
+    expect(screen.getByText('guest:nobody')).toBeInTheDocument();
+  });
+
   it('becomes a guest, instead of loading forever, when the stored token cannot be read', async () => {
     const api = fakeApi();
     const brokenStore: TokenStore = {

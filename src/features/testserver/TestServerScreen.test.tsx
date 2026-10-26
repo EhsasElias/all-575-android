@@ -1,9 +1,11 @@
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import i18next from 'i18next';
 import { MemoryRouter } from 'react-router';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
-import { installFakeApi } from '@/test/fakeApi';
+import { SessionProvider } from '@/shared/session';
+import { fakeApi, installFakeApi } from '@/test/fakeApi';
 import { restartApp } from './restartApp';
 import { TestBuildBanner } from './TestBuildBanner';
 import { TestServerScreen } from './TestServerScreen';
@@ -25,11 +27,16 @@ afterEach(() => {
 
 function openScreen(routes: Parameters<typeof installFakeApi>[0] = {}) {
   const api = installFakeApi({ 'GET /store': { body: { data: {} } }, ...routes });
+  const session = fakeApi();
   render(
-    <MemoryRouter initialEntries={['/test-server']}>
-      <TestBuildBanner />
-      <TestServerScreen />
-    </MemoryRouter>,
+    <QueryClientProvider client={new QueryClient()}>
+      <SessionProvider client={session.client} store={session.store}>
+        <MemoryRouter initialEntries={['/test-server']}>
+          <TestBuildBanner />
+          <TestServerScreen />
+        </MemoryRouter>
+      </SessionProvider>
+    </QueryClientProvider>,
   );
   return { user: userEvent.setup(), api };
 }
