@@ -6,14 +6,14 @@ import { pickText } from '../lib/localized';
 import { CatalogImage } from './CatalogImage';
 import styles from './CategoryTile.module.css';
 
-const TILE_IMAGE_SIZE = 72;
+const TILE_IMAGE_SIZE = 88;
 
 type CategoryTileProps = {
   category: Category;
   eager?: boolean;
 };
 
-/** A round picture over the category name: a link to the category's products. */
+/** A square picture over the category name: a link to the category's products. */
 export function CategoryTile({ category, eager = false }: CategoryTileProps) {
   const { language } = useLanguage();
 
@@ -24,7 +24,6 @@ export function CategoryTile({ category, eager = false }: CategoryTileProps) {
         alt=""
         size={TILE_IMAGE_SIZE}
         eager={eager}
-        round
         className={styles.image}
       />
       <span className={styles.name}>{pickText(category.name, language)}</span>

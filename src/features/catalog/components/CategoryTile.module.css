@@ -10,8 +10,10 @@
 }
 
 .image {
-  inline-size: 72px;
+  inline-size: 100%;
   border: 1px solid var(--color-border);
+  border-radius: var(--radius-lg);
+  background: transparent;
   transition: transform var(--motion-fast) var(--ease-standard);
 }
 

@@ -2,14 +2,14 @@ import { useTranslation } from 'react-i18next';
 import { Link } from 'react-router';
 import { useLanguage } from '@/shared/i18n';
 import { routePaths, routeTo } from '@/shared/lib';
-import { ButtonLink, EmptyState, ErrorState, Icon, Skeleton, VisuallyHidden } from '@/shared/ui';
+import { ButtonLink, EmptyState, ErrorState, Skeleton, VisuallyHidden } from '@/shared/ui';
 import { useCategories } from '../api/useCatalogQueries';
 import { CatalogImage } from '../components/CatalogImage';
 import { CategoryChips } from '../components/CategoryChips';
 import { pickText } from '../lib/localized';
 import styles from './CategoriesScreen.module.css';
 
-const CARD_IMAGE_SIZE = 56;
+const CARD_IMAGE_SIZE = 112;
 const EAGER_CARDS = 6;
 const PLACEHOLDERS = [1, 2, 3, 4, 5, 6] as const;
 
@@ -22,8 +22,8 @@ function CategoriesSkeleton() {
       <ul className={styles.grid} aria-hidden="true">
         {PLACEHOLDERS.map((placeholder) => (
           <li key={placeholder} className={styles.skeletonCard}>
-            <Skeleton width={CARD_IMAGE_SIZE} height={CARD_IMAGE_SIZE} circle />
-            <Skeleton width="50%" height="1.25em" />
+            <Skeleton width="100%" height={CARD_IMAGE_SIZE} />
+            <Skeleton width="60%" height="1em" />
           </li>
         ))}
       </ul>
@@ -71,11 +71,9 @@ export function CategoriesScreen() {
                     alt=""
                     size={CARD_IMAGE_SIZE}
                     eager={index < EAGER_CARDS}
-                    round
                     className={styles.image}
                   />
                   <span className={styles.name}>{name}</span>
-                  <Icon name="arrow-forward" />
                 </Link>
                 {children.length > 0 && (
                   <CategoryChips

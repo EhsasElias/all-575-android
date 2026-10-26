@@ -19,7 +19,7 @@ function StripSkeleton() {
       <ul className={styles.strip} aria-hidden="true">
         {PLACEHOLDERS.map((placeholder) => (
           <li key={placeholder} className={styles.stripItem}>
-            <Skeleton circle width={72} height={72} />
+            <Skeleton width={88} height={88} />
             <Skeleton width={56} height="1em" />
           </li>
         ))}
