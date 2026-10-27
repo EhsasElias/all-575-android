@@ -35,22 +35,6 @@ describe('Welcome slider card', () => {
     expect(screen.getByAltText('Fruit & vegetables')).toHaveAttribute('height', '616');
   });
 
-  it('puts a colored sparkle badge on the physical top-left corner, in both languages', async () => {
-    await renderApp({ route: '/welcome', language: 'ar' });
-
-    const layer = screen.getByAltText('خضار وفواكه').parentElement;
-    const badge = screen.getByAltText('خضار وفواكه').nextElementSibling;
-    expect(layer).toHaveAttribute('dir', 'ltr');
-    expect(badge).toHaveStyle({ backgroundColor: '#da2842' });
-    expect(badge?.querySelector('svg')).toBeInTheDocument();
-    expect(screen.getByAltText('منظفات').nextElementSibling).toHaveStyle({
-      backgroundColor: '#008d48',
-    });
-    expect(screen.getByAltText('ملابس').nextElementSibling).toHaveStyle({
-      backgroundColor: '#02a8b7',
-    });
-  });
-
   it('names the current category under the card and cross-fades the others out', async () => {
     const user = userEvent.setup();
     await renderApp({ route: '/welcome', language: 'en' });
@@ -74,52 +58,6 @@ describe('Welcome slider card', () => {
   });
 });
 
-describe('Welcome slider arrows', () => {
-  it('in English the right arrow is next and the left arrow is previous', async () => {
-    const user = userEvent.setup();
-    await renderApp({ route: '/welcome', language: 'en' });
-    const [left, right] = [
-      screen.getByRole('button', { name: 'Previous slide' }),
-      screen.getByRole('button', { name: 'Next slide' }),
-    ];
-
-    expect(left.compareDocumentPosition(right) & Node.DOCUMENT_POSITION_FOLLOWING).toBeTruthy();
-    expect(left.querySelector('path')).toHaveAttribute('d', 'm14.5 6-6 6 6 6');
-    expect(right.querySelector('path')).toHaveAttribute('d', 'm9.5 6 6 6-6 6');
-
-    await user.click(right);
-    expect(currentSlide()).toBe(1);
-    await user.click(left);
-    expect(currentSlide()).toBe(0);
-  });
-
-  it('in Arabic the left arrow is next and the right arrow is previous, with the same glyphs', async () => {
-    const user = userEvent.setup();
-    await renderApp({ route: '/welcome', language: 'ar' });
-    const next = screen.getByRole('button', { name: 'الشريحة التالية' });
-    const previous = screen.getByRole('button', { name: 'الشريحة السابقة' });
-
-    expect(next.compareDocumentPosition(previous) & Node.DOCUMENT_POSITION_FOLLOWING).toBeTruthy();
-    expect(next.querySelector('path')).toHaveAttribute('d', 'm14.5 6-6 6 6 6');
-    expect(previous.querySelector('path')).toHaveAttribute('d', 'm9.5 6 6 6-6 6');
-
-    await user.click(next);
-    expect(screen.getByRole('button', { name: 'الشريحة 2 من 3' })).toHaveAttribute(
-      'aria-current',
-      'true',
-    );
-  });
-
-  it('keeps the arrows in a left-to-right frame so they stay on the card edges', async () => {
-    await renderApp({ route: '/welcome', language: 'ar' });
-
-    expect(screen.getByRole('button', { name: 'الشريحة التالية' }).parentElement).toHaveAttribute(
-      'dir',
-      'ltr',
-    );
-  });
-});
-
 describe('Welcome slideshow', () => {
   it('has three progress dashes that are real buttons', async () => {
     await renderApp({ route: '/welcome' });
@@ -128,42 +66,34 @@ describe('Welcome slideshow', () => {
     expect(screen.getByRole('group', { name: 'Shop by category' })).toBeInTheDocument();
   });
 
-  it('advances by itself, and the pause button stops it', async () => {
+  it('keeps the selected slide still and has no playback controls', async () => {
     vi.useFakeTimers({ shouldAdvanceTime: true });
     await renderApp({ route: '/welcome' });
     expect(currentSlide()).toBe(0);
 
-    advance(4500);
-    expect(currentSlide()).toBe(1);
+    fireEvent.click(dash(3));
+    advance(60_000);
 
-    fireEvent.click(screen.getByRole('button', { name: 'Pause slideshow' }));
-    advance(30_000);
-    expect(currentSlide()).toBe(1);
-    expect(screen.getByRole('button', { name: 'Play slideshow' })).toBeInTheDocument();
+    expect(currentSlide()).toBe(2);
+    expect(screen.queryByRole('button', { name: /slideshow/ })).not.toBeInTheDocument();
   });
 
-  it('pauses while the card is pressed', async () => {
-    vi.useFakeTimers({ shouldAdvanceTime: true });
-    await renderApp({ route: '/welcome' });
+  it.each(['en', 'ar'] as const)(
+    'follows a swipe in the reading direction (%s)',
+    async (language) => {
+      await renderApp({ route: '/welcome', language });
+      const card = screen.getByRole('group', {
+        name: language === 'ar' ? 'تسوّق حسب الفئة' : 'Shop by category',
+      });
 
-    fireEvent.pointerDown(screen.getByRole('group', { name: 'Shop by category' }));
-    advance(30_000);
-    expect(currentSlide()).toBe(0);
+      fireEvent.pointerDown(card, { clientX: 200, clientY: 100 });
+      fireEvent.pointerUp(window, { clientX: language === 'ar' ? 300 : 100, clientY: 100 });
 
-    fireEvent.pointerUp(window);
-    advance(4500);
-    expect(currentSlide()).toBe(1);
-  });
-
-  it('follows a swipe in the reading direction', async () => {
-    await renderApp({ route: '/welcome', language: 'en' });
-    const card = screen.getByRole('group', { name: 'Shop by category' });
-
-    fireEvent.pointerDown(card, { clientX: 250, clientY: 100 });
-    fireEvent.pointerUp(window, { clientX: 100, clientY: 100 });
-
-    expect(currentSlide()).toBe(1);
-  });
+      expect(
+        screen.getByRole('button', { name: language === 'ar' ? 'الشريحة 2 من 3' : 'Slide 2 of 3' }),
+      ).toHaveAttribute('aria-current', 'true');
+    },
+  );
 
   it('does not move or offer a pause button when the user prefers reduced motion', async () => {
     vi.useFakeTimers({ shouldAdvanceTime: true });

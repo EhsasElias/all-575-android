@@ -1,10 +1,10 @@
 import { useTranslation } from 'react-i18next';
 import { Link } from 'react-router';
 import { routePaths } from '@/shared/lib';
-import { Button, Carousel, CarouselDashes, CarouselPauseButton } from '@/shared/ui';
+import { Button, Carousel, CarouselDashes } from '@/shared/ui';
 import { useStartShopping } from './useStartShopping';
 import { markWelcomeSeen } from './welcomeSeen';
-import { SLIDE_DURATION_MS, WELCOME_SLIDES } from './welcomeSlides';
+import { WELCOME_SLIDES } from './welcomeSlides';
 import { PricePill } from './PricePill';
 import { WelcomeCaption, WelcomeSlider } from './WelcomeSlider';
 import { WelcomeHeader } from './WelcomeHeader';
@@ -19,13 +19,10 @@ export function WelcomeScreen() {
       <WelcomeHeader onStartShopping={startShopping} />
       <PricePill />
 
-      <Carousel
-        count={WELCOME_SLIDES.length}
-        autoAdvanceMs={SLIDE_DURATION_MS}
-        className={styles.slideshow}
-      >
+      <Carousel count={WELCOME_SLIDES.length} className={styles.slideshow}>
         <WelcomeSlider />
         <WelcomeCaption />
+        <CarouselDashes className={styles.dashes} />
 
         <h1 className={styles.headline}>
           <span className={styles.headlineLead}>{t('headlineLead')}</span>{' '}
@@ -33,19 +30,16 @@ export function WelcomeScreen() {
         </h1>
         <p className={styles.subline}>{t('subline')}</p>
 
-        <Button size="lg" fullWidth className={styles.cta} onClick={startShopping}>
-          {t('cta')}
-        </Button>
-        <p className={styles.signIn}>
-          {t('signInPrompt')}{' '}
-          <Link to={routePaths.signIn} className={styles.signInLink} onClick={markWelcomeSeen}>
-            {t('signInLink')}
-          </Link>
-        </p>
-
-        <div className={styles.controls}>
-          <CarouselDashes className={styles.dashes} />
-          <CarouselPauseButton className={styles.pause} />
+        <div className={styles.actions}>
+          <Button size="lg" fullWidth className={styles.cta} onClick={startShopping}>
+            {t('cta')}
+          </Button>
+          <p className={styles.signIn}>
+            {t('signInPrompt')}{' '}
+            <Link to={routePaths.signIn} className={styles.signInLink} onClick={markWelcomeSeen}>
+              {t('signInLink')}
+            </Link>
+          </p>
         </div>
       </Carousel>
     </main>

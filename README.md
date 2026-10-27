@@ -90,6 +90,8 @@ See [Customer map and coverage](docs/customer/CUSTOMER_MAP.md) and the [step-by-
 
 The header menu opens from the right in Arabic and the left in English/French. It includes the live category tree and links to existing customer pages. Language and light/dark/system appearance choices are saved on the device; system mode follows later device changes.
 
+The welcome slider uses swipe gestures and tappable slide indicators, with no automatic movement or playback controls. Its photos, price and welcome messages are unchanged.
+
 The first-launch sequence is the product slider, a brief logo-only introduction, then the shopping home. Reduced motion skips the animated delay. Product descriptions expand on tap so the main buying choices remain easy to scan.
 
 The mobile browser workflow tests all six language/theme combinations and saves menu screenshots under the `mobile-ui-previews` artifact. The product and category pictures continue to come from the catalog API; this change does not replace real listings with generated products.

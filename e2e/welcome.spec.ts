@@ -12,21 +12,23 @@ test.describe('welcome screen', () => {
     await expect(page.getByRole('navigation', { name: 'Main navigation' })).toHaveCount(0);
   });
 
-  test('the slideshow can be paused and played again', async ({ page }) => {
+  test('slides change on request without playback controls or automatic movement', async ({
+    page,
+  }) => {
+    await page.clock.install();
     await page.goto('/welcome');
     const firstDot = page.getByRole('button', { name: 'Slide 1 of 3' });
     await expect(firstDot).toHaveAttribute('aria-current', 'true');
+    await expect(page.getByRole('button', { name: /slideshow/ })).toHaveCount(0);
 
-    await page.getByRole('button', { name: 'Pause slideshow' }).click();
-    await page.waitForTimeout(5500);
+    const thirdDot = page.getByRole('button', { name: 'Slide 3 of 3' });
+    await thirdDot.click();
+    await page.clock.fastForward(60_000);
 
+    await expect(thirdDot).toHaveAttribute('aria-current', 'true');
+    await expect(page.getByRole('img', { name: 'Clothing', exact: true })).toBeVisible();
+    await firstDot.click();
     await expect(firstDot).toHaveAttribute('aria-current', 'true');
-    await page.getByRole('button', { name: 'Play slideshow' }).click();
-    await expect(page.getByRole('button', { name: 'Slide 2 of 3' })).toHaveAttribute(
-      'aria-current',
-      'true',
-      { timeout: 8000 },
-    );
   });
 
   test('the language choice is remembered and flips the layout', async ({ page }) => {
