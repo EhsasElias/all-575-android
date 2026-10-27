@@ -187,7 +187,7 @@ describe('Welcome navigation', () => {
       { timeout: 3000 },
     );
     expect(hasSeenWelcome()).toBe(true);
-    expect(screen.getByRole('navigation', { name: 'Main navigation' })).toBeInTheDocument();
+    expect(await screen.findByRole('navigation', { name: 'Main navigation' })).toBeInTheDocument();
   });
 
   it('opens the shopping home from the call to action button', async () => {

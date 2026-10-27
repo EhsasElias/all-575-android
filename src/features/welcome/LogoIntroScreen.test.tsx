@@ -14,7 +14,7 @@ describe('Logo introduction', () => {
     if (header === null) throw new Error('Welcome header missing');
     await user.click(within(header).getByRole('button', { name: 'Tap the logo to shop now' }));
     expect(router.state.location.pathname).toBe('/welcome/logo');
-    expect(screen.getByRole('status')).toHaveTextContent('Loading');
+    expect(within(screen.getByRole('main')).getByRole('status')).toHaveTextContent('Loading');
     expect(screen.queryByRole('heading')).not.toBeInTheDocument();
     expect(screen.queryByRole('navigation')).not.toBeInTheDocument();
     await waitFor(
