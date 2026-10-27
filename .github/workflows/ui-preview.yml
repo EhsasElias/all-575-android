@@ -24,12 +24,6 @@ jobs:
           node-version: 22
           cache: npm
       - run: npm ci
-      - name: Formatting diagnostics
-        run: |
-          if ! npm run format:check; then
-            npx prettier --write .
-            git diff
-          fi
       - run: npx playwright install --with-deps chromium
       - name: Check mobile navigation, languages, themes and onboarding
         run: npm run test:e2e

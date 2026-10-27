@@ -27,7 +27,9 @@ for (const language of LANGUAGES) {
       await expect(page.locator('html')).toHaveAttribute('lang', language);
       await expect(page.locator('html')).toHaveAttribute('dir', language === 'ar' ? 'rtl' : 'ltr');
       await expect(page.locator('html')).toHaveAttribute('data-theme', theme);
-      expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(true);
+      expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(
+        true,
+      );
       const image = testInfo.outputPath(`menu-${language}-${theme}.png`);
       await page.screenshot({ path: image, fullPage: true });
       await testInfo.attach('Menu preview', { path: image, contentType: 'image/png' });

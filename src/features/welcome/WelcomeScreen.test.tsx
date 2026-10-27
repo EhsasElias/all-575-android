@@ -180,9 +180,12 @@ describe('Welcome navigation', () => {
     await user.click(within(getHeader()).getByRole('button', { name: EN.cta }));
 
     expect(router.state.location.pathname).toBe('/welcome/logo');
-    await waitFor(() => {
-      expect(router.state.location.pathname).toBe('/home');
-    }, { timeout: 3000 });
+    await waitFor(
+      () => {
+        expect(router.state.location.pathname).toBe('/home');
+      },
+      { timeout: 3000 },
+    );
     expect(hasSeenWelcome()).toBe(true);
     expect(screen.getByRole('navigation', { name: 'Main navigation' })).toBeInTheDocument();
   });
@@ -196,9 +199,12 @@ describe('Welcome navigation', () => {
     );
 
     expect(router.state.location.pathname).toBe('/welcome/logo');
-    await waitFor(() => {
-      expect(router.state.location.pathname).toBe('/home');
-    }, { timeout: 3000 });
+    await waitFor(
+      () => {
+        expect(router.state.location.pathname).toBe('/home');
+      },
+      { timeout: 3000 },
+    );
     expect(hasSeenWelcome()).toBe(true);
   });
 
@@ -209,9 +215,12 @@ describe('Welcome navigation', () => {
     await user.click(screen.getByRole('link', { name: 'Skip' }));
 
     expect(router.state.location.pathname).toBe('/welcome/logo');
-    await waitFor(() => {
-      expect(router.state.location.pathname).toBe('/home');
-    }, { timeout: 3000 });
+    await waitFor(
+      () => {
+        expect(router.state.location.pathname).toBe('/home');
+      },
+      { timeout: 3000 },
+    );
     expect(hasSeenWelcome()).toBe(true);
   });
 

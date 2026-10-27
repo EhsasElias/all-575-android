@@ -7,7 +7,13 @@ import { renderApp } from '@/test/render';
 
 const categories = {
   data: [
-    { id: 1, slug: 'clothing', name: { ar: 'ملابس', en: 'Clothing' }, image_url: null, children: [] },
+    {
+      id: 1,
+      slug: 'clothing',
+      name: { ar: 'ملابس', en: 'Clothing' },
+      image_url: null,
+      children: [],
+    },
   ],
 };
 

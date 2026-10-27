@@ -14,9 +14,12 @@ export function LogoIntroScreen() {
   const reducedMotion = usePrefersReducedMotion();
 
   useEffect(() => {
-    const timer = window.setTimeout(() => {
-      void navigate(routePaths.home, { replace: true });
-    }, reducedMotion ? 0 : INTRO_DURATION_MS);
+    const timer = window.setTimeout(
+      () => {
+        void navigate(routePaths.home, { replace: true });
+      },
+      reducedMotion ? 0 : INTRO_DURATION_MS,
+    );
     return () => {
       window.clearTimeout(timer);
     };

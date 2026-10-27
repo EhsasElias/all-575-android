@@ -17,9 +17,12 @@ describe('Logo introduction', () => {
     expect(screen.getByRole('status')).toHaveTextContent('Loading');
     expect(screen.queryByRole('heading')).not.toBeInTheDocument();
     expect(screen.queryByRole('navigation')).not.toBeInTheDocument();
-    await waitFor(() => {
-      expect(router.state.location.pathname).toBe('/home');
-    }, { timeout: 3000 });
+    await waitFor(
+      () => {
+        expect(router.state.location.pathname).toBe('/home');
+      },
+      { timeout: 3000 },
+    );
   });
 
   it('moves directly to the shop when reduced motion is preferred', async () => {
