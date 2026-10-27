@@ -28,10 +28,10 @@ describe('Appearance preference', () => {
         <ThemePicker />
       </>,
     );
-    await user.click(screen.getByRole('radio', { name: 'Light', exact: true }));
+    await user.click(screen.getByRole('radio', { name: 'Light' }));
     expect(document.documentElement).toHaveAttribute('data-theme', 'light');
     await expect(backend.get('theme')).resolves.toBe('light');
-    await user.click(screen.getByRole('radio', { name: 'System', exact: true }));
+    await user.click(screen.getByRole('radio', { name: 'System' }));
     expect(document.documentElement).not.toHaveAttribute('data-theme');
     expect(getPreference('theme')).toBe('system');
     await loadPreferences(backend);

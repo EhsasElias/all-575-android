@@ -63,13 +63,13 @@ describe('Side menu', () => {
     await renderApp({ route: '/account', seenWelcome: true });
     await user.click(screen.getByRole('button', { name: 'Open menu' }));
     const dialog = screen.getByRole('dialog', { name: 'Menu' });
-    await user.click(within(dialog).getByRole('radio', { name: 'Dark', exact: true }));
+    await user.click(within(dialog).getByRole('radio', { name: 'Dark' }));
     expect(document.documentElement).toHaveAttribute('data-theme', 'dark');
     expect(getPreference('theme')).toBe('dark');
     await user.click(within(dialog).getByRole('radio', { name: /FR/ }));
     expect(document.documentElement).toHaveAttribute('lang', 'fr');
     expect(document.documentElement).toHaveAttribute('dir', 'ltr');
-    await user.click(within(dialog).getByRole('radio', { name: 'Clair', exact: true }));
+    await user.click(within(dialog).getByRole('radio', { name: 'Clair' }));
     expect(document.documentElement).toHaveAttribute('data-theme', 'light');
     expect(getPreference('theme')).toBe('light');
   });
