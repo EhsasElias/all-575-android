@@ -1,4 +1,5 @@
 import { accountLocales } from '@/features/account';
+import { aftercareLocales } from '@/features/aftercare';
 import { addressesLocales } from '@/features/addresses';
 import { authLocales } from '@/features/auth';
 import { cartLocales } from '@/features/cart';
@@ -11,6 +12,7 @@ import { commonLocales } from '@/shared/i18n';
 
 export const appResources = {
   en: {
+    aftercare: aftercareLocales.en,
     common: commonLocales.en,
     welcome: welcomeLocales.en,
     catalog: catalogLocales.en,
@@ -23,6 +25,7 @@ export const appResources = {
     testserver: testServerLocales.en,
   },
   ar: {
+    aftercare: aftercareLocales.ar,
     common: commonLocales.ar,
     welcome: welcomeLocales.ar,
     catalog: catalogLocales.ar,
@@ -35,6 +38,7 @@ export const appResources = {
     testserver: testServerLocales.ar,
   },
   fr: {
+    aftercare: aftercareLocales.fr,
     common: commonLocales.fr,
     welcome: welcomeLocales.fr,
     catalog: catalogLocales.fr,

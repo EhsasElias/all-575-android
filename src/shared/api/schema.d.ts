@@ -187,6 +187,86 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/v1/me/cases": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["customerCase.index"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/v1/orders/{order}/care-items": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["customerCase.items"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/v1/orders/{order}/cases": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post: operations["customerCase.store"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/v1/me/cases/{case}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["customerCase.show"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/v1/me/cases/{case}/messages": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post: operations["customerCase.message"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/v1/orders/{order}/suborders/{suborder}/delivery-code": {
         parameters: {
             query?: never;
@@ -656,10 +736,46 @@ export interface components {
             payment_method: "mada" | "card" | "apple_pay";
             notes?: string | null;
         };
+        /** CreateCustomerCaseRequest */
+        CreateCustomerCaseRequest: {
+            /** @enum {string} */
+            kind: "support" | "return";
+            subject: string;
+            message: string;
+            /** Format: uuid */
+            request_key: string;
+            order_item_id?: number;
+            quantity?: number;
+        };
         /** CreateQuoteRequest */
         CreateQuoteRequest: {
             address_id: number;
             promo_code?: string | null;
+        };
+        /** CustomerCaseMessageRequest */
+        CustomerCaseMessageRequest: {
+            message: string;
+        };
+        /** CustomerCaseResource */
+        CustomerCaseResource: {
+            id: string;
+            order_id: string;
+            kind: string;
+            status: string;
+            subject: string;
+            order_item_id: number | null;
+            quantity: number | null;
+            /** Format: date-time */
+            created_at: string | null;
+            /** Format: date-time */
+            updated_at: string | null;
+            messages: {
+                id: number;
+                author: string;
+                body: string;
+                /** Format: date-time */
+                created_at: string | null;
+            }[];
         };
         /** MergeCartRequest */
         MergeCartRequest: {
@@ -1477,6 +1593,165 @@ export interface operations {
                             payment: components["schemas"]["PaymentResource"] | null;
                             replayed: boolean;
                         };
+                    };
+                };
+            };
+            401: components["responses"]["AuthenticationException"];
+            422: components["responses"]["ValidationException"];
+        };
+    };
+    "customerCase.index": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Paginated set of `CustomerCaseResource` */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        data: components["schemas"]["CustomerCaseResource"][];
+                        links: {
+                            first: string | null;
+                            last: string | null;
+                            prev: string | null;
+                            next: string | null;
+                        };
+                        meta: {
+                            /** @description Base path for paginator generated URLs. */
+                            path: string | null;
+                            /** @description Number of items shown per page. */
+                            per_page: number;
+                            /** @description The "cursor" that points to the next set of items. */
+                            next_cursor: string | null;
+                            /** @description The "cursor" that points to the previous set of items. */
+                            prev_cursor: string | null;
+                        };
+                    };
+                };
+            };
+            401: components["responses"]["AuthenticationException"];
+        };
+    };
+    "customerCase.items": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                order: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        data: {
+                            items: {
+                                id: number;
+                                name: {
+                                    ar: string;
+                                    en: string;
+                                };
+                                variant_name: {
+                                    ar: string | null;
+                                    en: string | null;
+                                };
+                                quantity: number;
+                                returnable_quantity: number;
+                            }[];
+                        };
+                    };
+                };
+            };
+            401: components["responses"]["AuthenticationException"];
+        };
+    };
+    "customerCase.store": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                order: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["CreateCustomerCaseRequest"];
+            };
+        };
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": string;
+                };
+            };
+            401: components["responses"]["AuthenticationException"];
+            422: components["responses"]["ValidationException"];
+        };
+    };
+    "customerCase.show": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                case: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description `CustomerCaseResource` */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        data: components["schemas"]["CustomerCaseResource"];
+                    };
+                };
+            };
+            401: components["responses"]["AuthenticationException"];
+        };
+    };
+    "customerCase.message": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                case: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["CustomerCaseMessageRequest"];
+            };
+        };
+        responses: {
+            /** @description `CustomerCaseResource` */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        data: components["schemas"]["CustomerCaseResource"];
                     };
                 };
             };

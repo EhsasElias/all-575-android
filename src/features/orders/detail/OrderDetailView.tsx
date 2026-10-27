@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { routePaths } from '@/shared/lib';
+import { routePaths, routeTo } from '@/shared/lib';
 import { ButtonLink } from '@/shared/ui';
 import { isActiveOrder } from '../status/statusLook';
 import type { OrderDetail } from '../types';
@@ -15,6 +15,7 @@ import styles from './OrderDetailView.module.css';
 /** Everything about one order, top to bottom: where it is, what is in it, where it goes, what it cost. */
 export function OrderDetailView({ order }: { order: OrderDetail }) {
   const { t } = useTranslation('orders');
+  const { t: tCare } = useTranslation('aftercare');
   const [focusRequest, setFocusRequest] = useState(0);
 
   return (
@@ -35,6 +36,7 @@ export function OrderDetailView({ order }: { order: OrderDetail }) {
       <ShippingSection order={order} />
       <PaymentsSection payments={order.payments} refunds={order.refunds} />
       <TotalsSection order={order} />
+      <ButtonLink to={routeTo.orderHelp(order.id)}>{tCare('open')}</ButtonLink>
     </div>
   );
 }

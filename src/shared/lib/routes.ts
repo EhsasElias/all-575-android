@@ -16,6 +16,9 @@ export const routePaths = {
   checkoutPayment: '/checkout/payment/:orderId',
   orders: '/orders',
   order: '/orders/:orderId',
+  customerCases: '/account/support',
+  customerCase: '/account/support/:caseId',
+  orderHelp: '/orders/:orderId/help',
   account: '/account',
   profile: '/account/profile',
   sessions: '/account/sessions',
@@ -32,6 +35,8 @@ export const routePaths = {
 const segment = (value: string | number): string => encodeURIComponent(String(value));
 
 export const routeTo = {
+  customerCase: (id: string) => `/account/support/${segment(id)}`,
+  orderHelp: (id: string) => `/orders/${segment(id)}/help`,
   categoryProducts: (slug: string) => `/categories/${segment(slug)}`,
   product: (slug: string) => `/products/${segment(slug)}`,
   seller: (slug: string) => `/sellers/${segment(slug)}`,

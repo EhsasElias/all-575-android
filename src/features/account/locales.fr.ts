@@ -22,6 +22,8 @@ export const fr: Translations<typeof en> = {
     addName: 'Ajouter votre nom',
   },
   menu: {
+    support: 'Assistance et retours',
+    supportHint: 'Suivez vos demandes et les réponses',
     label: 'Gérer votre compte',
     profile: 'Profil',
     profileHint: 'Votre nom et votre langue',

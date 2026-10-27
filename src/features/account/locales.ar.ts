@@ -22,6 +22,8 @@ export const ar: Translations<typeof en> = {
     addName: 'أضف اسمك',
   },
   menu: {
+    support: 'الدعم والمرتجعات',
+    supportHint: 'تابع طلبات الدعم والردود',
     label: 'إدارة حسابك',
     profile: 'الملف الشخصي',
     profileHint: 'اسمك ولغتك',

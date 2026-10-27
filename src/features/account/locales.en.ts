@@ -20,6 +20,8 @@ export const en = {
     addName: 'Add your name',
   },
   menu: {
+    support: 'Support and returns',
+    supportHint: 'Follow your requests and replies',
     label: 'Manage your account',
     profile: 'Profile',
     profileHint: 'Your name and language',

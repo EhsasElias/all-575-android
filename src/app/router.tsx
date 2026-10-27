@@ -1,5 +1,6 @@
 import { createBrowserRouter, redirect, type RouteObject } from 'react-router';
 import { accountRoutes, protectedAccountRoutes } from '@/features/account';
+import { aftercareRoutes } from '@/features/aftercare';
 import { addressesRoutes } from '@/features/addresses';
 import { authRoutes } from '@/features/auth';
 import { cartRoutes } from '@/features/cart';
@@ -43,6 +44,7 @@ export const appRoutes: RouteObject[] = [
           {
             element: <RequireAuth />,
             children: [
+              ...aftercareRoutes,
               ...addressesRoutes,
               ...checkoutRoutes,
               ...ordersRoutes,

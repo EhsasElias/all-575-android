@@ -8,17 +8,30 @@ import styles from './AccountMenu.module.css';
 type MenuEntry = {
   to: string;
   icon: IconName;
-  label: 'menu.profile' | 'menu.orders' | 'menu.addresses' | 'menu.spending' | 'menu.sessions';
+  label:
+    | 'menu.profile'
+    | 'menu.orders'
+    | 'menu.addresses'
+    | 'menu.spending'
+    | 'menu.sessions'
+    | 'menu.support';
   hint:
     | 'menu.profileHint'
     | 'menu.ordersHint'
     | 'menu.addressesHint'
     | 'menu.spendingHint'
-    | 'menu.sessionsHint';
+    | 'menu.sessionsHint'
+    | 'menu.supportHint';
 };
 
 // Orders, addresses and spending are built by other features; they are only linked here.
 const ENTRIES: readonly MenuEntry[] = [
+  {
+    to: routePaths.customerCases,
+    icon: 'receipt',
+    label: 'menu.support',
+    hint: 'menu.supportHint',
+  },
   { to: routePaths.profile, icon: 'user', label: 'menu.profile', hint: 'menu.profileHint' },
   { to: routePaths.orders, icon: 'receipt', label: 'menu.orders', hint: 'menu.ordersHint' },
   {

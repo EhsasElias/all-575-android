@@ -81,3 +81,7 @@ brand/         the exact logo and brand images
 
 Rules the linters enforce: strict TypeScript with no `as` casts, no default exports, files of at most 250 lines, logical CSS properties only (so right-to-left is correct by default).
 The sign-in token is never kept in web storage (memory on the web, secure storage on Android).
+
+## Customer map and testing
+
+See [Customer map and coverage](docs/customer/CUSTOMER_MAP.md) and the [step-by-step customer test guide](docs/customer/CUSTOMER_TEST_GUIDE.md). New support and return requests are available from an order and Account > Support and returns.
