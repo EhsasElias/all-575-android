@@ -2,6 +2,7 @@ import { useTranslation } from 'react-i18next';
 import { Link } from 'react-router';
 import { useLanguage } from '@/shared/i18n';
 import { routeTo } from '@/shared/lib';
+import { Icon } from '@/shared/ui';
 import type { ProductDetail } from '../api/types';
 import { CatalogImage } from '../components/CatalogImage';
 import { RatingSummary } from '../components/StarRating';
@@ -42,13 +43,14 @@ export function ProductDetails({ product }: { product: ProductDetail }) {
       <ProductBuyBox product={product} />
 
       {description !== '' && (
-        <section aria-labelledby="product-about" className={styles.about}>
-          <h2 id="product-about" className={styles.sectionTitle}>
-            {t('product.aboutTitle')}
-          </h2>
+        <details className={styles.about}>
+          <summary className={styles.summary}>
+            <h2 className={styles.sectionTitle}>{t('product.aboutTitle')}</h2>
+            <Icon name="chevron-down" size={18} />
+          </summary>
           {/* Plain text only, keeping the seller's line breaks. */}
           <p className={styles.description}>{description}</p>
-        </section>
+        </details>
       )}
 
       <ReviewsSection slug={product.slug} />

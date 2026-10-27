@@ -85,3 +85,11 @@ The sign-in token is never kept in web storage (memory on the web, secure storag
 ## Customer map and testing
 
 See [Customer map and coverage](docs/customer/CUSTOMER_MAP.md) and the [step-by-step customer test guide](docs/customer/CUSTOMER_TEST_GUIDE.md). New support and return requests are available from an order and Account > Support and returns.
+
+## Appearance and navigation
+
+The header menu opens from the right in Arabic and the left in English/French. It includes the live category tree and links to existing customer pages. Language and light/dark/system appearance choices are saved on the device; system mode follows later device changes.
+
+The first-launch sequence is the product slider, a brief logo-only introduction, then the shopping home. Reduced motion skips the animated delay. Product descriptions expand on tap so the main buying choices remain easy to scan.
+
+The mobile browser workflow tests all six language/theme combinations and saves menu screenshots under the `mobile-ui-previews` artifact. The product and category pictures continue to come from the catalog API; this change does not replace real listings with generated products.

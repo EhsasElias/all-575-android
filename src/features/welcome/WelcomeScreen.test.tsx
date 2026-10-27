@@ -1,4 +1,4 @@
-import { act, screen, within } from '@testing-library/react';
+import { act, screen, waitFor, within } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import i18next from 'i18next';
 import { describe, expect, it, vi } from 'vitest';
@@ -115,7 +115,7 @@ describe('Welcome header', () => {
 
       expect(header).toHaveAttribute('dir', 'ltr');
       const [first, second, third] = [...header.children];
-      expect(first).toHaveAttribute('href', '/home');
+      expect(first).toHaveAttribute('href', '/welcome/logo');
       expect(second?.tagName).toBe('FIELDSET');
       expect(third?.tagName).toBe('BUTTON');
       expect(
@@ -179,7 +179,10 @@ describe('Welcome navigation', () => {
 
     await user.click(within(getHeader()).getByRole('button', { name: EN.cta }));
 
-    expect(router.state.location.pathname).toBe('/home');
+    expect(router.state.location.pathname).toBe('/welcome/logo');
+    await waitFor(() => {
+      expect(router.state.location.pathname).toBe('/home');
+    }, { timeout: 3000 });
     expect(hasSeenWelcome()).toBe(true);
     expect(screen.getByRole('navigation', { name: 'Main navigation' })).toBeInTheDocument();
   });
@@ -192,7 +195,10 @@ describe('Welcome navigation', () => {
       within(screen.getByRole('main')).getAllByRole('button', { name: EN.cta })[1] ?? document.body,
     );
 
-    expect(router.state.location.pathname).toBe('/home');
+    expect(router.state.location.pathname).toBe('/welcome/logo');
+    await waitFor(() => {
+      expect(router.state.location.pathname).toBe('/home');
+    }, { timeout: 3000 });
     expect(hasSeenWelcome()).toBe(true);
   });
 
@@ -202,7 +208,10 @@ describe('Welcome navigation', () => {
 
     await user.click(screen.getByRole('link', { name: 'Skip' }));
 
-    expect(router.state.location.pathname).toBe('/home');
+    expect(router.state.location.pathname).toBe('/welcome/logo');
+    await waitFor(() => {
+      expect(router.state.location.pathname).toBe('/home');
+    }, { timeout: 3000 });
     expect(hasSeenWelcome()).toBe(true);
   });
 

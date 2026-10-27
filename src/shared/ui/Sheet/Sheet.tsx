@@ -13,7 +13,7 @@ type SheetProps = {
   children: ReactNode;
   footer?: ReactNode;
   /** `bottom` slides up from the screen edge; `center` is a classic dialog. */
-  placement?: 'bottom' | 'center';
+  placement?: 'bottom' | 'center' | 'side';
 };
 
 function useEscapeKey(active: boolean, onEscape: () => void): void {
@@ -59,7 +59,13 @@ export function Sheet({
   if (!open) return null;
 
   return createPortal(
-    <div className={cx(styles.root, placement === 'center' && styles.center)}>
+    <div
+      className={cx(
+        styles.root,
+        placement === 'center' && styles.center,
+        placement === 'side' && styles.side,
+      )}
+    >
       <div className={styles.backdrop} role="presentation" onClick={onClose} />
       <div
         ref={panelRef}

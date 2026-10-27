@@ -1,4 +1,5 @@
 import { Outlet } from 'react-router';
+import { ThemeSync } from '@/shared/theme';
 import { useDocumentTitle } from './documentTitle';
 import { SkipLink } from './SkipLink';
 
@@ -7,6 +8,7 @@ export function RootLayout() {
 
   return (
     <>
+      <ThemeSync />
       <SkipLink />
       <Outlet />
     </>

@@ -1,0 +1,57 @@
+.screen {
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-6);
+  min-block-size: 100vh;
+  min-block-size: 100dvh;
+  padding-block: var(--safe-top) var(--safe-bottom);
+  background: var(--color-bg);
+}
+
+.mark {
+  padding: var(--space-4);
+  border-radius: var(--radius-xl);
+  background: var(--color-card-surface);
+  animation: brand-in var(--motion-slow) var(--ease-standard) both;
+}
+
+.loading {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+}
+
+.dot {
+  inline-size: 6px;
+  block-size: 6px;
+  border-radius: var(--radius-pill);
+  background: var(--color-brand-text);
+  animation: pulse var(--motion-slow) ease-in-out infinite alternate;
+}
+
+.dot:nth-of-type(2) {
+  animation-delay: 80ms;
+}
+
+.dot:nth-of-type(3) {
+  animation-delay: 160ms;
+}
+
+@keyframes brand-in {
+  from {
+    opacity: 0;
+    transform: scale(0.94);
+  }
+}
+
+@keyframes pulse {
+  from {
+    opacity: 0.25;
+  }
+  to {
+    opacity: 1;
+  }
+}

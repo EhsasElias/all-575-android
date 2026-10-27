@@ -1,7 +1,7 @@
 .screen {
   display: flex;
   flex-direction: column;
-  gap: var(--space-4);
+  gap: var(--space-5);
 }
 
 .heading {
@@ -21,9 +21,30 @@
 }
 
 .about {
+  padding-block: var(--space-3);
+  border-block: 1px solid var(--color-border);
+}
+
+.summary {
   display: flex;
-  flex-direction: column;
-  gap: var(--space-2);
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-3);
+  min-block-size: var(--size-target);
+  cursor: pointer;
+  list-style: none;
+}
+
+.summary::-webkit-details-marker {
+  display: none;
+}
+
+.about[open] .summary svg {
+  transform: rotate(180deg);
+}
+
+.about[open] .description {
+  margin-block-start: var(--space-3);
 }
 
 .sectionTitle {

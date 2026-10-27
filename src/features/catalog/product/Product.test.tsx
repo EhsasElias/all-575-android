@@ -35,6 +35,7 @@ describe('Product page', () => {
     expect(screen.getByRole('link', { name: 'Food' })).toHaveAttribute('href', '/categories/food');
     expect(screen.getByText(/^5\.75\s+SAR$/)).toBeVisible();
     expect(screen.getByText('VAT included')).toBeVisible();
+    await userEvent.click(screen.getByText('About this product'));
     expect(screen.getByText('Demo product for previewing the store.')).toBeVisible();
     expect(screen.getByRole('img', { name: 'Biscuits' })).toHaveAttribute(
       'src',
@@ -195,6 +196,7 @@ describe('Languages', () => {
 
     expect(await screen.findByRole('heading', { level: 1, name: 'بسكويت' })).toBeVisible();
     expect(document.documentElement).toHaveAttribute('dir', 'rtl');
+    await userEvent.click(screen.getByText('عن المنتج'));
     expect(screen.getByText('منتج تجريبي لعرض المتجر.')).toBeVisible();
     expect(screen.getByText(/^5\.75\s+ر\.س$/)).toBeVisible();
     expect(screen.getByText('شامل الضريبة')).toBeVisible();
@@ -211,6 +213,8 @@ describe('Languages', () => {
     );
     await renderProduct('ar');
 
+    await screen.findByRole('heading', { level: 1, name: 'بسكويت' });
+    await userEvent.click(screen.getByText('عن المنتج'));
     expect(await screen.findByText('English only description')).toBeVisible();
     expect(screen.getByRole('heading', { level: 1, name: 'بسكويت' })).toBeVisible();
   });

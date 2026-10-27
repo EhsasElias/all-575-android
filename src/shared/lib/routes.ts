@@ -5,6 +5,7 @@
 export const routePaths = {
   root: '/',
   welcome: '/welcome',
+  logoIntro: '/welcome/logo',
   home: '/home',
   categories: '/categories',
   categoryProducts: '/categories/:slug',

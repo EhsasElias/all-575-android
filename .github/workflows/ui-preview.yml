@@ -1,0 +1,45 @@
+name: Mobile UI checks
+
+on:
+  pull_request:
+  push:
+    branches: [main, v2]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ui-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  browser:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci
+      - name: Formatting diagnostics
+        run: |
+          if ! npm run format:check; then
+            npx prettier --write .
+            git diff
+          fi
+      - run: npx playwright install --with-deps chromium
+      - name: Check mobile navigation, languages, themes and onboarding
+        run: npm run test:e2e
+      - name: Keep menu previews and failure details
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: mobile-ui-previews
+          path: |
+            test-results/
+            playwright-report/
+          if-no-files-found: ignore
+          retention-days: 14

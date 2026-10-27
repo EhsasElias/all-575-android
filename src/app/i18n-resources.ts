@@ -9,9 +9,13 @@ import { ordersLocales } from '@/features/orders';
 import { testServerLocales } from '@/features/testserver';
 import { welcomeLocales } from '@/features/welcome';
 import { commonLocales } from '@/shared/i18n';
+import { appearanceLocales } from '@/shared/theme';
+import { navigationLocales } from './layout/navigationLocales';
 
 export const appResources = {
   en: {
+    navigation: navigationLocales.en,
+    appearance: appearanceLocales.en,
     aftercare: aftercareLocales.en,
     common: commonLocales.en,
     welcome: welcomeLocales.en,
@@ -25,6 +29,8 @@ export const appResources = {
     testserver: testServerLocales.en,
   },
   ar: {
+    navigation: navigationLocales.ar,
+    appearance: appearanceLocales.ar,
     aftercare: aftercareLocales.ar,
     common: commonLocales.ar,
     welcome: welcomeLocales.ar,
@@ -38,6 +44,8 @@ export const appResources = {
     testserver: testServerLocales.ar,
   },
   fr: {
+    navigation: navigationLocales.fr,
+    appearance: appearanceLocales.fr,
     aftercare: aftercareLocales.fr,
     common: commonLocales.fr,
     welcome: welcomeLocales.fr,

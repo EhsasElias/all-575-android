@@ -7,6 +7,7 @@ import { StrictMode } from 'react';
 import { createRoot } from 'react-dom/client';
 import { initI18n, resolveInitialLanguage } from '@/shared/i18n';
 import { getPreference, loadPreferences } from '@/shared/storage';
+import { applyTheme, readTheme } from '@/shared/theme';
 import { App } from './App';
 import { appResources } from './i18n-resources';
 import { createAppRouter } from './router';
@@ -14,6 +15,7 @@ import { createAppRouter } from './router';
 /** Everything the first render reads synchronously is loaded here, before React starts. */
 export async function bootstrap(): Promise<void> {
   await loadPreferences();
+  applyTheme(readTheme());
   await initI18n({
     resources: appResources,
     language: resolveInitialLanguage({

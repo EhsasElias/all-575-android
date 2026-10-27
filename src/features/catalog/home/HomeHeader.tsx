@@ -7,7 +7,7 @@ import { Icon, Skeleton } from '@/shared/ui';
 import { DeliveryChip } from '../delivery/DeliveryChip';
 import styles from './HomeHeader.module.css';
 
-/** Where the customer is delivered to, what everything costs and the way into search. */
+/** Search first, then a calm photographic introduction to the store. */
 export function HomeHeader() {
   const { t } = useTranslation('catalog');
   const { language } = useLanguage();
@@ -16,21 +16,34 @@ export function HomeHeader() {
   return (
     <div className={styles.header}>
       <DeliveryChip className={styles.chip} />
-      <h1 className={styles.title}>{t('home.heading')}</h1>
-      <div className={styles.promise}>
-        {store.data ? (
-          <p className={styles.price}>
-            <Icon name="tag" size={18} />
-            {t('home.priceLine', { price: formatMoney(store.data.price.gross, language) })}
-          </p>
-        ) : (
-          store.isPending && <Skeleton width="14rem" height="2rem" />
-        )}
-      </div>
       <Link to={routePaths.search} className={styles.search}>
         <Icon name="search" />
         {t('search.label')}
       </Link>
+      <div className={styles.hero}>
+        <div className={styles.copy}>
+          <h1 className={styles.title}>{t('home.heading')}</h1>
+          <div className={styles.promise}>
+            {store.data ? (
+              <p className={styles.price}>
+                {t('home.priceLine', { price: formatMoney(store.data.price.gross, language) })}
+              </p>
+            ) : (
+              store.isPending && <Skeleton width="100%" height="2rem" />
+            )}
+          </div>
+        </div>
+        <img
+          className={styles.art}
+          src="/images/welcome/welcome-fruit.webp"
+          alt=""
+          width={240}
+          height={240}
+          onError={(event) => {
+            event.currentTarget.hidden = true;
+          }}
+        />
+      </div>
     </div>
   );
 }
