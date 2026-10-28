@@ -1,4 +1,5 @@
 import { expect, test } from '@playwright/test';
+import { finishIntro, openApp } from './openApp';
 
 const LANGUAGES = ['ar', 'en', 'fr'] as const;
 const THEMES = ['light', 'dark'] as const;
@@ -19,7 +20,7 @@ for (const language of LANGUAGES) {
           : [];
         await route.fulfill({ json: { data } });
       });
-      await page.goto('/account');
+      await openApp(page, '/account');
       await page.getByRole('button', { name: 'Open menu', exact: true }).click();
       const dialog = page.getByRole('dialog');
       await dialog.locator(`input[value="${language}"]`).check({ force: true });
@@ -37,6 +38,7 @@ for (const language of LANGUAGES) {
       await page.keyboard.press('Escape');
       await expect(dialog).toHaveCount(0);
       await page.reload();
+      await finishIntro(page, '/account');
       await expect(page.locator('html')).toHaveAttribute('data-theme', theme);
       await expect(page.locator('html')).toHaveAttribute('lang', language);
     });

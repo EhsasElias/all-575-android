@@ -1,4 +1,5 @@
 import { expect, test } from '@playwright/test';
+import { openApp } from './openApp';
 
 for (const channel of ['phone', 'email']) {
   test(`create account using ${channel} OTP and legal consent`, async ({ page }) => {
@@ -55,7 +56,7 @@ for (const channel of ['phone', 'email']) {
         },
       });
     });
-    await page.goto('/create-account?next=%2Faccount');
+    await openApp(page, '/create-account?next=%2Faccount');
     await expect(page.getByRole('heading', { name: 'Create account', exact: true })).toBeVisible();
     if (channel === 'email') await page.getByRole('button', { name: 'Use email instead' }).click();
     const destination = channel === 'phone' ? '0512345678' : 'sara@example.com';
@@ -78,7 +79,7 @@ for (const channel of ['phone', 'email']) {
 }
 
 test('browser sign-in uses codes and does not simulate fingerprint success', async ({ page }) => {
-  await page.goto('/sign-in');
+  await openApp(page, '/sign-in');
   await expect(page.getByText(/Fingerprint is available in the Android app/)).toBeVisible();
   await expect(page.getByRole('button', { name: 'Unlock with fingerprint' })).toHaveCount(0);
   await expect(page.getByRole('link', { name: 'New here? Create account' })).toBeVisible();

@@ -1,5 +1,6 @@
 import { useEffect } from 'react';
 import { isNativeBiometry, sessionVault } from '../security';
+import { observeAppVisibility } from '../native-lifecycle';
 
 /** Clear private UI and cached data when an opted-in native app goes into the background. */
 export function useBiometricAppLock(onLock: () => void) {
@@ -7,22 +8,21 @@ export function useBiometricAppLock(onLock: () => void) {
     if (!isNativeBiometry()) return;
     let stopped = false;
     let remove: (() => Promise<void>) | undefined;
-    void import('@capacitor/app')
-      .then(async ({ App }) => {
-        const listener = await App.addListener('appStateChange', ({ isActive }) => {
-          if (isActive || stopped) return;
+    void observeAppVisibility(({ isActive }) => {
+      if (isActive || stopped) return;
+      sessionVault.lock();
+      void sessionVault
+        .enabled()
+        .then((enabled) => {
+          if (!enabled || stopped) return;
+          onLock();
+        })
+        .catch(() => {
           sessionVault.lock();
-          void sessionVault
-            .enabled()
-            .then((enabled) => {
-              if (!enabled || stopped) return;
-              onLock();
-            })
-            .catch(() => {
-              sessionVault.lock();
-              onLock();
-            });
+          onLock();
         });
+    })
+      .then(async (listener) => {
         if (stopped) await listener.remove();
         else remove = () => listener.remove();
       })

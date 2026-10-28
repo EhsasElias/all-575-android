@@ -1,29 +1,27 @@
 import { useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
-import { useNavigate } from 'react-router';
-import { routePaths, usePrefersReducedMotion } from '@/shared/lib';
+import { useNavigate, useSearchParams } from 'react-router';
 import { Logo, VisuallyHidden } from '@/shared/ui';
 import styles from './LogoIntroScreen.module.css';
+import { afterIntroPath } from './introPaths';
 
-const INTRO_DURATION_MS = 900;
+const INTRO_DURATION_MS = 1200;
 
 /** A short brand transition, not a simulated payment or network progress indicator. */
 export function LogoIntroScreen() {
   const { t } = useTranslation();
   const navigate = useNavigate();
-  const reducedMotion = usePrefersReducedMotion();
+  const [params] = useSearchParams();
+  const destination = afterIntroPath(params.get('next'));
 
   useEffect(() => {
-    const timer = window.setTimeout(
-      () => {
-        void navigate(routePaths.home, { replace: true });
-      },
-      reducedMotion ? 0 : INTRO_DURATION_MS,
-    );
+    const timer = window.setTimeout(() => {
+      void navigate(destination, { replace: true });
+    }, INTRO_DURATION_MS);
     return () => {
       window.clearTimeout(timer);
     };
-  }, [navigate, reducedMotion]);
+  }, [navigate, destination]);
 
   return (
     <main id="main-content" tabIndex={-1} className={styles.screen}>

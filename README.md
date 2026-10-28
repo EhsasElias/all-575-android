@@ -92,7 +92,7 @@ The header menu opens from the right in Arabic and the left in English/French. I
 
 The welcome slider uses swipe gestures and tappable slide indicators, with no automatic movement or playback controls. Its photos, price and welcome messages are unchanged.
 
-Each launch through the app's start address (`/`) opens the product slider, followed by a brief logo-only introduction and the shopping home. This also applies to returning customers. Moving between pages or opening a direct product/checkout link does not restart the introduction. Reduced motion skips the animated delay. Product descriptions expand on tap so the main buying choices remain easy to scan.
+Every fresh open or reload starts with the slider, followed by the logo for 1.2 seconds, then the requested page (Home by default). Returning to the Android app or a hidden browser tab repeats this sequence too. Normal navigation inside the app does not repeat it. Direct product, checkout and sign-in links retain their destination through both intro screens. Reduced motion keeps the brief logo screen visible with animation disabled. Product descriptions expand on tap so the main buying choices remain easy to scan.
 
 The shopping header places the framed logo in the top corner opposite the menu: right in English/French, left in Arabic. The logo-only introduction remains centered.
 
@@ -103,3 +103,5 @@ The mobile browser workflow tests all six language/theme combinations and saves 
 Account > Create account supports email OTP or Saudi mobile OTP, including required Terms/Privacy consent. On Android, an already verified customer can opt into fingerprint unlock from Account. The saved native session is encrypted, stays locked across app restarts/backgrounding, and is revalidated against the API after a real system biometric prompt. Signing out deletes the enrollment and token; a new OTP sign-in resets enrollment.
 
 Fingerprint unlock is unavailable in desktop/web builds. Rebuild and run `npm run cap:sync` for the native plugins and biometric permission. See the [customer test guide](docs/customer/CUSTOMER_TEST_GUIDE.md) for device checks. Local OTP codes are logged by the backend; production SMS/email delivery still needs provider configuration.
+
+Android app-wide visibility includes the biometric prompt activity, so opening and closing the in-app fingerprint dialog does not restart the intro or lock the active authentication attempt. Rebuild the APK after pulling this change; restarting only the development server does not install the new native lifecycle bridge.

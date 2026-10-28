@@ -8,7 +8,7 @@ import { catalogRoutes } from '@/features/catalog';
 import { checkoutRoutes } from '@/features/checkout';
 import { ordersRoutes } from '@/features/orders';
 import { testServerRoutes } from '@/features/testserver';
-import { LogoIntroScreen, WelcomeScreen } from '@/features/welcome';
+import { LogoIntroScreen, WelcomeScreen, initialWelcomePath } from '@/features/welcome';
 import { routePaths, titled } from '@/shared/lib';
 import { RequireAuth } from '@/shared/session';
 import { NotFoundScreen } from './layout/NotFoundScreen';
@@ -64,5 +64,7 @@ export const appRoutes: RouteObject[] = [
 ];
 
 export function createAppRouter() {
+  const launchPath = initialWelcomePath(window.location);
+  if (launchPath !== null) window.history.replaceState(window.history.state, '', launchPath);
   return createBrowserRouter(appRoutes);
 }

@@ -42,23 +42,21 @@ test.describe('welcome screen', () => {
     await expect(page.getByRole('heading', { level: 1 })).toHaveText('نرحب بكم شريك النجاح');
   });
 
-  test('each launch shows the slider, then the logo and shop, without interrupting tab navigation', async ({
+  test('reloads on a shopping page repeat slider and logo, while tab navigation stays direct', async ({
     page,
   }) => {
-    await page.goto('/welcome');
-
-    // The header sits inside <main>, so it is not a banner landmark.
-    await page.locator('header').getByRole('button', { name: 'Tap the logo to shop now' }).click();
-
-    await expect(page).toHaveURL(/\/home$/);
-    await expect(page.getByRole('navigation', { name: 'Main navigation' })).toBeVisible();
-    await page.getByRole('link', { name: 'Categories', exact: true }).click();
-    await expect(page).toHaveURL(/\/categories$/);
-    await page.goto('/');
+    await page.goto('/home');
     await expect(page).toHaveURL(/\/welcome$/);
-    await page.getByRole('link', { name: 'Skip', exact: true }).click();
+    await page.locator('header').getByRole('button', { name: 'Tap the logo to shop now' }).click();
     await expect(page).toHaveURL(/\/welcome\/logo$/);
     await expect(page).toHaveURL(/\/home$/);
+    await page.getByRole('link', { name: 'Categories', exact: true }).click();
+    await expect(page).toHaveURL(/\/categories$/);
+    await page.reload();
+    await expect(page).toHaveURL(/\/welcome\?next=/);
+    await page.getByRole('link', { name: 'Skip', exact: true }).click();
+    await expect(page).toHaveURL(/\/welcome\/logo\?next=/);
+    await expect(page).toHaveURL(/\/categories$/);
   });
 });
 
@@ -66,7 +64,7 @@ test.describe('keyboard', () => {
   test('the first Tab stop is a skip link that moves focus to the main content', async ({
     page,
   }) => {
-    await page.goto('/home');
+    await page.goto('/welcome');
     await expect(page.getByRole('main')).toBeVisible();
 
     await page.keyboard.press('Tab');

@@ -25,12 +25,16 @@ describe('Logo introduction', () => {
     );
   });
 
-  it('moves directly to the shop when reduced motion is preferred', async () => {
+  it('still shows a brief logo screen when reduced motion is preferred', async () => {
     setReducedMotion(true);
     installFakeApi({});
     const { router } = await renderApp({ route: '/welcome/logo', seenWelcome: true });
-    await waitFor(() => {
-      expect(router.state.location.pathname).toBe('/home');
-    });
+    expect(router.state.location.pathname).toBe('/welcome/logo');
+    await waitFor(
+      () => {
+        expect(router.state.location.pathname).toBe('/home');
+      },
+      { timeout: 3000 },
+    );
   });
 });
