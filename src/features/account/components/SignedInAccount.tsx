@@ -10,6 +10,7 @@ import { PageHeader } from './PageHeader';
 import { ProfileSummary } from './ProfileSummary';
 import { Section } from './Section';
 import { SignOutSection } from './SignOutSection';
+import { BiometricPreference } from './BiometricPreference';
 
 type SignedInAccountProps = {
   user: SessionUser;
@@ -29,6 +30,7 @@ export function SignedInAccount({ user }: SignedInAccountProps) {
         <MarketingPreference user={user} />
       </Section>
       <LegalLinks />
+      <BiometricPreference />
       <SignOutSection />
     </Page>
   );

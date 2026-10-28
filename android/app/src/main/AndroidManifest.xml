@@ -39,6 +39,8 @@
     <!-- Permissions -->
 
     <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.USE_BIOMETRIC" />
+    <uses-permission android:name="android.permission.USE_FINGERPRINT" android:maxSdkVersion="27" />
 
     <!-- Asked only when the customer taps "Use my current location" (delivery area and address pin), never in the background. -->
     <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />

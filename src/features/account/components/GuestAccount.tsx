@@ -25,6 +25,7 @@ const SIGN_IN_FROM_ACCOUNT = `${routePaths.signIn}?next=${encodeURIComponent(rou
 /** What a guest sees: why to sign in, the way in, the language and the legal texts. */
 export function GuestAccount() {
   const { t } = useTranslation('account');
+  const { t: access } = useTranslation('access');
 
   return (
     <Page>
@@ -40,6 +41,13 @@ export function GuestAccount() {
         </ul>
         <ButtonLink to={SIGN_IN_FROM_ACCOUNT} size="lg" fullWidth>
           {t('guest.signIn')}
+        </ButtonLink>
+        <ButtonLink
+          variant="secondary"
+          to={`${routePaths.createAccount}?next=${encodeURIComponent(routePaths.account)}`}
+          fullWidth
+        >
+          {access('createTitle')}
         </ButtonLink>
       </Section>
       <Section title={t('preferences.title')}>

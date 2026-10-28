@@ -1,5 +1,5 @@
 import { useQueryClient } from '@tanstack/react-query';
-import { useCallback, useEffect, useMemo, useState, type ReactNode } from 'react';
+import { useCallback, useEffect, useMemo, useRef, useState, type ReactNode } from 'react';
 import {
   authEvents,
   http as defaultHttp,
@@ -11,6 +11,7 @@ import {
   type TokenStore,
 } from '@/shared/api';
 import { RESTORE_RETRY_DELAYS_MS, waitBeforeRetry } from './restoreRetry';
+import { useBiometricAppLock } from './useBiometricAppLock';
 import {
   SessionContext,
   type Session,
@@ -37,15 +38,20 @@ export function SessionProvider({
   const queryClient = useQueryClient();
   const [status, setStatus] = useState<SessionStatus>('loading');
   const [user, setUser] = useState<SessionUser | null>(null);
+  const revision = useRef(0);
 
   const becomeGuest = useCallback(() => {
+    revision.current++;
     setUser(null);
     setStatus('guest');
     queryClient.clear();
   }, [queryClient]);
 
+  useBiometricAppLock(becomeGuest);
+
   useEffect(() => {
     const controller = new AbortController();
+    const current = revision.current;
 
     // Storage that cannot be read, or does not answer (a locked or damaged keystore), is treated like no token: the
     // customer can still sign in.
@@ -55,7 +61,7 @@ export function SessionProvider({
 
     async function restore() {
       if (!(await hasStoredToken())) {
-        setStatus('guest');
+        if (!controller.signal.aborted && current === revision.current) setStatus('guest');
         return;
       }
       for (let attempt = 0; ; attempt++) {
@@ -63,11 +69,12 @@ export function SessionProvider({
           const { data } = await client.get<Data<SessionUser>>('/me', {
             signal: controller.signal,
           });
+          if (controller.signal.aborted || current !== revision.current) return;
           setUser(data);
           setStatus('signed-in');
           return;
         } catch (error) {
-          if (controller.signal.aborted) return;
+          if (controller.signal.aborted || current !== revision.current) return;
           // Meanwhile the customer can browse as a guest. A 401 has already made the client drop the token, so
           // that is final; anything else (offline, a timeout, a server error) leaves the token and asks again.
           setStatus('guest');
@@ -89,7 +96,9 @@ export function SessionProvider({
 
   const signIn = useCallback(
     async (token: string, signedInUser: SessionUser) => {
+      const current = ++revision.current;
       await store.set(token);
+      if (current !== revision.current) throw new Error('Session changed');
       setUser(signedInUser);
       setStatus('signed-in');
     },
@@ -97,6 +106,7 @@ export function SessionProvider({
   );
 
   const signOut = useCallback(async () => {
+    revision.current++;
     try {
       await client.delete('/auth/session');
     } catch {
@@ -106,9 +116,18 @@ export function SessionProvider({
     becomeGuest();
   }, [client, store, becomeGuest]);
 
+  const restoreSession = useCallback(async () => {
+    const current = revision.current;
+    if ((await readToken(store)) === null) throw new Error('Session unavailable');
+    const { data } = await client.get<Data<SessionUser>>('/me');
+    if (current !== revision.current) throw new Error('Session changed');
+    setUser(data);
+    setStatus('signed-in');
+  }, [client, store]);
+
   const session = useMemo<Session>(
-    () => ({ status, user, signIn, signOut, setUser }),
-    [status, user, signIn, signOut],
+    () => ({ status, user, signIn, signOut, restoreSession, setUser }),
+    [status, user, signIn, signOut, restoreSession],
   );
 
   return <SessionContext.Provider value={session}>{children}</SessionContext.Provider>;

@@ -10,7 +10,7 @@ export type SecureKeyValueStorage = {
 
 // Imported on demand so the web bundle never loads this plugin: on the web it
 // would fall back to unencrypted localStorage.
-async function loadNativeStorage(): Promise<SecureKeyValueStorage> {
+export async function loadNativeStorage(): Promise<SecureKeyValueStorage> {
   const { SecureStorage } = await import('@aparajita/capacitor-secure-storage');
   return SecureStorage;
 }

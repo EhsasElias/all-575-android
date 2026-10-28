@@ -12,6 +12,8 @@ export type Session = {
   signIn: (token: string, user: SessionUser) => Promise<void>;
   /** Ends this device's session on the server (best effort), forgets the token and clears cached data. */
   signOut: () => Promise<void>;
+  /** Revalidate an unlocked native session with the server; biometrics never mint a token. */
+  restoreSession: () => Promise<void>;
   /** Replaces the cached customer, e.g. after a profile or consent change. */
   setUser: (user: SessionUser) => void;
 };

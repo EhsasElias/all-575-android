@@ -33,3 +33,16 @@
 .guest {
   align-self: center;
 }
+
+.biometry {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+  padding: var(--space-4);
+  border-radius: var(--radius-lg);
+  background: var(--color-surface-mint);
+}
+
+.biometry h2 {
+  font-size: var(--font-size-body);
+}

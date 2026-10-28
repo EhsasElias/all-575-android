@@ -303,3 +303,16 @@ Use the changed source in both repositories together. Contract updates are gener
 ## 8. Record results and decide readiness
 
 Use columns: ID, result, expected, actual, device, language, order/case reference, evidence, owner. Keep failures and blocked items visible. Do not mark unimplemented requirements Pass simply because core shopping works. Release requires gateway/SMS configuration, business policy approval, missing roadmap features, real-device UAT and verification on the intended production database.
+
+## Account creation and fingerprint unlock
+
+- Open Account > Create account. Use a Saudi mobile number, or choose **Use email instead**.
+- Enter the received six-digit code. New accounts must accept the current Terms and Privacy Policy; marketing is optional. Existing customers use the same verified-code flow.
+- Android only: first enroll a fingerprint in the phone's system settings. After a verified sign-in, open Account > Fingerprint sign-in > Enable fingerprint, then complete the real system prompt.
+- Background or close and reopen the app. Protected account pages must require unlocking. Open Sign in > Unlock with fingerprint. Success revalidates the saved session against `/me`; it never creates a new token or an account by itself.
+- Cancel the prompt or use the wrong finger: remain signed out, with phone/email OTP still available. Remove fingerprint enrollment in system settings: the app must offer OTP rather than pretending to authenticate.
+- Revoke/expire the saved session, then try fingerprint: require a new OTP. Sign out: remove both the saved token and enrollment. Signing in again with OTP requires opting into fingerprint again, preventing an account switch from inheriting another account's setting.
+- On a laptop browser, fingerprint is intentionally unavailable; the native plugin's simulated browser mode is never treated as authentication. Test email and phone registration there.
+- Repeat registration in AR/EN/FR and both appearance modes. Check the return to checkout after following Create account from sign-in.
+
+**Code delivery:** the API currently uses `OTP_DRIVER=log` for local development; read the one-time code in the backend's local logs. Production SMS/email delivery still requires configured providers. Never deploy the local log driver for customer sign-ins. Physical biometric success, cancellation, lockout and background/resume must be verified on a supported Android phone after rebuilding the APK.

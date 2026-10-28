@@ -26,8 +26,10 @@
     "api:latest": "node scripts/api-contract.mjs latest"
   },
   "dependencies": {
+    "@aparajita/capacitor-biometric-auth": "^9.1.2",
     "@aparajita/capacitor-secure-storage": "^8.0.1",
     "@capacitor/android": "^8.5.3",
+    "@capacitor/app": "^8.1.2",
     "@capacitor/core": "^8.5.3",
     "@capacitor/geolocation": "^8.2.4",
     "@capacitor/preferences": "^8.0.1",

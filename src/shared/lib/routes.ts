@@ -30,6 +30,7 @@ export const routePaths = {
   terms: '/legal/terms',
   privacy: '/legal/privacy',
   signIn: '/sign-in',
+  createAccount: '/create-account',
   testServer: '/test-server',
 } as const;
 

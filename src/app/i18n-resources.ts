@@ -10,10 +10,12 @@ import { testServerLocales } from '@/features/testserver';
 import { welcomeLocales } from '@/features/welcome';
 import { commonLocales } from '@/shared/i18n';
 import { appearanceLocales } from '@/shared/theme';
+import { accessLocales } from '@/shared/security';
 import { navigationLocales } from './layout/navigationLocales';
 
 export const appResources = {
   en: {
+    access: accessLocales.en,
     navigation: navigationLocales.en,
     appearance: appearanceLocales.en,
     aftercare: aftercareLocales.en,
@@ -29,6 +31,7 @@ export const appResources = {
     testserver: testServerLocales.en,
   },
   ar: {
+    access: accessLocales.ar,
     navigation: navigationLocales.ar,
     appearance: appearanceLocales.ar,
     aftercare: aftercareLocales.ar,
@@ -44,6 +47,7 @@ export const appResources = {
     testserver: testServerLocales.ar,
   },
   fr: {
+    access: accessLocales.fr,
     navigation: navigationLocales.fr,
     appearance: appearanceLocales.fr,
     aftercare: aftercareLocales.fr,

@@ -7,5 +7,7 @@ import { routePaths, safeNextPath } from '@/shared/lib';
 export function afterSignInPath(next: string | null): string {
   const path = safeNextPath(next);
   const pathname = path.split(/[?#]/)[0];
-  return pathname === routePaths.signIn ? routePaths.home : path;
+  return pathname === routePaths.signIn || pathname === routePaths.createAccount
+    ? routePaths.home
+    : path;
 }

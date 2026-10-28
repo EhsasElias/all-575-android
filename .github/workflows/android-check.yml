@@ -1,0 +1,42 @@
+name: Native Android check
+
+on:
+  pull_request:
+    paths:
+      - 'android/**'
+      - 'src/shared/security/**'
+      - 'src/shared/session/**'
+      - 'package*.json'
+      - '.github/workflows/android-check.yml'
+  push:
+    branches: [v2]
+    paths:
+      - 'android/**'
+      - 'src/shared/security/**'
+      - 'src/shared/session/**'
+      - 'package*.json'
+      - '.github/workflows/android-check.yml'
+
+permissions:
+  contents: read
+
+jobs:
+  compile:
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: 21
+      - run: npm ci
+      - run: npm run build
+      - run: npx cap sync android
+      - name: Compile native plugins and Android app
+        working-directory: android
+        run: bash gradlew assembleDebug --no-daemon

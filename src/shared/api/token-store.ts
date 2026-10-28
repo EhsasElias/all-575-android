@@ -1,5 +1,5 @@
 import { Capacitor } from '@capacitor/core';
-import { createSecureTokenStore } from './secure-token-store';
+import { sessionVault } from '../security/sessionVault';
 
 /**
  * Where the access token lives. It must never be written to localStorage,
@@ -28,7 +28,7 @@ export function createMemoryTokenStore(): TokenStore {
 }
 
 export function createTokenStore(): TokenStore {
-  return Capacitor.isNativePlatform() ? createSecureTokenStore() : createMemoryTokenStore();
+  return Capacitor.isNativePlatform() ? sessionVault.store : createMemoryTokenStore();
 }
 
 export const TOKEN_READ_TIMEOUT_MS = 3_000;

@@ -95,3 +95,9 @@ The welcome slider uses swipe gestures and tappable slide indicators, with no au
 The first-launch sequence is the product slider, a brief logo-only introduction, then the shopping home. Reduced motion skips the animated delay. Product descriptions expand on tap so the main buying choices remain easy to scan.
 
 The mobile browser workflow tests all six language/theme combinations and saves menu screenshots under the `mobile-ui-previews` artifact. The product and category pictures continue to come from the catalog API; this change does not replace real listings with generated products.
+
+## Account creation and fingerprint
+
+Account > Create account supports email OTP or Saudi mobile OTP, including required Terms/Privacy consent. On Android, an already verified customer can opt into fingerprint unlock from Account. The saved native session is encrypted, stays locked across app restarts/backgrounding, and is revalidated against the API after a real system biometric prompt. Signing out deletes the enrollment and token; a new OTP sign-in resets enrollment.
+
+Fingerprint unlock is unavailable in desktop/web builds. Rebuild and run `npm run cap:sync` for the native plugins and biometric permission. See the [customer test guide](docs/customer/CUSTOMER_TEST_GUIDE.md) for device checks. Local OTP codes are logged by the backend; production SMS/email delivery still needs provider configuration.
