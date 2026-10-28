@@ -65,7 +65,7 @@ describe('revalidating an unlocked session', () => {
     const api = fakeApi({ 'DELETE /auth/session': { status: 204 } });
     await mount(api);
     await api.store.set('unlocked-token');
-    let finish = () => {
+    let finish: () => void = () => {
       throw new Error('Request not started');
     };
     api.fetchFn.mockImplementationOnce(
