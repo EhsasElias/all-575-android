@@ -8,7 +8,7 @@ import { catalogRoutes } from '@/features/catalog';
 import { checkoutRoutes } from '@/features/checkout';
 import { ordersRoutes } from '@/features/orders';
 import { testServerRoutes } from '@/features/testserver';
-import { LogoIntroScreen, WelcomeScreen, hasSeenWelcome } from '@/features/welcome';
+import { LogoIntroScreen, WelcomeScreen } from '@/features/welcome';
 import { routePaths, titled } from '@/shared/lib';
 import { RequireAuth } from '@/shared/session';
 import { NotFoundScreen } from './layout/NotFoundScreen';
@@ -17,7 +17,7 @@ import { RouteError } from './layout/RouteError';
 import { ShellLayout } from './layout/ShellLayout';
 
 function redirectFromRoot() {
-  return redirect(hasSeenWelcome() ? routePaths.home : routePaths.welcome);
+  return redirect(routePaths.welcome);
 }
 
 /**

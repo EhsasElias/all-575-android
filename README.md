@@ -92,7 +92,9 @@ The header menu opens from the right in Arabic and the left in English/French. I
 
 The welcome slider uses swipe gestures and tappable slide indicators, with no automatic movement or playback controls. Its photos, price and welcome messages are unchanged.
 
-The first-launch sequence is the product slider, a brief logo-only introduction, then the shopping home. Reduced motion skips the animated delay. Product descriptions expand on tap so the main buying choices remain easy to scan.
+Each launch through the app's start address (`/`) opens the product slider, followed by a brief logo-only introduction and the shopping home. This also applies to returning customers. Moving between pages or opening a direct product/checkout link does not restart the introduction. Reduced motion skips the animated delay. Product descriptions expand on tap so the main buying choices remain easy to scan.
+
+The shopping header places the framed logo in the top corner opposite the menu: right in English/French, left in Arabic. The logo-only introduction remains centered.
 
 The mobile browser workflow tests all six language/theme combinations and saves menu screenshots under the `mobile-ui-previews` artifact. The product and category pictures continue to come from the catalog API; this change does not replace real listings with generated products.
 

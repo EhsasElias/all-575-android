@@ -42,7 +42,9 @@ test.describe('welcome screen', () => {
     await expect(page.getByRole('heading', { level: 1 })).toHaveText('نرحب بكم شريك النجاح');
   });
 
-  test('tapping the logo opens the shop, and the welcome is not shown again', async ({ page }) => {
+  test('each launch shows the slider, then the logo and shop, without interrupting tab navigation', async ({
+    page,
+  }) => {
     await page.goto('/welcome');
 
     // The header sits inside <main>, so it is not a banner landmark.
@@ -50,7 +52,12 @@ test.describe('welcome screen', () => {
 
     await expect(page).toHaveURL(/\/home$/);
     await expect(page.getByRole('navigation', { name: 'Main navigation' })).toBeVisible();
+    await page.getByRole('link', { name: 'Categories', exact: true }).click();
+    await expect(page).toHaveURL(/\/categories$/);
     await page.goto('/');
+    await expect(page).toHaveURL(/\/welcome$/);
+    await page.getByRole('link', { name: 'Skip', exact: true }).click();
+    await expect(page).toHaveURL(/\/welcome\/logo$/);
     await expect(page).toHaveURL(/\/home$/);
   });
 });

@@ -34,7 +34,6 @@ export function TopBar() {
         <Link to={routePaths.home} className={styles.brand} aria-label={t('appName')}>
           <Logo decorative size={48} className={styles.logo} />
         </Link>
-        <span aria-hidden="true" />
       </header>
       <AppMenu open={open} onClose={close} />
     </>

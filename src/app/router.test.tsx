@@ -17,7 +17,7 @@ beforeEach(() => {
   });
 });
 
-describe('first launch', () => {
+describe('app launch', () => {
   it('opens the welcome screen on a fresh install', async () => {
     const { router } = await renderApp({ route: '/', seenWelcome: false });
 
@@ -25,13 +25,11 @@ describe('first launch', () => {
     expect(screen.getByRole('heading', { level: 1 })).toHaveTextContent('Welcome, our partner');
   });
 
-  it('opens the shopping home for a returning user', async () => {
+  it('opens the slider again for a returning user', async () => {
     const { router } = await renderApp({ route: '/', seenWelcome: true });
 
-    expect(router.state.location.pathname).toBe('/home');
-    expect(
-      await screen.findByRole('heading', { level: 1, name: 'What do you need today?' }),
-    ).toBeInTheDocument();
+    expect(router.state.location.pathname).toBe('/welcome');
+    expect(screen.getByRole('heading', { level: 1 })).toHaveTextContent('Welcome, our partner');
   });
 });
 

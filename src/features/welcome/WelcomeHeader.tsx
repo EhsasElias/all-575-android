@@ -19,6 +19,7 @@ export function WelcomeHeader({ onStartShopping }: WelcomeHeaderProps) {
       <ButtonLink
         variant="ghost"
         to={routePaths.logoIntro}
+        replace
         className={styles.skip}
         onClick={markWelcomeSeen}
       >

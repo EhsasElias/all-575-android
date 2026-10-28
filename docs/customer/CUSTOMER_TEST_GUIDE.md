@@ -77,7 +77,7 @@ Sign-in codes: after requesting one, open `all-575-api/storage/logs/laravel.log`
 
 ## 3. Run the normal customer journey first
 
-1. Fresh browser profile: open app. Verify welcome slides, manual arrows/dots, pause and language control. Tap the framed logo to shop.
+1. Open the app through its start address, including after a previous visit. Verify the welcome slider, swipe/dot navigation and language control. Tap the framed logo or Skip; verify the short animated logo screen, then the shop. Check the header logo sits in the corner opposite the menu.
 2. Browse without signing in. Select Riyadh delivery area. Open Categories, a category, then a product.
 3. Open T-shirt, select size M, add two units. Add tomatoes from another seller.
 4. Open Cart. Check product, size, quantity and availability. Change a quantity, remove/re-add a line.
@@ -98,7 +98,7 @@ For each ID record Pass / Fail / Blocked, actual result, device/browser, languag
 
 | ID  | Steps                                                                 | Expected result                                                                                      |
 | --- | --------------------------------------------------------------------- | ---------------------------------------------------------------------------------------------------- |
-| W01 | Fresh install/profile; watch three slides; use arrows, dots and pause | Three slides; manual controls work; logo goes to home                                                |
+| W01 | Launch through the start address, including a returning visit; swipe or tap dots | Three slides; no playback controls; continue/Skip opens the animated logo, then home                                                |
 | W02 | Change AR to EN and reopen app                                        | Correct direction and text; language persists                                                        |
 | W03 | Use reduced motion and keyboard/screen reader                         | Controls usable; focus visible; no forced animation dependency                                       |
 | W04 | Deny location permission, then select Riyadh manually                 | Browsing works; no forced permission or blank page                                                   |

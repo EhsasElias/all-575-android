@@ -8,6 +8,6 @@ export function useStartShopping(): () => void {
 
   return () => {
     markWelcomeSeen();
-    void navigate(routePaths.logoIntro);
+    void navigate(routePaths.logoIntro, { replace: true });
   };
 }
