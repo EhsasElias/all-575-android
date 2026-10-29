@@ -5,6 +5,7 @@ import { routePaths } from '@/shared/lib';
 import { useStoreInfo } from '@/shared/storeInfo';
 import { Icon, Skeleton } from '@/shared/ui';
 import { DeliveryChip } from '../delivery/DeliveryChip';
+import { HeroProducts } from './HeroProducts';
 import styles from './HomeHeader.module.css';
 
 /** Search first, then a calm photographic introduction to the store. */
@@ -33,16 +34,7 @@ export function HomeHeader() {
             )}
           </div>
         </div>
-        <img
-          className={styles.art}
-          src="/images/welcome/welcome-fruit.webp"
-          alt=""
-          width={240}
-          height={240}
-          onError={(event) => {
-            event.currentTarget.hidden = true;
-          }}
-        />
+        <HeroProducts />
       </div>
     </div>
   );

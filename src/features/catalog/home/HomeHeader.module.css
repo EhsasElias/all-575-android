@@ -11,13 +11,19 @@
 
 .hero {
   display: grid;
-  grid-template-columns: minmax(0, 1.3fr) minmax(0, 1fr);
+  grid-template-columns: minmax(0, 1.2fr) minmax(0, 1fr);
   align-items: center;
   gap: var(--space-3);
-  padding: var(--space-5);
-  border-radius: var(--radius-xl);
-  background: var(--color-surface-mint);
+  min-block-size: 11rem;
+  padding: var(--space-4);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-lg);
+  background: linear-gradient(135deg, var(--color-surface-mint), var(--color-surface-pill));
   overflow: hidden;
+}
+
+.hero:not(:has(.art)) {
+  grid-template-columns: 1fr;
 }
 
 .copy {
@@ -30,6 +36,7 @@
   color: var(--color-heading-accent);
   font-size: clamp(1.25rem, 5vw, 1.75rem);
   font-weight: var(--font-weight-bold);
+  line-height: var(--line-height-tight);
 }
 
 .promise {
@@ -45,9 +52,41 @@
 }
 
 .art {
+  position: relative;
+  justify-self: end;
   inline-size: 100%;
-  block-size: auto;
+  max-inline-size: 13rem;
+  aspect-ratio: 1;
+}
+
+.art .productImage {
+  inline-size: 78%;
+  border: 5px solid var(--color-card-surface);
+  border-radius: var(--radius-md);
+  background: var(--color-card-surface);
+  box-shadow: 0 4px 12px rgb(0 0 0 / 0.08);
+}
+
+.productImage > img {
   object-fit: contain;
+}
+
+.productImage:first-child {
+  transform: rotate(-5deg);
+}
+
+.productImage:nth-child(2) {
+  position: absolute;
+  inset-inline-end: 0;
+  inset-block-end: 0;
+  inline-size: 60%;
+  transform: rotate(6deg);
+}
+
+@media (min-width: 34rem) {
+  .hero {
+    padding: var(--space-5);
+  }
 }
 
 .search {
