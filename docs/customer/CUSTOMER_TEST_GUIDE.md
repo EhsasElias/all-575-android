@@ -377,3 +377,17 @@ Pull both branches and migrate the backend. Existing prices remain 575 halalas. 
 7. Repeat category filtering, price labels and clear/reset in AR/EN/FR and light/dark. Confirm welcome/home describe the new range/ceiling rather than one fixed price.
 
 Earlier matrix rows B10/C13 and the old 2–8/fixed-price notes are superseded by this section. Existing seeded products remain 5.75 until explicitly repriced; do not expect the migration to assign arbitrary business prices.
+
+## Dashboard and roadmap follow-up checks
+
+1. Signed out, open `/account/dashboard`: sign-in is required and the destination is retained.
+2. New customer: all counters and money are zero; shopping actions work. Do not seed fake figures into production.
+3. Create pending-online, paid and uncollected-cash orders: check total/active/awaiting/completed counts. Only recorded paid amounts affect spending; only succeeded refunds reduce it.
+4. Dashboard cards open the correct order status. Combine order number and last 7/30 days or custom dates; clear filters and load more. Dates are Saudi local days, including UTC midnight boundaries.
+5. Check saved/addresses/open support/open account-request counts and recent orders against that account’s records. Customer B sees no A records or totals.
+6. Follow all six shopping links, company billing, saved products, requests and settings. Paid state, delivery state and refund state stay separate.
+7. Spending: combine category/seller/status/date and download browser CSV. Same orders/totals must be included. The whole matching order is included, not only selected item lines.
+8. Disconnect during loading/refresh: error with retry, never invented zero totals. Restore connection and refresh. Check server-generated update time in Saudi timezone.
+9. Repeat in AR/EN/FR and both themes on Android-size screens and actual Android. Review ROADMAP_REVIEW.md for functions that must remain Blocked/Not implemented.
+
+Older H06 and the statements that spending only supports date filters are superseded by this section. CSV on Android still requires browser access until native file sharing is built.

@@ -1,8 +1,10 @@
+import { dashboardAr } from './dashboard.ar';
 import type { Translations } from '@/shared/i18n';
 import { legalLocales } from './legalLocales';
 import type { en } from './locales.en';
 
 export const ar: Translations<typeof en> = {
+  dashboard: dashboardAr,
   title: 'حسابي',
   loading: 'جارٍ تحميل حسابك',
   back: 'رجوع',

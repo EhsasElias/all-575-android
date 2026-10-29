@@ -1,6 +1,7 @@
 import { Capacitor } from '@capacitor/core';
 import { useTranslation } from 'react-i18next';
 import { Button, Icon } from '@/shared/ui';
+import type { SpendingFilters } from '../api/ordersApi';
 import type { DateRange } from '../types';
 import { useCsvExport } from './useCsvExport';
 import styles from './CsvExport.module.css';
@@ -8,11 +9,12 @@ import styles from './CsvExport.module.css';
 type CsvExportProps = {
   range: DateRange;
   disabled: boolean;
+  filters?: SpendingFilters;
 };
 
-function CsvDownloadButton({ range, disabled }: CsvExportProps) {
+function CsvDownloadButton({ range, disabled, filters }: CsvExportProps) {
   const { t } = useTranslation('orders');
-  const { state, start } = useCsvExport(range);
+  const { state, start } = useCsvExport(range, filters);
 
   return (
     <div className={styles.export}>
@@ -56,5 +58,10 @@ export function CsvExport(props: CsvExportProps) {
   }
 
   // A new period starts a fresh export, so "done" for the old one never lingers.
-  return <CsvDownloadButton key={`${props.range.from}:${props.range.to}`} {...props} />;
+  return (
+    <CsvDownloadButton
+      key={`${props.range.from}:${props.range.to}:${JSON.stringify(props.filters ?? {})}`}
+      {...props}
+    />
+  );
 }

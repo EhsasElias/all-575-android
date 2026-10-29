@@ -21,6 +21,7 @@ export const routePaths = {
   customerCase: '/account/support/:caseId',
   orderHelp: '/orders/:orderId/help',
   account: '/account',
+  dashboard: '/account/dashboard',
   billing: '/account/billing',
   customerRequests: '/account/requests',
   savedProducts: '/account/saved',

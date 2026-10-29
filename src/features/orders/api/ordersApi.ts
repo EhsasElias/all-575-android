@@ -5,6 +5,18 @@ export type Download = Awaited<ReturnType<HttpClient['download']>>;
 
 /** The page to fetch next: null is the first page. */
 export type Cursor = string | null;
+export type OrderFilters = {
+  status?: string | undefined;
+  q?: string | undefined;
+  from?: string | undefined;
+  to?: string | undefined;
+};
+
+export type SpendingFilters = {
+  category?: string | undefined;
+  seller?: string | undefined;
+  status?: string | undefined;
+};
 
 export type ReviewInput = { rating: number; body: string | null };
 
@@ -12,9 +24,13 @@ export type DeliveryCode = { code: string; expires_at: string };
 
 const segment = (value: string | number): string => encodeURIComponent(String(value));
 
-export function fetchOrdersPage(cursor: Cursor, signal: AbortSignal): Promise<Page<OrderSummary>> {
+export function fetchOrdersPage(
+  cursor: Cursor,
+  signal: AbortSignal,
+  filters: OrderFilters = {},
+): Promise<Page<OrderSummary>> {
   return http.get<Page<OrderSummary>>('/orders', {
-    query: { cursor: cursor ?? undefined },
+    query: { ...filters, cursor: cursor ?? undefined },
     signal,
   });
 }
@@ -59,18 +75,23 @@ export async function updateReview(reviewId: number, input: ReviewInput): Promis
 export async function fetchSpendingReport(
   range: DateRange,
   signal: AbortSignal,
+  filters: SpendingFilters = {},
 ): Promise<SpendingReport> {
   const { data } = await http.get<Data<SpendingReport>>('/me/reports/spending', {
-    query: { from: range.from, to: range.to },
+    query: { from: range.from, to: range.to, ...filters },
     signal,
   });
   return data;
 }
 
 /** The CSV as raw bytes, so the UTF-8 byte-order mark that Excel needs for Arabic text survives. */
-export function downloadSpendingCsv(range: DateRange, signal: AbortSignal): Promise<Download> {
+export function downloadSpendingCsv(
+  range: DateRange,
+  signal: AbortSignal,
+  filters: SpendingFilters = {},
+): Promise<Download> {
   return http.download('/me/reports/spending.csv', {
-    query: { from: range.from, to: range.to },
+    query: { from: range.from, to: range.to, ...filters },
     signal,
   });
 }

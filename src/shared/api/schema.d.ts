@@ -283,6 +283,23 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/v1/me/dashboard": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** The signed-in customer's all-time summary; no other customer's records are queried */
+        get: operations["v1.customerDashboard"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/v1/me/requests": {
         parameters: {
             query?: never;
@@ -874,6 +891,23 @@ export interface components {
                 /** Format: date-time */
                 created_at: string | null;
             }[];
+        };
+        /** CustomerDashboardResource */
+        CustomerDashboardResource: {
+            orders_total: number;
+            orders_active: number;
+            orders_awaiting_payment: number;
+            orders_completed: number;
+            paid_total: number;
+            refunded_total: number;
+            net_spent: number;
+            saved_products: number;
+            addresses: number;
+            open_support: number;
+            open_requests: number;
+            currency: string;
+            generated_at: string;
+            recent_orders: components["schemas"]["OrderResource"][];
         };
         /** CustomerRequestRequest */
         CustomerRequestRequest: {
@@ -1967,6 +2001,29 @@ export interface operations {
             422: components["responses"]["ValidationException"];
         };
     };
+    "v1.customerDashboard": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description `CustomerDashboardResource` */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        data: components["schemas"]["CustomerDashboardResource"];
+                    };
+                };
+            };
+            401: components["responses"]["AuthenticationException"];
+        };
+    };
     "customerRequest.index": {
         parameters: {
             query?: never;
@@ -2179,7 +2236,13 @@ export interface operations {
     };
     "order.index": {
         parameters: {
-            query?: never;
+            query?: {
+                status?: "pending_payment" | "confirmed" | "completed" | "cancelled" | null;
+                q?: string | null;
+                from?: string | null;
+                to?: string | null;
+                per_page?: number | null;
+            };
             header?: never;
             path?: never;
             cookie?: never;
@@ -2214,6 +2277,7 @@ export interface operations {
                 };
             };
             401: components["responses"]["AuthenticationException"];
+            422: components["responses"]["ValidationException"];
         };
     };
     "order.show": {
@@ -2816,6 +2880,9 @@ export interface operations {
     "spendingReport.show": {
         parameters: {
             query?: {
+                category?: string | null;
+                seller?: string | null;
+                status?: "confirmed" | "completed" | "cancelled" | null;
                 from?: string | null;
                 to?: string | null;
             };
@@ -2870,6 +2937,9 @@ export interface operations {
     "spendingReport.csv": {
         parameters: {
             query?: {
+                category?: string | null;
+                seller?: string | null;
+                status?: "confirmed" | "completed" | "cancelled" | null;
                 from?: string | null;
                 to?: string | null;
             };

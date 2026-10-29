@@ -1,0 +1,111 @@
+.section {
+  display: grid;
+  gap: var(--space-3);
+}
+.section h2 {
+  font-size: var(--font-size-title);
+  font-weight: var(--font-weight-bold);
+}
+.actions,
+.sectionHeader {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-3);
+  flex-wrap: wrap;
+}
+.sectionHeader a {
+  min-block-size: var(--size-target);
+  display: inline-flex;
+  align-items: center;
+}
+.metrics,
+.steps,
+.links {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: var(--space-3);
+}
+.metric,
+.step,
+.accountLink {
+  min-inline-size: 0;
+  padding: var(--space-4);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-lg);
+  background: var(--color-surface);
+  color: var(--color-text);
+  text-decoration: none;
+  overflow-wrap: anywhere;
+}
+.metric {
+  display: grid;
+  gap: var(--space-2);
+}
+.metric strong {
+  color: var(--color-brand-text);
+  font-size: var(--font-size-headline);
+}
+.balance {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--space-3);
+  padding: var(--space-5);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-lg);
+  background: var(--color-surface-mint);
+  color: var(--color-text);
+  text-decoration: none;
+}
+.balance svg {
+  flex: none;
+  color: var(--color-brand-text);
+}
+.balance strong {
+  display: block;
+  margin-block: var(--space-2);
+  font-size: var(--font-size-headline);
+  color: var(--color-brand-text);
+}
+.muted {
+  color: var(--color-text-muted);
+}
+.steps,
+.orders {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+.orders {
+  display: grid;
+  gap: var(--space-3);
+}
+.step {
+  position: relative;
+  display: grid;
+  align-content: start;
+  gap: var(--space-2);
+  block-size: 100%;
+}
+.step > svg {
+  color: var(--color-brand-text);
+}
+.stepNumber {
+  position: absolute;
+  inset-inline-end: var(--space-3);
+  inset-block-start: var(--space-3);
+  color: var(--color-text-muted);
+}
+.accountLink {
+  display: grid;
+  gap: var(--space-1);
+  min-block-size: var(--size-target);
+}
+@media (min-width: 36rem) {
+  .metrics {
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+  }
+  .steps {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+}

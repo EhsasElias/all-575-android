@@ -1,15 +1,19 @@
 import { useTranslation } from 'react-i18next';
+import { useSearchParams } from 'react-router';
 import { routePaths } from '@/shared/lib';
-import { ButtonLink, EmptyState, ErrorState } from '@/shared/ui';
+import { Button, ButtonLink, EmptyState, ErrorState } from '@/shared/ui';
 import { OrdersList } from './OrdersList';
 import { OrdersSkeleton } from './OrdersSkeleton';
 import { useOrderList } from './useOrderList';
+import { OrderFilters } from './OrderFilters';
 import styles from './OrdersScreen.module.css';
 
 function OrdersContent() {
   const { t } = useTranslation('orders');
   const { t: tCommon } = useTranslation('common');
   const list = useOrderList();
+  const [params, setParams] = useSearchParams();
+  const filtered = ['q', 'status', 'from', 'to'].some((key) => Boolean(params.get(key)));
 
   if (list.isPending) return <OrdersSkeleton />;
 
@@ -27,9 +31,22 @@ function OrdersContent() {
     return (
       <EmptyState
         icon="receipt"
-        title={t('list.emptyTitle')}
-        message={t('list.emptyMessage')}
-        action={<ButtonLink to={routePaths.home}>{tCommon('actions.startShopping')}</ButtonLink>}
+        title={filtered ? t('orderFilters.emptyTitle') : t('list.emptyTitle')}
+        message={filtered ? t('orderFilters.emptyMessage') : t('list.emptyMessage')}
+        action={
+          filtered ? (
+            <Button
+              variant="secondary"
+              onClick={() => {
+                setParams({}, { replace: true });
+              }}
+            >
+              {t('orderFilters.clear')}
+            </Button>
+          ) : (
+            <ButtonLink to={routePaths.home}>{tCommon('actions.startShopping')}</ButtonLink>
+          )
+        }
       />
     );
   }
@@ -48,6 +65,7 @@ function OrdersContent() {
 /** `/orders`: every order of the signed-in customer, newest first. */
 export function OrdersScreen() {
   const { t } = useTranslation('orders');
+  const [params] = useSearchParams();
 
   return (
     <div className={styles.page}>
@@ -57,6 +75,7 @@ export function OrdersScreen() {
           {t('list.spending')}
         </ButtonLink>
       </header>
+      <OrderFilters key={params.toString()} />
       <OrdersContent />
     </div>
   );

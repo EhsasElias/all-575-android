@@ -1,3 +1,5 @@
+import { spendingFiltersEn, spendingFiltersAr, spendingFiltersFr } from './strings/spendingFilters';
+import { orderFiltersEn, orderFiltersAr, orderFiltersFr } from './strings/orderFilters';
 import type { Translations } from '@/shared/i18n';
 import { deliveriesAr, deliveriesEn, deliveriesFr } from './strings/deliveries';
 import { listAr, listEn, listFr } from './strings/list';
@@ -8,6 +10,8 @@ import { statusAr, statusEn, statusFr } from './strings/status';
 
 // The text is split by screen to keep each file small; the namespace is still one: `orders`.
 const en = {
+  ...orderFiltersEn,
+  ...spendingFiltersEn,
   ...statusEn,
   ...listEn,
   ...deliveriesEn,
@@ -17,6 +21,8 @@ const en = {
 };
 
 const ar: Translations<typeof en> = {
+  ...orderFiltersAr,
+  ...spendingFiltersAr,
   ...statusAr,
   ...listAr,
   ...deliveriesAr,
@@ -26,6 +32,8 @@ const ar: Translations<typeof en> = {
 };
 
 const fr: Translations<typeof en> = {
+  ...orderFiltersFr,
+  ...spendingFiltersFr,
   ...statusFr,
   ...listFr,
   ...deliveriesFr,

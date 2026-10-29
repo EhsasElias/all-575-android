@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { isApiError } from '@/shared/api';
-import { downloadSpendingCsv } from '../api/ordersApi';
+import { downloadSpendingCsv, type SpendingFilters } from '../api/ordersApi';
 import type { DateRange } from '../types';
 import { csvFilename, saveBlob } from './saveFile';
 
@@ -19,7 +19,8 @@ function failureOf(error: unknown): 'invalidDates' | 'tooManyRequests' | 'failed
 }
 
 /** Downloads the period's CSV from the API and saves it. One download at a time; leaving the page cancels it. */
-export function useCsvExport({ from, to }: DateRange) {
+export function useCsvExport({ from, to }: DateRange, filters: SpendingFilters = {}) {
+  const { category, seller, status } = filters;
   const [state, setState] = useState<ExportState>(IDLE);
   const request = useRef<AbortController | null>(null);
 
@@ -37,7 +38,11 @@ export function useCsvExport({ from, to }: DateRange) {
     setState({ status: 'loading' });
     try {
       const range = { from, to };
-      const file = await downloadSpendingCsv(range, controller.signal);
+      const file = await downloadSpendingCsv(range, controller.signal, {
+        category,
+        seller,
+        status,
+      });
       const filename = csvFilename(file.filename, range);
       saveBlob(file.blob, filename);
       setState({ status: 'done', filename });
@@ -45,7 +50,7 @@ export function useCsvExport({ from, to }: DateRange) {
       if (controller.signal.aborted) return;
       setState({ status: 'error', reason: failureOf(error) });
     }
-  }, [from, to]);
+  }, [from, to, category, seller, status]);
 
   return { state, start };
 }

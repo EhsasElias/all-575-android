@@ -24,6 +24,10 @@ flowchart TD
     Order --> History["Orders and personal spending"]
 ```
 
+## Customer dashboard
+
+`/account/dashboard` is a protected customer overview with real counts, paid/refunded/net totals, recent orders and six shopping-step links. Account and the side menu expose it. Status cards open filtered order history; order-number and Saudi date filtering are implemented. Spending adds category/seller/status filters matching the browser CSV. See [roadmap review](ROADMAP_REVIEW.md) for remaining feature and integration gaps and [manager demonstration](MANAGER_DEMO.md) for the presentation sequence.
+
 ## Screen and acceptance mapping
 
 | Roadmap requirement                                                                 | Current route / implementation                                          | Coverage and remaining work                                                                                                                                                                   |
@@ -51,7 +55,7 @@ flowchart TD
 | Return approval policy, evidence uploads, collection, inspection and partial refund | Operations + payments                                                   | **Gap:** no production support console, attachment uploads, automatic eligibility window, return logistics or return-triggered refunds. Written evidence/details can be supplied in a message |
 | Pending/success/failure refund display                                              | Order details                                                           | Existing cancellation refund display; a case resolution never marks money refunded                                                                                                            |
 | Invoices and credit-note documents                                                  | Order details                                                           | **Gap:** PDF invoice and downloadable credit note are absent; refund metadata can contain credit-note number                                                                                  |
-| Personal spending and history                                                       | `/account/spending`                                                     | Date ranges and CSV implemented; XLSX/PDF, category/seller/status filters absent                                                                                                              |
+| Personal spending and history                                                       | `/account/spending`                                                     | Date/category/seller/status order filters and browser CSV implemented; XLSX/PDF and native file handling remain absent                                                                        |
 | Marketing choice, profile and sessions                                              | `/account`, `/account/profile`, `/account/sessions`                     | Implemented; channel-specific notification controls and contact change reverification absent                                                                                                  |
 | Data access and account closure                                                     | `/account/requests`                                                     | Tracked data-access and closure requests implemented. Verification, data delivery/erasure and required-record retention remain operational responsibilities                                   |
 

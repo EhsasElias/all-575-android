@@ -9,9 +9,10 @@ import styles from './AppMenu.module.css';
 
 const LINKS: readonly {
   to: string;
-  label: 'orders' | 'addresses' | 'spending' | 'support' | 'account';
+  label: 'dashboard' | 'orders' | 'addresses' | 'spending' | 'support' | 'account';
   icon: IconName;
 }[] = [
+  { to: routePaths.dashboard, label: 'dashboard', icon: 'grid' },
   { to: routePaths.orders, label: 'orders', icon: 'package' },
   { to: routePaths.addresses, label: 'addresses', icon: 'map-pin' },
   { to: routePaths.customerCases, label: 'support', icon: 'info' },

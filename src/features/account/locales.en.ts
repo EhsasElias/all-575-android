@@ -1,6 +1,8 @@
+import { dashboardEn } from './dashboard.en';
 import { legalLocales } from './legalLocales';
 
 export const en = {
+  dashboard: dashboardEn,
   title: 'Account',
   loading: 'Loading your account',
   back: 'Back',

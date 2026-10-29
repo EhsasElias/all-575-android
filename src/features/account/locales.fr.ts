@@ -1,8 +1,10 @@
+import { dashboardFr } from './dashboard.fr';
 import type { Translations } from '@/shared/i18n';
 import { legalLocales } from './legalLocales';
 import type { en } from './locales.en';
 
 export const fr: Translations<typeof en> = {
+  dashboard: dashboardFr,
   title: 'Compte',
   loading: 'Chargement de votre compte',
   back: 'Retour',

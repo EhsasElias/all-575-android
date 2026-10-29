@@ -1,3 +1,6 @@
+import { useState } from 'react';
+import { SpendingFilters } from './SpendingFilters';
+import type { SpendingFilters as ReportFilters } from '../api/ordersApi';
 import { useTranslation } from 'react-i18next';
 import { isApiError } from '@/shared/api';
 import { routePaths } from '@/shared/lib';
@@ -12,10 +15,18 @@ import { usePeriodFilter } from './usePeriodFilter';
 import { useSpendingReport } from './useSpendingReport';
 import styles from './SpendingScreen.module.css';
 
-function ReportContent({ range, usable }: { range: DateRange; usable: boolean }) {
+function ReportContent({
+  range,
+  usable,
+  filters,
+}: {
+  range: DateRange;
+  usable: boolean;
+  filters: ReportFilters;
+}) {
   const { t } = useTranslation('orders');
   const { t: tCommon } = useTranslation('common');
-  const report = useSpendingReport(range, usable);
+  const report = useSpendingReport(range, usable, filters);
 
   if (!usable) return null;
   if (report.isPending) return <SpendingSkeleton />;
@@ -54,6 +65,7 @@ function ReportContent({ range, usable }: { range: DateRange; usable: boolean })
 export function SpendingScreen() {
   const { t } = useTranslation('orders');
   const filter = usePeriodFilter();
+  const [filters, setFilters] = useState<ReportFilters>({});
 
   return (
     <div className={styles.page}>
@@ -70,8 +82,9 @@ export function SpendingScreen() {
         onSelect={filter.select}
         onChangeDay={filter.setCustomDay}
       />
-      <CsvExport range={filter.range} disabled={!filter.usable} />
-      <ReportContent range={filter.range} usable={filter.usable} />
+      <SpendingFilters value={filters} onChange={setFilters} />
+      <CsvExport range={filter.range} disabled={!filter.usable} filters={filters} />
+      <ReportContent range={filter.range} usable={filter.usable} filters={filters} />
     </div>
   );
 }

@@ -1,4 +1,5 @@
 import { useInfiniteQuery } from '@tanstack/react-query';
+import { useSearchParams } from 'react-router';
 import { fetchOrdersPage, type Cursor } from '../api/ordersApi';
 import { ordersKeys } from '../api/queryKeys';
 
@@ -6,9 +7,16 @@ const FIRST_PAGE: Cursor = null;
 
 /** The customer's orders, newest first, one cursor page at a time. */
 export function useOrderList() {
+  const [params] = useSearchParams();
+  const filters = {
+    status: params.get('status') ?? undefined,
+    q: params.get('q') ?? undefined,
+    from: params.get('from') ?? undefined,
+    to: params.get('to') ?? undefined,
+  };
   return useInfiniteQuery({
-    queryKey: ordersKeys.list(),
-    queryFn: ({ pageParam, signal }) => fetchOrdersPage(pageParam, signal),
+    queryKey: [...ordersKeys.list(), filters],
+    queryFn: ({ pageParam, signal }) => fetchOrdersPage(pageParam, signal, filters),
     initialPageParam: FIRST_PAGE,
     getNextPageParam: (lastPage): Cursor => lastPage.meta.next_cursor,
     select: (data) => data.pages.flatMap((page) => page.data),

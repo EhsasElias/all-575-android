@@ -1,4 +1,6 @@
 import { useTranslation } from 'react-i18next';
+import { routePaths } from '@/shared/lib';
+import { ButtonLink } from '@/shared/ui';
 import type { SessionUser } from '@/shared/session';
 import { AccountMenu } from './AccountMenu';
 import { ConsentNotice } from './ConsentNotice';
@@ -23,6 +25,7 @@ export function SignedInAccount({ user }: SignedInAccountProps) {
     <Page>
       <PageHeader title={t('title')} />
       <ProfileSummary user={user} />
+      <ButtonLink to={routePaths.dashboard}>{t('dashboard.title')}</ButtonLink>
       {user.consents.needs_update && <ConsentNotice />}
       <AccountMenu />
       <Section title={t('preferences.title')}>

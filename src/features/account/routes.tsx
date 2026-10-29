@@ -1,6 +1,7 @@
 import type { RouteObject } from 'react-router';
 import { routePaths, titled } from '@/shared/lib';
 import { AccountScreen } from './AccountScreen';
+import { CustomerDashboardScreen } from './CustomerDashboardScreen';
 import { LegalScreen } from './LegalScreen';
 import { BillingScreen } from './BillingScreen';
 import { CustomerRequestsScreen } from './CustomerRequestsScreen';
@@ -24,6 +25,11 @@ export const accountRoutes: RouteObject[] = [
 
 /** Routes that need a signed-in customer: the router wraps them in RequireAuth. */
 export const protectedAccountRoutes: RouteObject[] = [
+  {
+    path: routePaths.dashboard,
+    element: <CustomerDashboardScreen />,
+    handle: titled((t) => t('dashboard.title', { ns: 'account' })),
+  },
   {
     path: routePaths.billing,
     element: <BillingScreen />,
