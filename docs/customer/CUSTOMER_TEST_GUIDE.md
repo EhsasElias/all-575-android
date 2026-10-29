@@ -77,7 +77,7 @@ Sign-in codes: after requesting one, open `all-575-api/storage/logs/laravel.log`
 
 ## 3. Run the normal customer journey first
 
-1. Open or reload the app on Home or another page, including after a previous visit. Verify the welcome slider, swipe/dot navigation and language control. Tap the framed logo or Skip; verify the short animated logo screen, then the shop. Check the header logo sits in the corner opposite the menu.
+1. Open or reload the app on Home or another page, including after a previous visit. Verify the short animated loading logo appears first, followed by the welcome slider with swipe/dot navigation and language control. Tap the framed logo or Skip to enter the shop. Check the header logo sits in the corner opposite the menu.
 2. Browse without signing in. Select Riyadh delivery area. Open Categories, a category, then a product.
 3. Open T-shirt, select size M, add two units. Add tomatoes from another seller.
 4. Open Cart. Check product, size, quantity and availability. Change a quantity, remove/re-add a line.
@@ -319,7 +319,7 @@ Use columns: ID, result, expected, actual, device, language, order/case referenc
 
 ### Intro on every app entry
 
-Open or reload `/home`, a product link or a checkout link: the slider must appear first. Continue or Skip must show the logo for about 1.2 seconds and then return to the requested page. Switch away and return to the browser tab; background and return to the rebuilt Android app; repeat the check. Navigating between tabs inside the app must remain direct. With reduced motion enabled the logo still appears, with animation disabled. Opening the native fingerprint prompt must not be mistaken for leaving the app; test success and cancellation on a physical phone.
+Open or reload `/home`, a product link or a checkout link: the loading logo must appear first for about 1.2 seconds, followed by the slider. Continue or Skip must then return directly to the requested page. Switch away and return to the browser tab; background and return to the rebuilt Android app; repeat the check. Navigating between tabs inside the app must remain direct. With reduced motion enabled the logo still appears, with animation disabled. Opening the native fingerprint prompt must not be mistaken for leaving the app; test success and cancellation on a physical phone.
 
 ## New individual/company shopping scenarios
 

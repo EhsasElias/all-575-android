@@ -2,7 +2,7 @@
 
 ## Shopping from start to finish
 
-1. Launch the app: welcome slides, logo, requested destination. Choose Arabic, English or French and light/dark appearance.
+1. Launch the app: animated loading logo, welcome slides, requested destination. Choose Arabic, English or French and light/dark appearance.
 2. Browse as a guest, choose the delivery area, browse categories/subcategories and real product photographs.
 3. Search and combine category, company/seller, maximum price, stock in the selected area, and recommended/newest/rating order. Current marketplace unit price remains 5.75 SAR inclusive of VAT; low budgets can correctly return no results.
 4. Open product details: seller, description, exact variant, current stock, quantity and verified product reviews. Sign in to save products to the account.

@@ -45,10 +45,11 @@ for (const language of LANGUAGES) {
   }
 }
 
-test('the slider leads to a short logo introduction before shopping', async ({ page }) => {
+test('the loading logo leads to the slider before shopping', async ({ page }) => {
   await page.goto('/welcome');
-  await page.locator('header').getByRole('button', { name: 'Tap the logo to shop now' }).click();
   await expect(page).toHaveURL(/\/welcome\/logo$/);
   await expect(page.getByRole('navigation')).toHaveCount(0);
+  await expect(page).toHaveURL(/\/welcome$/);
+  await page.locator('header').getByRole('button', { name: 'Tap the logo to shop now' }).click();
   await expect(page).toHaveURL(/\/home$/);
 });

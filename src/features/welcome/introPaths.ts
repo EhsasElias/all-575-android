@@ -24,11 +24,11 @@ export const logoIntroPath = (destination: string | null) =>
 export function initialWelcomePath(
   location: Pick<Location, 'pathname' | 'search' | 'hash'>,
 ): string | null {
-  if (location.pathname === routePaths.welcome || location.pathname === routePaths.root)
+  if (location.pathname === routePaths.logoIntro || location.pathname === routePaths.root)
     return null;
   const destination =
-    location.pathname === routePaths.logoIntro
+    location.pathname === routePaths.welcome
       ? new URLSearchParams(location.search).get('next')
       : `${location.pathname}${location.search}${location.hash}`;
-  return welcomePath(destination);
+  return logoIntroPath(destination);
 }

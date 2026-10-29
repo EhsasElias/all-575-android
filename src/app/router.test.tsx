@@ -18,18 +18,24 @@ beforeEach(() => {
 });
 
 describe('app launch', () => {
-  it('opens the welcome screen on a fresh install', async () => {
+  it('opens the loading logo before the slider on a fresh install', async () => {
     const { router } = await renderApp({ route: '/', seenWelcome: false });
 
-    expect(router.state.location.pathname).toBe('/welcome');
-    expect(screen.getByRole('heading', { level: 1 })).toHaveTextContent('Welcome, our partner');
+    expect(router.state.location.pathname).toBe('/welcome/logo');
+    expect(within(screen.getByRole('main')).getByRole('status')).toHaveTextContent('Loading');
+    expect(await screen.findByRole('heading', { level: 1 }, { timeout: 3000 })).toHaveTextContent(
+      'Welcome, our partner',
+    );
   });
 
-  it('opens the slider again for a returning user', async () => {
+  it('opens the loading logo before the slider for a returning user', async () => {
     const { router } = await renderApp({ route: '/', seenWelcome: true });
 
-    expect(router.state.location.pathname).toBe('/welcome');
-    expect(screen.getByRole('heading', { level: 1 })).toHaveTextContent('Welcome, our partner');
+    expect(router.state.location.pathname).toBe('/welcome/logo');
+    expect(within(screen.getByRole('main')).getByRole('status')).toHaveTextContent('Loading');
+    expect(await screen.findByRole('heading', { level: 1 }, { timeout: 3000 })).toHaveTextContent(
+      'Welcome, our partner',
+    );
   });
 });
 

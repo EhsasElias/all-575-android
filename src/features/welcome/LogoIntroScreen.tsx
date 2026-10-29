@@ -3,7 +3,7 @@ import { useTranslation } from 'react-i18next';
 import { useNavigate, useSearchParams } from 'react-router';
 import { Logo, VisuallyHidden } from '@/shared/ui';
 import styles from './LogoIntroScreen.module.css';
-import { afterIntroPath } from './introPaths';
+import { welcomePath } from './introPaths';
 
 const INTRO_DURATION_MS = 1200;
 
@@ -12,7 +12,7 @@ export function LogoIntroScreen() {
   const { t } = useTranslation();
   const navigate = useNavigate();
   const [params] = useSearchParams();
-  const destination = afterIntroPath(params.get('next'));
+  const destination = welcomePath(params.get('next'));
 
   useEffect(() => {
     const timer = window.setTimeout(() => {

@@ -4,7 +4,7 @@ import { useSearchParams } from 'react-router';
 import { ButtonLink, LanguageSwitch, Logo } from '@/shared/ui';
 import { markWelcomeSeen } from './welcomeSeen';
 import styles from './WelcomeHeader.module.css';
-import { logoIntroPath } from './introPaths';
+import { afterIntroPath } from './introPaths';
 
 type WelcomeHeaderProps = {
   onStartShopping: () => void;
@@ -20,7 +20,7 @@ export function WelcomeHeader({ onStartShopping }: WelcomeHeaderProps) {
     <header dir="ltr" className={styles.header}>
       <ButtonLink
         variant="ghost"
-        to={logoIntroPath(params.get('next'))}
+        to={afterIntroPath(params.get('next'))}
         replace
         className={styles.skip}
         onClick={markWelcomeSeen}

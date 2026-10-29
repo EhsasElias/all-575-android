@@ -22,7 +22,7 @@ afterEach(() => {
 });
 
 describe('returning to the app', () => {
-  it('shows slider then logo before returning to the page that was open', async () => {
+  it('shows logo then slider before returning to the page that was open', async () => {
     installFakeApi({ 'GET /store': { body: { data: testStore } } });
     window.history.replaceState(null, '', '/cart');
     const { router } = await renderApp({ route: '/cart', seenWelcome: true });
@@ -35,16 +35,17 @@ describe('returning to the app', () => {
       bridge.listener?.({ isActive: true });
     });
     await waitFor(() => {
-      expect(router.state.location.pathname).toBe('/welcome');
+      expect(router.state.location.pathname).toBe('/welcome/logo');
     });
     expect(router.state.location.search).toBe('?next=%2Fcart');
-    await userEvent.setup().click(screen.getByRole('link', { name: 'Skip' }));
-    expect(router.state.location.pathname).toBe('/welcome/logo');
     await waitFor(
       () => {
-        expect(router.state.location.pathname).toBe('/cart');
+        expect(router.state.location.pathname).toBe('/welcome');
       },
       { timeout: 2500 },
     );
+    await screen.findByRole('heading', { level: 1, name: 'Welcome, our partner in success' });
+    await userEvent.setup().click(screen.getByRole('link', { name: 'Skip' }));
+    expect(router.state.location.pathname).toBe('/cart');
   });
 });

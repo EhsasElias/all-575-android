@@ -17,7 +17,7 @@ import { RouteError } from './layout/RouteError';
 import { ShellLayout } from './layout/ShellLayout';
 
 function redirectFromRoot() {
-  return redirect(routePaths.welcome);
+  return redirect(routePaths.logoIntro);
 }
 
 /**

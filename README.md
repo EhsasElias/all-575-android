@@ -92,7 +92,7 @@ The header menu opens from the right in Arabic and the left in English/French. I
 
 The welcome slider uses swipe gestures and tappable slide indicators, with no automatic movement or playback controls. Its photos, price and welcome messages are unchanged.
 
-Every fresh open or reload starts with the slider, followed by the logo for 1.2 seconds, then the requested page (Home by default). Returning to the Android app or a hidden browser tab repeats this sequence too. Normal navigation inside the app does not repeat it. Direct product, checkout and sign-in links retain their destination through both intro screens. Reduced motion keeps the brief logo screen visible with animation disabled. Product descriptions expand on tap so the main buying choices remain easy to scan.
+Every fresh open or reload starts with the animated loading logo for 1.2 seconds, followed by the slider, then the requested page (Home by default). Returning to the Android app or a hidden browser tab repeats this sequence too. Normal navigation inside the app does not repeat it. Direct product, checkout and sign-in links retain their destination through both intro screens. Reduced motion keeps the brief logo screen visible with animation disabled. Product descriptions expand on tap so the main buying choices remain easy to scan.
 
 The shopping header places the framed logo in the top corner opposite the menu: right in English/French, left in Arabic. The logo-only introduction remains centered.
 

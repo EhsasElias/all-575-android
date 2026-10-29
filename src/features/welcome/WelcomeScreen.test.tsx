@@ -115,7 +115,7 @@ describe('Welcome header', () => {
 
       expect(header).toHaveAttribute('dir', 'ltr');
       const [first, second, third] = [...header.children];
-      expect(first).toHaveAttribute('href', '/welcome/logo');
+      expect(first).toHaveAttribute('href', '/home');
       expect(second?.tagName).toBe('FIELDSET');
       expect(third?.tagName).toBe('BUTTON');
       expect(
@@ -179,7 +179,7 @@ describe('Welcome navigation', () => {
 
     await user.click(within(getHeader()).getByRole('button', { name: EN.cta }));
 
-    expect(router.state.location.pathname).toBe('/welcome/logo');
+    expect(router.state.location.pathname).toBe('/home');
     await waitFor(
       () => {
         expect(router.state.location.pathname).toBe('/home');
@@ -198,7 +198,7 @@ describe('Welcome navigation', () => {
       within(screen.getByRole('main')).getAllByRole('button', { name: EN.cta })[1] ?? document.body,
     );
 
-    expect(router.state.location.pathname).toBe('/welcome/logo');
+    expect(router.state.location.pathname).toBe('/home');
     await waitFor(
       () => {
         expect(router.state.location.pathname).toBe('/home');
@@ -214,7 +214,7 @@ describe('Welcome navigation', () => {
 
     await user.click(screen.getByRole('link', { name: 'Skip' }));
 
-    expect(router.state.location.pathname).toBe('/welcome/logo');
+    expect(router.state.location.pathname).toBe('/home');
     await waitFor(
       () => {
         expect(router.state.location.pathname).toBe('/home');

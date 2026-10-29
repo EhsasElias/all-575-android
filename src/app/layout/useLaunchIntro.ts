@@ -1,6 +1,6 @@
 import { useEffect } from 'react';
 import { useNavigate } from 'react-router';
-import { welcomePath } from '@/features/welcome';
+import { logoIntroPath } from '@/features/welcome';
 import { observeAppVisibility } from '@/shared/native-lifecycle';
 
 /** Reentering the actual native app restarts the intro; ordinary page navigation does not. */
@@ -22,7 +22,7 @@ export function useLaunchIntro() {
       const target = pathname.startsWith('/welcome')
         ? new URLSearchParams(search).get('next')
         : `${pathname}${search}${hash}`;
-      void navigate(welcomePath(target), { replace: true });
+      void navigate(logoIntroPath(target), { replace: true });
     })
       .then(async (handle) => {
         if (stopped) await handle.remove();
