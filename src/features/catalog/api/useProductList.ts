@@ -6,6 +6,9 @@ import { usePagedQuery } from './usePagedQuery';
 
 export type ProductFilters = {
   category?: string | undefined;
+  sort?: string | undefined;
+  inStock?: boolean | undefined;
+  maxPrice?: number | undefined;
   seller?: string | undefined;
   /** Free text, already trimmed. The server needs at least 2 characters. */
   q?: string | undefined;
@@ -16,8 +19,20 @@ export type ProductFilters = {
 
 const PRODUCTS_PATH = '/products';
 
-function toQuery({ category, seller, q, zoneId, perPage }: ProductFilters) {
+function toQuery({
+  category,
+  seller,
+  q,
+  zoneId,
+  perPage,
+  sort,
+  inStock,
+  maxPrice,
+}: ProductFilters) {
   return {
+    sort,
+    in_stock: inStock && zoneId !== null ? 1 : undefined,
+    max_price: maxPrice,
     category,
     seller,
     q,

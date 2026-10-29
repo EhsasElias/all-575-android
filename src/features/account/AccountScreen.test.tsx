@@ -100,6 +100,9 @@ describe('Account: a signed-in customer', () => {
       .getAllByRole('link')
       .map((link) => [link.textContent, link.getAttribute('href')]);
     expect(hrefs).toEqual([
+      ['Saved products', '/account/saved'],
+      ['Buyer and billing details', '/account/billing'],
+      ['Quotes and account requests', '/account/requests'],
       ['Support and returnsFollow your requests and replies', '/account/support'],
       ['ProfileYour name and language', '/account/profile'],
       ['OrdersTrack and review your orders', '/orders'],

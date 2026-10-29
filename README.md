@@ -105,3 +105,7 @@ Account > Create account supports email OTP or Saudi mobile OTP, including requi
 Fingerprint unlock is unavailable in desktop/web builds. Rebuild and run `npm run cap:sync` for the native plugins and biometric permission. See the [customer test guide](docs/customer/CUSTOMER_TEST_GUIDE.md) for device checks. Local OTP codes are logged by the backend; production SMS/email delivery still needs provider configuration.
 
 Android app-wide visibility includes the biometric prompt activity, so opening and closing the in-app fingerprint dialog does not restart the intro or lock the active authentication attempt. Rebuild the APK after pulling this change; restarting only the development server does not install the new native lifecycle bridge.
+
+## Saudi individual and company shopping
+
+See [A-Z customer flow](docs/customer/CUSTOMER_FLOW.md) and the added acceptance cases in the customer test guide. Update both `v2` repositories and run backend migrations. Cash on delivery confirms the order without marking it paid. Real online payments, messaging, tax invoices and operational courier integrations still need configured services.

@@ -75,12 +75,18 @@ export const ar: Translations<typeof en> = {
   method: {
     heading: 'طريقة الدفع',
     options: {
+      cash_on_delivery: {
+        name: 'الدفع عند الاستلام',
+        description: 'ادفع نقدًا للمندوب عند وصول طلبك.',
+      },
       mada: { name: 'مدى', description: 'بطاقة الصراف الآلي السعودية' },
       card: { name: 'فيزا أو ماستركارد', description: 'بطاقة ائتمانية أو مدينة' },
       apple_pay: { name: 'Apple Pay', description: 'ادفع من جهاز أبل' },
     },
   },
   pay: {
+    cashButton: 'تأكيد الطلب · {{amount}}',
+    cashHint: 'الدفع نقدًا عند الاستلام. لن يُخصم أي مبلغ إلكترونيًا.',
     button: 'ادفع',
     buttonWithAmount: 'ادفع {{amount}}',
     secure: 'تدفع في صفحة البنك الآمنة. لا نرى بيانات بطاقتك أبدًا.',

@@ -7,6 +7,7 @@ import type { ProductDetail } from '../api/types';
 import { CatalogImage } from '../components/CatalogImage';
 import { RatingSummary } from '../components/StarRating';
 import { pickText } from '../lib/localized';
+import { SaveProduct } from '../saved/SaveProduct';
 import { ProductBuyBox } from './ProductBuyBox';
 import { ReviewsSection } from './ReviewsSection';
 import styles from './ProductDetails.module.css';
@@ -41,6 +42,7 @@ export function ProductDetails({ product }: { product: ProductDetail }) {
       </div>
 
       <ProductBuyBox product={product} />
+      <SaveProduct slug={product.slug} />
 
       {description !== '' && (
         <details className={styles.about}>

@@ -182,6 +182,8 @@ export function order(overrides: Partial<Order> = {}): Order {
     preview_images: [],
     slot: { starts_at: slots[0]?.starts_at ?? null, ends_at: slots[0]?.ends_at ?? null },
     payment_status: 'pending',
+    billing_details: null,
+    purchase_order_reference: null,
     address: {
       recipient_name: 'Sara',
       recipient_phone: '+966512345678',

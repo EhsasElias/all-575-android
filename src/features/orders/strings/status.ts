@@ -32,6 +32,7 @@ export const statusEn = {
       mada: 'mada',
       card: 'Card',
       apple_pay: 'Apple Pay',
+      cash_on_delivery: 'Cash on delivery',
       none: 'Nothing to pay',
     },
     refund: {
@@ -96,6 +97,7 @@ export const statusAr: Translations<typeof statusEn> = {
       mada: 'مدى',
       card: 'بطاقة',
       apple_pay: 'Apple Pay',
+      cash_on_delivery: 'الدفع عند الاستلام',
       none: 'لا يوجد مبلغ للدفع',
     },
     refund: {
@@ -160,6 +162,7 @@ export const statusFr: Translations<typeof statusEn> = {
       mada: 'mada',
       card: 'Carte bancaire',
       apple_pay: 'Apple Pay',
+      cash_on_delivery: 'Paiement à la livraison',
       none: 'Rien à payer',
     },
     refund: {

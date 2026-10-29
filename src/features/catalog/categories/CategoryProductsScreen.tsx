@@ -11,6 +11,7 @@ import { ProductResults } from '../components/ProductResults';
 import { DeliveryChip } from '../delivery/DeliveryChip';
 import { useDeliveryZone } from '../delivery/useDeliveryZone';
 import { pickText } from '../lib/localized';
+import { ProductFilters, useCatalogFilters } from '../search/ProductFilters';
 import { findCategory } from './findCategory';
 import styles from './CategoryProductsScreen.module.css';
 
@@ -26,7 +27,8 @@ export function CategoryProductsScreen() {
   const match = categories.data ? findCategory(categories.data, slug) : null;
   // The products API answers an unknown slug with an empty list, so the category tree is what tells us.
   const unknownCategory = categories.isSuccess && match === null;
-  const list = useProductList({ category: slug, zoneId }, !unknownCategory);
+  const filters = useCatalogFilters();
+  const list = useProductList({ ...filters, category: slug, zoneId }, !unknownCategory);
 
   if (unknownCategory) {
     return (
@@ -64,6 +66,7 @@ export function CategoryProductsScreen() {
       </div>
 
       <DeliveryChip className={styles.chip} />
+      <ProductFilters zoneId={zoneId} showCategory={false} />
       {children.length > 0 && (
         <CategoryChips categories={children} label={t('categoryProducts.subcategories')} />
       )}

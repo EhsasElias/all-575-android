@@ -1,3 +1,4 @@
+import { PaymentBrand } from '@/shared/ui';
 import { useTranslation } from 'react-i18next';
 import { formatMoney, useLanguage } from '@/shared/i18n';
 import { StatusChip } from '../components/StatusChip';
@@ -30,11 +31,16 @@ function PaymentRow({ payment }: { payment: OrderPayment }) {
   return (
     <li className={styles.row}>
       <div className={styles.line}>
-        <p className={styles.title}>{t(`status.method.${payment.method}`)}</p>
+        <div>
+          <PaymentBrand method={payment.method} />
+          <p className={styles.title}>{t(`status.method.${payment.method}`)}</p>
+        </div>
         <p className={styles.amount}>{formatMoney(payment.amount, language)}</p>
       </div>
       <StatusChip icon={look.icon} tone={look.tone}>
-        {t(`status.payment.${payment.status}`)}
+        {payment.method === 'cash_on_delivery' && payment.status === 'pending'
+          ? t('status.method.cash_on_delivery')
+          : t(`status.payment.${payment.status}`)}
       </StatusChip>
       {payment.paid_at !== null && (
         <p className={styles.muted}>

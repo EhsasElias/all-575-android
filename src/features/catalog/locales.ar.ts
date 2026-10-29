@@ -2,6 +2,35 @@ import type { Translations } from '@/shared/i18n';
 import type { en } from './locales.en';
 
 export const ar: Translations<typeof en> = {
+  filters: {
+    title: 'التصفية والترتيب',
+    category: 'القسم والقسم الفرعي',
+    seller: 'الشركة / البائع',
+    all: 'الكل',
+    sort: 'ترتيب حسب',
+    featured: 'مقترح لك',
+    newest: 'الأحدث',
+    rating: 'الأعلى تقييمًا',
+    price: 'أعلى سعر للوحدة',
+    upTo: 'حتى {{amount}} ريال',
+    available: 'متوفر في منطقة التوصيل',
+    needArea: 'اختر منطقة التوصيل للتصفية حسب التوفر.',
+    clear: 'مسح الفلاتر',
+    samePrice: 'سعر المنتجات الحالي ٥٫٧٥ ريال للوحدة شامل الضريبة. اختيار حد أقل قد لا يعرض نتائج.',
+    failed: 'تعذر تحميل بعض خيارات التصفية.',
+  },
+  saved: {
+    title: 'المنتجات المحفوظة',
+    save: 'حفظ المنتج',
+    remove: 'إزالة من المحفوظات',
+    empty: 'لا توجد منتجات محفوظة',
+    emptyHint: 'احفظ المنتجات من صفحة تفاصيل المنتج لتجدها هنا.',
+    browse: 'تصفح المنتجات',
+    signIn: 'تسجيل الدخول',
+    signInHint: 'سجل دخولك لحفظ منتجاتك في حسابك.',
+    failed: 'تعذر تحديث المنتجات المحفوظة.',
+    retry: 'حاول مرة أخرى',
+  },
   titles: {
     search: 'البحث',
     category: 'الفئة',

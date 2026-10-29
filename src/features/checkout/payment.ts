@@ -6,7 +6,12 @@ export type PaymentStatus = Schemas['PaymentStatus'];
 /** The methods a customer can pick; `none` only appears on an order a promo code covered completely. */
 export type PayMethod = Exclude<Schemas['PaymentMethod'], 'none'>;
 
-export const PAY_METHODS = ['mada', 'card', 'apple_pay'] as const satisfies readonly PayMethod[];
+export const PAY_METHODS = [
+  'mada',
+  'card',
+  'apple_pay',
+  'cash_on_delivery',
+] as const satisfies readonly PayMethod[];
 
 const STATUSES = [
   'pending',

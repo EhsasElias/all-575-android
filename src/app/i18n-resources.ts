@@ -1,3 +1,4 @@
+import { customerLocales } from '@/features/account';
 import { accountLocales } from '@/features/account';
 import { aftercareLocales } from '@/features/aftercare';
 import { addressesLocales } from '@/features/addresses';
@@ -25,6 +26,7 @@ export const appResources = {
     cart: cartLocales.en,
     checkout: checkoutLocales.en,
     orders: ordersLocales.en,
+    customer: customerLocales.en,
     account: accountLocales.en,
     addresses: addressesLocales.en,
     auth: authLocales.en,
@@ -41,6 +43,7 @@ export const appResources = {
     cart: cartLocales.ar,
     checkout: checkoutLocales.ar,
     orders: ordersLocales.ar,
+    customer: customerLocales.ar,
     account: accountLocales.ar,
     addresses: addressesLocales.ar,
     auth: authLocales.ar,
@@ -57,6 +60,7 @@ export const appResources = {
     cart: cartLocales.fr,
     checkout: checkoutLocales.fr,
     orders: ordersLocales.fr,
+    customer: customerLocales.fr,
     account: accountLocales.fr,
     addresses: addressesLocales.fr,
     auth: authLocales.fr,

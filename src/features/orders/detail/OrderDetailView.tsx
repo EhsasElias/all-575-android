@@ -4,6 +4,7 @@ import { routePaths, routeTo } from '@/shared/lib';
 import { ButtonLink } from '@/shared/ui';
 import { isActiveOrder } from '../status/statusLook';
 import type { OrderDetail } from '../types';
+import { BillingDetails } from './BillingDetails';
 import { DeliveriesSection } from './DeliveriesSection';
 import { OrderHeader } from './OrderHeader';
 import { OrderTimeline } from './OrderTimeline';
@@ -34,6 +35,7 @@ export function OrderDetailView({ order }: { order: OrderDetail }) {
       <DeliveriesSection order={order} />
       <OrderTimeline events={order.timeline} suborders={order.suborders} />
       <ShippingSection order={order} />
+      <BillingDetails order={order} />
       <PaymentsSection payments={order.payments} refunds={order.refunds} />
       <TotalsSection order={order} />
       <ButtonLink to={routeTo.orderHelp(order.id)}>{tCare('open')}</ButtonLink>

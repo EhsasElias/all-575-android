@@ -21,6 +21,8 @@ const LINKS: readonly {
 
 export function AppMenu({ open, onClose }: { open: boolean; onClose: () => void }) {
   const { t } = useTranslation('navigation');
+  const { t: tc } = useTranslation('catalog');
+  const { t: tBuyer } = useTranslation('customer');
   const { language, setLanguage } = useLanguage();
 
   return (
@@ -49,6 +51,14 @@ export function AppMenu({ open, onClose }: { open: boolean; onClose: () => void 
           {t('home')}
         </Link>
         <CategoryMenu onNavigate={onClose} />
+        <Link to={routePaths.savedProducts} onClick={onClose} className={styles.link}>
+          <Icon name="cart" />
+          {tc('saved.title')}
+        </Link>
+        <Link to={routePaths.customerRequests} onClick={onClose} className={styles.link}>
+          <Icon name="receipt" />
+          {tBuyer('requests')}
+        </Link>
         {LINKS.map((link) => (
           <Link key={link.to} to={link.to} onClick={onClose} className={styles.link}>
             <Icon name={link.icon} />

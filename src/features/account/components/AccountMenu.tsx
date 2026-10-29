@@ -51,11 +51,31 @@ const ENTRIES: readonly MenuEntry[] = [
 
 export function AccountMenu() {
   const { t } = useTranslation('account');
+  const { t: tCatalog } = useTranslation('catalog');
+  const { t: tc } = useTranslation('customer');
   const { forward } = useDirectionalIcons();
 
   return (
     <nav aria-label={t('menu.label')}>
       <ul className={styles.list}>
+        <li>
+          <Link to={routePaths.savedProducts} className={styles.link}>
+            <Icon name="cart" />
+            <span>{tCatalog('saved.title')}</span>
+          </Link>
+        </li>
+        <li>
+          <Link to={routePaths.billing} className={styles.link}>
+            <Icon name="user" />
+            <span>{tc('billing')}</span>
+          </Link>
+        </li>
+        <li>
+          <Link to={routePaths.customerRequests} className={styles.link}>
+            <Icon name="receipt" />
+            <span>{tc('requests')}</span>
+          </Link>
+        </li>
         {ENTRIES.map((entry) => (
           <li key={entry.to}>
             <Link to={entry.to} className={styles.link}>

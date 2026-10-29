@@ -79,12 +79,18 @@ export const fr: Translations<typeof en> = {
   method: {
     heading: 'Mode de paiement',
     options: {
+      cash_on_delivery: {
+        name: 'Paiement à la livraison',
+        description: 'Payez le livreur en espèces à la réception.',
+      },
       mada: { name: 'mada', description: 'Carte de débit saoudienne' },
       card: { name: 'Visa ou Mastercard', description: 'Carte de crédit ou de débit' },
       apple_pay: { name: 'Apple Pay', description: 'Payez avec votre appareil Apple' },
     },
   },
   pay: {
+    cashButton: 'Commander · {{amount}}',
+    cashHint: 'Payez en espèces à la livraison. Aucun paiement en ligne.',
     button: 'Payer',
     buttonWithAmount: 'Payer {{amount}}',
     secure:

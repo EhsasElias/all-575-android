@@ -5,10 +5,16 @@ import { CategoryProductsScreen } from './categories/CategoryProductsScreen';
 import { HomeScreen } from './home/HomeScreen';
 import { ProductScreen } from './product/ProductScreen';
 import { SearchScreen } from './search/SearchScreen';
+import { SavedProductsScreen } from './saved/SavedProductsScreen';
 import { SellerScreen } from './seller/SellerScreen';
 
 /** Public: guests browse freely. */
 export const catalogRoutes: RouteObject[] = [
+  {
+    path: routePaths.savedProducts,
+    element: <SavedProductsScreen />,
+    handle: titled((t) => t('saved.title', { ns: 'catalog' })),
+  },
   { path: routePaths.home, element: <HomeScreen />, handle: titled((t) => t('nav.home')) },
   {
     path: routePaths.categories,

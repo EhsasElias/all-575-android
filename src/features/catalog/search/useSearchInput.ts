@@ -28,7 +28,10 @@ export function useSearchInput() {
   const commit = (value: string) => {
     clearTimeout(timer.current);
     const trimmed = value.trim();
-    setParams(trimmed === '' ? {} : { q: trimmed }, { replace: true });
+    const next = new URLSearchParams(params);
+    if (trimmed) next.set('q', trimmed);
+    else next.delete('q');
+    setParams(next, { replace: true });
   };
 
   return {

@@ -8,6 +8,7 @@ import { CategoryChips } from '../components/CategoryChips';
 import { ProductResults } from '../components/ProductResults';
 import { DeliveryChip } from '../delivery/DeliveryChip';
 import { useDeliveryZone } from '../delivery/useDeliveryZone';
+import { ProductFilters, useCatalogFilters } from './ProductFilters';
 import { SearchBox } from './SearchBox';
 import { MIN_QUERY_LENGTH, useSearchInput } from './useSearchInput';
 import styles from './SearchScreen.module.css';
@@ -38,8 +39,16 @@ export function SearchScreen() {
   const { draft, query, change, submit, clear } = useSearchInput();
   const { zoneId } = useDeliveryZone();
   const inputRef = useRef<HTMLInputElement>(null);
-  const searchable = query.length >= MIN_QUERY_LENGTH;
-  const list = useProductList({ q: query, zoneId }, searchable);
+  const filters = useCatalogFilters();
+  const searchable =
+    query.length >= MIN_QUERY_LENGTH ||
+    [filters.category, filters.seller, filters.maxPrice, filters.inStock, filters.sort].some(
+      Boolean,
+    );
+  const list = useProductList(
+    { ...filters, q: query.length >= MIN_QUERY_LENGTH ? query : undefined, zoneId },
+    searchable,
+  );
 
   // Opening search from the home screen should be ready to type, like any search field.
   const [arrivedEmpty] = useState(query === '');
@@ -58,6 +67,7 @@ export function SearchScreen() {
         onClear={clear}
       />
       <DeliveryChip className={styles.chip} />
+      <ProductFilters zoneId={zoneId} />
 
       {searchable ? (
         <section aria-labelledby="search-results" className={styles.results}>

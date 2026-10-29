@@ -8,6 +8,7 @@ import type {
   SuborderItem,
 } from './types';
 
+/** Synthetic customer/order fixtures only. No live phone, address or payment requests. */
 /** 24 Oct 2026, 8:18 PM in Riyadh. */
 export const PLACED_AT = '2026-10-24T17:18:04.000000Z';
 /** 8:20 PM in Riyadh. */
@@ -107,9 +108,11 @@ export const EVENT_TIME = '2026-10-24T17:18:04.000000Z';
 export function buildOrderDetail(overrides: Partial<OrderDetail> = {}): OrderDetail {
   return {
     ...buildOrderSummary(),
+    billing_details: null,
+    purchase_order_reference: null,
     address: {
       recipient_name: 'Order Tester',
-      recipient_phone: '+966565926409',
+      recipient_phone: '+966512345678',
       region: 'Riyadh Region',
       city: 'Riyadh',
       district: 'Al Olaya',

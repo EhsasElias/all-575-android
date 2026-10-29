@@ -1,0 +1,16 @@
+.brands {
+  display: inline-flex;
+  flex-wrap: wrap;
+  gap: 4px;
+  flex: none;
+  align-items: center;
+}
+.image {
+  inline-size: 52px;
+  block-size: 36px;
+  padding: 3px;
+  object-fit: contain;
+  background: #fff;
+  border: 1px solid #e1e6e2;
+  border-radius: 6px;
+}

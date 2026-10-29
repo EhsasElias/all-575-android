@@ -12,8 +12,8 @@ export function createAttemptKeys(generate: () => string = () => crypto.randomUU
   let current: { signature: string; key: string } | null = null;
 
   return {
-    keyFor: ({ quoteId, slotId, method }) => {
-      const signature = `${quoteId}|${slotId}|${method}`;
+    keyFor: ({ quoteId, slotId, method, purchaseOrderReference }) => {
+      const signature = JSON.stringify([quoteId, slotId, method, purchaseOrderReference ?? '']);
       if (current?.signature !== signature) current = { signature, key: generate() };
       return current.key;
     },

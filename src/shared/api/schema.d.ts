@@ -102,6 +102,22 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/v1/me/billing-profile": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["billingProfile.show"];
+        put: operations["billingProfile.update"];
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/v1/cart": {
         parameters: {
             query?: never;
@@ -261,6 +277,22 @@ export interface paths {
         get?: never;
         put?: never;
         post: operations["customerCase.message"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/v1/me/requests": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["customerRequest.index"];
+        put?: never;
+        post: operations["customerRequest.store"];
         delete?: never;
         options?: never;
         head?: never;
@@ -492,6 +524,54 @@ export interface paths {
         options?: never;
         head?: never;
         patch: operations["review.update"];
+        trace?: never;
+    };
+    "/v1/me/saved-products": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["savedProduct.index"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/v1/me/saved-products/{slug}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["savedProduct.show"];
+        put: operations["savedProduct.store"];
+        post?: never;
+        delete: operations["savedProduct.destroy"];
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/v1/sellers": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["seller.index"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
         trace?: never;
     };
     "/v1/sellers/{slug}": {
@@ -733,7 +813,8 @@ export interface components {
             quote_id: string;
             slot_id: number;
             /** @enum {string} */
-            payment_method: "mada" | "card" | "apple_pay";
+            payment_method: "mada" | "card" | "apple_pay" | "cash_on_delivery";
+            purchase_order_reference?: string | null;
             notes?: string | null;
         };
         /** CreateCustomerCaseRequest */
@@ -776,6 +857,27 @@ export interface components {
                 /** Format: date-time */
                 created_at: string | null;
             }[];
+        };
+        /** CustomerRequestRequest */
+        CustomerRequestRequest: {
+            request_key: string;
+            /** @enum {string} */
+            kind: "bulk_quote" | "data_access" | "account_closure";
+            subject: string;
+            description: string;
+        };
+        /** CustomerRequestResource */
+        CustomerRequestResource: {
+            id: string;
+            kind: string;
+            subject: string;
+            description: string;
+            status: string;
+            reply: string | null;
+            /** Format: date-time */
+            created_at: string | null;
+            /** Format: date-time */
+            updated_at: string | null;
         };
         /** MergeCartRequest */
         MergeCartRequest: {
@@ -832,6 +934,14 @@ export interface components {
                     gross: number;
                 }[];
             };
+            billing_details: {
+                buyer_type: string;
+                company_name: string | null;
+                registration_number: string | null;
+                vat_number: string | null;
+                billing_address: string | null;
+            } | null;
+            purchase_order_reference: string | null;
             promo_code: string | null;
             customer_notes: string | null;
             cancelled_at: string | null;
@@ -874,7 +984,7 @@ export interface components {
                 /** @enum {string} */
                 status: "pending" | "paid" | "failed" | "expired";
                 /** @enum {string} */
-                method: "mada" | "card" | "apple_pay" | "none";
+                method: "mada" | "card" | "apple_pay" | "cash_on_delivery" | "none";
                 amount: number;
                 currency: string;
                 expires_at: string;
@@ -929,16 +1039,17 @@ export interface components {
         OtpChannel: "phone" | "email";
         /**
          * PaymentMethod
-         * @description Cash on delivery, SADAD, BNPL and bank transfer need separate approval (roadmap D-06) and are not listed.
+         * @description Only enabled, supported checkout methods are accepted.
          *     | |
          *     |---|
          *     | `mada` <br/>  |
          *     | `card` <br/>  |
          *     | `apple_pay` <br/>  |
+         *     | `cash_on_delivery` <br/>  |
          *     | `none` <br/> Order fully covered by a promo code: nothing to charge. |
          * @enum {string}
          */
-        PaymentMethod: "mada" | "card" | "apple_pay" | "none";
+        PaymentMethod: "mada" | "card" | "apple_pay" | "cash_on_delivery" | "none";
         /** PaymentResource */
         PaymentResource: {
             id: string;
@@ -1090,6 +1201,15 @@ export interface components {
             product_slug: string;
             rating: number;
             body?: string | null;
+        };
+        /** UpdateBillingProfileRequest */
+        UpdateBillingProfileRequest: {
+            /** @enum {string} */
+            buyer_type: "individual" | "business";
+            company_name?: string | null;
+            registration_number?: string | null;
+            vat_number?: string | null;
+            billing_address?: string | null;
         };
         /** UpdateMarketingConsentRequest */
         UpdateMarketingConsentRequest: {
@@ -1447,6 +1567,67 @@ export interface operations {
             401: components["responses"]["AuthenticationException"];
         };
     };
+    "billingProfile.show": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        data: {
+                            buyer_type: string;
+                            company_name: string | null;
+                            registration_number: string | null;
+                            vat_number: string | null;
+                            billing_address: string | null;
+                        };
+                    };
+                };
+            };
+            401: components["responses"]["AuthenticationException"];
+        };
+    };
+    "billingProfile.update": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["UpdateBillingProfileRequest"];
+            };
+        };
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        data: {
+                            buyer_type: string;
+                            company_name: string | null;
+                            registration_number: string | null;
+                            vat_number: string | null;
+                            billing_address: string | null;
+                        };
+                    };
+                };
+            };
+            401: components["responses"]["AuthenticationException"];
+            422: components["responses"]["ValidationException"];
+        };
+    };
     "cart.show": {
         parameters: {
             query?: never;
@@ -1759,6 +1940,82 @@ export interface operations {
             422: components["responses"]["ValidationException"];
         };
     };
+    "customerRequest.index": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Paginated set of `CustomerRequestResource` */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        data: components["schemas"]["CustomerRequestResource"][];
+                        links: {
+                            first: string | null;
+                            last: string | null;
+                            prev: string | null;
+                            next: string | null;
+                        };
+                        meta: {
+                            current_page: number;
+                            from: number | null;
+                            last_page: number;
+                            /** @description Generated paginator links. */
+                            links: {
+                                url: string | null;
+                                label: string;
+                                active: boolean;
+                            }[];
+                            /** @description Base path for paginator generated URLs. */
+                            path: string | null;
+                            /** @description Number of items shown per page. */
+                            per_page: number;
+                            /** @description Number of the last item in the slice. */
+                            to: number | null;
+                            /** @description Total number of items being paginated. */
+                            total: number;
+                        };
+                    };
+                };
+            };
+            401: components["responses"]["AuthenticationException"];
+        };
+    };
+    "customerRequest.store": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["CustomerRequestRequest"];
+            };
+        };
+        responses: {
+            /** @description `CustomerRequestResource` */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        data: components["schemas"]["CustomerRequestResource"];
+                    };
+                };
+            };
+            401: components["responses"]["AuthenticationException"];
+            422: components["responses"]["ValidationException"];
+        };
+    };
     "deliveryCode.show": {
         parameters: {
             query?: never;
@@ -2017,6 +2274,10 @@ export interface operations {
                 seller?: string | null;
                 q?: string | null;
                 zone_id?: number | null;
+                sort?: "featured" | "newest" | "rating" | null;
+                min_price?: number | null;
+                max_price?: number | null;
+                in_stock?: boolean | null;
                 per_page?: number | null;
             };
             header?: never;
@@ -2254,6 +2515,154 @@ export interface operations {
             };
             401: components["responses"]["AuthenticationException"];
             422: components["responses"]["ValidationException"];
+        };
+    };
+    "savedProduct.index": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Paginated set of `ProductListResource` */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        data: components["schemas"]["ProductListResource"][];
+                        links: {
+                            first: string | null;
+                            last: string | null;
+                            prev: string | null;
+                            next: string | null;
+                        };
+                        meta: {
+                            current_page: number;
+                            from: number | null;
+                            last_page: number;
+                            /** @description Generated paginator links. */
+                            links: {
+                                url: string | null;
+                                label: string;
+                                active: boolean;
+                            }[];
+                            /** @description Base path for paginator generated URLs. */
+                            path: string | null;
+                            /** @description Number of items shown per page. */
+                            per_page: number;
+                            /** @description Number of the last item in the slice. */
+                            to: number | null;
+                            /** @description Total number of items being paginated. */
+                            total: number;
+                        };
+                    };
+                };
+            };
+            401: components["responses"]["AuthenticationException"];
+        };
+    };
+    "savedProduct.show": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                slug: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        data: {
+                            saved: boolean;
+                        };
+                    };
+                };
+            };
+            401: components["responses"]["AuthenticationException"];
+        };
+    };
+    "savedProduct.store": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                slug: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        data: {
+                            saved: boolean;
+                        };
+                    };
+                };
+            };
+            401: components["responses"]["AuthenticationException"];
+        };
+    };
+    "savedProduct.destroy": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                slug: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        data: {
+                            saved: boolean;
+                        };
+                    };
+                };
+            };
+            401: components["responses"]["AuthenticationException"];
+        };
+    };
+    "seller.index": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Array of `SellerResource` */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        data: components["schemas"]["SellerResource"][];
+                    };
+                };
+            };
         };
     };
     "seller.show": {

@@ -12,10 +12,18 @@ type PayBarProps = {
   onPay: () => void;
   /** A refusal to show right above the button. */
   notice?: ReactNode | undefined;
+  cashOnDelivery?: boolean;
 };
 
 /** Sticks to the bottom on a phone: the total and the pay button are always in reach, and always the same number. */
-export function PayBar({ total, blocked, placing, onPay, notice }: PayBarProps) {
+export function PayBar({
+  total,
+  blocked,
+  placing,
+  onPay,
+  notice,
+  cashOnDelivery = false,
+}: PayBarProps) {
   const { t } = useTranslation('checkout');
   const { language } = useLanguage();
   const hintId = useId();
@@ -39,11 +47,13 @@ export function PayBar({ total, blocked, placing, onPay, notice }: PayBarProps) 
           onClick={onPay}
         >
           <Icon name="lock" size={20} />
-          {amount === null ? t('pay.button') : t('pay.buttonWithAmount', { amount })}
+          {amount === null
+            ? t('pay.button')
+            : t(cashOnDelivery ? 'pay.cashButton' : 'pay.buttonWithAmount', { amount })}
         </Button>
       </div>
       <p id={hintId} className={styles.hint}>
-        {blocked ? t(`pay.blocked.${blocked}`) : t('pay.secure')}
+        {blocked ? t(`pay.blocked.${blocked}`) : t(cashOnDelivery ? 'pay.cashHint' : 'pay.secure')}
       </p>
     </div>
   );

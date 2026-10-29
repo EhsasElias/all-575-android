@@ -2,7 +2,7 @@ import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { errorCode } from '@/shared/api';
 import { routePaths } from '@/shared/lib';
-import { ButtonLink, EmptyState } from '@/shared/ui';
+import { ButtonLink, EmptyState, TextField } from '@/shared/ui';
 import { AddressPicker } from './AddressPicker';
 import { OrderSummary } from './OrderSummary';
 import { PayBar } from './PayBar';
@@ -34,6 +34,8 @@ function EmptyCart() {
 /** One screen, four clear steps: where to, when, what it costs, how to pay. */
 export function CheckoutScreen() {
   const { t } = useTranslation('checkout');
+  const { t: tc } = useTranslation('customer');
+  const [poReference, setPoReference] = useState('');
   const addresses = useCheckoutAddresses();
   const address = addresses.selected;
   const addressId = address?.id ?? null;
@@ -79,7 +81,13 @@ export function CheckoutScreen() {
 
   const pay = () => {
     if (blocked !== null || quote === null || slot === null) return;
-    order.place({ quoteId: quote.id, slotId: slot.id, method, shownTotal: quote.total });
+    order.place({
+      quoteId: quote.id,
+      slotId: slot.id,
+      method,
+      shownTotal: quote.total,
+      purchaseOrderReference: poReference.trim(),
+    });
   };
 
   return (
@@ -104,9 +112,25 @@ export function CheckoutScreen() {
         onSelect={changing(slots.choose)}
       />
       <OrderSummary flow={quoteFlow} addressId={addressId} zone={zone} change={change} />
+      <details>
+        <summary>{tc('billing')}</summary>
+        <ButtonLink to={routePaths.billing} variant="ghost">
+          {tc('editBilling')}
+        </ButtonLink>
+        <TextField
+          label={tc('po')}
+          value={poReference}
+          maxLength={80}
+          onChange={(e) => {
+            setPoReference(e.target.value);
+            order.dismiss();
+          }}
+        />
+      </details>
       <PaymentMethodPicker value={method} onChange={changing(setMethod)} />
 
       <PayBar
+        cashOnDelivery={method === 'cash_on_delivery'}
         total={quote?.total ?? null}
         blocked={blocked}
         placing={order.isPlacing}

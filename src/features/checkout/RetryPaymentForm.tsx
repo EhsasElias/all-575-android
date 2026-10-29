@@ -38,6 +38,7 @@ export function RetryPaymentForm({
   return (
     <div className={styles.form}>
       <PaymentMethodPicker
+        allowCash={false}
         value={method}
         onChange={setMethod}
         headingLevel="h2"

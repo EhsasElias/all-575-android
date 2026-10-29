@@ -73,12 +73,18 @@ export const en = {
   method: {
     heading: 'Payment method',
     options: {
+      cash_on_delivery: {
+        name: 'Cash on delivery',
+        description: 'Pay the courier in cash when your order arrives.',
+      },
       mada: { name: 'mada', description: 'Saudi debit card' },
       card: { name: 'Visa or Mastercard', description: 'Credit or debit card' },
       apple_pay: { name: 'Apple Pay', description: 'Pay with your Apple device' },
     },
   },
   pay: {
+    cashButton: 'Place order · {{amount}}',
+    cashHint: 'Pay in cash on delivery. No online payment is taken.',
     button: 'Pay',
     buttonWithAmount: 'Pay {{amount}}',
     secure: 'You pay on the bank’s secure page. We never see your card details.',

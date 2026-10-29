@@ -48,7 +48,7 @@ describe('Checkout: what the customer sees', () => {
       within(methods)
         .getAllByRole('radio')
         .map((radio) => radio.getAttribute('value')),
-    ).toEqual(['mada', 'card', 'apple_pay']);
+    ).toEqual(['mada', 'card', 'apple_pay', 'cash_on_delivery']);
     expect(within(methods).getByRole('radio', { name: /mada/ })).toBeChecked();
 
     // The pay button carries the same total, and waits for a delivery time.

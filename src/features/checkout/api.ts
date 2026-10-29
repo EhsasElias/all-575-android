@@ -51,7 +51,12 @@ export async function requestQuote(
   return quote;
 }
 
-export type CheckoutRequest = { quoteId: string; slotId: number; method: PayMethod };
+export type CheckoutRequest = {
+  purchaseOrderReference?: string;
+  quoteId: string;
+  slotId: number;
+  method: PayMethod;
+};
 
 export type PlacedOrder = {
   orderId: string;
@@ -78,7 +83,13 @@ export async function placeOrder(
 ): Promise<PlacedOrder> {
   const body = await http.post<unknown>(
     '/checkout',
-    { quote_id: request.quoteId, slot_id: request.slotId, payment_method: request.method },
+    {
+      quote_id: request.quoteId,
+      slot_id: request.slotId,
+      payment_method: request.method,
+      purchase_order_reference:
+        request.purchaseOrderReference === '' ? undefined : request.purchaseOrderReference,
+    },
     { headers: { 'Idempotency-Key': idempotencyKey } },
   );
   const placed = readPlacedOrder(body);

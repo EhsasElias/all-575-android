@@ -2,6 +2,36 @@ import type { Translations } from '@/shared/i18n';
 import type { en } from './locales.en';
 
 export const fr: Translations<typeof en> = {
+  filters: {
+    title: 'Filtrer et trier',
+    category: 'Catégorie et sous-catégorie',
+    seller: 'Entreprise / vendeur',
+    all: 'Tous',
+    sort: 'Trier par',
+    featured: 'Recommandés',
+    newest: 'Plus récents',
+    rating: 'Mieux notés',
+    price: 'Prix unitaire maximum',
+    upTo: 'Jusqu’à {{amount}} SAR',
+    available: 'Disponible dans ma zone',
+    needArea: 'Choisissez une zone pour filtrer la disponibilité.',
+    clear: 'Effacer les filtres',
+    samePrice:
+      'Les produits coûtent actuellement 5,75 SAR TTC. Un plafond inférieur peut ne donner aucun résultat.',
+    failed: 'Certains filtres n’ont pas pu être chargés.',
+  },
+  saved: {
+    title: 'Produits enregistrés',
+    save: 'Enregistrer le produit',
+    remove: 'Retirer des favoris',
+    empty: 'Aucun produit enregistré',
+    emptyHint: 'Enregistrez un produit depuis sa fiche pour le retrouver ici.',
+    browse: 'Voir les produits',
+    signIn: 'Se connecter',
+    signInHint: 'Connectez-vous pour conserver vos favoris.',
+    failed: 'Impossible de mettre à jour vos favoris.',
+    retry: 'Réessayer',
+  },
   titles: {
     search: 'Recherche',
     category: 'Catégorie',
