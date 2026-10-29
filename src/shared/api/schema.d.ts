@@ -316,6 +316,23 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/v1/addresses/resolve": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Suggest available address fields for a customer-selected map pin */
+        get: operations["v1.mapAddress"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/v1/me": {
         parameters: {
             query?: never;
@@ -878,6 +895,16 @@ export interface components {
             created_at: string | null;
             /** Format: date-time */
             updated_at: string | null;
+        };
+        /** MapAddressResource */
+        MapAddressResource: {
+            country_code: string | null;
+            region: string | null;
+            city: string | null;
+            district: string | null;
+            street: string | null;
+            building_number: string | null;
+            postal_code: string | null;
         };
         /** MergeCartRequest */
         MergeCartRequest: {
@@ -2042,6 +2069,33 @@ export interface operations {
                 };
             };
             401: components["responses"]["AuthenticationException"];
+        };
+    };
+    "v1.mapAddress": {
+        parameters: {
+            query: {
+                lat: number;
+                lng: number;
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description `MapAddressResource` */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        data: components["schemas"]["MapAddressResource"];
+                    };
+                };
+            };
+            401: components["responses"]["AuthenticationException"];
+            422: components["responses"]["ValidationException"];
         };
     };
     "me.show": {

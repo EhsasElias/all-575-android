@@ -3,6 +3,8 @@ import { useTranslation } from 'react-i18next';
 import { Button, Icon, Skeleton, VisuallyHidden } from '@/shared/ui';
 import { fieldId } from './addressFields';
 import { MapBoundary } from './MapBoundary';
+import { MapAddressStatus } from './MapAddressStatus';
+import type { LookupStatus } from './useMapAddressLookup';
 import type { MapPin, PinMapLabels } from './mapTypes';
 import { useCurrentLocation, type CurrentLocation } from './useCurrentLocation';
 import { usePinZone } from './usePinZone';
@@ -17,6 +19,8 @@ type LocationPickerProps = {
   pin: MapPin | null;
   onPinChange: (pin: MapPin) => void;
   error: string | undefined;
+  lookupStatus: LookupStatus;
+  onRetryLookup: () => void;
 };
 
 function useLocationMessage(location: CurrentLocation): string | null {
@@ -56,7 +60,13 @@ function PinStatus({ pin, error }: { pin: MapPin | null; error: string | undefin
 }
 
 /** The required map pin: tap the map, drag the pin, or use the device position (only when the button is tapped). */
-export function LocationPicker({ pin, onPinChange, error }: LocationPickerProps) {
+export function LocationPicker({
+  pin,
+  onPinChange,
+  error,
+  lookupStatus,
+  onRetryLookup,
+}: LocationPickerProps) {
   const { t } = useTranslation('addresses');
   const { t: tCommon } = useTranslation();
   const headingId = useId();
@@ -108,6 +118,7 @@ export function LocationPicker({ pin, onPinChange, error }: LocationPickerProps)
       </MapBoundary>
 
       <PinStatus pin={pin} error={error} />
+      <MapAddressStatus status={lookupStatus} onRetry={onRetryLookup} />
     </section>
   );
 }

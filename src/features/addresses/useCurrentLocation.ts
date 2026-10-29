@@ -25,7 +25,7 @@ export function failureOf(error: unknown): LocationFailure {
 
 /**
  * Asks for the device position only when `locate` is called (a tap), never in the background.
- * Nothing is stored or sent: the position only becomes the map pin.
+ * The selected position becomes the map pin and triggers the form's address lookup.
  */
 export function useCurrentLocation(onFound: (pin: MapPin) => void) {
   const [location, setLocation] = useState<CurrentLocation>({ status: 'idle' });

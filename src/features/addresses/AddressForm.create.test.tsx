@@ -1,7 +1,7 @@
 import { screen, within } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { describe, expect, it, vi } from 'vitest';
-import { fillNationalAddress, renderAddresses } from './addressTestHarness';
+import { fillNationalAddress, renderAddresses, waitForAddressLookup } from './addressTestHarness';
 import { homeAddress, jeddahAddress } from './testData';
 
 vi.mock('./LeafletMap', async () => {
@@ -26,6 +26,7 @@ describe('Add an address', () => {
     await user.clear(screen.getByLabelText('Building number'));
     await user.type(screen.getByLabelText('Building number'), '١٢٣٤');
     await user.click(screen.getByRole('button', { name: 'Tap the map in Riyadh' }));
+    await waitForAddressLookup();
     await user.click(screen.getByRole('button', { name: 'Save address' }));
 
     const saved = await screen.findByRole('heading', { level: 2, name: 'Address saved' });
@@ -69,6 +70,7 @@ describe('Add an address', () => {
     await fillNationalAddress(user);
     await user.click(screen.getByRole('button', { name: 'Tap the map in Riyadh' }));
     await user.click(screen.getByLabelText('Make this my default address'));
+    await waitForAddressLookup();
     await user.click(screen.getByRole('button', { name: 'Save address' }));
 
     await screen.findByRole('heading', { level: 2, name: 'Address saved' });
@@ -93,6 +95,7 @@ describe('Add an address', () => {
         'We do not deliver to this area yet. You can still save the address.',
       ),
     ).toBeVisible();
+    await waitForAddressLookup();
     await user.click(screen.getByRole('button', { name: 'Save address' }));
 
     const panel = await screen.findByRole('region', {
@@ -108,6 +111,8 @@ describe('Add an address', () => {
     await user.click(within(panel).getByRole('button', { name: 'Edit the pin' }));
     expect(await screen.findByRole('button', { name: 'Use my current location' })).toHaveFocus();
     await user.click(screen.getByRole('button', { name: 'Tap the map in Riyadh' }));
+    await fillNationalAddress(user);
+    await waitForAddressLookup();
     await user.click(screen.getByRole('button', { name: 'Save address' }));
 
     await screen.findByRole('heading', { level: 2, name: 'Address saved' });
@@ -125,6 +130,7 @@ describe('Add an address', () => {
 
     await fillNationalAddress(user);
     await user.click(screen.getByRole('button', { name: 'Tap the map in Riyadh' }));
+    await waitForAddressLookup();
     await user.click(screen.getByRole('button', { name: 'Save address' }));
 
     expect(await screen.findByRole('link', { name: 'Continue' })).toHaveAttribute(
@@ -143,6 +149,7 @@ describe('Add an address', () => {
 
     await fillNationalAddress(user);
     await user.click(screen.getByRole('button', { name: 'Tap the map in Riyadh' }));
+    await waitForAddressLookup();
     await user.click(screen.getByRole('button', { name: 'Save address' }));
 
     expect(await screen.findByRole('link', { name: 'Continue' })).toHaveAttribute('href', '/home');

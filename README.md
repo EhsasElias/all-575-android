@@ -111,3 +111,7 @@ Android app-wide visibility includes the biometric prompt activity, so opening a
 See [A-Z customer flow](docs/customer/CUSTOMER_FLOW.md) and the added acceptance cases in the customer test guide. Update both `v2` repositories and run backend migrations. Cash on delivery confirms the order without marking it paid. Real online payments, messaging, tax invoices and operational courier integrations still need configured services.
 
 The logo keeps its brand artwork and frame, with a transparent background in dark mode (including the loading screen and header). Light mode retains the white background.
+
+## Address fields from the map
+
+Selecting a map point, dragging the pin, placing it at the map center or using current location now requests available address details through the authenticated backend. Region, city, district, street, building number and postal code fill when available; customers can correct them. Additional number, short address, unit and floor are not guessed. Moving to a different pin clears the previous location's National Address fields. Opening a saved address does not trigger a lookup or overwrite its details. Customer edits made during a request take priority over its result, and late replies for an old pin are ignored. Lookup failure offers manual entry and retry. Pull both `v2` repositories; see the backend README for provider configuration and limits.

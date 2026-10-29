@@ -85,6 +85,8 @@ export function AddressForm({ address, nextPath }: AddressFormProps) {
         pin={form.pin}
         onPinChange={form.placePin}
         error={message('pin', form.problems.pin)}
+        lookupStatus={form.lookupStatus}
+        onRetryLookup={form.retryLookup}
       />
 
       {showMakeDefault && (
@@ -102,7 +104,13 @@ export function AddressForm({ address, nextPath }: AddressFormProps) {
       )}
 
       <div className={styles.actions}>
-        <Button type="submit" size="lg" fullWidth loading={form.isSaving}>
+        <Button
+          type="submit"
+          size="lg"
+          fullWidth
+          loading={form.isSaving}
+          disabled={form.lookupStatus === 'loading'}
+        >
           {address === null ? t('form.submit.create') : t('form.submit.update')}
         </Button>
       </div>

@@ -1,5 +1,5 @@
 import { useMutation, useQueryClient } from '@tanstack/react-query';
-import { useState } from 'react';
+import { useRef, useState } from 'react';
 import { errorCode, isApiError } from '@/shared/api';
 import { useSession } from '@/shared/session';
 import { saveAddress, type Address, type AddressPayload } from './api';
@@ -11,6 +11,8 @@ import {
   type AddressValues,
 } from './addressFields';
 import type { MapPin } from './mapTypes';
+import { LOCATION_FIELDS, MAP_FIELDS } from './mapAddressFields';
+import { useMapAddressLookup } from './useMapAddressLookup';
 import { addressKeys } from './queryKeys';
 import {
   clearProblem,
@@ -52,6 +54,8 @@ export function useAddressForm(address: Address | null) {
   const [saved, setSaved] = useState<Address | null>(null);
   // Once a new address exists, saving again (e.g. after moving the pin) updates it instead of adding another.
   const [existingId, setExistingId] = useState<number | null>(address?.id ?? null);
+  const edits = useRef<Partial<Record<AddressField, number>>>({});
+  const mapLookup = useMapAddressLookup();
 
   const mutation = useMutation({
     mutationFn: (payload: AddressPayload) => saveAddress(existingId, payload),
@@ -69,17 +73,43 @@ export function useAddressForm(address: Address | null) {
   });
 
   const setField = (field: AddressField, value: string) => {
+    edits.current[field] = (edits.current[field] ?? 0) + 1;
     setValues((current) => ({ ...current, [field]: value }));
     setProblems((current) => clearProblem(current, field));
   };
 
   const placePin = (next: MapPin) => {
+    const moved = pin !== null && (pin.lat !== next.lat || pin.lng !== next.lng);
     setPin(next);
     setProblems((current) => clearProblem(current, 'pin'));
+    const beforeLookup = { ...edits.current };
+    // Never leave details from another location attached to the newly selected pin.
+    setValues((current) => {
+      const updated = { ...current };
+      if (moved) for (const field of LOCATION_FIELDS) updated[field] = '';
+      return updated;
+    });
+    mapLookup.lookup(next, (found) => {
+      setValues((current) => {
+        const updated = { ...current };
+        for (const { field, source } of MAP_FIELDS) {
+          if (edits.current[field] === beforeLookup[field] && (moved || current[field] === '')) {
+            updated[field] = found[source] ?? '';
+          }
+        }
+        return updated;
+      });
+      setProblems((current) => {
+        let updated = current;
+        for (const field of LOCATION_FIELDS) updated = clearProblem(updated, field);
+        return updated;
+      });
+    });
   };
 
   /** Returns the first field with a problem (to focus it), or null when the form was sent. */
   const submit = (): ProblemKey | null => {
+    if (mapLookup.status === 'loading') return 'pin';
     const normalized = normalizeValues(values);
     const found = validateAddress(normalized, pin);
     setProblems(found);
@@ -101,6 +131,8 @@ export function useAddressForm(address: Address | null) {
     isNew: address === null,
     setField,
     placePin,
+    lookupStatus: mapLookup.status,
+    retryLookup: mapLookup.retry,
     setMakeDefault,
     dismissSaved: () => {
       setSaved(null);

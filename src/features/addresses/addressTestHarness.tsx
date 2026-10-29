@@ -1,5 +1,6 @@
-import { screen } from '@testing-library/react';
+import { screen, waitFor } from '@testing-library/react';
 import type { UserEvent } from '@testing-library/user-event';
+import { expect } from 'vitest';
 import type { Language } from '@/shared/i18n';
 import { installFakeApi, type FakeRoutes } from '@/test/fakeApi';
 import { testUser } from '@/test/fixtures';
@@ -18,6 +19,19 @@ export async function renderAddresses({
 }: Options = {}) {
   const api = installFakeApi({
     'GET /me': { body: { data: testUser } },
+    'GET /addresses/resolve': {
+      body: {
+        data: {
+          country_code: 'sa',
+          region: null,
+          city: null,
+          district: null,
+          street: null,
+          building_number: null,
+          postal_code: null,
+        },
+      },
+    },
     'GET /zones/resolve': ({ query }) => ({
       body: { data: Number(query.get('lat')) > 23 ? riyadhZone : outsideZone },
     }),
@@ -39,3 +53,7 @@ export async function fillNationalAddress(user: UserEvent) {
 }
 
 export const PIN_TEXT = (lat: number, lng: number) => `${lat},${lng}`;
+
+export async function waitForAddressLookup() {
+  await waitFor(() => expect(screen.getByRole('button', { name: 'Save address' })).toBeEnabled());
+}

@@ -77,6 +77,15 @@ export const en = {
     },
     makeDefault: 'Make this my default address',
     pin: {
+      lookup: {
+        loading: 'Finding address details…',
+        filled:
+          'Available address details have been filled in. Check them and complete the missing fields, including your additional number.',
+        empty: 'No address details were found here. Enter them manually or try another location.',
+        outside: 'Choose a location in Saudi Arabia. Address details have not been filled in.',
+        failed: 'We could not find the address details. Enter them manually or try again.',
+        retry: 'Try address lookup again',
+      },
       heading: 'Pin your location',
       help: 'Tap the map or drag the pin to your door. The pin is required so the courier can find you.',
       useMyLocation: 'Use my current location',

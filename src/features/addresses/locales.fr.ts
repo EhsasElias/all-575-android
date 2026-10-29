@@ -81,6 +81,17 @@ export const fr: Translations<typeof en> = {
     },
     makeDefault: 'Faire de cette adresse mon adresse par défaut',
     pin: {
+      lookup: {
+        loading: 'Recherche des détails de l’adresse…',
+        filled:
+          'Les détails disponibles ont été renseignés. Vérifiez-les et complétez les champs manquants, dont le numéro supplémentaire.',
+        empty:
+          'Aucune adresse trouvée ici. Saisissez les détails ou choisissez un autre emplacement.',
+        outside:
+          'Choisissez un emplacement en Arabie saoudite. Les détails n’ont pas été renseignés.',
+        failed: 'Impossible de trouver les détails de l’adresse. Saisissez-les ou réessayez.',
+        retry: 'Réessayer la recherche d’adresse',
+      },
       heading: 'Placez votre position',
       help: "Touchez la carte ou faites glisser le repère jusqu'à votre porte. Le repère est obligatoire pour que le livreur vous trouve.",
       useMyLocation: 'Utiliser ma position actuelle',

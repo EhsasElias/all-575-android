@@ -136,17 +136,17 @@ For each ID record Pass / Fail / Blocked, actual result, device/browser, languag
 
 ### Addresses
 
-| ID  | Steps                                                         | Expected result                                                    |
-| --- | ------------------------------------------------------------- | ------------------------------------------------------------------ |
-| D01 | Save Address A; edit unit; set default; create second address | Own saved addresses/default update correctly                       |
-| D02 | Omit required fields or enter 3-digit building/4-digit postal | Validation; no invalid address saved                               |
-| D03 | Use invalid mobile and malformed short address                | Validation; correct values accepted                                |
-| D04 | Deny geolocation; manually move pin and enter address         | Manual fallback works; pin does not fill/verify all written fields |
-| D05 | Move pin outside service zone; attempt checkout               | Unserviceable delivery refused clearly                             |
-| D06 | Change checkout address after quote/slot selected             | New quote/service/stock/fees; old slot not silently reused         |
-| D07 | Pay order, then edit/delete saved address                     | Existing order retains original address snapshot                   |
-| D08 | Customer B requests Customer A address ID via API             | Not found; no address details leaked                               |
-| D09 | Test Google search/drag pin provider                          | **Blocked:** current interactive map uses Leaflet/OpenStreetMap    |
+| ID  | Steps                                                         | Expected result                                                                                                                    |
+| --- | ------------------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------- |
+| D01 | Save Address A; edit unit; set default; create second address | Own saved addresses/default update correctly                                                                                       |
+| D02 | Omit required fields or enter 3-digit building/4-digit postal | Validation; no invalid address saved                                                                                               |
+| D03 | Use invalid mobile and malformed short address                | Validation; correct values accepted                                                                                                |
+| D04 | Deny geolocation; manually move pin and enter address         | Pin selection fills available address suggestions; manual correction/completion works; no National Address verification is claimed |
+| D05 | Move pin outside service zone; attempt checkout               | Unserviceable delivery refused clearly                                                                                             |
+| D06 | Change checkout address after quote/slot selected             | New quote/service/stock/fees; old slot not silently reused                                                                         |
+| D07 | Pay order, then edit/delete saved address                     | Existing order retains original address snapshot                                                                                   |
+| D08 | Customer B requests Customer A address ID via API             | Not found; no address details leaked                                                                                               |
+| D09 | Test Google search/drag pin provider                          | **Blocked:** current interactive map uses Leaflet/OpenStreetMap                                                                    |
 
 ### Cart, promotion, price and slot
 
@@ -237,6 +237,17 @@ For each ID record Pass / Fail / Blocked, actual result, device/browser, languag
 | H11 | Rate-limit protected create/message/login endpoints                   | Server throttles; no automatic retry loop or duplicated request            |
 
 ## 5. Simulate seller, courier and support actions
+
+### Map address autofill checks
+
+1. Open Add address: no provider request until selecting a pin or using current location.
+2. Select the map point, drag the marker, use the center button and use GPS separately: available city/region/district/street/building/postcode fill. Review the actual provider result; not every point has all details.
+3. Complete the additional number and other missing fields manually; correct a suggestion and save. The submitted details and coordinates match the form.
+4. Move to a different point: old National Address details clear, new suggestions replace them. Recipient details remain. A delayed response from the previous point cannot replace the new address.
+5. Type in a field while lookup runs: the customer edit wins. Saving is unavailable until lookup finishes. On provider failure/rate limit, manual entry and retry are available without losing edits.
+6. Open an existing saved address: details remain unchanged and no lookup happens. Select a foreign point: it is not copied into the Saudi form. Repeat in AR/EN/FR and both themes.
+
+The backend defaults to moderate user-triggered public Nominatim use with global throttling/caching. Follow the provider policy and use a shared backend cache; arrange a suitable contracted/self-hosted provider for higher production traffic. See backend README.
 
 In a backend terminal replace `A575-XXXXXXXX` with your displayed order number. Run in order, pausing to inspect the app after every command:
 

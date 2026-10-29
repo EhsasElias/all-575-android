@@ -1,7 +1,7 @@
 import { screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { describe, expect, it, vi } from 'vitest';
-import { fillNationalAddress, renderAddresses } from './addressTestHarness';
+import { fillNationalAddress, renderAddresses, waitForAddressLookup } from './addressTestHarness';
 import { homeAddress } from './testData';
 
 vi.mock('./LeafletMap', async () => {
@@ -19,6 +19,7 @@ describe('Address form validation (English)', () => {
     const { api } = await renderAddresses();
     await screen.findByRole('heading', { level: 1, name: 'New address' });
 
+    await waitForAddressLookup();
     await user.click(screen.getByRole('button', { name: 'Save address' }));
 
     expect(screen.getByLabelText('Region')).toHaveFocus();
@@ -48,6 +49,7 @@ describe('Address form validation (English)', () => {
     await user.type(screen.getByLabelText('Postal code'), '123456');
     await user.type(screen.getByLabelText('Short address (optional)'), 'RR2929');
     await user.click(screen.getByRole('button', { name: 'Tap the map in Riyadh' }));
+    await waitForAddressLookup();
     await user.click(screen.getByRole('button', { name: 'Save address' }));
 
     expect(screen.getByText('Enter a valid Saudi mobile number, like 0512345678')).toBeVisible();
@@ -67,6 +69,7 @@ describe('Address form validation (English)', () => {
     await screen.findByRole('heading', { level: 1, name: 'New address' });
 
     await user.type(screen.getByLabelText('Address name (optional)'), 'x'.repeat(41));
+    await waitForAddressLookup();
     await user.click(screen.getByRole('button', { name: 'Save address' }));
     expect(screen.getByText('Use at most 40 characters')).toBeVisible();
 
@@ -94,6 +97,7 @@ describe('Address form validation (English)', () => {
 
     await fillNationalAddress(user);
     await user.click(screen.getByRole('button', { name: 'Tap the map in Riyadh' }));
+    await waitForAddressLookup();
     await user.click(screen.getByRole('button', { name: 'Save address' }));
 
     expect(await screen.findByText('The building number is 4 digits')).toBeVisible();
@@ -117,6 +121,7 @@ describe('Address form validation (English)', () => {
 
     await fillNationalAddress(user);
     await user.click(screen.getByRole('button', { name: 'Tap the map in Riyadh' }));
+    await waitForAddressLookup();
     await user.click(screen.getByRole('button', { name: 'Save address' }));
 
     const alert = await screen.findByRole('alert');
@@ -144,6 +149,7 @@ describe('Address form validation (English)', () => {
 
     await fillNationalAddress(user);
     await user.click(screen.getByRole('button', { name: 'Tap the map in Riyadh' }));
+    await waitForAddressLookup();
     await user.click(screen.getByRole('button', { name: 'Save address' }));
 
     expect(
@@ -153,6 +159,7 @@ describe('Address form validation (English)', () => {
     ).toBeVisible();
     expect(screen.getByLabelText('Street')).toHaveValue('King Fahd Rd');
 
+    await waitForAddressLookup();
     await user.click(screen.getByRole('button', { name: 'Save address' }));
     expect(await screen.findByRole('heading', { level: 2, name: 'Address saved' })).toBeVisible();
   });
