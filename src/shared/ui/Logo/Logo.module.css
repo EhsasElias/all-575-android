@@ -1,0 +1,4 @@
+/* Only the rectangular background path changes; all brand artwork stays intact. */
+.logo > g > path:first-child {
+  fill: var(--color-logo-background);
+}

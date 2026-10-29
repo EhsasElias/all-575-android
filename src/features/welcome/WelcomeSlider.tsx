@@ -3,7 +3,7 @@ import { CarouselSlide, CarouselViewport, useCarousel } from '@/shared/ui';
 import { SLIDE_IMAGE_SIZE, WELCOME_SLIDES } from './welcomeSlides';
 import styles from './WelcomeSlider.module.css';
 
-/** A single photo card, navigated by swipe or the progress indicators. */
+/** A photo card that advances automatically and supports swipe or progress indicators. */
 export function WelcomeSlider() {
   const { t } = useTranslation('welcome');
 

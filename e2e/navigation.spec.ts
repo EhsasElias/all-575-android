@@ -37,6 +37,10 @@ for (const language of LANGUAGES) {
       await testInfo.attach('Menu preview', { path: image, contentType: 'image/png' });
       await page.keyboard.press('Escape');
       await expect(dialog).toHaveCount(0);
+      await expect(page.getByRole('banner').locator('svg > g > path').first()).toHaveCSS(
+        'fill',
+        theme === 'dark' ? 'rgba(0, 0, 0, 0)' : 'rgb(255, 255, 255)',
+      );
       await page.reload();
       await finishIntro(page, '/account');
       await expect(page.locator('html')).toHaveAttribute('data-theme', theme);

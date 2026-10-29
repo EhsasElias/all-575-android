@@ -1,5 +1,7 @@
 import { useId } from 'react';
 import { useTranslation } from 'react-i18next';
+import { cx } from '@/shared/lib';
+import styles from './Logo.module.css';
 import { LOGO_HEIGHT, LOGO_WIDTH, LogoArt } from './logoArt';
 
 type LogoProps = {
@@ -10,7 +12,7 @@ type LogoProps = {
   decorative?: boolean;
 };
 
-/** The ALL 5.75 logo. It is white with a red border on purpose, in light and dark. */
+/** The ALL 5.75 logo. The background is white in light mode and transparent in dark mode. */
 export function Logo({ size = 40, className, decorative = false }: LogoProps) {
   const { t } = useTranslation();
   // The artwork's gradient and clip path are referenced by id, so every instance needs its own.
@@ -25,7 +27,7 @@ export function Logo({ size = 40, className, decorative = false }: LogoProps) {
       clipId={`all575-logo-clip-${uniqueId}`}
       width={size}
       height={(size * LOGO_HEIGHT) / LOGO_WIDTH}
-      className={className}
+      className={cx(styles.logo, className)}
       focusable="false"
       {...accessibility}
     />

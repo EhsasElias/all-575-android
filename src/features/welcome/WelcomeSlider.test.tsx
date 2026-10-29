@@ -66,16 +66,30 @@ describe('Welcome slideshow', () => {
     expect(screen.getByRole('group', { name: 'Shop by category' })).toBeInTheDocument();
   });
 
-  it('keeps the selected slide still and has no playback controls', async () => {
+  it('advances every four seconds and loops back to the first slide without playback controls', async () => {
     vi.useFakeTimers({ shouldAdvanceTime: true });
     await renderApp({ route: '/welcome' });
     expect(currentSlide()).toBe(0);
-
-    fireEvent.click(dash(3));
-    advance(60_000);
-
+    advance(3000);
+    expect(currentSlide()).toBe(0);
+    advance(1000);
+    expect(currentSlide()).toBe(1);
+    advance(4000);
     expect(currentSlide()).toBe(2);
+    advance(4000);
+    expect(currentSlide()).toBe(0);
     expect(screen.queryByRole('button', { name: /slideshow/ })).not.toBeInTheDocument();
+  });
+
+  it('restarts the interval when the customer chooses a slide', async () => {
+    vi.useFakeTimers({ shouldAdvanceTime: true });
+    await renderApp({ route: '/welcome' });
+    advance(3000);
+    fireEvent.click(dash(3));
+    advance(3000);
+    expect(currentSlide()).toBe(2);
+    advance(1000);
+    expect(currentSlide()).toBe(0);
   });
 
   it.each(['en', 'ar'] as const)(

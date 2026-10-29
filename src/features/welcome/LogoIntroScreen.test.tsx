@@ -16,7 +16,7 @@ describe('Logo introduction', () => {
       () => {
         expect(router.state.location.pathname).toBe('/welcome');
       },
-      { timeout: 3000 },
+      { timeout: 5000 },
     );
     expect(router.state.location.search).toBe('?next=%2Fcart');
     await screen.findByRole('heading', { level: 1, name: 'Welcome, our partner in success' });
@@ -37,7 +37,7 @@ describe('Logo introduction', () => {
       () => {
         expect(router.state.location.pathname).toBe('/welcome');
       },
-      { timeout: 3000 },
+      { timeout: 5000 },
     );
   });
 });

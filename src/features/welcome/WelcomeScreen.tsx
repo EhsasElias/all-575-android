@@ -19,7 +19,7 @@ export function WelcomeScreen() {
       <WelcomeHeader onStartShopping={startShopping} />
       <PricePill />
 
-      <Carousel count={WELCOME_SLIDES.length} className={styles.slideshow}>
+      <Carousel count={WELCOME_SLIDES.length} autoAdvanceMs={4000} className={styles.slideshow}>
         <WelcomeSlider />
         <WelcomeCaption />
         <CarouselDashes className={styles.dashes} />

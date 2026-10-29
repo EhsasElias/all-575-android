@@ -90,9 +90,9 @@ See [Customer map and coverage](docs/customer/CUSTOMER_MAP.md) and the [step-by-
 
 The header menu opens from the right in Arabic and the left in English/French. It includes the live category tree and links to existing customer pages. Language and light/dark/system appearance choices are saved on the device; system mode follows later device changes.
 
-The welcome slider uses swipe gestures and tappable slide indicators, with no automatic movement or playback controls. Its photos, price and welcome messages are unchanged.
+The welcome slider advances automatically every four seconds and loops through all three slides. Swipe gestures and tappable slide indicators remain available, with no playback button. Automatic movement pauses during touch/keyboard interaction and respects reduced motion. Its photos, price and welcome messages are unchanged.
 
-Every fresh open or reload starts with the animated loading logo for 1.2 seconds, followed by the slider, then the requested page (Home by default). Returning to the Android app or a hidden browser tab repeats this sequence too. Normal navigation inside the app does not repeat it. Direct product, checkout and sign-in links retain their destination through both intro screens. Reduced motion keeps the brief logo screen visible with animation disabled. Product descriptions expand on tap so the main buying choices remain easy to scan.
+Every fresh open or reload starts with the animated loading logo for 2.5 seconds, followed by the slider, then the requested page (Home by default). Returning to the Android app or a hidden browser tab repeats this sequence too. Normal navigation inside the app does not repeat it. Direct product, checkout and sign-in links retain their destination through both intro screens. Reduced motion keeps the brief logo screen visible with animation disabled. Product descriptions expand on tap so the main buying choices remain easy to scan.
 
 The shopping header places the framed logo in the top corner opposite the menu: right in English/French, left in Arabic. The logo-only introduction remains centered.
 
@@ -109,3 +109,5 @@ Android app-wide visibility includes the biometric prompt activity, so opening a
 ## Saudi individual and company shopping
 
 See [A-Z customer flow](docs/customer/CUSTOMER_FLOW.md) and the added acceptance cases in the customer test guide. Update both `v2` repositories and run backend migrations. Cash on delivery confirms the order without marking it paid. Real online payments, messaging, tax invoices and operational courier integrations still need configured services.
+
+The logo keeps its brand artwork and frame, with a transparent background in dark mode (including the loading screen and header). Light mode retains the white background.

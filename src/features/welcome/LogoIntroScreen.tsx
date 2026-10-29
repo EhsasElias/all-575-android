@@ -5,7 +5,7 @@ import { Logo, VisuallyHidden } from '@/shared/ui';
 import styles from './LogoIntroScreen.module.css';
 import { welcomePath } from './introPaths';
 
-const INTRO_DURATION_MS = 1200;
+const INTRO_DURATION_MS = 2500;
 
 /** A short brand transition, not a simulated payment or network progress indicator. */
 export function LogoIntroScreen() {

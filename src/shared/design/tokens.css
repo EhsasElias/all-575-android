@@ -19,6 +19,7 @@
 
   /* Cards that stay light in both themes (the welcome slider) */
   --color-card-surface: #ffffff;
+  --color-logo-background: #ffffff;
   --color-on-card: #192a20;
 
   /* Text */
@@ -131,6 +132,7 @@
     --color-surface-pill: #223629;
 
     --color-card-surface: #ffffff;
+    --color-logo-background: transparent;
     --color-on-card: #192a20;
 
     --color-text: #eaf1ec;
@@ -170,6 +172,7 @@
   --color-surface-pill: #223629;
 
   --color-card-surface: #ffffff;
+  --color-logo-background: transparent;
   --color-on-card: #192a20;
 
   --color-text: #eaf1ec;

@@ -96,23 +96,23 @@ For each ID record Pass / Fail / Blocked, actual result, device/browser, languag
 
 ### Welcome, browsing and products
 
-| ID  | Steps                                                                            | Expected result                                                                                      |
-| --- | -------------------------------------------------------------------------------- | ---------------------------------------------------------------------------------------------------- |
-| W01 | Open/reload Home or another page, including a returning visit; swipe or tap dots | Three slides; no playback controls; continue/Skip opens the animated logo, then home                 |
-| W02 | Change AR to EN and reopen app                                                   | Correct direction and text; language persists                                                        |
-| W03 | Use reduced motion and keyboard/screen reader                                    | Controls usable; focus visible; no forced animation dependency                                       |
-| W04 | Deny location permission, then select Riyadh manually                            | Browsing works; no forced permission or blank page                                                   |
-| B01 | Browse home/categories/product while signed out                                  | No login required until protected action                                                             |
-| B02 | Open category and subcategory fixture                                            | Correct products; inactive/unapproved content excluded. Subcategory fixture requires additional seed |
-| B03 | Search `Tomatoes`, `طماطم`, and a nonsense word                                  | Relevant match or useful empty state; no crash                                                       |
-| B04 | Open product then seller link                                                    | Correct seller and seller-specific products                                                          |
-| B05 | Choose S then M; add each                                                        | Separate exact variants in cart                                                                      |
-| B06 | Set fixture stock to zero, refresh product, try adding                           | Clearly unavailable; backend refuses purchase                                                        |
-| B07 | Select another delivery zone, then return to product/cart                        | Availability revalidated; old stock not trusted                                                      |
-| B08 | Disable internet, open product, restore connection, retry                        | Error/retry; no false success                                                                        |
-| B09 | Open a nonexistent product/category URL                                          | Useful not-found state and way back                                                                  |
-| B10 | Test combined category/subcategory/company/price 2-8 filter                      | **Blocked:** combined filter and variable pricing incomplete                                         |
-| B11 | Review product images and all welcome screens                                    | Real acceptable images, no medicine imagery; record visual failures separately                       |
+| ID  | Steps                                                                            | Expected result                                                                                                                                                   |
+| --- | -------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| W01 | Open/reload Home or another page, including a returning visit; swipe or tap dots | Loading logo first, then three slides advancing every four seconds and looping; swipe/dots still work, no playback button; continue/Skip opens the requested page |
+| W02 | Change AR to EN and reopen app                                                   | Correct direction and text; language persists                                                                                                                     |
+| W03 | Use reduced motion and keyboard/screen reader                                    | Controls usable; focus visible; no forced animation dependency                                                                                                    |
+| W04 | Deny location permission, then select Riyadh manually                            | Browsing works; no forced permission or blank page                                                                                                                |
+| B01 | Browse home/categories/product while signed out                                  | No login required until protected action                                                                                                                          |
+| B02 | Open category and subcategory fixture                                            | Correct products; inactive/unapproved content excluded. Subcategory fixture requires additional seed                                                              |
+| B03 | Search `Tomatoes`, `طماطم`, and a nonsense word                                  | Relevant match or useful empty state; no crash                                                                                                                    |
+| B04 | Open product then seller link                                                    | Correct seller and seller-specific products                                                                                                                       |
+| B05 | Choose S then M; add each                                                        | Separate exact variants in cart                                                                                                                                   |
+| B06 | Set fixture stock to zero, refresh product, try adding                           | Clearly unavailable; backend refuses purchase                                                                                                                     |
+| B07 | Select another delivery zone, then return to product/cart                        | Availability revalidated; old stock not trusted                                                                                                                   |
+| B08 | Disable internet, open product, restore connection, retry                        | Error/retry; no false success                                                                                                                                     |
+| B09 | Open a nonexistent product/category URL                                          | Useful not-found state and way back                                                                                                                               |
+| B10 | Test combined category/subcategory/company/price 2-8 filter                      | **Blocked:** combined filter and variable pricing incomplete                                                                                                      |
+| B11 | Review product images and all welcome screens                                    | Real acceptable images, no medicine imagery; record visual failures separately                                                                                    |
 
 ### Sign-in, consent and account
 
@@ -319,7 +319,7 @@ Use columns: ID, result, expected, actual, device, language, order/case referenc
 
 ### Intro on every app entry
 
-Open or reload `/home`, a product link or a checkout link: the loading logo must appear first for about 1.2 seconds, followed by the slider. Continue or Skip must then return directly to the requested page. Switch away and return to the browser tab; background and return to the rebuilt Android app; repeat the check. Navigating between tabs inside the app must remain direct. With reduced motion enabled the logo still appears, with animation disabled. Opening the native fingerprint prompt must not be mistaken for leaving the app; test success and cancellation on a physical phone.
+Open or reload `/home`, a product link or a checkout link: the loading logo must appear first for about 2.5 seconds, followed by the slider. Continue or Skip must then return directly to the requested page. Switch away and return to the browser tab; background and return to the rebuilt Android app; repeat the check. Navigating between tabs inside the app must remain direct. With reduced motion enabled the logo still appears, with animation disabled. Opening the native fingerprint prompt must not be mistaken for leaving the app; test success and cancellation on a physical phone.
 
 ## New individual/company shopping scenarios
 

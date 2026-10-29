@@ -14,7 +14,7 @@
 .mark {
   padding: var(--space-4);
   border-radius: var(--radius-xl);
-  background: var(--color-card-surface);
+  background: var(--color-logo-background);
   animation: brand-in var(--motion-slow) var(--ease-standard) both;
 }
 

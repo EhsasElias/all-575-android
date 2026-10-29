@@ -23,7 +23,7 @@ describe('app launch', () => {
 
     expect(router.state.location.pathname).toBe('/welcome/logo');
     expect(within(screen.getByRole('main')).getByRole('status')).toHaveTextContent('Loading');
-    expect(await screen.findByRole('heading', { level: 1 }, { timeout: 3000 })).toHaveTextContent(
+    expect(await screen.findByRole('heading', { level: 1 }, { timeout: 5000 })).toHaveTextContent(
       'Welcome, our partner',
     );
   });
@@ -33,7 +33,7 @@ describe('app launch', () => {
 
     expect(router.state.location.pathname).toBe('/welcome/logo');
     expect(within(screen.getByRole('main')).getByRole('status')).toHaveTextContent('Loading');
-    expect(await screen.findByRole('heading', { level: 1 }, { timeout: 3000 })).toHaveTextContent(
+    expect(await screen.findByRole('heading', { level: 1 }, { timeout: 5000 })).toHaveTextContent(
       'Welcome, our partner',
     );
   });

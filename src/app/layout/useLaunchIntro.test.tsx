@@ -42,7 +42,7 @@ describe('returning to the app', () => {
       () => {
         expect(router.state.location.pathname).toBe('/welcome');
       },
-      { timeout: 2500 },
+      { timeout: 5000 },
     );
     await screen.findByRole('heading', { level: 1, name: 'Welcome, our partner in success' });
     await userEvent.setup().click(screen.getByRole('link', { name: 'Skip' }));
