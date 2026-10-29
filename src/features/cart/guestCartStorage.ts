@@ -51,6 +51,9 @@ function parseLine(value: unknown): GuestLine | null {
     name: { ar: name.ar, en: name.en },
     variantName: variantName === null ? null : { ar: variantName.ar, en: variantName.en },
     imageUrl,
+    ...(isPositiveInteger(value.unitPrice) && value.unitPrice >= 100 && value.unitPrice <= 575
+      ? { unitPrice: value.unitPrice }
+      : {}),
   };
 }
 

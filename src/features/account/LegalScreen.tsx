@@ -7,22 +7,52 @@ import { Page } from './components/Page';
 import { PageHeader } from './components/PageHeader';
 import styles from './LegalScreen.module.css';
 
-const TERMS_TOPICS = ['using', 'orders', 'delivery', 'returns', 'changes'] as const;
-const PRIVACY_TOPICS = ['collect', 'use', 'share', 'keep', 'rights'] as const;
+const TERMS_TOPICS = [
+  'operator',
+  'using',
+  'prices',
+  'orders',
+  'delivery',
+  'returns',
+  'conduct',
+  'rights',
+  'changes',
+  'contact',
+] as const;
+const PRIVACY_TOPICS = [
+  'controller',
+  'collect',
+  'use',
+  'location',
+  'biometry',
+  'share',
+  'transfers',
+  'keep',
+  'rights',
+  'choices',
+] as const;
 
 type LegalScreenProps = {
   document: 'terms' | 'privacy';
 };
 
-/**
- * PLACEHOLDER legal page: the current version, a notice that the full text is pending legal review, and the
- * topics it will cover. It carries no legal terms of its own.
- */
+/** Detailed policy drafts with readable sections and an honest launch-readiness notice. */
 export function LegalScreen({ document }: LegalScreenProps) {
   const { t } = useTranslation('account');
   const isTerms = document === 'terms';
   const noticeId = useId();
   const outlineId = useId();
+  const sections = isTerms
+    ? TERMS_TOPICS.map((topic) => ({
+        id: `terms-${topic}`,
+        title: t(`legal.terms.sections.${topic}.title`),
+        body: t(`legal.terms.sections.${topic}.body`),
+      }))
+    : PRIVACY_TOPICS.map((topic) => ({
+        id: `privacy-${topic}`,
+        title: t(`legal.privacy.sections.${topic}.title`),
+        body: t(`legal.privacy.sections.${topic}.body`),
+      }));
 
   return (
     <Page>
@@ -32,6 +62,7 @@ export function LegalScreen({ document }: LegalScreenProps) {
         back={<BackLink to={routePaths.account} label={t('back')} preferHistory />}
       />
       <LegalVersion document={document} />
+      <p>{t('legal.updated')}</p>
       <section role="note" aria-labelledby={noticeId} className={styles.notice}>
         <h2 id={noticeId} className={styles.noticeTitle}>
           {t('legal.noticeTitle')}
@@ -42,14 +73,22 @@ export function LegalScreen({ document }: LegalScreenProps) {
         <h2 id={outlineId} className={styles.outlineTitle}>
           {t('legal.outline')}
         </h2>
-        <ul className={styles.topics}>
-          {isTerms
-            ? TERMS_TOPICS.map((topic) => <li key={topic}>{t(`legal.terms.topics.${topic}`)}</li>)
-            : PRIVACY_TOPICS.map((topic) => (
-                <li key={topic}>{t(`legal.privacy.topics.${topic}`)}</li>
-              ))}
-        </ul>
+        <ol className={styles.topics}>
+          {sections.map((section) => (
+            <li key={section.id}>
+              <a href={`#${section.id}`}>{section.title}</a>
+            </li>
+          ))}
+        </ol>
       </section>
+      {sections.map((section) => (
+        <section key={section.id} aria-labelledby={section.id} className={styles.policySection}>
+          <h2 id={section.id} className={styles.outlineTitle}>
+            {section.title}
+          </h2>
+          <p>{section.body}</p>
+        </section>
+      ))}
     </Page>
   );
 }

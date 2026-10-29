@@ -27,7 +27,10 @@ export function HomeHeader() {
           <div className={styles.promise}>
             {store.data ? (
               <p className={styles.price}>
-                {t('home.priceLine', { price: formatMoney(store.data.price.gross, language) })}
+                {t('home.priceLine', {
+                  minimum: formatMoney(100, language),
+                  price: formatMoney(store.data.price.gross, language),
+                })}
               </p>
             ) : (
               store.isPending && <Skeleton width="100%" height="2rem" />

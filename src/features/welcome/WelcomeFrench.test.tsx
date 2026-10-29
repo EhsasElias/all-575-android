@@ -23,7 +23,7 @@ describe('Welcome in French', () => {
   it('writes the one price with a comma and SAR', async () => {
     await renderApp({ route: '/welcome', language: 'fr' });
 
-    expect(screen.getByText(/Tout à 5,75\s+SAR/)).toBeInTheDocument();
+    expect(screen.getByText(/Jusqu’à 5,75\s+SAR/)).toBeInTheDocument();
   });
 
   it('switches to French from the language choice and remembers it', async () => {

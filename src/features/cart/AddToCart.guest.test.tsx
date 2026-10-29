@@ -36,9 +36,9 @@ describe('AddToCart as a guest', () => {
     await waitFor(() => {
       expect(badge()).toHaveTextContent('1');
     });
-    expect(guestCartStore.getSnapshot()).toEqual([guestLine(BISCUITS, 1)]);
+    expect(guestCartStore.getSnapshot()).toEqual([{ ...guestLine(BISCUITS, 1), unitPrice: 575 }]);
     const stored: unknown = JSON.parse(getPreference('guestCart') ?? 'null');
-    expect(stored).toEqual({ version: 1, lines: [guestLine(BISCUITS, 1)] });
+    expect(stored).toEqual({ version: 1, lines: [{ ...guestLine(BISCUITS, 1), unitPrice: 575 }] });
     expect(api.requests().filter((request) => request.includes('/cart'))).toEqual([]);
   });
 
@@ -107,7 +107,7 @@ describe('AddToCart as a guest', () => {
         'The most you can order of one item is 20. Biscuits is now at 20 in your cart.',
       ),
     ).toBeInTheDocument();
-    expect(guestCartStore.getSnapshot()).toEqual([guestLine(BISCUITS, 20)]);
+    expect(guestCartStore.getSnapshot()).toEqual([{ ...guestLine(BISCUITS, 20), unitPrice: 575 }]);
     expect(badge()).toHaveTextContent('20');
   });
 

@@ -50,7 +50,9 @@ export function addGuestLine(
   return {
     ok: true,
     lines: lines.map((line) =>
-      line.variantId === snapshot.variantId ? { ...line, quantity: plan.quantity } : line,
+      line.variantId === snapshot.variantId
+        ? { ...line, ...snapshot, quantity: plan.quantity }
+        : line,
     ),
     ...plan,
   };

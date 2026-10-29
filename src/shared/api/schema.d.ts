@@ -2328,7 +2328,7 @@ export interface operations {
                 seller?: string | null;
                 q?: string | null;
                 zone_id?: number | null;
-                sort?: "featured" | "newest" | "rating" | null;
+                sort?: "featured" | "newest" | "rating" | "best_selling" | "price_asc" | "price_desc" | null;
                 min_price?: number | null;
                 max_price?: number | null;
                 in_stock?: boolean | null;

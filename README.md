@@ -1,6 +1,6 @@
 # ALL 5.75 customer app
 
-The customer app of ALL 5.75 (كل شيء بـ 5.75): a Saudi marketplace where everything costs 5.75 SAR, VAT included.
+The customer app of ALL 5.75 (كل شيء بـ 5.75): a Saudi marketplace with individual product prices from 1 to 5.75 SAR, VAT included.
 React 19 and TypeScript, built with Vite, wrapped by Capacitor for Android. Arabic (right-to-left, the default) and English.
 
 ## The two repositories
@@ -117,3 +117,13 @@ The logo keeps its brand artwork and frame, with a transparent background in dar
 Selecting a map point, dragging the pin, placing it at the map center or using current location now requests available address details through the authenticated backend. Region, city, district, street, building number and postal code fill when available; customers can correct them. Additional number, short address, unit and floor are not guessed. Moving to a different pin clears the previous location's National Address fields. Opening a saved address does not trigger a lookup or overwrite its details. Customer edits made during a request take priority over its result, and late replies for an old pin are ignored. Lookup failure offers manual entry and retry. Pull both `v2` repositories; see the backend README for provider configuration and limits.
 
 Product cards use a shorter inset photo area with a white background in both themes, keeping the full photograph visible and the name, seller and price easy to scan. The home introduction replaces the basket graphic with two actual catalog product photographs from the existing home query; empty or unavailable catalog data leaves the introduction text visible. No extra catalog request or stock-photo substitution is introduced.
+
+## Category browsing and price filters
+
+Categories can be searched by Arabic/English category or subcategory name. Filter and sort switches to matching products: category/subcategory, company, minimum and maximum price (1–5.75 SAR), best selling, low/high price, newest, highest rated, recommended and stock in the selected delivery area. Clear filters returns to category browsing. Product/category/search results use server filtering, including cursor pagination. Best selling uses completed paid order quantities; no sales figures or badges are invented.
+
+Pull both repositories and run backend migrations. Existing products keep 5.75 SAR until assigned individual prices with `catalog:set-price` (see backend README). Product variants inherit their product price. Guest carts keep the catalog price captured at addition, with a legacy fallback for older fixed-price carts; server sign-in/checkout reprices all quantities. Welcome and Home text now describe a price ceiling/range.
+
+## Terms and privacy drafts
+
+The legal pages now contain full original AR/EN/FR drafts with a contents list and readable sections, instead of topic placeholders. They describe accounts, variable VAT-inclusive prices, order/payment states, delivery, statutory cancellation rights, returns/refunds, reviews, privacy purposes/bases, map-provider disclosure, device biometrics, retention, transfers and data-rights requests. They are explicitly marked for review because the legal operator identity, CR/address, official support/privacy contacts, final providers and operational policies have not been supplied. No company identifiers, inboxes, hosting locations or guarantees are invented. See [legal review notes](docs/customer/LEGAL_REVIEW.md). On adoption set both backend `STORE_TERMS_VERSION` and `STORE_PRIVACY_VERSION` to `2026-10-29`, clear config and verify renewed consent where required. Existing environment values are not overwritten by a pull.

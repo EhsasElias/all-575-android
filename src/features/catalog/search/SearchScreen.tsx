@@ -42,9 +42,14 @@ export function SearchScreen() {
   const filters = useCatalogFilters();
   const searchable =
     query.length >= MIN_QUERY_LENGTH ||
-    [filters.category, filters.seller, filters.maxPrice, filters.inStock, filters.sort].some(
-      Boolean,
-    );
+    [
+      filters.category,
+      filters.seller,
+      filters.minPrice,
+      filters.maxPrice,
+      filters.inStock,
+      filters.sort,
+    ].some(Boolean);
   const list = useProductList(
     { ...filters, q: query.length >= MIN_QUERY_LENGTH ? query : undefined, zoneId },
     searchable,

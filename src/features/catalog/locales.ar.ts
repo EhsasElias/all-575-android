@@ -3,6 +3,13 @@ import type { en } from './locales.en';
 
 export const ar: Translations<typeof en> = {
   filters: {
+    minimumPrice: 'أقل سعر للوحدة',
+    bestSelling: 'الأكثر مبيعًا',
+    priceAsc: 'السعر: من الأقل للأعلى',
+    priceDesc: 'السعر: من الأعلى للأقل',
+    categorySearch: 'ابحث باسم الفئة',
+    noCategoryMatch: 'لا توجد فئات مطابقة',
+    clearCategorySearch: 'مسح البحث عن الفئات',
     title: 'التصفية والترتيب',
     category: 'القسم والقسم الفرعي',
     seller: 'الشركة / البائع',
@@ -16,7 +23,7 @@ export const ar: Translations<typeof en> = {
     available: 'متوفر في منطقة التوصيل',
     needArea: 'اختر منطقة التوصيل للتصفية حسب التوفر.',
     clear: 'مسح الفلاتر',
-    samePrice: 'سعر المنتجات الحالي ٥٫٧٥ ريال للوحدة شامل الضريبة. اختيار حد أقل قد لا يعرض نتائج.',
+    samePrice: 'أسعار المنتجات من 1 إلى 5.75 ريال، شاملة الضريبة.',
     failed: 'تعذر تحميل بعض خيارات التصفية.',
   },
   saved: {
@@ -60,7 +67,7 @@ export const ar: Translations<typeof en> = {
   },
   home: {
     heading: 'ماذا تحتاج اليوم؟',
-    priceLine: 'كل منتج بسعر {{price}} شامل الضريبة',
+    priceLine: 'أسعار من {{minimum}} إلى {{price}} شاملة الضريبة',
     categoriesTitle: 'الفئات',
     seeAll: 'عرض الكل',
     popularTitle: 'الأكثر طلبًا',

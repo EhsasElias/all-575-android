@@ -363,3 +363,17 @@ Run these against the updated API after `php artisan migrate` and `php artisan o
 | Account isolation       | Use two different accounts for billing/saved/requests/orders                                                                         | Neither account can list or change the other's records.                                                                                                                                       |
 
 Production acceptance still requires the actual gateway, messaging, invoicing and courier/returns integrations listed in [CUSTOMER_FLOW.md](CUSTOMER_FLOW.md). Development helpers are not evidence of a real charge, cash handover or delivery.
+
+## Individual pricing and category discovery acceptance
+
+Pull both branches and migrate the backend. Existing prices remain 575 halalas. On a test database use `php artisan catalog:set-price PRODUCT_SLUG 100` and another at 250; keep one at 575.
+
+1. Categories: search a category/subcategory name in Arabic or English. Only matching category cards remain; a nonsense name gives an empty state with Clear search.
+2. Open Filter and sort, select a category/company and minimum 1 / maximum 3 SAR. Matching products replace category cards. Clear filters returns to browsing.
+3. Try recommended/newest/rating, best selling, low-to-high and high-to-low prices. Load further cursor pages; no duplicates/skipped equal-price products. Best sellers count completed, paid units only; pending/cancelled/uncollected cash orders must not boost ranking.
+4. Compare a 1 SAR and 2.50 SAR item in product/variant details, guest cart (including reload), signed-in cart, quote and placed order. Prices stay consistent and VAT is included once. Mixed quantities total correctly.
+5. Quote, change that product's price, then place: require review of the changed quote. Editing a product later never rewrites an existing order's price.
+6. Reject 99 / 576 / decimal halalas in the operator price command. Prices are entered as integer halalas, not riyals. Client-supplied prices are never trusted.
+7. Repeat category filtering, price labels and clear/reset in AR/EN/FR and light/dark. Confirm welcome/home describe the new range/ceiling rather than one fixed price.
+
+Earlier matrix rows B10/C13 and the old 2–8/fixed-price notes are superseded by this section. Existing seeded products remain 5.75 until explicitly repriced; do not expect the migration to assign arbitrary business prices.

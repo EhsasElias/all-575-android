@@ -30,7 +30,7 @@ function clear(): Promise<CartChange> {
 }
 
 /**
- * A guest's cart lives on the device. Everything costs the one store price, so prices come from `GET /store`;
+ * A guest cart uses catalog prices captured when adding each product. The store fallback covers legacy carts;
  * availability is not known here and is checked at checkout.
  */
 export function useGuestCart(): Cart {
@@ -40,7 +40,7 @@ export function useGuestCart(): Cart {
 
   return useMemo<Cart>(() => {
     // An empty cart needs no price, so it never waits for the store call.
-    const priced = lines.length === 0 || unitPrice !== undefined;
+    const priced = lines.every((line) => line.unitPrice !== undefined) || unitPrice !== undefined;
     const contents = priceGuestLines(priced ? lines : [], unitPrice ?? 0);
     const status: CartStatus = priced ? 'ready' : storeInfo.isError ? 'error' : 'loading';
     return {

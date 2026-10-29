@@ -88,8 +88,8 @@ describe('Welcome copy: one language at a time', () => {
 
 describe('Welcome price pill', () => {
   it.each([
-    ['en', 'Everything · '],
-    ['ar', 'كل شيء بـ '],
+    ['en', 'Up to '],
+    ['ar', 'حتى '],
   ] as const)('builds the amount with formatMoney (%s)', async (language, prefix) => {
     await renderApp({ route: '/welcome', language });
 
@@ -99,10 +99,10 @@ describe('Welcome price pill', () => {
 
   it('reads 5.75 SAR in English and ر.س in Arabic', async () => {
     await renderApp({ route: '/welcome', language: 'en' });
-    expect(screen.getByText(/Everything · 5\.75\s+SAR/)).toBeInTheDocument();
+    expect(screen.getByText(/Up to 5\.75\s+SAR/)).toBeInTheDocument();
 
     await i18next.changeLanguage('ar');
-    expect(await screen.findByText(/كل شيء بـ 5\.75\s+ر\.س/)).toBeInTheDocument();
+    expect(await screen.findByText(/حتى 5\.75\s+ر\.س/)).toBeInTheDocument();
   });
 });
 

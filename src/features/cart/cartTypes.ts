@@ -13,6 +13,8 @@ export type LineSnapshot = {
   name: LocalizedText;
   variantName: LocalizedText | null;
   imageUrl: string | null;
+  /** Last catalog price; checkout always reprices on the server. Absent only on legacy carts. */
+  unitPrice?: number;
 };
 
 export type GuestLine = LineSnapshot & { quantity: number };

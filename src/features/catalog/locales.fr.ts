@@ -3,6 +3,13 @@ import type { en } from './locales.en';
 
 export const fr: Translations<typeof en> = {
   filters: {
+    minimumPrice: 'Prix unitaire minimum',
+    bestSelling: 'Meilleures ventes',
+    priceAsc: 'Prix croissant',
+    priceDesc: 'Prix décroissant',
+    categorySearch: 'Rechercher une catégorie par nom',
+    noCategoryMatch: 'Aucune catégorie correspondante',
+    clearCategorySearch: 'Effacer la recherche de catégories',
     title: 'Filtrer et trier',
     category: 'Catégorie et sous-catégorie',
     seller: 'Entreprise / vendeur',
@@ -16,8 +23,7 @@ export const fr: Translations<typeof en> = {
     available: 'Disponible dans ma zone',
     needArea: 'Choisissez une zone pour filtrer la disponibilité.',
     clear: 'Effacer les filtres',
-    samePrice:
-      'Les produits coûtent actuellement 5,75 SAR TTC. Un plafond inférieur peut ne donner aucun résultat.',
+    samePrice: 'Prix unitaires de 1 à 5,75 SAR, TVA comprise.',
     failed: 'Certains filtres n’ont pas pu être chargés.',
   },
   saved: {
@@ -66,7 +72,7 @@ export const fr: Translations<typeof en> = {
   },
   home: {
     heading: "De quoi avez-vous besoin aujourd'hui ?",
-    priceLine: 'Chaque article coûte {{price}}, TVA comprise',
+    priceLine: 'Prix de {{minimum}} à {{price}}, TVA comprise',
     categoriesTitle: 'Catégories',
     seeAll: 'Tout voir',
     popularTitle: 'Populaires',

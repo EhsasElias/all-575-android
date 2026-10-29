@@ -3,7 +3,7 @@ import { useQuery } from '@tanstack/react-query';
 import { useTranslation } from 'react-i18next';
 import { useSearchParams } from 'react-router';
 import { http, type Data } from '@/shared/api';
-import { useLanguage } from '@/shared/i18n';
+import { formatMoney, useLanguage } from '@/shared/i18n';
 import { Button } from '@/shared/ui';
 import type { Category, Seller } from '../api/types';
 import { useCategories } from '../api/useCatalogQueries';
@@ -19,6 +19,7 @@ export function useCatalogFilters() {
     seller: params.get('seller') ?? undefined,
     sort: params.get('sort') ?? undefined,
     inStock: params.get('in_stock') === '1',
+    minPrice: params.get('min_price') ? Number(params.get('min_price')) : undefined,
     maxPrice: params.get('max_price') ? Number(params.get('max_price')) : undefined,
   };
 }
@@ -43,6 +44,10 @@ export function ProductFilters({
     const next = new URLSearchParams(params);
     if (value) next.set(key, value);
     else next.delete(key);
+    if (key === 'min_price' && Number(value) > Number(next.get('max_price') ?? 575))
+      next.delete('max_price');
+    if (key === 'max_price' && value && Number(value) < Number(next.get('min_price') ?? 100))
+      next.delete('min_price');
     setParams(next, { replace: true });
   };
   return (
@@ -113,25 +118,32 @@ export function ProductFilters({
             >
               <option value="featured">{t('filters.featured')}</option>
               <option value="newest">{t('filters.newest')}</option>
+              <option value="best_selling">{t('filters.bestSelling')}</option>
+              <option value="price_asc">{t('filters.priceAsc')}</option>
+              <option value="price_desc">{t('filters.priceDesc')}</option>
               <option value="rating">{t('filters.rating')}</option>
             </select>
           </label>
-          <label>
-            {t('filters.price')}
-            <select
-              value={params.get('max_price') ?? ''}
-              onChange={(e) => {
-                change('max_price', e.target.value);
-              }}
-            >
-              <option value="">{t('filters.all')}</option>
-              {[200, 300, 400, 500, 575, 600, 700, 800].map((v) => (
-                <option key={v} value={v}>
-                  {t('filters.upTo', { amount: (v / 100).toFixed(2) })}
-                </option>
-              ))}
-            </select>
-          </label>
+          <div className={styles.priceRange}>
+            {(['min_price', 'max_price'] as const).map((key) => (
+              <label key={key}>
+                {t(key === 'min_price' ? 'filters.minimumPrice' : 'filters.price')}
+                <select
+                  value={params.get(key) ?? ''}
+                  onChange={(e) => {
+                    change(key, e.target.value);
+                  }}
+                >
+                  <option value="">{t('filters.all')}</option>
+                  {[100, 200, 300, 400, 500, 575].map((value) => (
+                    <option key={value} value={value}>
+                      {formatMoney(value, language)}
+                    </option>
+                  ))}
+                </select>
+              </label>
+            ))}
+          </div>
           <p className={styles.hint}>{t('filters.samePrice')}</p>
           <label className={styles.check}>
             <input
@@ -149,9 +161,11 @@ export function ProductFilters({
             variant="ghost"
             onClick={() => {
               const next = new URLSearchParams(params);
-              ['category', 'seller', 'sort', 'max_price', 'in_stock'].forEach((key) => {
-                next.delete(key);
-              });
+              ['category', 'seller', 'sort', 'min_price', 'max_price', 'in_stock'].forEach(
+                (key) => {
+                  next.delete(key);
+                },
+              );
               setParams(next, { replace: true });
             }}
           >

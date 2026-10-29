@@ -52,7 +52,7 @@ describe('Saved products and shopping filters', () => {
     await user.click(await screen.findByText('Filter and sort'));
     await user.selectOptions(await screen.findByLabelText('Category and subcategory'), 'food');
     await user.selectOptions(screen.getByLabelText('Company / seller'), homeStore.slug);
-    await user.selectOptions(screen.getByLabelText('Maximum unit price'), '600');
+    await user.selectOptions(screen.getByLabelText('Maximum unit price'), '500');
     await user.selectOptions(screen.getByLabelText('Sort by'), 'rating');
     const box = screen.getByRole('searchbox', { name: 'Search products' });
     await user.clear(box);
@@ -65,7 +65,7 @@ describe('Saved products and shopping filters', () => {
       expect(call?.query.get('q')).toBe('towels');
       expect(call?.query.get('category')).toBe('food');
       expect(call?.query.get('seller')).toBe(homeStore.slug);
-      expect(call?.query.get('max_price')).toBe('600');
+      expect(call?.query.get('max_price')).toBe('500');
       expect(call?.query.get('sort')).toBe('rating');
     });
     expect(screen.getByLabelText('Available in my delivery area')).toBeDisabled();

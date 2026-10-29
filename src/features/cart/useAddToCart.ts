@@ -18,6 +18,7 @@ type Outcome = { variantId: number; refusal: string | null };
 function snapshotOf(product: Product, variant: Variant): LineSnapshot {
   return {
     variantId: variant.id,
+    unitPrice: variant.price.gross,
     productSlug: product.slug,
     name: product.name,
     variantName: fromApiName(variant.name),

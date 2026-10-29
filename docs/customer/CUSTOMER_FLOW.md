@@ -4,7 +4,7 @@
 
 1. Launch the app: animated loading logo, welcome slides, requested destination. Choose Arabic, English or French and light/dark appearance.
 2. Browse as a guest, choose the delivery area, browse categories/subcategories and real product photographs.
-3. Search and combine category, company/seller, maximum price, stock in the selected area, and recommended/newest/rating order. Current marketplace unit price remains 5.75 SAR inclusive of VAT; low budgets can correctly return no results.
+3. Search and combine category, company/seller, maximum price, stock in the selected area, and recommended/newest/rating order. Unit prices range from 1 to 5.75 SAR inclusive of VAT. Best selling counts completed paid quantities; price ascending/descending, newest and rating sorting combine with the filters.
 4. Open product details: seller, description, exact variant, current stock, quantity and verified product reviews. Sign in to save products to the account.
 5. Add products to the guest cart. Verified sign-in merges it with the server cart. Review quantities and remove items.
 6. Sign up by phone/email OTP, explicitly accept terms/privacy; marketing stays optional. Native biometric unlock is available after verified sign-in. Actual SMS/email delivery requires a configured provider.

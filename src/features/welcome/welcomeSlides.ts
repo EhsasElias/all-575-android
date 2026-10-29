@@ -21,5 +21,5 @@ export const WELCOME_SLIDES: readonly WelcomeSlide[] = [
 
 export const SLIDE_IMAGE_SIZE = { width: 608, height: 616 };
 
-/** The "everything for 5.75" promise, as integer halalas. */
+/** The 5.75 ceiling, as integer halalas. */
 export const PROMISE_PRICE_HALALAS = 575;

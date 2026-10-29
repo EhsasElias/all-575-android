@@ -8,6 +8,7 @@ export type ProductFilters = {
   category?: string | undefined;
   sort?: string | undefined;
   inStock?: boolean | undefined;
+  minPrice?: number | undefined;
   maxPrice?: number | undefined;
   seller?: string | undefined;
   /** Free text, already trimmed. The server needs at least 2 characters. */
@@ -27,11 +28,13 @@ function toQuery({
   perPage,
   sort,
   inStock,
+  minPrice,
   maxPrice,
 }: ProductFilters) {
   return {
     sort,
     in_stock: inStock && zoneId !== null ? 1 : undefined,
+    min_price: minPrice,
     max_price: maxPrice,
     category,
     seller,
@@ -41,7 +44,7 @@ function toQuery({
   };
 }
 
-/** A paged list of products. There is no price filter or price sort: everything costs the same. */
+/** Server-priced results with combinable category, price and sort choices. */
 export function useProductList(filters: ProductFilters, enabled = true) {
   const query = toQuery(filters);
   return usePagedQuery<ProductSummary>({

@@ -1,7 +1,6 @@
 # ALL 5.75 customer app
 
-React 19 + TypeScript (strict) + Vite, wrapped by Capacitor for Android. Arabic (right-to-left, default) and English. Everything in the marketplace costs
-5.75 SAR, VAT included. The backend is a separate repository: [all-575-api](https://github.com/EhsasElias/all-575-api), branch `v2`. Read `README.md` first.
+React 19 + TypeScript (strict) + Vite, wrapped by Capacitor for Android. Arabic (right-to-left, default) and English. Products cost from 1 to 5.75 SAR, VAT included. Prices are owned by the backend, per product. The backend is a separate repository: [all-575-api](https://github.com/EhsasElias/all-575-api), branch `v2`. Read `README.md` first.
 
 ## Commands
 

@@ -27,3 +27,24 @@
   margin: 0;
   padding-inline-start: var(--space-5);
 }
+
+.topics a {
+  display: inline-flex;
+  align-items: center;
+  min-block-size: var(--size-target);
+  color: var(--color-brand-text);
+  text-underline-offset: 0.2em;
+}
+
+.policySection {
+  display: grid;
+  gap: var(--space-3);
+  padding-block: var(--space-4);
+  border-block-start: 1px solid var(--color-border);
+  line-height: 1.85;
+  overflow-wrap: anywhere;
+}
+
+.policySection h2 {
+  scroll-margin-block-start: 6rem;
+}

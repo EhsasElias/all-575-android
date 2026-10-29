@@ -12,18 +12,23 @@ const storeWith = (terms: string, privacy: string) => ({
 });
 
 describe('Legal pages', () => {
-  it('shows the Terms with the current version and says the full text is pending', async () => {
+  it('shows readable Terms sections, a contents list and the current version', async () => {
     installFakeApi(storeWith('2026-10-01', '2026-10-05'));
     await renderApp({ route: '/legal/terms', seenWelcome: true });
 
     expect(screen.getByRole('heading', { level: 1, name: 'Terms of Use' })).toBeInTheDocument();
     expect(await screen.findByText('Version 2026-10-01')).toBeVisible();
-    const notice = screen.getByRole('note', { name: 'The full text is coming soon' });
-    expect(within(notice).getByText(/waiting for legal review/)).toBeVisible();
-    expect(
-      screen.getByRole('heading', { level: 2, name: 'What this document will cover' }),
-    ).toBeVisible();
+    const notice = screen.getByRole('note', { name: 'Draft for review before public launch' });
+    expect(within(notice).getByText(/must be confirmed and reviewed/)).toBeVisible();
+    expect(screen.getByRole('heading', { level: 2, name: 'On this page' })).toBeVisible();
     expect(screen.getAllByRole('listitem').length).toBeGreaterThanOrEqual(5);
+    expect(
+      screen.getByRole('heading', { name: 'Cancellation, returns and refunds' }),
+    ).toBeVisible();
+    expect(screen.getByText(/within seven days after receipt/)).toBeVisible();
+    expect(
+      screen.getByRole('link', { name: 'Prices, VAT and product information' }),
+    ).toHaveAttribute('href', '#terms-prices');
     expect(document.title).toBe('Terms of Use · ALL 5.75');
   });
 
@@ -33,7 +38,9 @@ describe('Legal pages', () => {
 
     expect(screen.getByRole('heading', { level: 1, name: 'Privacy Policy' })).toBeInTheDocument();
     expect(await screen.findByText('Version 2026-10-05')).toBeVisible();
-    expect(screen.getByText('What personal data we collect')).toBeVisible();
+    expect(screen.getByRole('heading', { name: 'What personal data we collect' })).toBeVisible();
+    expect(screen.getByRole('heading', { name: 'Location and map services' })).toBeVisible();
+    expect(screen.getByText(/not a fingerprint image or biometric template/)).toBeVisible();
     expect(document.title).toBe('Privacy Policy · ALL 5.75');
   });
 
@@ -52,7 +59,7 @@ describe('Legal pages', () => {
     expect(screen.getByRole('heading', { level: 1, name: 'شروط الاستخدام' })).toBeInTheDocument();
     expect(document.documentElement).toHaveAttribute('dir', 'rtl');
     expect(await screen.findByText('الإصدار 2026-10-01')).toBeVisible();
-    expect(screen.getByRole('note', { name: 'النص الكامل قريبًا' })).toBeVisible();
+    expect(screen.getByRole('note', { name: 'مسودة للمراجعة قبل الإطلاق العام' })).toBeVisible();
     expect(screen.queryByText('Terms of Use')).not.toBeInTheDocument();
   });
 

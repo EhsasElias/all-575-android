@@ -31,13 +31,13 @@ export function countItems(lines: readonly GuestLine[]): number {
   return lines.reduce((total, line) => total + line.quantity, 0);
 }
 
-/** A guest line with the one price everything costs. */
+/** Use each catalog snapshot price; the fallback is for legacy fixed-price carts only. */
 export function priceGuestLines(lines: readonly GuestLine[], unitPrice: number): CartContents {
   return summarize(
     lines.map((line) => ({
       ...line,
-      unitPrice,
-      linePrice: unitPrice * line.quantity,
+      unitPrice: line.unitPrice ?? unitPrice,
+      linePrice: (line.unitPrice ?? unitPrice) * line.quantity,
       // Stock is only known per delivery address, so a guest's lines are checked at checkout.
       availability: 'unknown',
     })),

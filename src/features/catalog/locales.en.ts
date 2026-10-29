@@ -1,5 +1,12 @@
 export const en = {
   filters: {
+    minimumPrice: 'Minimum unit price',
+    bestSelling: 'Best selling',
+    priceAsc: 'Price: low to high',
+    priceDesc: 'Price: high to low',
+    categorySearch: 'Search categories by name',
+    noCategoryMatch: 'No matching categories',
+    clearCategorySearch: 'Clear category search',
     title: 'Filter and sort',
     category: 'Category and subcategory',
     seller: 'Company / seller',
@@ -13,8 +20,7 @@ export const en = {
     available: 'Available in my delivery area',
     needArea: 'Choose a delivery area to filter by availability.',
     clear: 'Clear filters',
-    samePrice:
-      'Current products cost 5.75 SAR each, VAT included. A lower price limit may show no results.',
+    samePrice: 'Unit prices from 1 to 5.75 SAR, VAT included.',
     failed: 'Some filter choices could not load.',
   },
   saved: {
@@ -60,7 +66,7 @@ export const en = {
   },
   home: {
     heading: 'What do you need today?',
-    priceLine: 'Every item is {{price}}, VAT included',
+    priceLine: 'Prices from {{minimum}} to {{price}}, VAT included',
     categoriesTitle: 'Categories',
     seeAll: 'See all',
     popularTitle: 'Popular',

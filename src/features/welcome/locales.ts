@@ -8,7 +8,7 @@ const en = {
   skip: 'Skip',
   signInPrompt: 'Already a customer?',
   signInLink: 'Sign in',
-  priceLine: 'Everything · {{amount}}',
+  priceLine: 'Up to {{amount}}',
   carouselLabel: 'Shop by category',
   slides: {
     fruit: 'Fruit & vegetables',
@@ -25,7 +25,7 @@ const ar: Translations<typeof en> = {
   skip: 'تخطي',
   signInPrompt: 'لديك حساب؟',
   signInLink: 'تسجيل الدخول',
-  priceLine: 'كل شيء بـ {{amount}}',
+  priceLine: 'حتى {{amount}}',
   carouselLabel: 'تسوّق حسب الفئة',
   slides: {
     fruit: 'خضار وفواكه',
@@ -42,7 +42,7 @@ const fr: Translations<typeof en> = {
   skip: 'Passer',
   signInPrompt: 'Déjà client ?',
   signInLink: 'Se connecter',
-  priceLine: 'Tout à {{amount}}',
+  priceLine: 'Jusqu’à {{amount}}',
   carouselLabel: 'Acheter par catégorie',
   slides: {
     fruit: 'Fruits et légumes',
