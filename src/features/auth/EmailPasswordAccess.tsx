@@ -17,6 +17,7 @@ import { SignInSteps } from './SignInSteps';
 import { currentDeviceName } from './deviceName';
 import { failureKey } from './emailPasswordFailure';
 import { EmailPasswordForm } from './EmailPasswordForm';
+import { resendEmailVerification } from './resendEmailVerification';
 import { clearMarketingDraft, readMarketingDraft, saveMarketingDraft } from './marketingDraft';
 import { useConsentVersions } from './useConsentVersions';
 import type { ConsentChoice } from './authApi';
@@ -131,19 +132,13 @@ export function EmailPasswordAccess({ createAccount }: Props) {
     setPending(true);
     try {
       const auth = getFirebaseAuth();
-      auth.languageCode = i18n.resolvedLanguage ?? i18n.language ?? 'en';
+      auth.languageCode = i18n.resolvedLanguage ?? i18n.language;
       if (createAccount && verificationRequested) {
-        const credential = await signInWithEmailAndPassword(auth, email.trim(), password);
         try {
-          if (credential.user.emailVerified) {
-            setNotice(t('emailPassword.alreadyVerified'));
-          } else {
-            await sendEmailVerification(credential.user);
-            setLastVerificationRequestAt(Date.now());
-            setNotice(t('emailPassword.verificationResent'));
-          }
+          const sent = await resendEmailVerification(auth, email, password);
+          setNotice(t(sent ? 'emailPassword.verificationResent' : 'emailPassword.alreadyVerified'));
+          if (sent) setLastVerificationRequestAt(Date.now());
         } finally {
-          await signOut(auth);
           setPassword('');
         }
       } else if (createAccount) {
