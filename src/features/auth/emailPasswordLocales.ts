@@ -25,6 +25,13 @@ const en = {
   agreePrivacy: 'I accept the',
   terms: 'Terms of Use',
   privacy: 'Privacy Policy',
+  agreeLegal:
+    'I agree to the <termsLink>Terms of Use</termsLink> and <privacyLink>Privacy Policy</privacyLink>.',
+  required: 'Required',
+  marketingOptional: 'Send me offers and product updates (optional)',
+  marketingHint:
+    'Optional and unchecked by default. Confirm your choice after email verification; change it any time.',
+  legalVersions: 'Terms {{terms}} · Privacy {{privacy}}',
   enterEmail: 'Enter your email first.',
   accountConflict: 'This email needs to be linked to an existing account. Contact support.',
   notReady: 'Email login is not ready yet. Please use one-time code sign-in.',
@@ -56,6 +63,13 @@ const ar: Translations<typeof en> = {
   agreePrivacy: 'أوافق على',
   terms: 'شروط الاستخدام',
   privacy: 'سياسة الخصوصية',
+  agreeLegal:
+    'أوافق على <termsLink>شروط الاستخدام</termsLink> و<privacyLink>سياسة الخصوصية</privacyLink>.',
+  required: 'إلزامي',
+  marketingOptional: 'أرغب باستقبال العروض والتحديثات التسويقية (اختياري)',
+  marketingHint:
+    'اختياري وغير محدد مسبقًا. يتم تأكيد اختيارك بعد توثيق البريد ويمكنك تغييره لاحقًا.',
+  legalVersions: 'إصدار الشروط {{terms}} · إصدار الخصوصية {{privacy}}',
   enterEmail: 'أدخل بريدك الإلكتروني أولًا.',
   accountConflict: 'يجب ربط هذا البريد بحساب موجود. تواصل مع الدعم.',
   notReady: 'الدخول بالبريد غير متاح حاليًا. استخدم رمز التحقق.',
@@ -89,6 +103,13 @@ const fr: Translations<typeof en> = {
   agreePrivacy: "J'accepte la",
   terms: "Conditions d'utilisation",
   privacy: 'Politique de confidentialité',
+  agreeLegal:
+    "J'accepte les <termsLink>Conditions d'utilisation</termsLink> et la <privacyLink>Politique de confidentialité</privacyLink>.",
+  required: 'Obligatoire',
+  marketingOptional: 'Recevoir des offres et des nouveautés (facultatif)',
+  marketingHint:
+    "Facultatif et non coché par défaut. Confirmez votre choix après vérification de l'e-mail.",
+  legalVersions: 'Conditions {{terms}} · Confidentialité {{privacy}}',
   enterEmail: "Saisissez d'abord votre e-mail.",
   accountConflict: 'Cette adresse doit être liée à un compte existant. Contactez le support.',
   notReady: 'La connexion par e-mail est indisponible. Utilisez un code OTP.',
