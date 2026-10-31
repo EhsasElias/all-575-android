@@ -103,17 +103,17 @@ export function EmailPasswordAccess({ createAccount }: Props) {
 
     const data = (
       await http.post<Data<LoginReply>>('/auth/firebase/login', {
-      id_token: await getIdToken(currentUser),
-      device_name: currentDeviceName(),
-      ...(consents === null
-        ? {}
-        : {
-            consents: {
-              terms_version: consents.terms,
-              privacy_version: consents.privacy,
-              marketing: consents.marketing,
-            },
-          }),
+        id_token: await getIdToken(currentUser),
+        device_name: currentDeviceName(),
+        ...(consents === null
+          ? {}
+          : {
+              consents: {
+                terms_version: consents.terms,
+                privacy_version: consents.privacy,
+                marketing: consents.marketing,
+              },
+            }),
       })
     ).data;
 
@@ -245,7 +245,11 @@ export function EmailPasswordAccess({ createAccount }: Props) {
             }}
           />
         )}
-        {failure && <p role="alert" className={styles.alert}>{failure}</p>}
+        {failure && (
+          <p role="alert" className={styles.alert}>
+            {failure}
+          </p>
+        )}
       </div>
     );
   }
@@ -310,8 +314,16 @@ export function EmailPasswordAccess({ createAccount }: Props) {
             )}
           </div>
         )}
-        {failure && <p role="alert" className={styles.alert}>{failure}</p>}
-        {notice && <p role="status" className={formStyles.notice}>{notice}</p>}
+        {failure && (
+          <p role="alert" className={styles.alert}>
+            {failure}
+          </p>
+        )}
+        {notice && (
+          <p role="status" className={formStyles.notice}>
+            {notice}
+          </p>
+        )}
         <Button type="submit" size="lg" fullWidth loading={pending}>
           {t(createAccount ? 'emailPassword.register' : 'emailPassword.login')}
         </Button>
