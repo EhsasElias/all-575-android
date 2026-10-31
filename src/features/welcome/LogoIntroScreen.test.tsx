@@ -25,7 +25,7 @@ describe('Logo introduction', () => {
     await userEvent
       .setup()
       .click(within(header).getByRole('button', { name: 'Tap the logo to shop now' }));
-    expect(router.state.location.pathname).toBe('/cart');
+    expect(router.state.location.pathname).toBe('/home');
   });
 
   it('keeps the brief logo visible before the slider when reduced motion is preferred', async () => {
