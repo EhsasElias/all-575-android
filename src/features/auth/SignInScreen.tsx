@@ -30,7 +30,7 @@ export function SignInScreen({ createAccount = false }: { createAccount?: boolea
     <section className={styles.screen}>
       <header className={styles.header}>
         <h1 className={styles.title}>{createAccount ? access('createTitle') : t('title')}</h1>
-        <p className={styles.intro}>{access(createAccount ? 'createIntro' : 'signInIntro')}</p>
+        <p className={styles.intro}>{emailLoginEnabled ? t(createAccount ? 'emailPassword.introRegister' : 'emailPassword.introSignIn') : access(createAccount ? 'createIntro' : 'signInIntro')}</p>
       </header>
       {status === 'loading' ? (
         <div role="status" aria-busy="true" aria-label={t('loading')} className={styles.skeleton}>
