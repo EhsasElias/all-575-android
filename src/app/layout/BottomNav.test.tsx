@@ -33,6 +33,16 @@ describe('BottomNav', () => {
     ]);
   });
 
+  it('sends guests who tap Account to the logo transition before sign-in', () => {
+    renderNav({ guest: true });
+
+    expect(screen.getByRole('link', { name: 'Account' })).toHaveAttribute(
+      'href',
+      '/welcome/logo?mode=account',
+    );
+    expect(screen.getByRole('link', { name: 'Cart' })).toHaveAttribute('href', '/cart');
+  });
+
   it('marks the current tab with aria-current, not only with color', () => {
     renderNav({}, '/orders');
 
