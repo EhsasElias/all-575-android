@@ -43,7 +43,9 @@ function installBlobReaders(): void {
             if (reader.result instanceof ArrayBuffer) resolve(reader.result);
             else reject(new Error('The blob reader did not return an ArrayBuffer'));
           };
-          reader.onerror = () => reject(reader.error ?? new Error('Could not read the blob'));
+          reader.onerror = () => {
+            reject(reader.error ?? new Error('Could not read the blob'));
+          };
           reader.readAsArrayBuffer(this);
         });
       },
