@@ -14,12 +14,12 @@ type Props = {
   failure: string;
   notice: string;
   legal: ConsentVersions;
-  termsAccepted: boolean;
-  privacyAccepted: boolean;
+  legalAccepted: boolean;
+  marketing: boolean;
   onEmail: (value: string) => void;
   onPassword: (value: string) => void;
-  onTerms: (accepted: boolean) => void;
-  onPrivacy: (accepted: boolean) => void;
+  onLegal: (accepted: boolean) => void;
+  onMarketing: (accepted: boolean) => void;
   onSubmit: (event: SubmitEvent<HTMLFormElement>) => void;
   onReset: () => void;
   onOtp: () => void;
@@ -34,12 +34,12 @@ export function EmailPasswordForm({
   failure,
   notice,
   legal,
-  termsAccepted,
-  privacyAccepted,
+  legalAccepted,
+  marketing,
   onEmail,
   onPassword,
-  onTerms,
-  onPrivacy,
+  onLegal,
+  onMarketing,
   onSubmit,
   onReset,
   onOtp,
@@ -78,10 +78,10 @@ export function EmailPasswordForm({
         {createAccount && (
           <EmailSignupLegal
             legal={legal}
-            termsAccepted={termsAccepted}
-            privacyAccepted={privacyAccepted}
-            onTerms={onTerms}
-            onPrivacy={onPrivacy}
+            legalAccepted={legalAccepted}
+            marketing={marketing}
+            onLegal={onLegal}
+            onMarketing={onMarketing}
           />
         )}
         {failure && (
