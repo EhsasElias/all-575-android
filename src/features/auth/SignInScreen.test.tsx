@@ -127,15 +127,26 @@ describe('Sign in: the code step', () => {
     expect(screen.getByText('+966512345678')).toBeInTheDocument();
   });
 
-  it('keeps the mobile number field labelled, with its hint, before anything is typed', async () => {
-    await renderApp({ route: '/sign-in', seenWelcome: true });
+  it.each(['/sign-in', '/create-account'])(
+    'shows email first for %s and keeps mobile OTP optional',
+    async (route) => {
+      const user = userEvent.setup();
+      await renderApp({ route, seenWelcome: true });
 
-    const field = screen.getByLabelText('Mobile number');
-    expect(field).toHaveAttribute('type', 'tel');
-    expect(field).toHaveAttribute('autocomplete', 'tel');
-    expect(field).toHaveAccessibleDescription('A Saudi mobile number, for example 0512345678.');
-    expect(field).not.toHaveAttribute('placeholder');
-  });
+      const email = screen.getByLabelText('Email address');
+      expect(email).toHaveAttribute('type', 'email');
+      expect(email).toHaveAttribute('autocomplete', 'email');
+      expect(email).toHaveValue('');
+      expect(screen.queryByLabelText('Mobile number')).not.toBeInTheDocument();
+
+      await user.click(screen.getByRole('button', { name: 'Use mobile number instead' }));
+      const phone = screen.getByLabelText('Mobile number');
+      expect(phone).toHaveAttribute('type', 'tel');
+      expect(phone).toHaveAccessibleDescription(
+        'A Saudi mobile number, for example 0512345678.',
+      );
+    },
+  );
 });
 
 describe('Sign in: someone who is already signed in', () => {
@@ -177,6 +188,7 @@ describe('Sign in: Arabic', () => {
     expect(screen.getByRole('heading', { level: 1, name: 'تسجيل الدخول' })).toBeInTheDocument();
     expect(document.title).toBe('تسجيل الدخول · الكل بـ 5.75');
 
+    await user.click(screen.getByRole('button', { name: 'استخدم رقم الجوال بدلًا من ذلك' }));
     await user.type(screen.getByLabelText('رقم الجوال'), '٠٥١٢٣٤٥٦٧٨');
     await user.click(screen.getByRole('button', { name: 'إرسال الرمز' }));
     await user.type(await screen.findByLabelText('رمز التحقق (6 أرقام)'), '١٢٣٤٥٦');
