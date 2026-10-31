@@ -4,6 +4,11 @@ interface ImportMetaEnv {
   readonly VITE_API_BASE_URL?: string;
   /** `true` only in a tester's build: shows the buttons that play the payment provider on a test server. */
   readonly VITE_TEST_PANEL?: string;
+  /** Public Firebase web-app configuration (never put Admin credentials in VITE_*). */
+  readonly VITE_FIREBASE_API_KEY: string;
+  readonly VITE_FIREBASE_AUTH_DOMAIN: string;
+  readonly VITE_FIREBASE_PROJECT_ID: string;
+  readonly VITE_FIREBASE_APP_ID: string;
 }
 
 interface Window {
