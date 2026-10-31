@@ -8,6 +8,7 @@ import formStyles from './EmailPasswordAccess.module.css';
 
 type Props = {
   createAccount: boolean;
+  verificationRequested: boolean;
   email: string;
   password: string;
   pending: boolean;
@@ -28,6 +29,7 @@ type Props = {
 /** A display-only form: Firebase identity and Laravel session logic live in its parent. */
 export function EmailPasswordForm({
   createAccount,
+  verificationRequested,
   email,
   password,
   pending,
@@ -66,16 +68,20 @@ export function EmailPasswordForm({
           name="password"
           type="password"
           label={t('emailPassword.password')}
-          autoComplete={createAccount ? 'new-password' : 'current-password'}
-          minLength={createAccount ? 12 : undefined}
+          autoComplete={createAccount && !verificationRequested ? 'new-password' : 'current-password'}
+          minLength={createAccount && !verificationRequested ? 12 : undefined}
           required
           value={password}
           onChange={(event) => {
             onPassword(event.target.value);
           }}
-          hint={createAccount ? t('emailPassword.passwordHint') : undefined}
+          hint={
+            createAccount
+              ? t(verificationRequested ? 'emailPassword.resendHint' : 'emailPassword.passwordHint')
+              : undefined
+          }
         />
-        {createAccount && (
+        {createAccount && !verificationRequested && (
           <EmailSignupLegal
             legal={legal}
             legalAccepted={legalAccepted}
@@ -95,7 +101,13 @@ export function EmailPasswordForm({
           </p>
         )}
         <Button type="submit" size="lg" fullWidth loading={pending}>
-          {t(createAccount ? 'emailPassword.register' : 'emailPassword.login')}
+          {t(
+            createAccount
+              ? verificationRequested
+                ? 'emailPassword.resendVerification'
+                : 'emailPassword.register'
+              : 'emailPassword.login',
+          )}
         </Button>
       </form>
       {!createAccount && (
