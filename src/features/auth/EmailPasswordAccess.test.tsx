@@ -30,6 +30,23 @@ describe('feature-gated Firebase email access', () => {
     expect(await screen.findByRole('textbox', { name: 'Email address' })).toBeVisible();
   });
 
+  it('preserves checkout intent while allowing guest browsing until checkout', async () => {
+    const { router } = await renderApp({ route: '/checkout', seenWelcome: true });
+
+    expect(await screen.findByRole('heading', { name: 'Sign in' })).toBeVisible();
+    expect(router.state.location.pathname).toBe('/sign-in');
+    expect(router.state.location.search).toBe('?next=%2Fcheckout');
+    expect(
+      screen.getByText(
+        'You can browse as a guest. Sign in or create an account only when you are ready to checkout.',
+      ),
+    ).toBeVisible();
+    expect(screen.getByRole('link', { name: 'Continue shopping as guest' })).toHaveAttribute(
+      'href',
+      '/home',
+    );
+  });
+
   it('shows clear required legal and optional marketing checkboxes during registration', async () => {
     const user = userEvent.setup();
     await renderApp({ route: '/create-account?next=%2Fcheckout', seenWelcome: true });
