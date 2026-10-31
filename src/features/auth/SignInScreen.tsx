@@ -37,9 +37,7 @@ export function SignInScreen({ createAccount = false }: { createAccount?: boolea
             : access(createAccount ? 'createIntro' : 'signInIntro')}
         </p>
       </header>
-      {checkoutEntry && (
-        <p className={styles.intro}>{t('emailPassword.checkoutRequired')}</p>
-      )}
+      {checkoutEntry && <p className={styles.intro}>{t('emailPassword.checkoutRequired')}</p>}
       {status === 'loading' ? (
         <div role="status" aria-busy="true" aria-label={t('loading')} className={styles.skeleton}>
           <Skeleton height="1.5rem" width="60%" />
