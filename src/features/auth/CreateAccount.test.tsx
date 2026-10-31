@@ -26,8 +26,8 @@ describe('Create account', () => {
         seenWelcome: true,
       });
       expect(screen.getByRole('heading', { level: 1, name: 'Create account' })).toBeVisible();
-      if (channel === 'email')
-        await user.click(screen.getByRole('button', { name: 'Use email instead' }));
+      if (channel === 'phone')
+        await user.click(screen.getByRole('button', { name: 'Use mobile number instead' }));
       const destination = channel === 'email' ? 'sara@example.com' : '0512345678';
       await user.type(
         screen.getByLabelText(channel === 'email' ? 'Email address' : 'Mobile number'),
