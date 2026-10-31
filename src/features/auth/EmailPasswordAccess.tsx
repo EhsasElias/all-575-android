@@ -149,14 +149,17 @@ export function EmailPasswordAccess({ createAccount }: Props) {
       } else if (createAccount) {
         const credential = await createUserWithEmailAndPassword(auth, email.trim(), password);
         saveMarketingDraft(email, marketing);
+        // The Firebase account now exists even if email sending fails.
+        // Switch to the resend flow before requesting the email so customers
+        // never accidentally submit another create-account request.
+        setVerificationRequested(true);
         try {
           await sendEmailVerification(credential.user);
           setNotice(t('emailPassword.verificationSent'));
-          setVerificationRequested(true);
           setLastVerificationRequestAt(Date.now());
-          setPassword('');
         } finally {
-          // A new, unverified account must never remain authenticated in the app.
+          setPassword('');
+          // An unverified Firebase account never receives a Laravel customer session.
           await signOut(auth);
         }
       } else {
