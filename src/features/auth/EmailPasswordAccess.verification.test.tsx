@@ -6,11 +6,11 @@ import { testStore } from '@/test/fixtures';
 import { renderApp } from '@/test/render';
 
 const authMocks = vi.hoisted(() => ({
-  create: vi.fn(async () => ({ user: { email: 'new@example.com', emailVerified: false } })),
+  create: vi.fn(() => Promise.resolve({ user: { email: 'new@example.com', emailVerified: false } })),
   signIn: vi.fn(async () => ({ user: { email: 'new@example.com', emailVerified: false } })),
-  verify: vi.fn(async () => undefined),
-  signOut: vi.fn(async () => undefined),
-  passwordReset: vi.fn(async () => undefined),
+  verify: vi.fn(() => Promise.resolve(undefined)),
+  signOut: vi.fn(() => Promise.resolve(undefined)),
+  passwordReset: vi.fn(() => Promise.resolve(undefined)),
   token: vi.fn(async () => 'fake-test-token'),
 }));
 
