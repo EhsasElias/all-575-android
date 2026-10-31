@@ -14,14 +14,14 @@ const en = {
   backToEmail: 'Back to email and password',
   verificationSent:
     'Firebase accepted the verification email request. Check Inbox, Spam and Promotions. If it does not arrive, enter your password below to request another link.',
-  verificationResent:
-    'Another verification email was requested. Check Inbox, Spam and Promotions.',
+  verificationResent: 'Another verification email was requested. Check Inbox, Spam and Promotions.',
   resendVerification: 'Resend verification email',
   resendHint: 'Re-enter your password to request a new verification link.',
   resendWait: 'Please wait at least one minute before requesting another email.',
   resendPasswordRequired: 'Enter your password to resend the verification email.',
   alreadyVerified: 'Your email is already verified. Select Sign in below.',
-  checkoutRequired: 'You can browse as a guest. Sign in or create an account only when you are ready to checkout.',
+  checkoutRequired:
+    'You can browse as a guest. Sign in or create an account only when you are ready to checkout.',
   continueShoppingAsGuest: 'Continue shopping as guest',
   verificationRequired: 'Please verify your email using the link we sent, then sign in again.',
   resetSent: 'If this email has an account, password reset instructions have been sent.',
@@ -74,7 +74,8 @@ const ar: Translations<typeof en> = {
   resendWait: 'يرجى الانتظار دقيقة على الأقل قبل إعادة الإرسال.',
   resendPasswordRequired: 'أدخل كلمة المرور لإعادة إرسال رابط التحقق.',
   alreadyVerified: 'تم تأكيد بريدك بالفعل. اختر تسجيل الدخول أدناه.',
-  checkoutRequired: 'يمكنك تصفح المنتجات كزائر. تسجيل الدخول أو إنشاء الحساب مطلوب فقط عند إتمام الطلب.',
+  checkoutRequired:
+    'يمكنك تصفح المنتجات كزائر. تسجيل الدخول أو إنشاء الحساب مطلوب فقط عند إتمام الطلب.',
   continueShoppingAsGuest: 'متابعة التسوق كزائر',
   verificationRequired: 'يجب تأكيد بريدك من الرابط المرسل ثم تسجيل الدخول مرة أخرى.',
   resetSent: 'إذا كان البريد مسجّلًا فستصلك تعليمات استعادة كلمة المرور.',
@@ -121,13 +122,14 @@ const fr: Translations<typeof en> = {
   verificationSent:
     "Firebase a accepté la demande d'envoi. Vérifiez la boîte de réception, les spams et les promotions. Si nécessaire, saisissez votre mot de passe pour demander un nouveau lien.",
   verificationResent:
-    "Un nouvel e-mail de vérification a été demandé. Vérifiez les spams et les promotions.",
+    'Un nouvel e-mail de vérification a été demandé. Vérifiez les spams et les promotions.',
   resendVerification: "Renvoyer l'e-mail de vérification",
   resendHint: 'Saisissez à nouveau votre mot de passe pour demander un nouveau lien.',
   resendWait: 'Attendez au moins une minute avant de demander un nouvel e-mail.',
   resendPasswordRequired: 'Saisissez votre mot de passe pour renvoyer le lien.',
   alreadyVerified: 'Votre adresse est déjà vérifiée. Connectez-vous ci-dessous.',
-  checkoutRequired: 'Vous pouvez parcourir la boutique sans compte. Connectez-vous uniquement pour commander.',
+  checkoutRequired:
+    'Vous pouvez parcourir la boutique sans compte. Connectez-vous uniquement pour commander.',
   continueShoppingAsGuest: 'Continuer les achats en invité',
   verificationRequired: 'Confirmez votre e-mail avec le lien envoyé, puis reconnectez-vous.',
   resetSent: 'Si ce compte existe, un message de réinitialisation a été envoyé.',
