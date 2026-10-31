@@ -14,13 +14,7 @@ type Props = {
   onMarketing: (accepted: boolean) => void;
 };
 
-export function EmailSignupLegal({
-  legal,
-  legalAccepted,
-  marketing,
-  onLegal,
-  onMarketing,
-}: Props) {
+export function EmailSignupLegal({ legal, legalAccepted, marketing, onLegal, onMarketing }: Props) {
   const { t } = useTranslation('auth');
 
   return (
