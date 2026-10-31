@@ -91,6 +91,7 @@ describe('payments', () => {
   it.each([
     ['https://pay.example.test/s/1', 'https://pay.example.test/s/1'],
     ['http://pay.example.test/s/1', null],
+    ['https://user:password@pay.example.test/s/1', null],
     ['javascript:alert(1)', null],
     ['intent://pay#Intent;end', null],
     ['not a url', null],
