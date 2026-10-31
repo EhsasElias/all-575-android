@@ -16,6 +16,8 @@ type ConsentFormProps = {
   channel: Channel;
   verify: Progress;
   onAccept: (consent: ConsentChoice) => void;
+  /** A provisional signup choice, confirmed by the customer on this screen. */
+  initialMarketing?: boolean;
 };
 
 type Missing = { terms: boolean; privacy: boolean };
@@ -26,11 +28,12 @@ export function ConsentForm({
   channel,
   verify,
   onAccept,
+  initialMarketing = false,
 }: ConsentFormProps) {
   const { t } = useTranslation('auth');
   const [terms, setTerms] = useState(false);
   const [privacy, setPrivacy] = useState(false);
-  const [marketing, setMarketing] = useState(false);
+  const [marketing, setMarketing] = useState(initialMarketing);
   const [missing, setMissing] = useState<Missing>({ terms: false, privacy: false });
   const termsRef = useRef<HTMLInputElement>(null);
   const privacyRef = useRef<HTMLInputElement>(null);
