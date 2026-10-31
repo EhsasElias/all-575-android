@@ -14,8 +14,9 @@ export function getFirebaseAuth() {
     throw new Error('Firebase web app configuration is missing');
   }
 
-  const app = getApps().find((candidate) => candidate.name === 'market575-customer')
-    ?? initializeApp(config, 'market575-customer');
+  const app =
+    getApps().find((candidate) => candidate.name === 'market575-customer') ??
+    initializeApp(config, 'market575-customer');
 
   return getAuth(app);
 }
