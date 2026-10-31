@@ -1,24 +1,25 @@
-import { useTranslation } from 'react-i18next';
+import { Trans, useTranslation } from 'react-i18next';
 import { Link } from 'react-router';
 import { routePaths } from '@/shared/lib';
 import { ErrorState, Skeleton } from '@/shared/ui';
+import { ConsentCheckbox } from './ConsentCheckbox';
 import type { ConsentVersions } from './useConsentVersions';
 import styles from './EmailPasswordAccess.module.css';
 
 type Props = {
   legal: ConsentVersions;
-  termsAccepted: boolean;
-  privacyAccepted: boolean;
-  onTerms: (accepted: boolean) => void;
-  onPrivacy: (accepted: boolean) => void;
+  legalAccepted: boolean;
+  marketing: boolean;
+  onLegal: (accepted: boolean) => void;
+  onMarketing: (accepted: boolean) => void;
 };
 
 export function EmailSignupLegal({
   legal,
-  termsAccepted,
-  privacyAccepted,
-  onTerms,
-  onPrivacy,
+  legalAccepted,
+  marketing,
+  onLegal,
+  onMarketing,
 }: Props) {
   const { t } = useTranslation('auth');
 
@@ -28,29 +29,31 @@ export function EmailSignupLegal({
       {legal.status === 'error' && <ErrorState headingLevel={3} onRetry={legal.retry} />}
       {legal.status === 'ready' && (
         <>
-          <label>
-            <input
-              type="checkbox"
-              checked={termsAccepted}
-              onChange={(event) => {
-                onTerms(event.target.checked);
+          <ConsentCheckbox
+            checked={legalAccepted}
+            onChange={onLegal}
+            hint={t('emailPassword.legalVersions', {
+              terms: legal.versions.terms,
+              privacy: legal.versions.privacy,
+            })}
+          >
+            <Trans
+              t={t}
+              i18nKey="emailPassword.agreeLegal"
+              components={{
+                termsLink: <Link to={routePaths.terms} />,
+                privacyLink: <Link to={routePaths.privacy} />,
               }}
             />
-            {t('emailPassword.agreeTerms')}{' '}
-            <Link to={routePaths.terms}>{t('emailPassword.terms')}</Link> ({legal.versions.terms})
-          </label>
-          <label>
-            <input
-              type="checkbox"
-              checked={privacyAccepted}
-              onChange={(event) => {
-                onPrivacy(event.target.checked);
-              }}
-            />
-            {t('emailPassword.agreePrivacy')}{' '}
-            <Link to={routePaths.privacy}>{t('emailPassword.privacy')}</Link> (
-            {legal.versions.privacy})
-          </label>
+            <span className={styles.required}>{t('emailPassword.required')}</span>
+          </ConsentCheckbox>
+          <ConsentCheckbox
+            checked={marketing}
+            onChange={onMarketing}
+            hint={t('emailPassword.marketingHint')}
+          >
+            {t('emailPassword.marketingOptional')}
+          </ConsentCheckbox>
         </>
       )}
     </div>
