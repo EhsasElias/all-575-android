@@ -1,15 +1,67 @@
-.day {
-  padding: 0;
-  margin-block-end: var(--space-2);
-  font-weight: var(--font-weight-bold);
-}
-
-.grid {
+.calendar {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(11rem, 1fr));
-  gap: var(--space-2);
+  gap: var(--space-3);
+  padding: var(--space-3);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+  background: var(--color-surface);
 }
-
+.label { margin: 0; font-weight: var(--font-weight-bold); }
+.monthHeader {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-2);
+  padding: var(--space-2);
+  background: var(--color-surface-mint);
+  border-radius: var(--radius-md);
+}
+.navButton {
+  min-inline-size: var(--size-target);
+  min-block-size: var(--size-target);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+  background: var(--color-surface);
+  color: var(--color-text);
+  font-size: 1.5rem;
+  cursor: pointer;
+}
+.navButton:disabled { opacity: .35; cursor: not-allowed; }
+.calendarGrid {
+  display: grid;
+  grid-template-columns: repeat(7, minmax(0, 1fr));
+  gap: .25rem;
+}
+.weekday { text-align: center; color: var(--color-text-muted); font-size: var(--font-size-small); }
+.calendarDay {
+  display: grid;
+  place-items: center;
+  position: relative;
+  min-inline-size: 0;
+  min-block-size: var(--size-target);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+  background: var(--color-surface);
+  color: var(--color-text);
+  cursor: pointer;
+}
+.calendarDay:disabled { opacity: .3; cursor: not-allowed; }
+.calendarDay[data-selected='true'] {
+  border-color: var(--color-brand);
+  background: var(--color-surface-mint);
+  font-weight: var(--font-weight-bold);
+  box-shadow: inset 0 0 0 1px var(--color-brand);
+}
+.dayDot {
+  position: absolute;
+  inset-block-end: .2rem;
+  inline-size: .3rem;
+  block-size: .3rem;
+  background: var(--color-brand);
+  border-radius: 50%;
+}
+.dayLabel { margin: 0; color: var(--color-text-muted); }
+.grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(11rem, 1fr)); gap: var(--space-2); }
 .slot {
   position: relative;
   display: flex;
@@ -24,8 +76,6 @@
   background: var(--color-surface);
   cursor: pointer;
 }
-
-/* The radio itself is hidden; the whole chip is the control and shows the selection with a border and a check. */
 .input {
   position: absolute;
   inset: 0;
@@ -35,50 +85,18 @@
   opacity: 0;
   cursor: inherit;
 }
-
 .slot:has(.input:checked) {
   border-color: var(--color-brand);
   background: var(--color-surface-mint);
   box-shadow: inset 0 0 0 1px var(--color-brand);
 }
-
-.slot:has(.input:focus-visible) {
+.slot:has(.input:focus-visible), .calendarDay:focus-visible, .navButton:focus-visible {
   outline: 3px solid var(--color-focus);
   outline-offset: 2px;
 }
-
-.slot[data-full='true'] {
-  border-style: dashed;
-  background: var(--color-surface-sunken);
-  cursor: not-allowed;
-}
-
-.times {
-  display: inline-flex;
-  align-items: center;
-  gap: var(--space-1);
-  font-weight: var(--font-weight-strong);
-}
-
-/* A check mark joins the border, so the selection is not shown by color alone. */
-.check {
-  display: none;
-  color: var(--color-brand-text);
-}
-
-.slot:has(.input:checked) .check {
-  display: block;
-}
-
-.slot[data-full='true'] .times {
-  color: var(--color-text-muted);
-}
-
-.full {
-  display: inline-flex;
-  align-items: center;
-  gap: var(--space-1);
-  color: var(--color-text-muted);
-  font-size: var(--font-size-small);
-  font-weight: var(--font-weight-strong);
-}
+.slot[data-full='true'] { border-style: dashed; background: var(--color-surface-sunken); cursor: not-allowed; }
+.times { display: inline-flex; align-items: center; gap: var(--space-1); font-weight: var(--font-weight-strong); }
+.check { display: none; color: var(--color-brand-text); }
+.slot:has(.input:checked) .check { display: block; }
+.slot[data-full='true'] .times { color: var(--color-text-muted); }
+.full { display: inline-flex; align-items: center; gap: var(--space-1); color: var(--color-text-muted); font-size: var(--font-size-small); font-weight: var(--font-weight-strong); }
