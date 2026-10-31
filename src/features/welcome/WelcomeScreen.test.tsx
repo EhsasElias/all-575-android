@@ -188,7 +188,9 @@ describe('Welcome navigation', () => {
     const { router } = await renderApp({ route: '/welcome?next=%2Fsign-in' });
 
     expect(screen.getByRole('link', { name: 'Skip' })).toHaveAttribute('href', '/home');
-    await user.click(within(screen.getByRole('main')).getAllByRole('button', { name: EN.cta })[1] ?? document.body);
+    await user.click(
+      within(screen.getByRole('main')).getAllByRole('button', { name: EN.cta })[1] ?? document.body,
+    );
 
     expect(router.state.location.pathname).toBe('/home');
     expect(router.state.location.search).toBe('');
