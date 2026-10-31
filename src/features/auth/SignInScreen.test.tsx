@@ -142,9 +142,7 @@ describe('Sign in: the code step', () => {
       await user.click(screen.getByRole('button', { name: 'Use mobile number instead' }));
       const phone = screen.getByLabelText('Mobile number');
       expect(phone).toHaveAttribute('type', 'tel');
-      expect(phone).toHaveAccessibleDescription(
-        'A Saudi mobile number, for example 0512345678.',
-      );
+      expect(phone).toHaveAccessibleDescription('A Saudi mobile number, for example 0512345678.');
     },
   );
 });
