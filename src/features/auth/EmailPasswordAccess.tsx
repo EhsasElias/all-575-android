@@ -8,16 +8,15 @@ import {
   signOut,
 } from 'firebase/auth';
 import { useTranslation } from 'react-i18next';
-import { Link } from 'react-router';
 import { errorCode, http, isApiError, type Data, type Schemas } from '@/shared/api';
 import { getFirebaseAuth } from '@/shared/firebase/firebase';
-import { routePaths } from '@/shared/lib';
 import { useSession } from '@/shared/session';
 import { Button, ErrorState, Skeleton, TextField, useToast } from '@/shared/ui';
 import { ConsentForm } from './ConsentForm';
 import { SignInSteps } from './SignInSteps';
 import { currentDeviceName } from './deviceName';
 import { failureKey } from './emailPasswordFailure';
+import { EmailSignupLegal } from './EmailSignupLegal';
 import { useConsentVersions } from './useConsentVersions';
 import type { ConsentChoice } from './authApi';
 import styles from './StepLayout.module.css';
@@ -177,7 +176,9 @@ export function EmailPasswordAccess({ createAccount }: Props) {
   if (useOtp) {
     return (
       <div className={styles.step}>
-        <Button variant="ghost" onClick={() => setUseOtp(false)}>
+        <Button variant="ghost" onClick={() => {
+          setUseOtp(false);
+        }}>
           {t('emailPassword.backToEmail')}
         </Button>
         <SignInSteps />
@@ -228,7 +229,9 @@ export function EmailPasswordAccess({ createAccount }: Props) {
           dir="ltr"
           required
           value={email}
-          onChange={(event) => setEmail(event.target.value)}
+          onChange={(event) => {
+            setEmail(event.target.value);
+          }}
         />
         <TextField
           name="password"
@@ -238,38 +241,19 @@ export function EmailPasswordAccess({ createAccount }: Props) {
           minLength={createAccount ? 12 : undefined}
           required
           value={password}
-          onChange={(event) => setPassword(event.target.value)}
+          onChange={(event) => {
+            setPassword(event.target.value);
+          }}
           hint={createAccount ? t('emailPassword.passwordHint') : undefined}
         />
         {createAccount && (
-          <div className={formStyles.legal}>
-            {legal.status === 'loading' && <Skeleton height="3rem" />}
-            {legal.status === 'error' && <ErrorState headingLevel={3} onRetry={legal.retry} />}
-            {legal.status === 'ready' && (
-              <>
-                <label>
-                  <input
-                    type="checkbox"
-                    checked={termsAccepted}
-                    onChange={(event) => setTermsAccepted(event.target.checked)}
-                  />
-                  {t('emailPassword.agreeTerms')}{' '}
-                  <Link to={routePaths.terms}>{t('emailPassword.terms')}</Link> (
-                  {legal.versions.terms})
-                </label>
-                <label>
-                  <input
-                    type="checkbox"
-                    checked={privacyAccepted}
-                    onChange={(event) => setPrivacyAccepted(event.target.checked)}
-                  />
-                  {t('emailPassword.agreePrivacy')}{' '}
-                  <Link to={routePaths.privacy}>{t('emailPassword.privacy')}</Link> (
-                  {legal.versions.privacy})
-                </label>
-              </>
-            )}
-          </div>
+          <EmailSignupLegal
+            legal={legal}
+            termsAccepted={termsAccepted}
+            privacyAccepted={privacyAccepted}
+            onTerms={setTermsAccepted}
+            onPrivacy={setPrivacyAccepted}
+          />
         )}
         {failure && (
           <p role="alert" className={styles.alert}>
@@ -298,7 +282,9 @@ export function EmailPasswordAccess({ createAccount }: Props) {
       )}
       <div className={formStyles.alternative}>
         <span>{t('emailPassword.or')}</span>
-        <Button variant="secondary" fullWidth onClick={() => setUseOtp(true)}>
+        <Button variant="secondary" fullWidth onClick={() => {
+            setUseOtp(true);
+          }}>
           {t('emailPassword.useOtp')}
         </Button>
       </div>
