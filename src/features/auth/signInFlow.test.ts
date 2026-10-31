@@ -75,8 +75,9 @@ describe('dropExpired', () => {
 describe('the sign-in kept in memory', () => {
   beforeEach(forgetFlow);
 
-  it('starts empty', () => {
+  it('starts with an empty email field by default', () => {
     expect(recallFlow(NOW)).toBe(INITIAL_FLOW);
+    expect(INITIAL_FLOW).toMatchObject({ step: 'contact', contact: { channel: 'email', destination: '' } });
   });
 
   it('gives back what was remembered while the code is valid, and nothing after', () => {
