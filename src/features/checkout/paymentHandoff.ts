@@ -8,7 +8,9 @@ export function safeProviderUrl(raw: string | null | undefined): string | null {
   if (!raw) return null;
   try {
     const url = new URL(raw);
-    return url.protocol === 'https:' ? url.href : null;
+    return url.protocol === 'https:' && url.username === '' && url.password === ''
+      ? url.href
+      : null;
   } catch {
     return null;
   }

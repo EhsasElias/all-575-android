@@ -5,6 +5,8 @@ React 19 and TypeScript, built with Vite, wrapped by Capacitor for Android. Arab
 
 ## The two repositories
 
+This frontend also runs as the customer website, sharing the same Laravel backend with Android. See [Web deployment and security](docs/customer/WEB_SECURITY.md) for the HTTPS/Nginx configuration and release checks.
+
 |                                       | Repository                                                                              | Branch |
 | ------------------------------------- | --------------------------------------------------------------------------------------- | ------ |
 | **Front end** (this repo)             | [EhsasElias/all-575-android](https://github.com/EhsasElias/all-575-android)             | `v2`   |

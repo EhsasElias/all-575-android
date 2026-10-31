@@ -1,0 +1,24 @@
+# Review paths/certificates, install nginx-security.conf, then nginx -t before reloading.
+server {
+    listen 80;
+    server_name market575.com;
+    return 301 https://market575.com$request_uri;
+}
+
+server {
+    listen 443 ssl;
+    server_name market575.com;
+    ssl_certificate /etc/letsencrypt/live/market575.com/fullchain.pem;
+    ssl_certificate_key /etc/letsencrypt/live/market575.com/privkey.pem;
+    ssl_protocols TLSv1.2 TLSv1.3;
+    root /var/www/market575/site;
+    index index.html;
+    include /etc/nginx/snippets/market575-security.conf;
+
+    # Only the built dist contents belong in the document root, never the repository or .env.
+    location ~ /\. { deny all; }
+    location = /api { return 404; }
+    location /api/ { return 404; }
+    location /assets/ { try_files $uri =404; }
+    location / { try_files $uri $uri/ /index.html; }
+}

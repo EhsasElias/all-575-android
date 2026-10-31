@@ -3,6 +3,7 @@ import { ApiError, createApiError } from './api-error';
 import type { RequestTrace, RequestTracer } from './requestTrace';
 import { describeFailure, describeReply } from './traceDetails';
 import { readToken, type TokenStore } from './token-store';
+import { buildRequestUrl } from './requestUrl';
 
 const DEFAULT_TIMEOUT_MS = 15_000;
 const TIMEOUT = Symbol('timeout');
@@ -45,16 +46,6 @@ export type HttpClientConfig = {
 };
 
 type RawResponse<Body> = { response: Response; body: Body };
-
-function buildUrl(baseUrl: string, path: string, query: RequestOptions['query']): string {
-  const url = `${baseUrl.replace(/\/+$/, '')}/${path.replace(/^\/+/, '')}`;
-  const params = new URLSearchParams();
-  for (const [key, value] of Object.entries(query ?? {})) {
-    if (value !== undefined) params.set(key, String(value));
-  }
-  const search = params.toString();
-  return search ? `${url}?${search}` : url;
-}
 
 function parseJson(text: string): unknown {
   if (text === '') return undefined;
@@ -99,7 +90,14 @@ async function sendWithTimeout<Body>(
   callerSignal?.addEventListener('abort', forwardAbort, { once: true });
 
   try {
-    const response = await fetchFn(url, { ...init, signal: controller.signal });
+    const response = await fetchFn(url, {
+      ...init,
+      signal: controller.signal,
+      credentials: 'omit',
+      redirect: 'error',
+      cache: 'no-store',
+      referrerPolicy: 'no-referrer',
+    });
     return { response, body: await readBody(response) };
   } catch (error) {
     if (controller.signal.reason === TIMEOUT) {
@@ -156,7 +154,7 @@ export function createHttpClient(config: HttpClientConfig): HttpClient {
     trace?.sending();
     const { response, body: text } = await sendWithTimeout(
       fetchFn,
-      buildUrl(config.baseUrl, path, options.query),
+      buildRequestUrl(config.baseUrl, path, options.query),
       { method, headers, ...(hasBody ? { body: JSON.stringify(options.body) } : {}) },
       options.timeoutMs ?? defaultTimeoutMs,
       options.signal,
@@ -185,7 +183,7 @@ export function createHttpClient(config: HttpClientConfig): HttpClient {
     headers.set('Accept', '*/*');
     const { response, body: blob } = await sendWithTimeout(
       fetchFn,
-      buildUrl(config.baseUrl, path, options.query),
+      buildRequestUrl(config.baseUrl, path, options.query),
       { method: 'GET', headers },
       options.timeoutMs ?? defaultTimeoutMs,
       options.signal,
