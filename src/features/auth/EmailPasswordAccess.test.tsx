@@ -58,7 +58,9 @@ describe('feature-gated Firebase email access', () => {
     installFakeApi({ 'GET /store': 'offline' });
     await renderApp({ route: '/create-account', seenWelcome: true });
 
-    expect(await screen.findByRole('checkbox', { name: /I agree to the.*Required/ })).toBeDisabled();
+    expect(
+      await screen.findByRole('checkbox', { name: /I agree to the.*Required/ }),
+    ).toBeDisabled();
     expect(screen.getByRole('checkbox', { name: /offers and product updates/i })).toBeEnabled();
     expect(screen.getByRole('link', { name: 'Terms of Use' })).toBeVisible();
     expect(screen.getByRole('link', { name: 'Privacy Policy' })).toBeVisible();
