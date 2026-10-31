@@ -29,7 +29,7 @@ const en = {
   accountConflict: 'This email needs to be linked to an existing account. Contact support.',
   notReady: 'Email login is not ready yet. Please use one-time code sign-in.',
   tryAgain: 'We could not complete sign-in. Check your connection and try again.',
-  };
+};
 
 const ar: Translations<typeof en> = {
   introSignIn: 'سجّل الدخول بالبريد الإلكتروني وكلمة المرور، أو اختر رمز التحقق إذا رغبت.',
@@ -60,7 +60,7 @@ const ar: Translations<typeof en> = {
   accountConflict: 'يجب ربط هذا البريد بحساب موجود. تواصل مع الدعم.',
   notReady: 'الدخول بالبريد غير متاح حاليًا. استخدم رمز التحقق.',
   tryAgain: 'تعذّر إكمال تسجيل الدخول. تحقق من الاتصال وحاول مرة أخرى.',
-  };
+};
 
 const fr: Translations<typeof en> = {
   introSignIn:
@@ -75,8 +75,7 @@ const fr: Translations<typeof en> = {
   or: 'Ou une autre méthode',
   useOtp: 'Utiliser un code unique (OTP)',
   backToEmail: 'Retour à e-mail et mot de passe',
-  verificationSent:
-    'Vérifiez votre boîte mail et confirmez votre adresse avant de vous connecter.',
+  verificationSent: 'Vérifiez votre boîte mail et confirmez votre adresse avant de vous connecter.',
   verificationRequired: 'Confirmez votre e-mail avec le lien envoyé, puis reconnectez-vous.',
   resetSent: 'Si ce compte existe, un message de réinitialisation a été envoyé.',
   invalidCredentials: 'E-mail ou mot de passe incorrect.',
@@ -94,6 +93,6 @@ const fr: Translations<typeof en> = {
   accountConflict: 'Cette adresse doit être liée à un compte existant. Contactez le support.',
   notReady: 'La connexion par e-mail est indisponible. Utilisez un code OTP.',
   tryAgain: 'Connexion impossible. Vérifiez votre connexion et réessayez.',
-  };
+};
 
 export const emailPasswordLocales = { en, ar, fr };
