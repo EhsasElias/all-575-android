@@ -29,7 +29,7 @@ export type FlowAction =
 
 export const INITIAL_FLOW: FlowState = {
   step: 'contact',
-  contact: { channel: 'phone', destination: '' },
+  contact: { channel: 'email', destination: '' },
   previous: null,
 };
 

@@ -216,6 +216,7 @@ describe('Sign in: a new customer', () => {
     const user = userEvent.setup();
     newCustomerApi();
     await renderApp({ route: '/sign-in', seenWelcome: true, language: 'ar' });
+    await user.click(screen.getByRole('button', { name: 'استخدم رقم الجوال بدلًا من ذلك' }));
     await user.type(screen.getByLabelText('رقم الجوال'), '0512345678');
     await user.click(screen.getByRole('button', { name: 'إرسال الرمز' }));
     await user.type(await screen.findByLabelText('رمز التحقق (6 أرقام)'), CODE);

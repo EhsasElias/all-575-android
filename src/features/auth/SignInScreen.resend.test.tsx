@@ -129,6 +129,7 @@ describe('Sign in: asking for a new code', () => {
     installFakeApi({ 'POST /auth/otp/request': issuedChallenge });
     await renderApp({ route: '/sign-in', seenWelcome: true, language: 'ar' });
 
+    await user.click(screen.getByRole('button', { name: 'استخدم رقم الجوال بدلًا من ذلك' }));
     await user.type(screen.getByLabelText('رقم الجوال'), '0512345678');
     await user.click(screen.getByRole('button', { name: 'إرسال الرمز' }));
 
@@ -196,16 +197,13 @@ describe('Sign in: changing the number', () => {
   });
 });
 
-describe('Sign in: email instead of a mobile number', () => {
-  it('switches the field, checks the address and sends the code by email', async () => {
+describe('Sign in: email first, mobile optional', () => {
+  it('validates the default email field and sends the code by email', async () => {
     const user = userEvent.setup();
     const api = installFakeApi({ 'POST /auth/otp/request': issuedChallenge });
     await renderApp({ route: '/sign-in', seenWelcome: true });
 
-    await user.click(screen.getByRole('button', { name: 'Use email instead' }));
-
     const field = screen.getByLabelText('Email address');
-    expect(field).toHaveFocus();
     expect(field).toHaveAttribute('type', 'email');
     expect(field).toHaveAttribute('autocomplete', 'email');
     expect(screen.queryByLabelText('Mobile number')).not.toBeInTheDocument();
@@ -229,8 +227,6 @@ describe('Sign in: email instead of a mobile number', () => {
   it('can switch back to the mobile number', async () => {
     const user = userEvent.setup();
     await renderApp({ route: '/sign-in', seenWelcome: true });
-    await user.click(screen.getByRole('button', { name: 'Use email instead' }));
-
     await user.click(screen.getByRole('button', { name: 'Use mobile number instead' }));
 
     expect(screen.getByLabelText('Mobile number')).toHaveFocus();
