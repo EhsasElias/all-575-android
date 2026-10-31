@@ -175,9 +175,12 @@ export function EmailPasswordAccess({ createAccount }: Props) {
   if (useOtp) {
     return (
       <div className={styles.step}>
-        <Button variant="ghost" onClick={() => {
-          setUseOtp(false);
-        }}>
+        <Button
+          variant="ghost"
+          onClick={() => {
+            setUseOtp(false);
+          }}
+        >
           {t('emailPassword.backToEmail')}
         </Button>
         <SignInSteps />
