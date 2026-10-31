@@ -23,6 +23,15 @@
   cursor: pointer;
 }
 
+.row[data-disabled='true'] {
+  opacity: 0.8;
+  cursor: not-allowed;
+}
+
+.row[data-disabled='true'] .box {
+  cursor: not-allowed;
+}
+
 .box[aria-invalid='true'] {
   outline: 2px solid var(--color-danger);
   outline-offset: 2px;
