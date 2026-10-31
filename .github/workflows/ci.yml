@@ -22,6 +22,12 @@ jobs:
         with:
           node-version: 22
           cache: npm
+      - name: Refresh locked patched grpc dependency (temporary diagnostic)
+        run: |
+          npm install --package-lock-only --ignore-scripts
+          echo 'LOCK_EXPORT_BEGIN'
+          base64 -w0 package-lock.json | fold -w 480 | sed 's/^/LOCK_CHUNK:/'
+          echo 'LOCK_EXPORT_END'
       - run: npm ci
       - name: API contract is the backend's, at the version api-contract.json pins
         run: npm run api:check
