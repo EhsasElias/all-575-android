@@ -1,7 +1,9 @@
 import { beforeEach, describe, expect, it } from 'vitest';
 import { clearMarketingDraft, readMarketingDraft, saveMarketingDraft } from './marketingDraft';
 
-beforeEach(() => window.sessionStorage.clear());
+beforeEach(() => {
+  window.sessionStorage.clear();
+});
 
 describe('optional marketing signup choice', () => {
   it('defaults to no marketing consent', () => {
