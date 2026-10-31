@@ -11,16 +11,15 @@ import { useTranslation } from 'react-i18next';
 import { errorCode, http, isApiError, type Data, type Schemas } from '@/shared/api';
 import { getFirebaseAuth } from '@/shared/firebase/firebase';
 import { useSession } from '@/shared/session';
-import { Button, ErrorState, Skeleton, TextField, useToast } from '@/shared/ui';
+import { Button, ErrorState, Skeleton, useToast } from '@/shared/ui';
 import { ConsentForm } from './ConsentForm';
 import { SignInSteps } from './SignInSteps';
 import { currentDeviceName } from './deviceName';
 import { failureKey } from './emailPasswordFailure';
-import { EmailSignupLegal } from './EmailSignupLegal';
+import { EmailPasswordForm } from './EmailPasswordForm';
 import { useConsentVersions } from './useConsentVersions';
 import type { ConsentChoice } from './authApi';
 import styles from './StepLayout.module.css';
-import formStyles from './EmailPasswordAccess.module.css';
 
 type LoginReply = {
   token: string;
@@ -213,81 +212,29 @@ export function EmailPasswordAccess({ createAccount }: Props) {
   }
 
   return (
-    <div className={styles.step}>
-      <form
-        className={styles.form}
-        onSubmit={(event) => {
-          void submit(event);
-        }}
-      >
-        <TextField
-          name="email"
-          type="email"
-          label={t('emailPassword.email')}
-          autoComplete="email"
-          autoCapitalize="none"
-          dir="ltr"
-          required
-          value={email}
-          onChange={(event) => {
-            setEmail(event.target.value);
-          }}
-        />
-        <TextField
-          name="password"
-          type="password"
-          label={t('emailPassword.password')}
-          autoComplete={createAccount ? 'new-password' : 'current-password'}
-          minLength={createAccount ? 12 : undefined}
-          required
-          value={password}
-          onChange={(event) => {
-            setPassword(event.target.value);
-          }}
-          hint={createAccount ? t('emailPassword.passwordHint') : undefined}
-        />
-        {createAccount && (
-          <EmailSignupLegal
-            legal={legal}
-            termsAccepted={termsAccepted}
-            privacyAccepted={privacyAccepted}
-            onTerms={setTermsAccepted}
-            onPrivacy={setPrivacyAccepted}
-          />
-        )}
-        {failure && (
-          <p role="alert" className={styles.alert}>
-            {failure}
-          </p>
-        )}
-        {notice && (
-          <p role="status" className={formStyles.notice}>
-            {notice}
-          </p>
-        )}
-        <Button type="submit" size="lg" fullWidth loading={pending}>
-          {t(createAccount ? 'emailPassword.register' : 'emailPassword.login')}
-        </Button>
-      </form>
-      {!createAccount && (
-        <Button
-          variant="ghost"
-          onClick={() => {
-            void resetPassword();
-          }}
-          disabled={pending}
-        >
-          {t('emailPassword.forgot')}
-        </Button>
-      )}
-      <div className={formStyles.alternative}>
-        <span>{t('emailPassword.or')}</span>
-        <Button variant="secondary" fullWidth onClick={() => {
-            setUseOtp(true);
-          }}>
-          {t('emailPassword.useOtp')}
-        </Button>
-      </div>
-    </div>
+    <EmailPasswordForm
+      createAccount={createAccount}
+      email={email}
+      password={password}
+      pending={pending}
+      failure={failure}
+      notice={notice}
+      legal={legal}
+      termsAccepted={termsAccepted}
+      privacyAccepted={privacyAccepted}
+      onEmail={setEmail}
+      onPassword={setPassword}
+      onTerms={setTermsAccepted}
+      onPrivacy={setPrivacyAccepted}
+      onSubmit={(event) => {
+        void submit(event);
+      }}
+      onReset={() => {
+        void resetPassword();
+      }}
+      onOtp={() => {
+        setUseOtp(true);
+      }}
+    />
   );
 }
