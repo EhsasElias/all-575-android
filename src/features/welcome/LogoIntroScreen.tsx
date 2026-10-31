@@ -22,9 +22,12 @@ export function LogoIntroScreen() {
     : welcomePath(params.get('next'));
 
   useEffect(() => {
-    const timer = window.setTimeout(() => {
-      void navigate(destination, { replace: true });
-    }, accountEntry ? ACCOUNT_INTRO_DURATION_MS : INTRO_DURATION_MS);
+    const timer = window.setTimeout(
+      () => {
+        void navigate(destination, { replace: true });
+      },
+      accountEntry ? ACCOUNT_INTRO_DURATION_MS : INTRO_DURATION_MS,
+    );
     return () => {
       window.clearTimeout(timer);
     };
