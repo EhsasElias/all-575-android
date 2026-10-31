@@ -35,7 +35,10 @@ describe('feature-gated Firebase email access', () => {
     const api = installFakeApi({ 'GET /store': { body: { data: testStore } } });
     await renderApp({ route: '/create-account', seenWelcome: true });
 
-    await user.type(await screen.findByRole('textbox', { name: 'Email address' }), 'new@example.com');
+    await user.type(
+      await screen.findByRole('textbox', { name: 'Email address' }),
+      'new@example.com',
+    );
     await user.type(screen.getByLabelText('Password'), 'long-secure-password-2026');
     await user.click(screen.getByRole('button', { name: 'Create account' }));
 
