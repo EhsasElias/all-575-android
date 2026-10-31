@@ -27,9 +27,11 @@ const MAX_BADGE = 99;
 type BottomNavProps = {
   /** Small counters on a tab, such as the number of items in the cart. */
   badges?: Partial<Record<TabId, number>>;
+  /** Guest account taps show the brand briefly before the sign-in form. */
+  guest?: boolean;
 };
 
-export function BottomNav({ badges = {} }: BottomNavProps) {
+export function BottomNav({ badges = {}, guest = false }: BottomNavProps) {
   const { t } = useTranslation();
   const { language } = useLanguage();
 
@@ -50,7 +52,7 @@ export function BottomNav({ badges = {} }: BottomNavProps) {
           return (
             <li key={tab.id} className={styles.item}>
               <NavLink
-                to={tab.to}
+                to={guest && tab.id === 'account' ? '/welcome/logo?mode=account' : tab.to}
                 aria-label={accessibleName}
                 className={({ isActive }) => cx(styles.link, isActive && styles.active)}
               >
