@@ -183,11 +183,11 @@ describe('Welcome navigation', () => {
     expect(hasSeenWelcome()).toBe(true);
   });
 
-  it('does not send the Shop Now button or Skip to an old sign-in link', async () => {
+  it('always sends Shop Now to Home while Skip preserves an explicit destination', async () => {
     const user = userEvent.setup();
     const { router } = await renderApp({ route: '/welcome?next=%2Fsign-in' });
 
-    expect(screen.getByRole('link', { name: 'Skip' })).toHaveAttribute('href', '/home');
+    expect(screen.getByRole('link', { name: 'Skip' })).toHaveAttribute('href', '/sign-in');
     await user.click(
       within(screen.getByRole('main')).getAllByRole('button', { name: EN.cta })[1] ?? document.body,
     );
