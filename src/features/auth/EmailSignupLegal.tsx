@@ -37,8 +37,7 @@ export function EmailSignupLegal({
               }}
             />
             {t('emailPassword.agreeTerms')}{' '}
-            <Link to={routePaths.terms}>{t('emailPassword.terms')}</Link> (
-            {legal.versions.terms})
+            <Link to={routePaths.terms}>{t('emailPassword.terms')}</Link> ({legal.versions.terms})
           </label>
           <label>
             <input
