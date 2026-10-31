@@ -14,7 +14,7 @@
     "typecheck": "tsc -b",
     "lint": "eslint .",
     "format": "prettier --write .",
-    "format:check": "prettier --write src/features/auth/EmailPasswordAccess.tsx src/features/auth/emailPasswordFailure.ts src/features/auth/emailPasswordLocales.ts src/features/auth/EmailSignupLegal.tsx && git diff -- src/features/auth/EmailPasswordAccess.tsx src/features/auth/emailPasswordFailure.ts src/features/auth/emailPasswordLocales.ts src/features/auth/EmailSignupLegal.tsx && exit 1",
+    "format:check": "prettier --check .",
     "test": "vitest run",
     "test:watch": "vitest",
     "test:e2e": "playwright test",
