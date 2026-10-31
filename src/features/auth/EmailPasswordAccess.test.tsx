@@ -24,7 +24,8 @@ describe('feature-gated Firebase email access', () => {
     expect(screen.queryByLabelText('Mobile number')).not.toBeInTheDocument();
 
     await user.click(screen.getByRole('button', { name: 'Use one-time code (OTP)' }));
-    expect(await screen.findByLabelText('Mobile number')).toBeVisible();
+    expect(await screen.findByLabelText('Email address')).toBeVisible();
+    expect(screen.queryByLabelText('Mobile number')).not.toBeInTheDocument();
 
     await user.click(screen.getByRole('button', { name: 'Back to email and password' }));
     expect(await screen.findByRole('textbox', { name: 'Email address' })).toBeVisible();
