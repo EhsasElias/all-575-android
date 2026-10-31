@@ -14,7 +14,7 @@
     "typecheck": "tsc -b",
     "lint": "eslint .",
     "format": "prettier --write .",
-    "format:check": "prettier --write src/features/auth/EmailPasswordAccess.verification.test.tsx src/features/auth/resendEmailVerification.ts && git diff -- src/features/auth/EmailPasswordAccess.verification.test.tsx src/features/auth/resendEmailVerification.ts && exit 1",
+    "format:check": "prettier --check .",
     "test": "vitest run",
     "test:watch": "vitest",
     "test:e2e": "playwright test",
