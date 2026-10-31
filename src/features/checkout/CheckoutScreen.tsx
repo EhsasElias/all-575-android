@@ -110,6 +110,7 @@ export function CheckoutScreen() {
         onRetry={slots.refresh}
         selectedId={slot?.id ?? null}
         onSelect={changing(slots.choose)}
+        onClearSelection={() => { order.dismiss(); slots.clearChoice(); }}
       />
       <OrderSummary flow={quoteFlow} addressId={addressId} zone={zone} change={change} />
       <details>
