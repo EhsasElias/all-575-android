@@ -172,6 +172,28 @@ describe('Welcome navigation', () => {
     expect(screen.queryByRole('navigation', { name: 'Main navigation' })).not.toBeInTheDocument();
   });
 
+  it('ignores a saved registration destination when the logo is tapped to shop now', async () => {
+    const user = userEvent.setup();
+    const { router } = await renderApp({ route: '/welcome?next=%2Fcreate-account' });
+
+    await user.click(within(getHeader()).getByRole('button', { name: EN.cta }));
+
+    expect(router.state.location.pathname).toBe('/home');
+    expect(router.state.location.search).toBe('');
+    expect(hasSeenWelcome()).toBe(true);
+  });
+
+  it('does not send the Shop Now button or Skip to an old sign-in link', async () => {
+    const user = userEvent.setup();
+    const { router } = await renderApp({ route: '/welcome?next=%2Fsign-in' });
+
+    expect(screen.getByRole('link', { name: 'Skip' })).toHaveAttribute('href', '/home');
+    await user.click(within(screen.getByRole('main')).getAllByRole('button', { name: EN.cta })[1] ?? document.body);
+
+    expect(router.state.location.pathname).toBe('/home');
+    expect(router.state.location.search).toBe('');
+  });
+
   it('opens the shopping home from the logo, and remembers the welcome was seen', async () => {
     const user = userEvent.setup();
     const { router } = await renderApp({ route: '/welcome' });
