@@ -31,7 +31,19 @@ type LoginReply = {
 
 type Props = { createAccount: boolean };
 
-function failureKey(error: unknown): string {
+type FailureKey =
+  | 'emailPassword.accountConflict'
+  | 'failure.accountInactive'
+  | 'emailPassword.notReady'
+  | 'emailPassword.tryAgain'
+  | 'emailPassword.emailExists'
+  | 'emailPassword.invalidEmail'
+  | 'emailPassword.weakPassword'
+  | 'emailPassword.invalidCredentials'
+  | 'emailPassword.tooMany'
+  | 'failure.offline';
+
+function failureKey(error: unknown): FailureKey {
   if (isApiError(error)) {
     const code = errorCode(error);
     if (code === 'account_link_required') return 'emailPassword.accountConflict';
