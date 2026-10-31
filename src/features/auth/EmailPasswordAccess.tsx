@@ -1,5 +1,4 @@
 import { useState, type SubmitEvent } from 'react';
-import { FirebaseError } from 'firebase/app';
 import {
   createUserWithEmailAndPassword,
   getIdToken,
@@ -18,6 +17,7 @@ import { Button, ErrorState, Skeleton, TextField, useToast } from '@/shared/ui';
 import { ConsentForm } from './ConsentForm';
 import { SignInSteps } from './SignInSteps';
 import { currentDeviceName } from './deviceName';
+import { failureKey } from './emailPasswordFailure';
 import { useConsentVersions } from './useConsentVersions';
 import type { ConsentChoice } from './authApi';
 import styles from './StepLayout.module.css';
@@ -30,49 +30,6 @@ type LoginReply = {
 };
 
 type Props = { createAccount: boolean };
-
-type FailureKey =
-  | 'emailPassword.accountConflict'
-  | 'failure.accountInactive'
-  | 'emailPassword.notReady'
-  | 'emailPassword.tryAgain'
-  | 'emailPassword.emailExists'
-  | 'emailPassword.invalidEmail'
-  | 'emailPassword.weakPassword'
-  | 'emailPassword.invalidCredentials'
-  | 'emailPassword.tooMany'
-  | 'failure.offline';
-
-function failureKey(error: unknown): FailureKey {
-  if (isApiError(error)) {
-    const code = errorCode(error);
-    if (code === 'account_link_required') return 'emailPassword.accountConflict';
-    if (code === 'account_inactive') return 'failure.accountInactive';
-    if (code === 'firebase_unavailable') return 'emailPassword.notReady';
-    return 'emailPassword.tryAgain';
-  }
-  if (error instanceof FirebaseError) {
-    switch (error.code) {
-      case 'auth/email-already-in-use':
-        return 'emailPassword.emailExists';
-      case 'auth/invalid-email':
-        return 'emailPassword.invalidEmail';
-      case 'auth/weak-password':
-        return 'emailPassword.weakPassword';
-      case 'auth/invalid-credential':
-      case 'auth/wrong-password':
-      case 'auth/user-not-found':
-        return 'emailPassword.invalidCredentials';
-      case 'auth/too-many-requests':
-        return 'emailPassword.tooMany';
-      case 'auth/network-request-failed':
-        return 'failure.offline';
-      default:
-        return 'emailPassword.tryAgain';
-    }
-  }
-  return 'emailPassword.tryAgain';
-}
 
 /**
  * Firebase authenticates email/password. Only a confirmed Firebase email ID token
@@ -97,7 +54,7 @@ export function EmailPasswordAccess({ createAccount }: Props) {
   async function exchange(consents: ConsentChoice | null): Promise<void> {
     const auth = getFirebaseAuth();
     const currentUser = auth.currentUser;
-    if (currentUser === null || !currentUser.emailVerified) {
+    if (!currentUser?.emailVerified) {
       throw new Error('Verified Firebase email session required');
     }
 
