@@ -61,7 +61,7 @@ export function EmailSignupLegal({ legal, legalAccepted, marketing, onLegal, onM
       {legal.status === 'error' && (
         <div className={styles.legalStatus}>
           <p role="alert">{t('emailPassword.legalUnavailable')}</p>
-          <Button variant="ghost" size="sm" onClick={legal.retry}>
+          <Button variant="ghost" onClick={legal.retry}>
             {t('emailPassword.legalRetry')}
           </Button>
         </div>
