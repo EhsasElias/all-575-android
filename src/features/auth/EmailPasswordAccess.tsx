@@ -17,6 +17,7 @@ import { SignInSteps } from './SignInSteps';
 import { currentDeviceName } from './deviceName';
 import { failureKey } from './emailPasswordFailure';
 import { EmailPasswordForm } from './EmailPasswordForm';
+import { clearMarketingDraft, readMarketingDraft, saveMarketingDraft } from './marketingDraft';
 import { useConsentVersions } from './useConsentVersions';
 import type { ConsentChoice } from './authApi';
 import styles from './StepLayout.module.css';
@@ -42,8 +43,8 @@ export function EmailPasswordAccess({ createAccount }: Props) {
   const [useOtp, setUseOtp] = useState(false);
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
-  const [termsAccepted, setTermsAccepted] = useState(false);
-  const [privacyAccepted, setPrivacyAccepted] = useState(false);
+  const [legalAccepted, setLegalAccepted] = useState(false);
+  const [marketing, setMarketing] = useState(false);
   const [needsConsent, setNeedsConsent] = useState(false);
   const [pending, setPending] = useState(false);
   const [failure, setFailure] = useState('');
@@ -73,6 +74,7 @@ export function EmailPasswordAccess({ createAccount }: Props) {
     ).data;
 
     await session.signIn(data.token, data.user);
+    if (consents !== null) clearMarketingDraft(email);
     showToast({
       message: t(data.is_new_user ? 'welcome.newAccount' : 'welcome.returning'),
       variant: 'success',
@@ -102,7 +104,7 @@ export function EmailPasswordAccess({ createAccount }: Props) {
 
     setFailure('');
     setNotice('');
-    if (createAccount && (!termsAccepted || !privacyAccepted)) {
+    if (createAccount && !legalAccepted) {
       setFailure(t('emailPassword.acceptLegal'));
       return;
     }
@@ -120,6 +122,7 @@ export function EmailPasswordAccess({ createAccount }: Props) {
       const auth = getFirebaseAuth();
       if (createAccount) {
         const credential = await createUserWithEmailAndPassword(auth, email.trim(), password);
+        saveMarketingDraft(email, marketing);
         try {
           await sendEmailVerification(credential.user);
           setNotice(t('emailPassword.verificationSent'));
@@ -200,6 +203,7 @@ export function EmailPasswordAccess({ createAccount }: Props) {
             versions={legal.versions}
             versionsChanged={false}
             verify={{ pending, failure: null }}
+            initialMarketing={readMarketingDraft(email)}
             onAccept={(choice) => {
               void finish(choice);
             }}
@@ -223,12 +227,12 @@ export function EmailPasswordAccess({ createAccount }: Props) {
       failure={failure}
       notice={notice}
       legal={legal}
-      termsAccepted={termsAccepted}
-      privacyAccepted={privacyAccepted}
+      legalAccepted={legalAccepted}
+      marketing={marketing}
       onEmail={setEmail}
       onPassword={setPassword}
-      onTerms={setTermsAccepted}
-      onPrivacy={setPrivacyAccepted}
+      onLegal={setLegalAccepted}
+      onMarketing={setMarketing}
       onSubmit={(event) => {
         void submit(event);
       }}
