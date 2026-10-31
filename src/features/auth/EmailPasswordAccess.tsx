@@ -238,7 +238,9 @@ export function EmailPasswordAccess({ createAccount }: Props) {
             versions={legal.versions}
             versionsChanged={false}
             verify={{ pending, failure: null }}
-            onAccept={(choice) => { void finish(choice); }}
+            onAccept={(choice) => {
+              void finish(choice);
+            }}
           />
         )}
         {failure && <p role="alert" className={styles.alert}>{failure}</p>}
@@ -248,7 +250,12 @@ export function EmailPasswordAccess({ createAccount }: Props) {
 
   return (
     <div className={styles.step}>
-      <form className={styles.form} onSubmit={(event) => { void submit(event); }}>
+      <form
+        className={styles.form}
+        onSubmit={(event) => {
+          void submit(event);
+        }}
+      >
         <TextField
           name="email"
           type="email"
@@ -278,14 +285,24 @@ export function EmailPasswordAccess({ createAccount }: Props) {
             {legal.status === 'ready' && (
               <>
                 <label>
-                  <input type="checkbox" checked={termsAccepted} onChange={(event) => setTermsAccepted(event.target.checked)} />
-                  {t('emailPassword.agreeTerms')} <Link to={routePaths.terms}>{t('emailPassword.terms')}</Link>
-                  {' '}({legal.versions.terms})
+                  <input
+                    type="checkbox"
+                    checked={termsAccepted}
+                    onChange={(event) => setTermsAccepted(event.target.checked)}
+                  />
+                  {t('emailPassword.agreeTerms')}{' '}
+                  <Link to={routePaths.terms}>{t('emailPassword.terms')}</Link> (
+                  {legal.versions.terms})
                 </label>
                 <label>
-                  <input type="checkbox" checked={privacyAccepted} onChange={(event) => setPrivacyAccepted(event.target.checked)} />
-                  {t('emailPassword.agreePrivacy')} <Link to={routePaths.privacy}>{t('emailPassword.privacy')}</Link>
-                  {' '}({legal.versions.privacy})
+                  <input
+                    type="checkbox"
+                    checked={privacyAccepted}
+                    onChange={(event) => setPrivacyAccepted(event.target.checked)}
+                  />
+                  {t('emailPassword.agreePrivacy')}{' '}
+                  <Link to={routePaths.privacy}>{t('emailPassword.privacy')}</Link> (
+                  {legal.versions.privacy})
                 </label>
               </>
             )}
@@ -298,7 +315,13 @@ export function EmailPasswordAccess({ createAccount }: Props) {
         </Button>
       </form>
       {!createAccount && (
-        <Button variant="ghost" onClick={() => { void resetPassword(); }} disabled={pending}>
+        <Button
+          variant="ghost"
+          onClick={() => {
+            void resetPassword();
+          }}
+          disabled={pending}
+        >
           {t('emailPassword.forgot')}
         </Button>
       )}
