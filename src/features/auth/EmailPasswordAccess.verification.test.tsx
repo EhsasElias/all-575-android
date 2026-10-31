@@ -50,7 +50,9 @@ describe('email verification delivery and resend', () => {
   it('shows a resend option instead of attempting duplicate account creation', async () => {
     const user = await fillSignup();
     await user.click(screen.getByRole('button', { name: 'Create account' }));
-    expect(await screen.findByText(/Firebase accepted the verification email request/)).toBeVisible();
+    expect(
+      await screen.findByText(/Firebase accepted the verification email request/),
+    ).toBeVisible();
     expect(screen.getByRole('button', { name: 'Resend verification email' })).toBeVisible();
     expect(screen.queryByRole('checkbox', { name: /I agree to the.*Required/ })).toBeNull();
     expect(authMocks.create).toHaveBeenCalledTimes(1);
