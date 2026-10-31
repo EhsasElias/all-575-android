@@ -54,6 +54,16 @@ describe('feature-gated Firebase email access', () => {
     expect(legal).toBeChecked();
   });
 
+  it('keeps both checkboxes visible while legal versions are unavailable', async () => {
+    installFakeApi({ 'GET /store': 'offline' });
+    await renderApp({ route: '/create-account', seenWelcome: true });
+
+    expect(await screen.findByRole('checkbox', { name: /I agree to the.*Required/ })).toBeDisabled();
+    expect(screen.getByRole('checkbox', { name: /offers and product updates/i })).toBeEnabled();
+    expect(screen.getByRole('link', { name: 'Terms of Use' })).toBeVisible();
+    expect(screen.getByRole('link', { name: 'Privacy Policy' })).toBeVisible();
+  });
+
   it('requires legal acknowledgement before attempting registration', async () => {
     const user = userEvent.setup();
     const api = installFakeApi({ 'GET /store': { body: { data: testStore } } });
