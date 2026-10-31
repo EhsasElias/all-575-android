@@ -21,6 +21,7 @@ export function SignInScreen({ createAccount = false }: { createAccount?: boolea
   const { status } = useSession();
   const [searchParams] = useSearchParams();
   const emailLoginEnabled = import.meta.env.VITE_FIREBASE_AUTH_ENABLED === 'true';
+  const checkoutEntry = searchParams.get('next')?.startsWith('/checkout') ?? false;
 
   if (status === 'signed-in') {
     return <Navigate to={afterSignInPath(searchParams.get('next'))} replace />;
@@ -36,6 +37,9 @@ export function SignInScreen({ createAccount = false }: { createAccount?: boolea
             : access(createAccount ? 'createIntro' : 'signInIntro')}
         </p>
       </header>
+      {checkoutEntry && (
+        <p className={styles.intro}>{t('emailPassword.checkoutRequired')}</p>
+      )}
       {status === 'loading' ? (
         <div role="status" aria-busy="true" aria-label={t('loading')} className={styles.skeleton}>
           <Skeleton height="1.5rem" width="60%" />
@@ -57,7 +61,7 @@ export function SignInScreen({ createAccount = false }: { createAccount?: boolea
       </ButtonLink>
       {!createAccount && status === 'guest' && <BiometricSignIn />}
       <ButtonLink variant="ghost" to={routePaths.home} className={styles.guest}>
-        {t('continueAsGuest')}
+        {emailLoginEnabled ? t('emailPassword.continueShoppingAsGuest') : t('continueAsGuest')}
       </ButtonLink>
     </section>
   );
