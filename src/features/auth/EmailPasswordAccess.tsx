@@ -101,7 +101,8 @@ export function EmailPasswordAccess({ createAccount }: Props) {
       throw new Error('Verified Firebase email session required');
     }
 
-    const data = (await http.post<Data<LoginReply>>('/auth/firebase/login', {
+    const data = (
+      await http.post<Data<LoginReply>>('/auth/firebase/login', {
       id_token: await getIdToken(currentUser),
       device_name: currentDeviceName(),
       ...(consents === null
@@ -113,7 +114,8 @@ export function EmailPasswordAccess({ createAccount }: Props) {
               marketing: consents.marketing,
             },
           }),
-    })).data;
+      })
+    ).data;
 
     await session.signIn(data.token, data.user);
     showToast({
