@@ -43,4 +43,3 @@ export function failureKey(error: unknown): FailureKey {
   }
   return 'emailPassword.tryAgain';
 }
-
