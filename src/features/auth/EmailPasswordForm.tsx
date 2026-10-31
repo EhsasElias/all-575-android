@@ -68,7 +68,9 @@ export function EmailPasswordForm({
           name="password"
           type="password"
           label={t('emailPassword.password')}
-          autoComplete={createAccount && !verificationRequested ? 'new-password' : 'current-password'}
+          autoComplete={
+            createAccount && !verificationRequested ? 'new-password' : 'current-password'
+          }
           minLength={createAccount && !verificationRequested ? 12 : undefined}
           required
           value={password}
