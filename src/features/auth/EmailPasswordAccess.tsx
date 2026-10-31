@@ -36,7 +36,7 @@ type Props = { createAccount: boolean };
  * Existing Laravel phone/email OTP remains available as an explicit alternative.
  */
 export function EmailPasswordAccess({ createAccount }: Props) {
-  const { t } = useTranslation('auth');
+  const { t, i18n } = useTranslation('auth');
   const session = useSession();
   const { showToast } = useToast();
   const legal = useConsentVersions(null);
@@ -49,6 +49,8 @@ export function EmailPasswordAccess({ createAccount }: Props) {
   const [pending, setPending] = useState(false);
   const [failure, setFailure] = useState('');
   const [notice, setNotice] = useState('');
+  const [verificationRequested, setVerificationRequested] = useState(false);
+  const [lastVerificationRequestAt, setLastVerificationRequestAt] = useState(0);
 
   async function exchange(consents: ConsentChoice | null): Promise<void> {
     const auth = getFirebaseAuth();
@@ -104,28 +106,54 @@ export function EmailPasswordAccess({ createAccount }: Props) {
 
     setFailure('');
     setNotice('');
-    if (createAccount && !legalAccepted) {
+    if (createAccount && !verificationRequested && !legalAccepted) {
       setFailure(t('emailPassword.acceptLegal'));
       return;
     }
-    if (createAccount && legal.status !== 'ready') {
+    if (createAccount && !verificationRequested && legal.status !== 'ready') {
       setFailure(t('emailPassword.tryAgain'));
       return;
     }
-    if (createAccount && password.length < 12) {
+    if (createAccount && !verificationRequested && password.length < 12) {
       setFailure(t('emailPassword.weakPassword'));
+      return;
+    }
+
+    if (createAccount && verificationRequested && Date.now() - lastVerificationRequestAt < 60_000) {
+      setFailure(t('emailPassword.resendWait'));
+      return;
+    }
+    if (createAccount && verificationRequested && password.length === 0) {
+      setFailure(t('emailPassword.resendPasswordRequired'));
       return;
     }
 
     setPending(true);
     try {
       const auth = getFirebaseAuth();
-      if (createAccount) {
+      auth.languageCode = i18n.resolvedLanguage ?? i18n.language ?? 'en';
+      if (createAccount && verificationRequested) {
+        const credential = await signInWithEmailAndPassword(auth, email.trim(), password);
+        try {
+          if (credential.user.emailVerified) {
+            setNotice(t('emailPassword.alreadyVerified'));
+          } else {
+            await sendEmailVerification(credential.user);
+            setLastVerificationRequestAt(Date.now());
+            setNotice(t('emailPassword.verificationResent'));
+          }
+        } finally {
+          await signOut(auth);
+          setPassword('');
+        }
+      } else if (createAccount) {
         const credential = await createUserWithEmailAndPassword(auth, email.trim(), password);
         saveMarketingDraft(email, marketing);
         try {
           await sendEmailVerification(credential.user);
           setNotice(t('emailPassword.verificationSent'));
+          setVerificationRequested(true);
+          setLastVerificationRequestAt(Date.now());
           setPassword('');
         } finally {
           // A new, unverified account must never remain authenticated in the app.
@@ -221,6 +249,7 @@ export function EmailPasswordAccess({ createAccount }: Props) {
   return (
     <EmailPasswordForm
       createAccount={createAccount}
+      verificationRequested={verificationRequested}
       email={email}
       password={password}
       pending={pending}
