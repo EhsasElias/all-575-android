@@ -1,8 +1,9 @@
 import { useTranslation } from 'react-i18next';
+import { useSearchParams } from 'react-router';
 import { useLanguage } from '@/shared/i18n';
 import { ButtonLink, LanguageSwitch, Logo } from '@/shared/ui';
-import { routePaths } from '@/shared/lib';
 import { markWelcomeSeen } from './welcomeSeen';
+import { afterIntroPath } from './introPaths';
 import styles from './WelcomeHeader.module.css';
 
 type WelcomeHeaderProps = {
@@ -13,12 +14,13 @@ type WelcomeHeaderProps = {
 export function WelcomeHeader({ onStartShopping }: WelcomeHeaderProps) {
   const { t } = useTranslation('welcome');
   const { language, setLanguage } = useLanguage();
+  const [params] = useSearchParams();
 
   return (
     <header dir="ltr" className={styles.header}>
       <ButtonLink
         variant="ghost"
-        to={routePaths.home}
+        to={afterIntroPath(params.get('next'))}
         replace
         className={styles.skip}
         onClick={markWelcomeSeen}
