@@ -113,6 +113,18 @@ export function SessionProvider({
       // Offline or already expired: the device forgets the token either way.
     }
     await store.clear();
+    // An app logout also ends the Firebase web session if that login method was used.
+    if (import.meta.env.VITE_FIREBASE_AUTH_ENABLED === 'true') {
+      try {
+        const [{ getFirebaseAuth }, { signOut: firebaseSignOut }] = await Promise.all([
+          import('@/shared/firebase/firebase'),
+          import('firebase/auth'),
+        ]);
+        await firebaseSignOut(getFirebaseAuth());
+      } catch {
+        // A stale or unavailable Firebase session must not prevent local logout.
+      }
+    }
     becomeGuest();
   }, [client, store, becomeGuest]);
 

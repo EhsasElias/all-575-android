@@ -1,4 +1,5 @@
 import type { Translations } from '@/shared/i18n';
+import { emailPasswordLocales } from './emailPasswordLocales';
 
 const en = {
   title: 'Sign in',
@@ -64,6 +65,7 @@ const en = {
     offline: 'We could not reach the server. Check your connection and try again.',
     unknown: 'Something went wrong. Please try again.',
   },
+  emailPassword: emailPasswordLocales.en,
   welcome: {
     returning: 'You are signed in. Welcome back!',
     newAccount: 'Your account is ready. Welcome to ALL 5.75!',
@@ -133,6 +135,7 @@ const ar: Translations<typeof en> = {
     offline: 'تعذّر الاتصال بالخادم. تحقق من اتصالك بالإنترنت وحاول مرة أخرى.',
     unknown: 'حدث خطأ ما. حاول مرة أخرى.',
   },
+  emailPassword: emailPasswordLocales.ar,
   welcome: {
     returning: 'تم تسجيل دخولك. أهلًا بعودتك!',
     newAccount: 'تم إنشاء حسابك. أهلًا بك في الكل بـ 5.75!',
@@ -206,6 +209,7 @@ const fr: Translations<typeof en> = {
     offline: 'Impossible de joindre le serveur. Vérifiez votre connexion et réessayez.',
     unknown: "Une erreur s'est produite. Veuillez réessayer.",
   },
+  emailPassword: emailPasswordLocales.fr,
   welcome: {
     returning: 'Vous êtes connecté. Content de vous revoir !',
     newAccount: 'Votre compte est prêt. Bienvenue sur TOUT à 5,75 !',
