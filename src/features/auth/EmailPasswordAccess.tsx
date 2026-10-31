@@ -77,7 +77,6 @@ export function EmailPasswordAccess({ createAccount }: Props) {
   const [password, setPassword] = useState('');
   const [termsAccepted, setTermsAccepted] = useState(false);
   const [privacyAccepted, setPrivacyAccepted] = useState(false);
-  const [marketing, setMarketing] = useState(false);
   const [needsConsent, setNeedsConsent] = useState(false);
   const [pending, setPending] = useState(false);
   const [failure, setFailure] = useState('');
@@ -275,10 +274,6 @@ export function EmailPasswordAccess({ createAccount }: Props) {
                   <input type="checkbox" checked={privacyAccepted} onChange={(event) => setPrivacyAccepted(event.target.checked)} />
                   {t('emailPassword.agreePrivacy')} <Link to={routePaths.privacy}>{t('emailPassword.privacy')}</Link>
                   {' '}({legal.versions.privacy})
-                </label>
-                <label>
-                  <input type="checkbox" checked={marketing} onChange={(event) => setMarketing(event.target.checked)} />
-                  {t('consent.marketing')}
                 </label>
               </>
             )}
