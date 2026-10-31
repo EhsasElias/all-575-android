@@ -267,7 +267,8 @@ const fr: Translations<typeof en> = {
     unknown: "Une erreur s'est produite. Veuillez réessayer.",
   },
   emailPassword: {
-    introSignIn: 'Connectez-vous avec votre e-mail et votre mot de passe, ou choisissez un code à usage unique.',
+    introSignIn:
+      'Connectez-vous avec votre e-mail et votre mot de passe, ou choisissez un code à usage unique.',
     introRegister: 'Créez un compte avec votre e-mail et un mot de passe fort.',
     email: 'Adresse e-mail',
     password: 'Mot de passe',
@@ -278,12 +279,14 @@ const fr: Translations<typeof en> = {
     or: 'Ou une autre méthode',
     useOtp: 'Utiliser un code unique (OTP)',
     backToEmail: 'Retour à e-mail et mot de passe',
-    verificationSent: 'Vérifiez votre boîte mail et confirmez votre adresse avant de vous connecter.',
+    verificationSent:
+      'Vérifiez votre boîte mail et confirmez votre adresse avant de vous connecter.',
     verificationRequired: 'Confirmez votre e-mail avec le lien envoyé, puis reconnectez-vous.',
     resetSent: 'Si ce compte existe, un message de réinitialisation a été envoyé.',
     invalidCredentials: 'E-mail ou mot de passe incorrect.',
     invalidEmail: 'Saisissez une adresse e-mail valide.',
-    emailExists: 'Cette adresse possède déjà un compte. Connectez-vous ou réinitialisez le mot de passe.',
+    emailExists:
+      'Cette adresse possède déjà un compte. Connectez-vous ou réinitialisez le mot de passe.',
     weakPassword: 'Utilisez un mot de passe d’au moins 12 caractères.',
     tooMany: 'Trop de tentatives. Réessayez plus tard.',
     acceptLegal: 'Acceptez les conditions et la politique de confidentialité pour créer un compte.',
