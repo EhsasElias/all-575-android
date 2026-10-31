@@ -197,14 +197,13 @@ describe('Sign in: changing the number', () => {
   });
 });
 
-describe('Sign in: email instead of a mobile number', () => {
-  it('switches the field, checks the address and sends the code by email', async () => {
+describe('Sign in: email first, mobile optional', () => {
+  it('validates the default email field and sends the code by email', async () => {
     const user = userEvent.setup();
     const api = installFakeApi({ 'POST /auth/otp/request': issuedChallenge });
     await renderApp({ route: '/sign-in', seenWelcome: true });
 
     const field = screen.getByLabelText('Email address');
-    expect(field).toHaveFocus();
     expect(field).toHaveAttribute('type', 'email');
     expect(field).toHaveAttribute('autocomplete', 'email');
     expect(screen.queryByLabelText('Mobile number')).not.toBeInTheDocument();
