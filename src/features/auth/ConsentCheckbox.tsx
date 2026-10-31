@@ -4,6 +4,7 @@ import styles from './ConsentCheckbox.module.css';
 
 type ConsentCheckboxProps = {
   checked: boolean;
+  disabled?: boolean;
   onChange: (checked: boolean) => void;
   /** The sentence the customer agrees to; it may contain a link to the full text. */
   children: ReactNode;
@@ -15,6 +16,7 @@ type ConsentCheckboxProps = {
 /** A real checkbox in a roomy, tappable row, with its hint and error text tied to it for screen readers. */
 export function ConsentCheckbox({
   checked,
+  disabled = false,
   onChange,
   children,
   hint,
@@ -28,12 +30,13 @@ export function ConsentCheckbox({
 
   return (
     <div className={styles.item}>
-      <label className={styles.row}>
+      <label className={styles.row} data-disabled={disabled || undefined}>
         <input
           ref={ref}
           type="checkbox"
           className={styles.box}
           checked={checked}
+          disabled={disabled}
           aria-invalid={error ? true : undefined}
           aria-describedby={describedBy || undefined}
           onChange={(event) => {
