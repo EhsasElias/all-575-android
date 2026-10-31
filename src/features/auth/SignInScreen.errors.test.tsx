@@ -167,6 +167,7 @@ describe('Sign in: asking for the code', () => {
     const user = userEvent.setup();
     const api = installFakeApi({ 'POST /auth/otp/request': requestReply });
     await renderApp({ route: '/sign-in', seenWelcome: true });
+    await user.click(screen.getByRole('button', { name: 'Use mobile number instead' }));
     return { user, api };
   }
 
