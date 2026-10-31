@@ -1,14 +1,13 @@
-import { useNavigate, useSearchParams } from 'react-router';
-import { afterIntroPath } from './introPaths';
+import { useNavigate } from 'react-router';
+import { routePaths } from '@/shared/lib';
 import { markWelcomeSeen } from './welcomeSeen';
 
-/** Leaves the welcome screen for the shopping home and remembers it was seen. */
+/** The explicit "shop now" action always opens Home, never a saved auth/deep-link route. */
 export function useStartShopping(): () => void {
   const navigate = useNavigate();
-  const [params] = useSearchParams();
 
   return () => {
     markWelcomeSeen();
-    void navigate(afterIntroPath(params.get('next')), { replace: true });
+    void navigate(routePaths.home, { replace: true });
   };
 }
