@@ -15,7 +15,7 @@ const authMocks = vi.hoisted(() => ({
   verify: vi.fn(() => Promise.resolve(undefined)),
   signOut: vi.fn(() => Promise.resolve(undefined)),
   passwordReset: vi.fn(() => Promise.resolve(undefined)),
-  token: vi.fn(async () => 'fake-test-token'),
+  token: vi.fn(() => Promise.resolve('fake-test-token')),
 }));
 
 vi.mock('@/shared/firebase/firebase', () => ({
