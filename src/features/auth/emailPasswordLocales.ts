@@ -32,6 +32,10 @@ const en = {
   marketingHint:
     'Optional and unchecked by default. Confirm your choice after email verification; change it any time.',
   legalVersions: 'Terms {{terms}} · Privacy {{privacy}}',
+  legalNotReady: 'Waiting for the latest legal versions.',
+  legalLoading: 'Checking the current Terms and Privacy versions…',
+  legalUnavailable: 'The latest Terms and Privacy versions could not be loaded. Check the API connection before registering.',
+  legalRetry: 'Retry loading policies',
   enterEmail: 'Enter your email first.',
   accountConflict: 'This email needs to be linked to an existing account. Contact support.',
   notReady: 'Email login is not ready yet. Please use one-time code sign-in.',
@@ -70,6 +74,10 @@ const ar: Translations<typeof en> = {
   marketingHint:
     'اختياري وغير محدد مسبقًا. يتم تأكيد اختيارك بعد توثيق البريد ويمكنك تغييره لاحقًا.',
   legalVersions: 'إصدار الشروط {{terms}} · إصدار الخصوصية {{privacy}}',
+  legalNotReady: 'بانتظار تحميل الإصدارات الحالية للسياسات.',
+  legalLoading: 'جارٍ التحقق من إصدارات الشروط والخصوصية الحالية…',
+  legalUnavailable: 'تعذّر تحميل أحدث الشروط وسياسة الخصوصية. تحقّق من اتصال API قبل إنشاء الحساب.',
+  legalRetry: 'إعادة تحميل السياسات',
   enterEmail: 'أدخل بريدك الإلكتروني أولًا.',
   accountConflict: 'يجب ربط هذا البريد بحساب موجود. تواصل مع الدعم.',
   notReady: 'الدخول بالبريد غير متاح حاليًا. استخدم رمز التحقق.',
@@ -110,6 +118,10 @@ const fr: Translations<typeof en> = {
   marketingHint:
     "Facultatif et non coché par défaut. Confirmez votre choix après vérification de l'e-mail.",
   legalVersions: 'Conditions {{terms}} · Confidentialité {{privacy}}',
+  legalNotReady: 'En attente des versions actuelles des politiques.',
+  legalLoading: 'Vérification des versions des conditions et de la confidentialité…',
+  legalUnavailable: "Impossible de charger les versions actuelles. Vérifiez la connexion API avant l'inscription.",
+  legalRetry: 'Réessayer de charger les politiques',
   enterEmail: "Saisissez d'abord votre e-mail.",
   accountConflict: 'Cette adresse doit être liée à un compte existant. Contactez le support.',
   notReady: 'La connexion par e-mail est indisponible. Utilisez un code OTP.',
