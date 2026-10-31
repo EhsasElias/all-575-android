@@ -1,4 +1,9 @@
-import { sendEmailVerification, signInWithEmailAndPassword, signOut, type Auth } from 'firebase/auth';
+import {
+  sendEmailVerification,
+  signInWithEmailAndPassword,
+  signOut,
+  type Auth,
+} from 'firebase/auth';
 
 /**
  * Firebase requires a recently authenticated user to resend an email action.
