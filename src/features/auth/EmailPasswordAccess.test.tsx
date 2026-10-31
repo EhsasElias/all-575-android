@@ -38,7 +38,10 @@ describe('feature-gated Firebase email access', () => {
     const marketing = screen.getByRole('checkbox', { name: /offers and product updates/i });
     expect(legal).not.toBeChecked();
     expect(marketing).not.toBeChecked();
-    expect(screen.getByRole('link', { name: 'Terms of Use' })).toHaveAttribute('href', '/legal/terms');
+    expect(screen.getByRole('link', { name: 'Terms of Use' })).toHaveAttribute(
+      'href',
+      '/legal/terms',
+    );
     expect(screen.getByRole('link', { name: 'Privacy Policy' })).toHaveAttribute(
       'href',
       '/legal/privacy',
