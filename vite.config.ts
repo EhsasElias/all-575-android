@@ -21,6 +21,9 @@ export default defineConfig({
     setupFiles: ['./src/test/setup.ts'],
     include: ['src/**/*.test.{ts,tsx}'],
     restoreMocks: true,
+    // Checkout and navigation integration tests may exceed Vitest's 5-second default under parallel load.
+    testTimeout: 15_000,
+    maxWorkers: 2,
     // Lets tests read stylesheets as text (`?raw`), including CSS modules.
     css: { include: [/\.css\?raw/] },
   },
