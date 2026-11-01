@@ -13,7 +13,7 @@ function OrdersContent() {
   const { t: tCommon } = useTranslation('common');
   const list = useOrderList();
   const [params, setParams] = useSearchParams();
-  const filtered = ['q', 'status', 'from', 'to'].some((key) => Boolean(params.get(key)));
+  const filtered = ['q', 'status', 'from', 'to', 'product', 'seller', 'branch', 'payment_method', 'min_price', 'max_price'].some((key) => Boolean(params.get(key)));
 
   if (list.isPending) return <OrdersSkeleton />;
 
