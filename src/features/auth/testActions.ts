@@ -4,12 +4,11 @@ import { CODE } from './testData';
 
 /** Types a mobile number on the first step and asks for the code. Waits for the code step. */
 export async function requestCode(user: UserEvent, phone = '0512345678') {
-  const otpOption = screen.queryByRole('button', { name: 'Use one-time code (OTP)' });
-  if (otpOption) await user.click(otpOption);
-  if (screen.queryByLabelText('Mobile number') === null) {
-    await user.click(screen.getByRole('button', { name: 'Use mobile number instead' }));
-  }
-  await user.type(screen.getByLabelText('Mobile number'), phone);
+  const otpOption = await screen.findByRole('button', { name: 'Use one-time code (OTP)' });
+  await user.click(otpOption);
+  const switchToPhone = await screen.findByRole('button', { name: 'Use mobile number instead' });
+  await user.click(switchToPhone);
+  await user.type(await screen.findByLabelText('Mobile number'), phone);
   await user.click(screen.getByRole('button', { name: 'Send code' }));
   await screen.findByRole('heading', { level: 2, name: 'Enter your code' });
 }
