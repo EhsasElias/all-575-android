@@ -1,5 +1,10 @@
 import { screen } from '@testing-library/react';
-import { describe, expect, it } from 'vitest';
+import { describe, expect, it, vi } from 'vitest';
+
+vi.mock('@/shared/lib', async (importOriginal) => ({
+  ...(await importOriginal<typeof import('@/shared/lib')>()),
+  isTestServerEnabled: () => false,
+}));
 import { installFakeApi } from '@/test/fakeApi';
 import { renderApp } from '@/test/render';
 
