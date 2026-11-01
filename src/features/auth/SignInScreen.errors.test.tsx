@@ -1,6 +1,6 @@
 import { screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
-import { beforeEach, describe, expect, it } from 'vitest';
+import { beforeEach, describe, expect, it, vi } from 'vitest';
 import { installFakeApi, type FakeRoutes } from '@/test/fakeApi';
 import { renderApp } from '@/test/render';
 import { forgetFlow } from './signInMemory';
@@ -11,7 +11,10 @@ type Reply = FakeRoutes[string];
 
 const RAW_SERVER_TEXT = 'Server wording that must never be shown';
 
-beforeEach(forgetFlow);
+beforeEach(() => {
+  forgetFlow();
+  vi.stubEnv('VITE_FIREBASE_AUTH_ENABLED', 'true');
+});
 
 async function openCodeStep(verifyReply: Reply) {
   const user = userEvent.setup();
@@ -167,7 +170,8 @@ describe('Sign in: asking for the code', () => {
     const user = userEvent.setup();
     const api = installFakeApi({ 'POST /auth/otp/request': requestReply });
     await renderApp({ route: '/sign-in', seenWelcome: true });
-    await user.click(screen.getByRole('button', { name: 'Use mobile number instead' }));
+    await user.click(await screen.findByRole('button', { name: 'Use one-time code (OTP)' }));
+    await user.click(await screen.findByRole('button', { name: 'Use mobile number instead' }));
     return { user, api };
   }
 
@@ -179,7 +183,7 @@ describe('Sign in: asking for the code', () => {
     expect(screen.getByText('Enter your mobile number.')).toBeVisible();
     expect(screen.getByLabelText('Mobile number')).toHaveFocus();
     expect(screen.getByLabelText('Mobile number')).toBeInvalid();
-    expect(api.requests()).toEqual([]);
+    expect(api.requests().filter((request) => request === 'POST /auth/otp/request')).toEqual([]);
   });
 
   it.each(['0112345678', '05123', '+971512345678', 'hello'])(
@@ -194,7 +198,7 @@ describe('Sign in: asking for the code', () => {
         screen.getByText('Enter a Saudi mobile number, for example 0512345678.'),
       ).toBeVisible();
       expect(screen.getByLabelText('Mobile number')).toHaveFocus();
-      expect(api.requests()).toEqual([]);
+      expect(api.requests().filter((request) => request === 'POST /auth/otp/request')).toEqual([]);
     },
   );
 
