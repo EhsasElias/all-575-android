@@ -14,6 +14,7 @@ import { useSession } from '@/shared/session';
 import { Button, ErrorState, Skeleton, useToast } from '@/shared/ui';
 import { ConsentForm } from './ConsentForm';
 import { SignInSteps } from './SignInSteps';
+import { recallFlow } from './signInMemory';
 import { currentDeviceName } from './deviceName';
 import { failureKey } from './emailPasswordFailure';
 import { EmailPasswordForm } from './EmailPasswordForm';
@@ -41,7 +42,8 @@ export function EmailPasswordAccess({ createAccount }: Props) {
   const session = useSession();
   const { showToast } = useToast();
   const legal = useConsentVersions(null);
-  const [useOtp, setUseOtp] = useState(false);
+  // Resume an unfinished OTP challenge after visiting the Terms or Privacy pages.
+  const [useOtp, setUseOtp] = useState(() => recallFlow().step !== 'contact');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [legalAccepted, setLegalAccepted] = useState(false);
