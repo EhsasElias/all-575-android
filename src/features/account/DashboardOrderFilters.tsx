@@ -43,10 +43,8 @@ export function DashboardOrderFilters() {
         <label>Payment type / نوع الدفع<select value={values.payment_method} onChange={e => set('payment_method', e.target.value)}>
           <option value="">All / الكل</option>
           <option value="mada">Mada</option>
-          <option value="visa">Visa</option>
-          <option value="mastercard">Mastercard</option>
+          <option value="card">Card (Visa / Mastercard)</option>
           <option value="apple_pay">Apple Pay</option>
-          <option value="sadad">Sadad</option>
           <option value="cash_on_delivery">Cash on delivery</option>
         </select></label>
         {!valid && <p role="alert">Check date and price ranges / تحقق من نطاق التاريخ والسعر</p>}
