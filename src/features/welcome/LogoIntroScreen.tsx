@@ -18,7 +18,7 @@ export function LogoIntroScreen() {
   return (
     <main id="main-content" tabIndex={-1} className={styles.screen}>
       <h1 className={styles.greeting}>
-        <span className={styles.lead}>{t('headlineLead')}</span>
+        <span className={styles.lead}>{t('headlineLead')}</span>{' '}
         <span className={styles.accent}>{t('headlineAccent')}</span>
       </h1>
       <button
