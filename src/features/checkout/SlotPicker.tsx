@@ -19,13 +19,13 @@ type SlotPickerProps = {
 };
 
 function shiftMonth(month: string, amount: number): string {
-  const [year, number] = month.split('-').map(Number);
+  const [year = 1970, number = 1] = month.split('-').map(Number);
   const shifted = new Date(Date.UTC(year, number - 1 + amount, 1));
   return shifted.toISOString().slice(0, 7);
 }
 
 function datesInMonth(month: string): (string | null)[] {
-  const [year, number] = month.split('-').map(Number);
+  const [year = 1970, number = 1] = month.split('-').map(Number);
   const prefix = Array<string | null>(
     new Date(Date.UTC(year, number - 1, 1)).getUTCDay(),
   ).fill(null);
