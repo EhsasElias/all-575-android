@@ -8,6 +8,7 @@ import { Button, ButtonLink, EmptyState, ErrorState, Skeleton } from '@/shared/u
 import { Page } from './components/Page';
 import { PageHeader } from './components/PageHeader';
 import { DashboardSummary } from './DashboardSummary';
+import { DashboardOrderFilters } from './DashboardOrderFilters';
 import { DashboardJourney } from './DashboardJourney';
 import { formatDateTime } from './formatDateTime';
 import { useCustomerDashboard } from './useCustomerDashboard';
@@ -43,6 +44,7 @@ export function CustomerDashboardScreen() {
       {query.data && !query.isError && (
         <>
           <DashboardSummary data={query.data} />
+          <DashboardOrderFilters />
           <section className={styles.section} aria-labelledby="dashboard-recent">
             <div className={styles.sectionHeader}>
               <h2 id="dashboard-recent">{t('dashboard.recent')}</h2>
