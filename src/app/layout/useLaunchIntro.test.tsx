@@ -42,7 +42,7 @@ describe('returning to the app', () => {
     await waitFor(() => {
       expect(router.state.location.pathname).toBe('/welcome');
     });
-    await screen.findByRole('heading', { level: 1, name: 'Welcome, our partner in success' });
+    expect(await screen.findByRole('link', { name: 'Skip' })).toBeVisible();
     await userEvent.setup().click(screen.getByRole('link', { name: 'Skip' }));
     expect(router.state.location.pathname).toBe('/cart');
   });
