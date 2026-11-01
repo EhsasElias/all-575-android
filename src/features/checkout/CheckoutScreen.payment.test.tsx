@@ -1,4 +1,5 @@
-import { screen, waitFor, within } from '@testing-library/react';
+import { screen, waitFor } from '@testing-library/react';
+import { chooseFirstSlot } from './checkoutActions';
 import userEvent from '@testing-library/user-event';
 import { describe, expect, it, vi } from 'vitest';
 import { renderCheckout } from './checkoutHarness';
@@ -6,8 +7,7 @@ import { createShop } from './shopServer';
 import { ORDER_ID, TOTAL_TEXT, payment } from './testData';
 
 async function chooseSlotAndPay(user: ReturnType<typeof userEvent.setup>) {
-  const sunday = await screen.findByRole('group', { name: 'Sunday, October 25' });
-  await user.click(within(sunday).getByRole('radio', { name: '9:00 AM – 11:00 AM' }));
+  await chooseFirstSlot(user);
   await user.click(screen.getByRole('button', { name: `Pay ${TOTAL_TEXT}` }));
 }
 
