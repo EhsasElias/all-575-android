@@ -66,8 +66,9 @@ describe('Checkout: the idempotency key', () => {
     await payNow(user);
     await screen.findByText('We did not hear back');
 
-    const monday = screen.getByRole('group', { name: 'Monday, October 26' });
-    await user.click(within(monday).getByRole('radio', { name: '9:00 AM – 11:00 AM' }));
+    const calendar = screen.getByRole('group', { name: 'Choose delivery date' });
+    await user.click(within(calendar).getByRole('button', { name: '2026-10-26' }));
+    await user.click(await screen.findByRole('radio', { name: '9:00 AM – 11:00 AM' }));
     await payNow(user);
 
     await screen.findByRole('heading', { level: 1, name: 'Complete your payment' });
