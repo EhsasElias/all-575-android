@@ -30,7 +30,8 @@ describe('Checkout: what the customer sees', () => {
     await (await import('@testing-library/user-event')).default.setup().click(
       within(calendar).getByRole('button', { name: '2026-10-26' }),
     );
-    expect(screen.getByRole('radio', { name: '9:00 PM – 11:00 PM' })).toBeEnabled();
+    expect(screen.getByRole('radio', { name: '9:00 AM – 11:00 AM' })).toBeEnabled();
+    expect(screen.queryByRole('radio', { name: '11:00 AM – 1:00 PM' })).not.toBeInTheDocument();
 
     // (c) the server's itemized price.
     const summary = await screen.findByRole('region', { name: 'Order summary' });
