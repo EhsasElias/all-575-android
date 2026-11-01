@@ -24,12 +24,6 @@ export function WelcomeScreen() {
         <WelcomeCaption />
         <CarouselDashes className={styles.dashes} />
 
-        <h1 className={styles.headline}>
-          <span className={styles.headlineLead}>{t('headlineLead')}</span>{' '}
-          <span className={styles.headlineAccent}>{t('headlineAccent')}</span>
-        </h1>
-        <p className={styles.subline}>{t('subline')}</p>
-
         <div className={styles.actions}>
           <Button size="lg" fullWidth className={styles.cta} onClick={startShopping}>
             {t('cta')}
