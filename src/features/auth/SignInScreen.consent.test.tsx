@@ -1,6 +1,6 @@
 import { act, screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
-import { beforeEach, describe, expect, it } from 'vitest';
+import { beforeEach, describe, expect, it, vi } from 'vitest';
 import { installFakeApi, type FakeRoutes } from '@/test/fakeApi';
 import { testStore } from '@/test/fixtures';
 import { renderApp } from '@/test/render';
@@ -26,7 +26,10 @@ async function reachConsentStep(user: ReturnType<typeof userEvent.setup>) {
   await screen.findByRole('heading', { level: 2, name: 'Accept to continue' });
 }
 
-beforeEach(forgetFlow);
+beforeEach(() => {
+  forgetFlow();
+  vi.stubEnv('VITE_FIREBASE_AUTH_ENABLED', 'true');
+});
 
 describe('Sign in: a new customer', () => {
   it('accepts the terms without asking for a new code', async () => {
@@ -216,6 +219,7 @@ describe('Sign in: a new customer', () => {
     const user = userEvent.setup();
     newCustomerApi();
     await renderApp({ route: '/sign-in', seenWelcome: true, language: 'ar' });
+    await user.click(await screen.findByRole('button', { name: 'الدخول برمز التحقق OTP' }));
     await user.click(screen.getByRole('button', { name: 'استخدم رقم الجوال بدلًا من ذلك' }));
     await user.type(screen.getByLabelText('رقم الجوال'), '0512345678');
     await user.click(screen.getByRole('button', { name: 'إرسال الرمز' }));
