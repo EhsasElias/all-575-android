@@ -12,11 +12,18 @@ export function OrderFilters() {
   const [params, setParams] = useSearchParams();
   const [open, setOpen] = useState(false);
   const [number, setNumber] = useState(params.get('q') ?? '');
+  const [product, setProduct] = useState(params.get('product') ?? '');
+  const [seller, setSeller] = useState(params.get('seller') ?? '');
+  const [branch, setBranch] = useState(params.get('branch') ?? '');
+  const [payment, setPayment] = useState(params.get('payment_method') ?? '');
+  const [minPrice, setMinPrice] = useState(params.get('min_price') ?? '');
+  const [maxPrice, setMaxPrice] = useState(params.get('max_price') ?? '');
   const [status, setStatus] = useState(params.get('status') ?? '');
   const [from, setFrom] = useState(params.get('from') ?? '');
   const [to, setTo] = useState(params.get('to') ?? '');
   const [period, setPeriod] = useState(params.has('from') || params.has('to') ? 'custom' : 'all');
   const reversed = from !== '' && to !== '' && to < from;
+  const reversedPrice = minPrice !== '' && maxPrice !== '' && Number(maxPrice) < Number(minPrice);
   return (
     <details
       className={styles.panel}
@@ -31,9 +38,9 @@ export function OrderFilters() {
           noValidate
           onSubmit={(event) => {
             event.preventDefault();
-            if (reversed) return;
+            if (reversed || reversedPrice) return;
             const next = new URLSearchParams();
-            for (const [key, value] of Object.entries({ q: number.trim(), status, from, to })) {
+            for (const [key, value] of Object.entries({ q: number.trim(), product: product.trim(), seller: seller.trim(), branch: branch.trim(), payment_method: payment, min_price: minPrice, max_price: maxPrice, status, from, to })) {
               if (value) next.set(key, value);
             }
             setParams(next, { replace: true });
@@ -48,6 +55,31 @@ export function OrderFilters() {
               setNumber(event.target.value);
             }}
           />
+          <TextField type="search" label="Product name / اسم المنتج" maxLength={120}
+            value={product} onChange={(event) => setProduct(event.target.value)} />
+          <TextField type="search" label="Company name / اسم الشركة" maxLength={120}
+            value={seller} onChange={(event) => setSeller(event.target.value)} />
+          <TextField type="search" label="Branch name / اسم الفرع" maxLength={120}
+            value={branch} onChange={(event) => setBranch(event.target.value)} />
+          <div className={styles.dates}>
+            <TextField type="number" label="Min price (SAR) / أقل سعر" value={minPrice}
+              min="0" onChange={(event) => setMinPrice(event.target.value)} />
+            <TextField type="number" label="Max price (SAR) / أعلى سعر" value={maxPrice}
+              min="0" error={reversedPrice ? 'Maximum must be greater than minimum' : undefined}
+              onChange={(event) => setMaxPrice(event.target.value)} />
+          </div>
+          <label>
+            Payment type / نوع الدفع
+            <select value={payment} onChange={(event) => setPayment(event.target.value)}>
+              <option value="">All / الكل</option>
+              <option value="mada">Mada</option>
+              <option value="visa">Visa</option>
+              <option value="mastercard">Mastercard</option>
+              <option value="apple_pay">Apple Pay</option>
+              <option value="sadad">Sadad</option>
+              <option value="cash_on_delivery">Cash on delivery / الدفع عند الاستلام</option>
+            </select>
+          </label>
           <label>
             {t('orderFilters.status')}
             <select
@@ -110,13 +142,15 @@ export function OrderFilters() {
           )}
           <p className={styles.hint}>{t('orderFilters.dateBasis')}</p>
           <div className={styles.actions}>
-            <Button type="submit" disabled={reversed}>
+            <Button type="submit" disabled={reversed || reversedPrice}>
               {t('orderFilters.apply')}
             </Button>
             <Button
               variant="ghost"
               onClick={() => {
                 setNumber('');
+                setProduct(''); setSeller(''); setBranch(''); setPayment('');
+                setMinPrice(''); setMaxPrice('');
                 setStatus('');
                 setFrom('');
                 setTo('');
