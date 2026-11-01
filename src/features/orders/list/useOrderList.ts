@@ -13,6 +13,12 @@ export function useOrderList() {
     q: params.get('q') ?? undefined,
     from: params.get('from') ?? undefined,
     to: params.get('to') ?? undefined,
+    product: params.get('product') ?? undefined,
+    seller: params.get('seller') ?? undefined,
+    branch: params.get('branch') ?? undefined,
+    payment_method: params.get('payment_method') ?? undefined,
+    min_price: params.get('min_price') ?? undefined,
+    max_price: params.get('max_price') ?? undefined,
   };
   return useInfiniteQuery({
     queryKey: [...ordersKeys.list(), filters],
