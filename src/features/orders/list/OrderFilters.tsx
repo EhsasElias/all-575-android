@@ -73,10 +73,8 @@ export function OrderFilters() {
             <select value={payment} onChange={(event) => setPayment(event.target.value)}>
               <option value="">All / الكل</option>
               <option value="mada">Mada</option>
-              <option value="visa">Visa</option>
-              <option value="mastercard">Mastercard</option>
+              <option value="card">Card (Visa / Mastercard)</option>
               <option value="apple_pay">Apple Pay</option>
-              <option value="sadad">Sadad</option>
               <option value="cash_on_delivery">Cash on delivery / الدفع عند الاستلام</option>
             </select>
           </label>
