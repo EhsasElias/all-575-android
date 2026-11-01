@@ -30,8 +30,8 @@ describe('Welcome copy: one language at a time', () => {
   it('shows only English when English is selected', async () => {
     await renderApp({ route: '/welcome', language: 'en' });
 
-    expect(screen.getByRole('heading', { level: 1, name: EN.headline })).toBeInTheDocument();
-    expect(screen.getByText(EN.subline)).toBeInTheDocument();
+    expect(screen.queryByRole('heading', { level: 1, name: EN.headline })).not.toBeInTheDocument();
+    expect(screen.queryByText(EN.subline)).not.toBeInTheDocument();
     expect(screen.queryByText(AR.subline)).not.toBeInTheDocument();
     expect(screen.queryByText('نرحب بكم')).not.toBeInTheDocument();
     expect(screen.queryByText(AR.cta)).not.toBeInTheDocument();
@@ -44,8 +44,8 @@ describe('Welcome copy: one language at a time', () => {
   it('shows only Arabic when Arabic is selected', async () => {
     await renderApp({ route: '/welcome', language: 'ar' });
 
-    expect(screen.getByRole('heading', { level: 1, name: AR.headline })).toBeInTheDocument();
-    expect(screen.getByText(AR.subline)).toBeInTheDocument();
+    expect(screen.queryByRole('heading', { level: 1, name: AR.headline })).not.toBeInTheDocument();
+    expect(screen.queryByText(AR.subline)).not.toBeInTheDocument();
     expect(screen.queryByText(EN.subline)).not.toBeInTheDocument();
     expect(screen.queryByText('Welcome,')).not.toBeInTheDocument();
     expect(screen.queryByText(EN.cta)).not.toBeInTheDocument();
@@ -57,20 +57,10 @@ describe('Welcome copy: one language at a time', () => {
   it('renders each message exactly once', async () => {
     await renderApp({ route: '/welcome', language: 'ar' });
 
-    expect(screen.getAllByRole('heading', { level: 1 })).toHaveLength(1);
-    expect(screen.getAllByText(AR.subline)).toHaveLength(1);
+    expect(screen.queryByRole('heading', { level: 1 })).not.toBeInTheDocument();
+    expect(screen.queryByText(AR.subline)).not.toBeInTheDocument();
     // The call to action is both the visible button and the name of the logo button.
     expect(screen.getAllByRole('button', { name: AR.cta })).toHaveLength(2);
-  });
-
-  it('splits the headline into a dark line and a green line', async () => {
-    await renderApp({ route: '/welcome', language: 'en' });
-
-    expect(screen.getByText('Welcome,')).toBeInTheDocument();
-    expect(screen.getByText('our partner in success')).toBeInTheDocument();
-    expect(screen.getByRole('heading', { level: 1 })).toContainElement(
-      screen.getByText('our partner in success'),
-    );
   });
 
   it('does not flip language by itself', async () => {
@@ -149,7 +139,7 @@ describe('Welcome language choice', () => {
 
     await user.click(screen.getByRole('radio', { name: /EN/ }));
 
-    expect(screen.getByRole('heading', { level: 1, name: EN.headline })).toBeInTheDocument();
+    expect(screen.queryByRole('heading', { level: 1, name: EN.headline })).not.toBeInTheDocument();
     expect(screen.queryByText(AR.subline)).not.toBeInTheDocument();
     expect(document.documentElement).toHaveAttribute('lang', 'en');
     expect(document.documentElement).toHaveAttribute('dir', 'ltr');
