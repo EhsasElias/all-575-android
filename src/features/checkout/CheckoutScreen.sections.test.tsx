@@ -18,14 +18,18 @@ describe('Checkout: what the customer sees', () => {
     expect(within(addresses).getByRole('radio', { name: /Work/ })).not.toBeChecked();
     expect(within(addresses).getByText('Default')).toBeVisible();
 
-    // (b) delivery times, grouped by Saudi day.
-    expect(await screen.findByRole('group', { name: 'Sunday, October 25' })).toBeVisible();
-    expect(screen.getByRole('group', { name: 'Monday, October 26' })).toBeVisible();
-    const sunday = screen.getByRole('group', { name: 'Sunday, October 25' });
-    expect(within(sunday).getByRole('radio', { name: '9:00 AM – 11:00 AM' })).toBeEnabled();
+    // (b) delivery calendar, with availability in Saudi time.
+    const calendar = await screen.findByRole('group', { name: 'Choose delivery date' });
+    expect(within(calendar).getByRole('button', { name: '2026-10-25' })).toHaveAttribute('aria-pressed', 'true');
+    expect(within(calendar).getByRole('button', { name: '2026-10-26' })).toBeEnabled();
+    expect(screen.getByRole('radio', { name: '9:00 AM – 11:00 AM' })).toBeEnabled();
     const full = screen.getByRole('radio', { name: /11:00 AM – 1:00 PM/ });
     expect(full).toBeDisabled();
     expect(within(full.closest('label') ?? document.body).getByText('Full')).toBeVisible();
+    // Switching days changes the rendered appointment options.
+    await (await import('@testing-library/user-event')).default.setup().click(
+      within(calendar).getByRole('button', { name: '2026-10-26' }),
+    );
     expect(screen.getByRole('radio', { name: '9:00 PM – 11:00 PM' })).toBeEnabled();
 
     // (c) the server's itemized price.
@@ -169,8 +173,8 @@ describe('Checkout: what the customer sees', () => {
 
     expect(await screen.findByRole('heading', { level: 1, name: 'إتمام الطلب' })).toBeVisible();
     expect(document.documentElement).toHaveAttribute('dir', 'rtl');
-    expect(await screen.findByRole('group', { name: 'الأحد، 25 أكتوبر' })).toBeVisible();
-    expect(screen.getAllByRole('radio', { name: '9:00 ص – 11:00 ص' })).toHaveLength(2);
+    expect(await screen.findByRole('group', { name: 'اختر تاريخ التوصيل' })).toBeVisible();
+    expect(screen.getByRole('radio', { name: '9:00 ص – 11:00 ص' })).toBeEnabled();
     expect(
       await screen.findByRole('button', { name: `ادفع ${formatMoney(2150, 'ar')}` }),
     ).toBeInTheDocument();
