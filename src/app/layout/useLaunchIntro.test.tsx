@@ -38,12 +38,10 @@ describe('returning to the app', () => {
       expect(router.state.location.pathname).toBe('/welcome/logo');
     });
     expect(router.state.location.search).toBe('?next=%2Fcart');
-    await waitFor(
-      () => {
-        expect(router.state.location.pathname).toBe('/welcome');
-      },
-      { timeout: 5000 },
-    );
+    await userEvent.setup().click(await screen.findByRole('button', { name: 'Tap the logo to shop now' }));
+    await waitFor(() => {
+      expect(router.state.location.pathname).toBe('/welcome');
+    });
     await screen.findByRole('heading', { level: 1, name: 'Welcome, our partner in success' });
     await userEvent.setup().click(screen.getByRole('link', { name: 'Skip' }));
     expect(router.state.location.pathname).toBe('/cart');
