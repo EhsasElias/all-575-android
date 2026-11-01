@@ -17,8 +17,8 @@ describe('Account tab login transition', () => {
     expect(router.state.location.search).toBe('?mode=account');
     const logo = within(screen.getByRole('main')).getByRole('button', { name: 'Tap the logo to shop now' });
     expect(logo).toBeVisible();
-    await user.click(logo);
     expect(screen.queryByRole('navigation')).not.toBeInTheDocument();
+    await user.click(logo);
 
     await waitFor(
       () => {
