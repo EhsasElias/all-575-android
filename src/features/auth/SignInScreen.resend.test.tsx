@@ -20,7 +20,10 @@ function setupUser() {
   return userEvent.setup({ advanceTimers: vi.advanceTimersByTime });
 }
 
-beforeEach(forgetFlow);
+beforeEach(() => {
+  forgetFlow();
+  vi.stubEnv('VITE_FIREBASE_AUTH_ENABLED', 'true');
+});
 
 describe('Sign in: asking for a new code', () => {
   it('counts down in view, then offers a new code and starts the count again', async () => {
@@ -129,6 +132,7 @@ describe('Sign in: asking for a new code', () => {
     installFakeApi({ 'POST /auth/otp/request': issuedChallenge });
     await renderApp({ route: '/sign-in', seenWelcome: true, language: 'ar' });
 
+    await user.click(await screen.findByRole('button', { name: 'الدخول برمز التحقق OTP' }));
     await user.click(screen.getByRole('button', { name: 'استخدم رقم الجوال بدلًا من ذلك' }));
     await user.type(screen.getByLabelText('رقم الجوال'), '0512345678');
     await user.click(screen.getByRole('button', { name: 'إرسال الرمز' }));
@@ -156,7 +160,7 @@ describe('Sign in: changing the number', () => {
     await user.click(screen.getByRole('button', { name: 'Send code' }));
     await screen.findByRole('heading', { level: 2, name: 'Enter your code' });
 
-    expect(api.calls().map((call) => call.body)).toEqual([
+    expect(api.calls().filter((call) => call.path === '/auth/otp/request').map((call) => call.body)).toEqual([
       { channel: 'phone', destination: '0512345678' },
       { channel: 'phone', destination: '0598765432' },
     ]);
@@ -203,7 +207,8 @@ describe('Sign in: email first, mobile optional', () => {
     const api = installFakeApi({ 'POST /auth/otp/request': issuedChallenge });
     await renderApp({ route: '/sign-in', seenWelcome: true });
 
-    const field = screen.getByLabelText('Email address');
+    await user.click(await screen.findByRole('button', { name: 'Use one-time code (OTP)' }));
+    const field = await screen.findByLabelText('Email address');
     expect(field).toHaveAttribute('type', 'email');
     expect(field).toHaveAttribute('autocomplete', 'email');
     expect(screen.queryByLabelText('Mobile number')).not.toBeInTheDocument();
@@ -213,20 +218,21 @@ describe('Sign in: email first, mobile optional', () => {
     expect(
       screen.getByText('Enter a valid email address, for example name@example.com.'),
     ).toBeVisible();
-    expect(api.requests()).toEqual([]);
+    expect(api.requests().filter((request) => request === 'POST /auth/otp/request')).toEqual([]);
 
     await user.clear(field);
     await user.type(field, ' Sara@Example.com ');
     await user.click(screen.getByRole('button', { name: 'Send code' }));
 
     expect(await screen.findByText('sara@example.com')).toBeVisible();
-    expect(api.calls()[0]?.body).toEqual({ channel: 'email', destination: 'sara@example.com' });
+    expect(api.calls().find((call) => call.path === '/auth/otp/request')?.body).toEqual({ channel: 'email', destination: 'sara@example.com' });
     expect(screen.getByRole('button', { name: 'Change email' })).toBeVisible();
   });
 
   it('can switch back to the mobile number', async () => {
     const user = userEvent.setup();
     await renderApp({ route: '/sign-in', seenWelcome: true });
+    await user.click(await screen.findByRole('button', { name: 'Use one-time code (OTP)' }));
     await user.click(screen.getByRole('button', { name: 'Use mobile number instead' }));
 
     expect(screen.getByLabelText('Mobile number')).toHaveFocus();
