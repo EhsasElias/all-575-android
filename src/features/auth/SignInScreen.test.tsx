@@ -16,7 +16,10 @@ const returningCustomerApi = () =>
     'POST /auth/otp/verify': verifiedLogin(),
   });
 
-beforeEach(forgetFlow);
+beforeEach(() => {
+  forgetFlow();
+  vi.stubEnv('VITE_FIREBASE_AUTH_ENABLED', 'true');
+});
 
 describe('Sign in: a returning customer', () => {
   it('asks for a code, checks it, signs in and goes to the page they came from', async () => {
@@ -133,12 +136,13 @@ describe('Sign in: the code step', () => {
       const user = userEvent.setup();
       await renderApp({ route, seenWelcome: true });
 
-      const email = screen.getByLabelText('Email address');
+      const email = await screen.findByLabelText('Email address');
       expect(email).toHaveAttribute('type', 'email');
       expect(email).toHaveAttribute('autocomplete', 'email');
       expect(email).toHaveValue('');
       expect(screen.queryByLabelText('Mobile number')).not.toBeInTheDocument();
 
+      await user.click(screen.getByRole('button', { name: 'Use one-time code (OTP)' }));
       await user.click(screen.getByRole('button', { name: 'Use mobile number instead' }));
       const phone = screen.getByLabelText('Mobile number');
       expect(phone).toHaveAttribute('type', 'tel');
@@ -186,6 +190,7 @@ describe('Sign in: Arabic', () => {
     expect(screen.getByRole('heading', { level: 1, name: 'تسجيل الدخول' })).toBeInTheDocument();
     expect(document.title).toBe('تسجيل الدخول · الكل بـ 5.75');
 
+    await user.click(await screen.findByRole('button', { name: 'الدخول برمز التحقق OTP' }));
     await user.click(screen.getByRole('button', { name: 'استخدم رقم الجوال بدلًا من ذلك' }));
     await user.type(screen.getByLabelText('رقم الجوال'), '٠٥١٢٣٤٥٦٧٨');
     await user.click(screen.getByRole('button', { name: 'إرسال الرمز' }));
