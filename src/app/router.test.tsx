@@ -25,9 +25,7 @@ describe('app launch', () => {
     const logo = within(screen.getByRole('main')).getByRole('button', { name: 'Tap the logo to shop now' });
     expect(logo).toBeVisible();
     await userEvent.setup().click(logo);
-    expect(await screen.findByRole('heading', { level: 1 }, { timeout: 5000 })).toHaveTextContent(
-      'Welcome, our partner',
-    );
+    expect(await screen.findByRole('link', { name: 'Skip' })).toBeVisible();
   });
 
   it('opens the loading logo before the slider for a returning user', async () => {
@@ -35,9 +33,7 @@ describe('app launch', () => {
 
     expect(router.state.location.pathname).toBe('/welcome/logo');
     expect(within(screen.getByRole('main')).getByRole('status')).toHaveTextContent('Loading');
-    expect(await screen.findByRole('heading', { level: 1 }, { timeout: 5000 })).toHaveTextContent(
-      'Welcome, our partner',
-    );
+    expect(await screen.findByRole('link', { name: 'Skip' })).toBeVisible();
   });
 });
 
