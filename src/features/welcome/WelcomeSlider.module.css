@@ -4,7 +4,10 @@
 
 .card {
   aspect-ratio: 343 / 280;
-  border-radius: var(--radius-xl);
+  overflow: hidden;
+  border: 1px solid var(--color-border);
+  border-radius: calc(var(--radius-xl) + 6px);
+  box-shadow: 0 12px 36px rgb(0 0 0 / 9%);
 }
 
 .slide {
@@ -18,11 +21,11 @@
 
 .image {
   position: absolute;
-  inset-block: 5%;
+  inset-block: 4%;
   inset-inline: 0;
   inline-size: auto;
-  max-inline-size: 90%;
-  block-size: 90%;
+  max-inline-size: 94%;
+  block-size: 92%;
   margin-inline: auto;
   object-fit: contain;
   -webkit-user-drag: none;
@@ -30,10 +33,11 @@
 
 .caption {
   display: grid;
-  margin-block-start: var(--space-3);
+  margin-block-start: var(--space-2);
   justify-items: center;
-  color: var(--color-text-muted);
-  font-size: var(--font-size-small);
+  color: var(--color-text);
+  font-size: var(--font-size-title);
+  font-weight: var(--font-weight-strong);
   line-height: var(--line-height-body);
   text-align: center;
 }
@@ -46,4 +50,9 @@
 
 .captionItem[data-active='true'] {
   opacity: 1;
+}
+
+@media (max-height: 680px) {
+  .card { aspect-ratio: 343 / 230; }
+  .image { inset-block: 2%; block-size: 96%; }
 }
