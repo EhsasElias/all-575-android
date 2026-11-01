@@ -1,13 +1,16 @@
 import { screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
-import { beforeEach, describe, expect, it } from 'vitest';
+import { beforeEach, describe, expect, it, vi } from 'vitest';
 import { installFakeApi } from '@/test/fakeApi';
 import { renderApp } from '@/test/render';
 import { forgetFlow } from './signInMemory';
 import { hasConsents, submitCode } from './testActions';
 import { consentRequired, issuedChallenge, verifiedLogin } from './testData';
 
-beforeEach(forgetFlow);
+beforeEach(() => {
+  forgetFlow();
+  vi.stubEnv('VITE_FIREBASE_AUTH_ENABLED', 'true');
+});
 
 describe('Create account', () => {
   it.each(['phone', 'email'] as const)(
@@ -26,6 +29,7 @@ describe('Create account', () => {
         seenWelcome: true,
       });
       expect(screen.getByRole('heading', { level: 1, name: 'Create account' })).toBeVisible();
+      await user.click(await screen.findByRole('button', { name: 'Use one-time code (OTP)' }));
       if (channel === 'phone')
         await user.click(screen.getByRole('button', { name: 'Use mobile number instead' }));
       const destination = channel === 'email' ? 'sara@example.com' : '0512345678';
@@ -68,6 +72,8 @@ describe('Create account', () => {
     expect(
       screen.queryByRole('button', { name: 'Unlock with fingerprint' }),
     ).not.toBeInTheDocument();
+    expect(await screen.findByRole('button', { name: 'Use one-time code (OTP)' })).toBeVisible();
+    await userEvent.setup().click(screen.getByRole('button', { name: 'Use one-time code (OTP)' }));
     expect(screen.getByRole('button', { name: 'Send code' })).toBeVisible();
   });
 });
