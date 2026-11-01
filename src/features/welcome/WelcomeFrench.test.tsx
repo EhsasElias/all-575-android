@@ -8,10 +8,8 @@ describe('Welcome in French', () => {
   it('shows only French, left to right', async () => {
     await renderApp({ route: '/welcome', language: 'fr' });
 
-    expect(
-      screen.getByRole('heading', { level: 1, name: 'Bienvenue, partenaire de réussite' }),
-    ).toBeInTheDocument();
-    expect(screen.getByText('Tout ce dont vous avez besoin, au même endroit')).toBeInTheDocument();
+    expect(screen.queryByRole('heading', { level: 1 })).not.toBeInTheDocument();
+    expect(screen.getByRole('group', { name: 'Acheter par catégorie' })).toBeInTheDocument();
     expect(screen.getByText('Passer')).toBeInTheDocument();
     expect(screen.getByRole('link', { name: 'Se connecter' })).toBeInTheDocument();
     expect(screen.queryByText('Skip')).not.toBeInTheDocument();
