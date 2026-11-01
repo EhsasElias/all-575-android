@@ -21,13 +21,20 @@
 }
 .lead { color: var(--color-text); font-size: var(--font-size-headline); }
 .accent { color: var(--color-heading-accent); font-size: var(--font-size-headline); }
+.tagline {
+  margin: 0;
+  color: var(--color-text-muted);
+  font-size: var(--font-size-body);
+  line-height: 1.6;
+  text-wrap: balance;
+}
 .logoButton {
   display: grid;
   place-items: center;
-  min-inline-size: 240px;
-  min-block-size: 240px;
+  min-inline-size: min(290px, 100%);
+  min-block-size: 290px;
   max-inline-size: 100%;
-  padding: var(--space-4);
+  padding: var(--space-2);
   border: 2px solid var(--color-border);
   border-radius: var(--radius-xl);
   background: var(--color-logo-background);
