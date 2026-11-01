@@ -109,3 +109,11 @@
     grid-template-columns: repeat(3, minmax(0, 1fr));
   }
 }
+
+.filterGrid { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 14rem), 1fr)); gap: var(--space-3); padding: var(--space-4); border: 1px solid var(--color-border); border-radius: var(--radius-lg); background: var(--color-surface); }
+.filterGrid label { display: grid; gap: var(--space-2); font-weight: var(--font-weight-strong); }
+.filterGrid input, .filterGrid select { inline-size: 100%; min-block-size: var(--size-target); padding: var(--space-2); border: 1px solid var(--color-border); border-radius: var(--radius-md); color: var(--color-text); background: var(--color-surface); font: inherit; }
+.filterSubmit, .filterReset { min-block-size: var(--size-target); border-radius: var(--radius-md); padding: var(--space-2); font: inherit; cursor: pointer; }
+.filterSubmit { background: var(--color-brand); color: var(--color-text); border: 1px solid var(--color-brand); }
+.filterReset { background: var(--color-surface); color: var(--color-text); border: 1px solid var(--color-border); }
+.filterSubmit:disabled { opacity: .5; cursor: not-allowed; }
