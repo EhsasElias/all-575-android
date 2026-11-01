@@ -10,6 +10,12 @@ export type OrderFilters = {
   q?: string | undefined;
   from?: string | undefined;
   to?: string | undefined;
+  product?: string | undefined;
+  seller?: string | undefined;
+  branch?: string | undefined;
+  payment_method?: string | undefined;
+  min_price?: string | undefined;
+  max_price?: string | undefined;
 };
 
 export type SpendingFilters = {
