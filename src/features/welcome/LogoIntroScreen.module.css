@@ -4,54 +4,63 @@
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  gap: var(--space-6);
+  gap: var(--space-5);
   min-block-size: 100vh;
   min-block-size: 100dvh;
-  padding-block: var(--safe-top) var(--safe-bottom);
+  padding: calc(var(--safe-top) + var(--space-5)) var(--space-4)
+    calc(var(--safe-bottom) + var(--space-5));
   background: var(--color-bg);
+  text-align: center;
 }
-
-.mark {
+.greeting {
+  display: grid;
+  gap: var(--space-1);
+  margin: 0;
+  font-weight: var(--font-weight-strong);
+  line-height: 1.5;
+}
+.lead { color: var(--color-text); font-size: var(--font-size-headline); }
+.accent { color: var(--color-heading-accent); font-size: var(--font-size-headline); }
+.logoButton {
+  display: grid;
+  place-items: center;
+  min-inline-size: 240px;
+  min-block-size: 240px;
+  max-inline-size: 100%;
   padding: var(--space-4);
+  border: 2px solid var(--color-border);
   border-radius: var(--radius-xl);
   background: var(--color-logo-background);
+  cursor: pointer;
   animation: brand-in var(--motion-slow) var(--ease-standard) both;
 }
-
-.loading {
-  display: flex;
-  align-items: center;
-  gap: var(--space-2);
+.logoButton:focus-visible {
+  outline: 3px solid var(--color-focus);
+  outline-offset: 3px;
 }
-
+.instruction {
+  margin: 0;
+  color: var(--color-brand-text);
+  font-weight: var(--font-weight-strong);
+  font-size: var(--font-size-body);
+}
+.loading { display: flex; align-items: center; gap: var(--space-2); }
 .dot {
-  inline-size: 6px;
-  block-size: 6px;
+  inline-size: 7px;
+  block-size: 7px;
   border-radius: var(--radius-pill);
   background: var(--color-brand-text);
   animation: pulse var(--motion-slow) ease-in-out infinite alternate;
 }
-
-.dot:nth-of-type(2) {
-  animation-delay: 80ms;
-}
-
-.dot:nth-of-type(3) {
-  animation-delay: 160ms;
-}
-
+.dot:nth-child(2) { animation-delay: 100ms; }
+.dot:nth-child(3) { animation-delay: 200ms; }
 @keyframes brand-in {
-  from {
-    opacity: 0;
-    transform: scale(0.94);
-  }
+  from { opacity: 0; transform: scale(.94); }
 }
-
 @keyframes pulse {
-  from {
-    opacity: 0.25;
-  }
-  to {
-    opacity: 1;
-  }
+  from { opacity: .25; }
+  to { opacity: 1; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .logoButton, .dot { animation: none; }
 }
