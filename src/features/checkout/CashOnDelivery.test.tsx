@@ -1,4 +1,5 @@
-import { screen, within } from '@testing-library/react';
+import { screen } from '@testing-library/react';
+import { chooseFirstSlot } from './checkoutActions';
 import userEvent from '@testing-library/user-event';
 import { describe, expect, it } from 'vitest';
 import { renderCheckout } from './checkoutHarness';
@@ -30,8 +31,7 @@ describe('Cash on delivery', () => {
       'src',
       '/images/payments/master.svg',
     );
-    const sunday = await screen.findByRole('group', { name: 'Sunday, October 25' });
-    await user.click(within(sunday).getByRole('radio', { name: '9:00 AM – 11:00 AM' }));
+    await chooseFirstSlot(user);
     await user.click(screen.getByRole('radio', { name: 'Cash on delivery' }));
     expect(screen.getByText('Pay in cash on delivery. No online payment is taken.')).toBeVisible();
     await user.click(screen.getByRole('button', { name: `Place order · ${TOTAL_TEXT}` }));
