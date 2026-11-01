@@ -1,4 +1,4 @@
-import { screen, within } from '@testing-library/react';
+import { screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { describe, expect, it } from 'vitest';
 import { setReducedMotion } from '@/test/browserStubs';
@@ -17,7 +17,7 @@ describe('Logo introduction', () => {
     expect(router.state.location.pathname).toBe('/welcome');
     expect(router.state.location.search).toBe('?next=%2Fcart');
     expect(screen.queryByRole('heading', { name: 'Welcome, our partner in success' })).not.toBeInTheDocument();
-    expect(within(screen.getByRole('main')).getByText('Shop by category')).toBeInTheDocument();
+    expect(screen.getByRole('button', { name: 'Tap the logo to shop now' })).toBeInTheDocument();
   });
 
   it('waits for a click even with reduced motion', async () => {
