@@ -17,7 +17,7 @@ describe('Logo introduction', () => {
     expect(router.state.location.pathname).toBe('/welcome');
     expect(router.state.location.search).toBe('?next=%2Fcart');
     expect(screen.queryByRole('heading', { name: 'Welcome, our partner in success' })).not.toBeInTheDocument();
-    expect(screen.getByRole('button', { name: 'Tap the logo to shop now' })).toBeInTheDocument();
+    expect(screen.getAllByRole('button', { name: 'Tap the logo to shop now' })).toHaveLength(2);
   });
 
   it('waits for a click even with reduced motion', async () => {
