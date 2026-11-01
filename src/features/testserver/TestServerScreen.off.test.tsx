@@ -1,20 +1,18 @@
-import { screen } from '@testing-library/react';
+import { createElement } from 'react';
+import { render, screen } from '@testing-library/react';
 import { describe, expect, it, vi } from 'vitest';
-
-vi.mock('@/shared/lib', async (importOriginal) => ({
-  ...(await importOriginal<typeof import('@/shared/lib')>()),
-  isTestServerEnabled: () => false,
-}));
-import { installFakeApi } from '@/test/fakeApi';
-import { renderApp } from '@/test/render';
+import { TestBuildBanner } from './TestBuildBanner';
 
 describe('A build that is not a test build', () => {
-  it('has no server screen and no test bar', async () => {
-    installFakeApi();
+  it('does not register the server route or display the test bar', async () => {
+    vi.stubEnv('VITE_TEST_PANEL', 'false');
+    vi.resetModules();
 
-    await renderApp({ route: '/test-server', seenWelcome: true });
+    // Routes are assembled at module initialization, as in a fresh production build.
+    const { testServerRoutes } = await import('./routes');
+    expect(testServerRoutes).toEqual([]);
 
-    expect(await screen.findByRole('heading', { level: 1, name: 'Page not found' })).toBeVisible();
+    render(createElement(TestBuildBanner));
     expect(screen.queryByText('Test build')).not.toBeInTheDocument();
     expect(screen.queryByRole('link', { name: 'Change server' })).not.toBeInTheDocument();
   });
