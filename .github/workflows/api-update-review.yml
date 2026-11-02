@@ -1,0 +1,32 @@
+name: Regenerate customer API client for review
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  regenerate:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci
+      - name: Regenerate API contract and TypeScript types from backend
+        run: npm run api:update
+      - name: Show generated changes
+        run: git diff --stat && git status --short
+      - name: Save generated files for review (no automatic push)
+        uses: actions/upload-artifact@v4
+        with:
+          name: customer-api-generated
+          path: |
+            api-contract.json
+            docs/api/openapi.json
+            src/shared/api/schema.d.ts
+          retention-days: 7
