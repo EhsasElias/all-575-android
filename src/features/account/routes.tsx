@@ -8,6 +8,7 @@ import { CustomerRequestsScreen } from './CustomerRequestsScreen';
 import { ProfileScreen } from './ProfileScreen';
 import { SessionsScreen } from './SessionsScreen';
 import { SellerApplicationScreen } from './SellerApplicationScreen';
+import { SellerWorkspaceScreen } from './SellerWorkspaceScreen';
 
 /** The account screen itself handles guests, and the legal texts are public. */
 export const accountRoutes: RouteObject[] = [
