@@ -82,7 +82,7 @@ export function SellerApplicationScreen() {
     finally { setBusy(false); }
   };
 
-  const readonly = status !== null && status !== 'draft';
+  const readonly = status !== null && status !== 'draft' && status !== 'correction';
   return (
     <Page>
       <PageHeader title={ar ? 'طلب التسجيل كبائع' : 'Seller application'}
