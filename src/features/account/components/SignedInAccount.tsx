@@ -30,6 +30,7 @@ export function SignedInAccount({ user }: SignedInAccountProps) {
       {user.consents.needs_update && <ConsentNotice />}
       <AccountMenu />
       <ButtonLink to={routePaths.sellerApplication}>{'التسجيل كبائع / Become a seller'}</ButtonLink>
+      <ButtonLink to={routePaths.sellerWorkspace}>{'لوحة البائع / Seller workspace'}</ButtonLink>
       <CustomerNotifications />
       <Section title={t('preferences.title')}>
         <LanguagePreference />
