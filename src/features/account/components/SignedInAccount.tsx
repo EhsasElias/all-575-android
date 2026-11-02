@@ -3,6 +3,7 @@ import { routePaths } from '@/shared/lib';
 import { ButtonLink } from '@/shared/ui';
 import type { SessionUser } from '@/shared/session';
 import { AccountMenu } from './AccountMenu';
+import { CustomerNotifications } from './CustomerNotifications';
 import { ConsentNotice } from './ConsentNotice';
 import { LanguagePreference } from './LanguagePreference';
 import { LegalLinks } from './LegalLinks';
@@ -28,6 +29,7 @@ export function SignedInAccount({ user }: SignedInAccountProps) {
       <ButtonLink to={routePaths.dashboard}>{t('dashboard.title')}</ButtonLink>
       {user.consents.needs_update && <ConsentNotice />}
       <AccountMenu />
+      <CustomerNotifications />
       <Section title={t('preferences.title')}>
         <LanguagePreference />
         <MarketingPreference user={user} />
