@@ -1,26 +1,14 @@
 import { useCallback, useEffect, useState } from 'react';
-import { http } from '@/shared/api';
-
-type Notice = {
-  id: number;
-  type: string;
-  title: string;
-  message: string;
-  target_path: string | null;
-  read_at: string | null;
-  created_at: string;
-};
-
-type Inbox = { data: Notice[]; unread_count: number };
+import { getNotifications, markAllNotificationsRead, markNotificationRead, type NotificationInbox } from '../notificationsApi';
 
 export function CustomerNotifications() {
-  const [inbox, setInbox] = useState<Inbox | null>(null);
+  const [inbox, setInbox] = useState<NotificationInbox | null>(null);
   const [error, setError] = useState(false);
   const [busy, setBusy] = useState(false);
 
   const load = useCallback(async () => {
     try {
-      const result = await http.get<Inbox>('/me/notifications');
+      const result = await getNotifications();
       setInbox(result);
       setError(false);
     } catch {
@@ -36,7 +24,7 @@ export function CustomerNotifications() {
     if (busy) return;
     setBusy(true);
     try {
-      await http.patch('/me/notifications/' + id + '/read');
+      await markNotificationRead(id);
       await load();
     } catch {
       setError(true);
@@ -49,7 +37,7 @@ export function CustomerNotifications() {
     if (busy) return;
     setBusy(true);
     try {
-      await http.patch('/me/notifications/read-all');
+      await markAllNotificationsRead();
       await load();
     } catch {
       setError(true);
