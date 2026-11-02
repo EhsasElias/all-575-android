@@ -29,6 +29,7 @@ export function SignedInAccount({ user }: SignedInAccountProps) {
       <ButtonLink to={routePaths.dashboard}>{t('dashboard.title')}</ButtonLink>
       {user.consents.needs_update && <ConsentNotice />}
       <AccountMenu />
+      <ButtonLink to={routePaths.sellerApplication}>{'التسجيل كبائع / Become a seller'}</ButtonLink>
       <CustomerNotifications />
       <Section title={t('preferences.title')}>
         <LanguagePreference />
