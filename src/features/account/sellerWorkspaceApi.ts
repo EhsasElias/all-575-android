@@ -61,7 +61,7 @@ export type SellerProductInput = {
 };
 
 export type SellerCategory = {
-  id: number; name_ar: string; name_en: string;
+  id: number; name: { ar: string; en: string };
   children?: SellerCategory[];
 };
 
