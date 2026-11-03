@@ -181,7 +181,7 @@ export function EmailPasswordAccess({ createAccount }: Props) {
             {stage === 'reset' ? tr('تغيير كلمة المرور والدخول', 'Reset password and sign in') : tr('تأكيد البريد والدخول', 'Verify email and sign in')}
           </Button>
         </form>
-        <Button variant="ghost" disabled={pending || Date.now() - lastSent < 60_000}
+        <Button variant="ghost" disabled={pending}
           onClick={() => void sendCode(stage === 'reset')}>
           {tr('إعادة إرسال الرمز بعد دقيقة', 'Resend code after one minute')}
         </Button>
