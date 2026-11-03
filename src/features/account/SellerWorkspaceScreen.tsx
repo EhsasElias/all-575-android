@@ -4,12 +4,13 @@ import { useTranslation } from 'react-i18next';
 import { routePaths } from '@/shared/lib';
 import { Page } from './components/Page';
 import { PageHeader } from './components/PageHeader';
+import { SellerProductManagement } from './SellerProductManagement';
 import {
   memberships, openSellerSession, closeSellerSession, sellerDashboard,
   sellerOrders, sellerBranches, sellerProducts, sellerStock,
   advanceSellerOrder, adjustSellerStock,
   type SellerBranch, type SellerDashboard, type SellerOrder,
-  type SellerProduct, type SellerStock,
+  type SellerProduct, type SellerStock, type SellerMembership,
 } from './sellerWorkspaceApi';
 
 type Section = 'overview' | 'products' | 'inventory' | 'orders';
@@ -27,6 +28,7 @@ export function SellerWorkspaceScreen() {
   const ar = i18n.language.startsWith('ar');
   const tr = (arabic: string, english: string) => ar ? arabic : english;
   const [eligible, setEligible] = useState(false);
+  const [sellerMemberships, setSellerMemberships] = useState<SellerMembership[]>([]);
   const [section, setSection] = useState<Section>('overview');
   const [dashboard, setDashboard] = useState<SellerDashboard | null>(null);
   const [branches, setBranches] = useState<SellerBranch[]>([]);
@@ -50,6 +52,7 @@ export function SellerWorkspaceScreen() {
       try {
         const list = await memberships();
         if (!active) return;
+        setSellerMemberships(list.data);
         if (!list.data.some((membership) => membership.is_active && membership.seller_status === 'approved')) {
           setEligible(false);
           return;
@@ -234,19 +237,12 @@ export function SellerWorkspaceScreen() {
               </section>
             </>
           )}
-          {!loading && section === 'products' && (
-            <section>
-              <h2>{tr('المنتجات', 'Products')}</h2>
-              {products.length === 0 && <p>{tr('لا توجد منتجات لهذه الحالة.', 'No products for this status.')}</p>}
-              {products.map((product) => (
-                <article key={product.id} style={panel}>
-                  <strong>{ar ? product.name_ar : product.name_en}</strong>
-                  <p>{tr('الحالة', 'Status')}: {product.status} · SKU #{product.id}</p>
-                  <small>{tr('التصنيف', 'Category')}: {product.category_id}</small>
-                </article>
-              ))}
-              <p>{tr('عرض أول 50 منتجًا كحد أقصى. الإضافة والتعديل والاستيراد ستكون في المرحلة التالية.', 'Showing up to 50 products. Create, edit and import screens are next.')}</p>
-            </section>
+          {section === 'products' && !loading && (
+            <SellerProductManagement
+              products={products}
+              memberships={sellerMemberships}
+              onUpdated={reload}
+            />
           )}
           {!loading && section === 'inventory' && (
             <section>
