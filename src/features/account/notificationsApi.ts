@@ -20,7 +20,7 @@ export const notificationKeys = {
 };
 
 export function getNotifications(signal?: AbortSignal) {
-  return http.get<NotificationInbox>('/me/notifications', { signal });
+  return http.get<NotificationInbox>('/me/notifications', signal ? { signal } : {});
 }
 
 export function markNotificationRead(id: number) {
