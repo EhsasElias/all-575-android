@@ -107,3 +107,30 @@ export const importSellerProductCsv = (sellerId: number, file: File, dryRun = fa
   if (dryRun) form.append('dry_run', '1');
   return seller.upload<{ data: { created_drafts: number } & Partial<SellerCsvPreview> }>('/seller/products/import', form);
 };
+
+export type SellerFinanceSummary = {
+  seller_id: number;
+  currency: 'SAR';
+  delivered_orders: number;
+  subtotal_halalas: number;
+  discount_halalas: number;
+  merchandise_total_halalas: number;
+  payout_calculated: boolean;
+};
+
+export type SellerFinanceLedgerRow = {
+  suborder_id: string;
+  order_number: string;
+  branch_id: number;
+  placed_at: string;
+  currency: 'SAR';
+  merchandise_halalas: number;
+};
+
+export const sellerFinanceSummary = (sellerId: number, from: string, to: string) =>
+  seller.get<{ data: SellerFinanceSummary }>('/seller/finance/summary', { query: { seller_id: sellerId, from, to } });
+
+export const sellerFinanceLedger = (sellerId: number, from: string, to: string) =>
+  seller.get<{ data: SellerFinanceLedgerRow[]; payout_calculated: boolean }>('/seller/finance/ledger', {
+    query: { seller_id: sellerId, from, to, limit: 20 },
+  });
