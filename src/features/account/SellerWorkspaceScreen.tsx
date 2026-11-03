@@ -237,7 +237,7 @@ export function SellerWorkspaceScreen() {
               </section>
             </>
           )}
-          {section === 'products' && !loading && (
+          {section === 'products' && (
             <SellerProductManagement
               products={products}
               memberships={sellerMemberships}
