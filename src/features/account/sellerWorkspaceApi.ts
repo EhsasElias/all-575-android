@@ -14,7 +14,8 @@ export type SellerBranch = {
 };
 export type SellerProduct = {
   id: number; seller_id: number; category_id: number; slug: string;
-  name_ar: string; name_en: string; status: string; created_at: string;
+  name_ar: string; name_en: string; description_ar?: string | null; description_en?: string | null;
+  price_halalas: number; vat_class: string; status: string; created_at: string;
 };
 export type SellerStock = {
   id: number; branch_id: number; variant_id: number; on_hand: number;
@@ -48,3 +49,39 @@ export const advanceSellerOrder = (id: string, status: 'preparing' | 'ready') =>
   seller.patch('/seller/orders/' + encodeURIComponent(id) + '/status', { status });
 export const adjustSellerStock = (id: number, on_hand: number) =>
   seller.patch('/seller/stock/' + id, { on_hand });
+
+export type SellerProductInput = {
+  category_id: number;
+  name_ar: string;
+  name_en: string;
+  description_ar?: string;
+  description_en?: string;
+  price_halalas: number;
+  vat_class: 'standard' | 'zero' | 'exempt';
+};
+
+export type SellerCategory = {
+  id: number; name_ar: string; name_en: string;
+  children?: SellerCategory[];
+};
+
+export const sellerCategories = () =>
+  http.get<{ data: SellerCategory[] }>('/categories');
+
+export const createSellerProduct = (sellerId: number, input: SellerProductInput) =>
+  seller.post<{ data: SellerProduct }>('/seller/products', { ...input, seller_id: sellerId });
+
+export const updateSellerProduct = (productId: number, input: SellerProductInput) =>
+  seller.patch<{ data: SellerProduct }>('/seller/products/' + productId, input);
+
+export const addSellerProductVariant = (
+  productId: number, variant: { sku: string; barcode?: string | null; name_ar?: string; name_en?: string },
+) => seller.post<{ data: { id: number; product_id: number; sku: string; barcode: string | null } }>(
+  '/seller/products/' + productId + '/variants', variant,
+);
+
+export const submitSellerProduct = (productId: number) =>
+  seller.post<{ data: SellerProduct }>('/seller/products/' + productId + '/submit');
+
+export const sellerCatalogTemplate = () =>
+  seller.download('/seller/products/import/template.csv');
