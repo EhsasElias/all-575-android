@@ -1,7 +1,8 @@
 import { useEffect, useState, type FormEvent } from 'react';
 import { useTranslation } from 'react-i18next';
 import {
-  addSellerProductVariant, createSellerProduct, sellerCategories, sellerCatalogTemplate,
+  addSellerProductVariant, createSellerProduct, importSellerProductCsv, uploadSellerProductImage,
+  sellerCategories, sellerCatalogTemplate,
   submitSellerProduct, updateSellerProduct,
   type SellerCategory, type SellerMembership, type SellerProduct, type SellerProductInput,
 } from './sellerWorkspaceApi';
@@ -43,6 +44,9 @@ export function SellerProductManagement({ products, memberships, onUpdated }: Pr
   const [draft, setDraft] = useState<Draft>(() => empty(String(sellerIds[0] ?? '')));
   const [workingId, setWorkingId] = useState<number | null>(null);
   const [busy, setBusy] = useState(false);
+  const [coverFile, setCoverFile] = useState<File | null>(null);
+  const [importFile, setImportFile] = useState<File | null>(null);
+  const [importSeller, setImportSeller] = useState('');
   const [error, setError] = useState('');
   const [success, setSuccess] = useState('');
 
@@ -163,6 +167,42 @@ export function SellerProductManagement({ products, memberships, onUpdated }: Pr
     } finally { setBusy(false); }
   };
 
+  const uploadCover = async () => {
+    if (selected === null || coverFile === null || busy) return;
+    if (!coverFile.type.startsWith('image/') || coverFile.size > 5 * 1024 * 1024) {
+      setError(tr('الصورة يجب أن تكون بحد أقصى 5 ميجابايت.', 'Image must be at most 5 MB.'));
+      return;
+    }
+    setBusy(true); setError(''); setSuccess('');
+    try {
+      await uploadSellerProductImage(selected, coverFile);
+      setCoverFile(null);
+      setSuccess(tr('تم حفظ صورة المنتج.', 'Product cover image uploaded.'));
+      onUpdated();
+    } catch {
+      setError(tr('تعذر رفع الصورة. اختاري ملف صورة صالحًا لمسودة.', 'Image upload failed. Select a valid image for a draft.'));
+    } finally { setBusy(false); }
+  };
+
+  const uploadCsv = async () => {
+    const sellerId = Number(importSeller || sellerIds[0]);
+    if (busy || importFile === null || !sellerIds.includes(sellerId)) return;
+    if (importFile.size > 1024 * 1024 || !/[.]csv$/i.test(importFile.name)) {
+      setError(tr('اختاري ملف CSV لا يتجاوز 1 ميجابايت.', 'Choose a CSV file under 1 MB.'));
+      return;
+    }
+    if (!window.confirm(tr('استيراد المنتجات كمسودات فقط؟', 'Import products as drafts only?'))) return;
+    setBusy(true); setError(''); setSuccess('');
+    try {
+      const result = await importSellerProductCsv(sellerId, importFile);
+      setImportFile(null);
+      setSuccess(tr('تم استيراد مسودات المنتجات: ', 'Imported product drafts: ') + result.data.created_drafts);
+      onUpdated();
+    } catch {
+      setError(tr('فشل الاستيراد. تأكدي من ترتيب أعمدة القالب وصحة التصنيفات والأسعار وعدم تكرار SKU.', 'Import failed. Check template columns, categories, prices and duplicate SKUs.'));
+    } finally { setBusy(false); }
+  };
+
   const flatCategories = (items: SellerCategory[], depth = 0): Array<{ id: number; label: string }> =>
     items.flatMap((item) => [
       { id: item.id, label: '—'.repeat(depth) + (ar ? item.name_ar : item.name_en) },
@@ -175,6 +215,25 @@ export function SellerProductManagement({ products, memberships, onUpdated }: Pr
         {sellerIds.length > 0 && <button type="button" style={button} onClick={newProduct}>{tr('إضافة منتج جديد', 'Add new product')}</button>}
         <button type="button" style={button} disabled={busy} onClick={() => void downloadTemplate()}>{tr('تحميل قالب CSV', 'Download CSV template')}</button>
       </div>
+      {sellerIds.length > 0 && (
+        <div style={card}>
+          <h3>{tr('استيراد المنتجات عبر CSV', 'Import products from CSV')}</h3>
+          <p>{tr('حمّلي القالب وأدخلي حتى 200 منتج. سيتم حفظها كمسودات للمراجعة.', 'Download the template and enter up to 200 products. They will be saved as drafts.')}</p>
+          <div style={controls}>
+            <label style={field}>{tr('المتجر', 'Store')}
+              <select value={importSeller || String(sellerIds[0])} onChange={(event) => setImportSeller(event.target.value)}>
+                {sellerIds.map((id) => <option key={id} value={id}>{ar ? allowed.find((m) => m.seller_id === id)?.name_ar : allowed.find((m) => m.seller_id === id)?.name_en}</option>)}
+              </select>
+            </label>
+            <label style={field}>{tr('ملف CSV', 'CSV file')}
+              <input type="file" accept=".csv,text/csv" onChange={(event) => setImportFile(event.target.files?.[0] ?? null)}/>
+            </label>
+          </div>
+          <button type="button" style={{ ...button, marginTop: 12 }} disabled={busy || importFile === null} onClick={() => void uploadCsv()}>
+            {tr('استيراد المسودات', 'Import drafts')}
+          </button>
+        </div>
+      )}
       {sellerIds.length === 0 && <p>{tr('يمكن للمالك ومدير الفرع فقط إضافة وتعديل المنتجات.', 'Only owners and branch managers can add or edit products.')}</p>}
       {error && <p role="alert" style={{ color: '#a52e2e' }}>{error}</p>}
       {success && <p role="status">{success}</p>}
@@ -251,8 +310,14 @@ export function SellerProductManagement({ products, memberships, onUpdated }: Pr
                   <input maxLength={100} value={draft.barcode} onChange={(event) => set('barcode', event.target.value)} />
                 </label>
               </div>
+              <label style={{ ...field, marginTop: 12 }}>{tr('صورة غلاف المنتج (5 ميجابايت كحد أقصى)', 'Product cover image (up to 5 MB)')}
+                <input type="file" accept="image/*" onChange={(event) => setCoverFile(event.target.files?.[0] ?? null)}/>
+              </label>
+              <button type="button" style={button} disabled={busy || coverFile === null} onClick={() => void uploadCover()}>
+                {tr('رفع الصورة', 'Upload image')}
+              </button>
               <div style={{ ...controls, marginTop: 12 }}>
-                <button type="button" style={button} disabled={busy} onClick={() => void addVariant(selected)}>
+                <button type="button" style={button} disabled={busy} onClick={() => void addVariant(selected)}
                   {tr('إضافة وحدة بيع', 'Add variant')}
                 </button>
                 <button type="button" style={button} disabled={busy || workingId === selected}
