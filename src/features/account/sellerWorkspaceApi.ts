@@ -85,3 +85,18 @@ export const submitSellerProduct = (productId: number) =>
 
 export const sellerCatalogTemplate = () =>
   seller.download('/seller/products/import/template.csv');
+
+export const uploadSellerProductImage = (productId: number, image: File) => {
+  const form = new FormData();
+  form.append('image', image);
+  return seller.upload<{ data: { product_id: number; image_path: string } }>(
+    '/seller/products/' + productId + '/image', form,
+  );
+};
+
+export const importSellerProductCsv = (sellerId: number, file: File) => {
+  const form = new FormData();
+  form.append('seller_id', String(sellerId));
+  form.append('file', file);
+  return seller.upload<{ data: { created_drafts: number } }>('/seller/products/import', form);
+};
