@@ -14,13 +14,13 @@ const EmailPasswordAccess = lazy(async () => {
   return { default: module.EmailPasswordAccess };
 });
 
-/** Customer sign-in with a feature-gated Firebase email/password option and existing OTP fallback. */
+/** Native email/password is the primary sign-in; existing OTP remains the fallback. */
 export function SignInScreen({ createAccount = false }: { createAccount?: boolean }) {
   const { t } = useTranslation('auth');
   const { t: access } = useTranslation('access');
   const { status } = useSession();
   const [searchParams] = useSearchParams();
-  const emailLoginEnabled = import.meta.env.VITE_FIREBASE_AUTH_ENABLED === 'true';
+  const emailLoginEnabled = true;
   const checkoutEntry = searchParams.get('next')?.startsWith('/checkout') ?? false;
 
   if (status === 'signed-in') {
