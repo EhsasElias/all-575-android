@@ -86,17 +86,23 @@ export function SellerWorkspaceScreen() {
           const result = await sellerProducts({ limit: 50, ...(productStatus !== 'all' ? { status: productStatus } : {}) });
           if (active) setProducts(result.data);
         } else if (section === 'inventory') {
-          const result = await sellerStock({
-            limit: 50, ...(branchId ? { branch_id: Number(branchId) } : {}),
-            ...(lowStockOnly ? { low_stock_below: 5 } : {}),
-          });
-          if (active) setStock(result.data);
+          const [result, branchList] = await Promise.all([
+            sellerStock({
+              limit: 50, ...(branchId ? { branch_id: Number(branchId) } : {}),
+              ...(lowStockOnly ? { low_stock_below: 5 } : {}),
+            }),
+            sellerBranches(),
+          ]);
+          if (active) { setStock(result.data); setBranches(branchList.data); }
         } else if (section === 'orders') {
-          const result = await sellerOrders({
-            limit: 50, ...(branchId ? { branch_id: Number(branchId) } : {}),
-            ...(orderStatus !== 'all' ? { status: orderStatus } : {}),
-          });
-          if (active) setOrders(result.data);
+          const [result, branchList] = await Promise.all([
+            sellerOrders({
+              limit: 50, ...(branchId ? { branch_id: Number(branchId) } : {}),
+              ...(orderStatus !== 'all' ? { status: orderStatus } : {}),
+            }),
+            sellerBranches(),
+          ]);
+          if (active) { setOrders(result.data); setBranches(branchList.data); }
         }
       } catch {
         if (active) setError(tr('تعذر تحميل البيانات. تحقق من الاتصال أو صلاحيات حسابك.', 'Unable to load data. Check your connection or account permissions.'));
