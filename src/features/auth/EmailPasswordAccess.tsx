@@ -50,9 +50,22 @@ export function EmailPasswordAccess({ createAccount }: Props) {
       } else if (code === 'invalid_credentials') {
         setFailure(tr('بيانات الدخول غير صحيحة أو البريد غير مؤكد. يمكنك التحقق باستخدام OTP.', 'Incorrect credentials or unverified email. Try email OTP.'));
       } else if (code === 'consent_required') {
-        setFailure(tr('يلزم قبول الشروط الحالية. ادخل برمز OTP لإكمال الموافقة.', 'Current terms must be accepted. Use OTP sign-in to continue.'));
+        setFailure(createAccount
+          ? tr('تغير إصدار الشروط أو الخصوصية على الخادم. حدّثي الصفحة ثم وافقي على النسخ الحالية.', 'The server requires newer Terms or Privacy versions. Refresh the page, then accept the current versions.')
+          : tr('يلزم قبول الشروط الحالية. استخدمي تسجيل الدخول بالرمز لاستكمال الموافقة.', 'Updated consent is required. Use OTP sign-in to accept current terms.'));
+      } else if (code === 'otp_delivery_unavailable') {
+        setFailure(tr('خدمة إرسال الرمز غير متاحة. تحققي من إعدادات SMTP في Laravel.', 'Email verification delivery is unavailable. Check Laravel SMTP settings.'));
+      } else if (code === 'otp_cooldown' || error.kind === 'rate-limited') {
+        setFailure(tr('طلبات التحقق كثيرة. انتظري قليلًا ثم حاولي مجددًا.', 'Too many verification requests. Wait before retrying.'));
+      } else if (error.kind === 'validation') {
+        const firstFieldError = Object.values(error.fieldErrors).flat()[0];
+        setFailure(firstFieldError ?? tr('تحققي من البيانات المطلوبة وصحة البريد وكلمة المرور.', 'Check your email, password and required fields.'));
+      } else if (error.kind === 'network' || error.kind === 'timeout') {
+        setFailure(tr('تعذر الوصول إلى خادم Laravel. تأكدي أن API يعمل وأن العنوان صحيح.', 'Could not reach the Laravel API. Check that it is running and configured correctly.'));
+      } else if (error.kind === 'server') {
+        setFailure(tr('حدث خطأ على خادم Laravel. راجعي سجل laravel.log لمعرفة السبب.', 'Laravel reported a server error. Check laravel.log for the cause.'));
       } else {
-        setFailure(tr('تعذر إكمال العملية. تحقق من إعداد البريد والاتصال ثم حاول مجددًا.', 'Unable to complete the request. Check mail configuration and connectivity.'));
+        setFailure(tr('تعذر إكمال الطلب. رمز الاستجابة: ', 'Request failed. HTTP status: ') + String(error.status ?? 'unknown'));
       }
     } else {
       setFailure(tr('تعذر إكمال العملية. حاول مجددًا.', 'Unable to complete the request. Try again.'));
@@ -89,7 +102,7 @@ export function EmailPasswordAccess({ createAccount }: Props) {
           },
         });
         setChallengeId(response.data.challenge_id);
-          setStage('verify');
+        setStage('verify');
         setPassword('');
         setNotice(tr('أرسلنا رمز التحقق إلى بريدك. أدخليه لتفعيل الحساب.', 'We sent a verification code to your email. Enter it to activate your account.'));
       } else {
