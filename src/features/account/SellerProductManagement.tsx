@@ -317,7 +317,7 @@ export function SellerProductManagement({ products, memberships, onUpdated }: Pr
                 {tr('رفع الصورة', 'Upload image')}
               </button>
               <div style={{ ...controls, marginTop: 12 }}>
-                <button type="button" style={button} disabled={busy} onClick={() => void addVariant(selected)}
+                <button type="button" style={button} disabled={busy} onClick={() => void addVariant(selected)}>
                   {tr('إضافة وحدة بيع', 'Add variant')}
                 </button>
                 <button type="button" style={button} disabled={busy || workingId === selected}
