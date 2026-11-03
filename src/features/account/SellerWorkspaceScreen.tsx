@@ -5,6 +5,7 @@ import { routePaths } from '@/shared/lib';
 import { Page } from './components/Page';
 import { PageHeader } from './components/PageHeader';
 import { SellerProductManagement } from './SellerProductManagement';
+import { SellerFinanceOverview } from './SellerFinanceOverview';
 import {
   memberships, openSellerSession, closeSellerSession, sellerDashboard,
   sellerOrders, sellerBranches, sellerProducts, sellerStock,
@@ -13,7 +14,7 @@ import {
   type SellerProduct, type SellerStock, type SellerMembership,
 } from './sellerWorkspaceApi';
 
-type Section = 'overview' | 'products' | 'inventory' | 'orders';
+type Section = 'overview' | 'products' | 'inventory' | 'orders' | 'finance';
 const orderStatuses = ['all', 'awaiting_seller', 'preparing', 'ready', 'on_the_way', 'delivered'] as const;
 
 const panel: React.CSSProperties = {
@@ -90,7 +91,7 @@ export function SellerWorkspaceScreen() {
             ...(lowStockOnly ? { low_stock_below: 5 } : {}),
           });
           if (active) setStock(result.data);
-        } else {
+        } else if (section === 'orders') {
           const result = await sellerOrders({
             limit: 50, ...(branchId ? { branch_id: Number(branchId) } : {}),
             ...(orderStatus !== 'all' ? { status: orderStatus } : {}),
@@ -137,6 +138,7 @@ export function SellerWorkspaceScreen() {
     { id: 'products', ar: 'المنتجات', en: 'Products' },
     { id: 'inventory', ar: 'المخزون', en: 'Inventory' },
     { id: 'orders', ar: 'الطلبات', en: 'Orders' },
+    { id: 'finance', ar: 'المالية', en: 'Finance' },
   ];
   const labels: Record<string, string> = {
     awaiting_seller: tr('بانتظار البائع', 'Awaiting seller'),
@@ -244,6 +246,7 @@ export function SellerWorkspaceScreen() {
               onUpdated={reload}
             />
           )}
+          {section === 'finance' && <SellerFinanceOverview memberships={sellerMemberships} />}
           {!loading && section === 'inventory' && (
             <section>
               <h2>{tr('مخزون الفروع', 'Branch inventory')}</h2>
