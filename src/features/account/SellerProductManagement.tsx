@@ -205,7 +205,7 @@ export function SellerProductManagement({ products, memberships, onUpdated }: Pr
 
   const flatCategories = (items: SellerCategory[], depth = 0): Array<{ id: number; label: string }> =>
     items.flatMap((item) => [
-      { id: item.id, label: '—'.repeat(depth) + (ar ? item.name_ar : item.name_en) },
+      { id: item.id, label: '—'.repeat(depth) + (ar ? item.name.ar : item.name.en) },
       ...flatCategories(item.children ?? [], depth + 1),
     ]);
 
