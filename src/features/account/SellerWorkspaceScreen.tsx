@@ -6,6 +6,7 @@ import { Page } from './components/Page';
 import { PageHeader } from './components/PageHeader';
 import { SellerProductManagement } from './SellerProductManagement';
 import { SellerFinanceOverview } from './SellerFinanceOverview';
+import { SellerStaffManagement } from './SellerStaffManagement';
 import {
   memberships, openSellerSession, closeSellerSession, sellerDashboard,
   sellerOrders, sellerBranches, sellerProducts, sellerStock,
@@ -14,7 +15,7 @@ import {
   type SellerProduct, type SellerStock, type SellerMembership,
 } from './sellerWorkspaceApi';
 
-type Section = 'overview' | 'products' | 'inventory' | 'orders' | 'finance';
+type Section = 'overview' | 'products' | 'inventory' | 'orders' | 'finance' | 'staff';
 const orderStatuses = ['all', 'awaiting_seller', 'preparing', 'ready', 'on_the_way', 'delivered'] as const;
 
 const panel: React.CSSProperties = {
@@ -166,6 +167,7 @@ export function SellerWorkspaceScreen() {
     { id: 'inventory', ar: 'المخزون', en: 'Inventory' },
     { id: 'orders', ar: 'الطلبات', en: 'Orders' },
     { id: 'finance', ar: 'المالية', en: 'Finance' },
+    { id: 'staff', ar: 'الفريق', en: 'Staff' },
   ];
   const labels: Record<string, string> = {
     awaiting_seller: tr('بانتظار البائع', 'Awaiting seller'),
@@ -274,6 +276,7 @@ export function SellerWorkspaceScreen() {
             />
           )}
           {section === 'finance' && <SellerFinanceOverview memberships={sellerMemberships} />}
+          {section === 'staff' && <SellerStaffManagement memberships={sellerMemberships} />}
           {!loading && section === 'inventory' && (
             <section>
               <h2>{tr('مخزون الفروع', 'Branch inventory')}</h2>
