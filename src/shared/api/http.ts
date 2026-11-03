@@ -28,6 +28,8 @@ export type HttpClient = {
   delete: <T>(path: string, options?: RequestOptions) => Promise<T>;
   /** GET a file (e.g. a CSV export) as raw bytes, so nothing like a byte-order mark is lost on the way. */
   download: (path: string, options?: RequestOptions) => Promise<Download>;
+  /** Multipart upload with the same timeout and auth protections as JSON requests. */
+  upload: <T>(path: string, body: FormData, options?: RequestOptions) => Promise<T>;
 };
 
 export type Download = { blob: Blob; filename: string | null };
@@ -194,6 +196,30 @@ export function createHttpClient(config: HttpClientConfig): HttpClient {
     return { blob, filename: readFilename(response.headers.get('Content-Disposition')) };
   }
 
+  async function upload<T>(path: string, body: FormData, options: RequestOptions): Promise<T> {
+    // Browser supplies the multipart boundary; setting application/json would corrupt the upload.
+    const { headers, token } = await buildHeaders(false, options.headers);
+    const { response, body: reply } = await sendWithTimeout(
+      fetchFn,
+      buildRequestUrl(config.baseUrl, path, options.query),
+      { method: 'POST', headers, body },
+      options.timeoutMs ?? defaultTimeoutMs,
+      options.signal,
+      (res) => res.text(),
+    );
+    if (!response.ok) await rejectWith(response, reply, token);
+    try {
+      // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
+      return parseJson(reply) as T;
+    } catch {
+      throw new ApiError({
+        kind: 'unexpected',
+        status: response.status,
+        message: 'The server returned an invalid response',
+      });
+    }
+  }
+
   /**
    * An expired or revoked token is useless from now on: drop it and tell the app. But only the token this request
    * carried. If the customer signed in again while it was on its way, the new token is not the one that was refused.
@@ -229,5 +255,6 @@ export function createHttpClient(config: HttpClientConfig): HttpClient {
     patch: (path, body, options = {}) => request('PATCH', path, { ...options, body }),
     delete: (path, options = {}) => request('DELETE', path, options),
     download: (path, options = {}) => download(path, options),
+    upload: (path, body, options = {}) => upload(path, body, options),
   };
 }
