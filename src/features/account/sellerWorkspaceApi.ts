@@ -37,13 +37,13 @@ export async function openSellerSession() {
 }
 export const closeSellerSession = () => tokens.clear();
 export const sellerOrders = (filters: { branch_id?: number; status?: string; limit?: number } = {}) =>
-  seller.get<{ data: SellerOrder[] }>('/seller/orders', { params: filters });
+  seller.get<{ data: SellerOrder[] }>('/seller/orders', { query: filters });
 export const sellerDashboard = () => seller.get<{ data: SellerDashboard }>('/seller/dashboard');
 export const sellerBranches = () => seller.get<{ data: SellerBranch[] }>('/seller/branches');
 export const sellerProducts = (filters: { status?: string; limit?: number } = {}) =>
-  seller.get<{ data: SellerProduct[] }>('/seller/products', { params: filters });
+  seller.get<{ data: SellerProduct[] }>('/seller/products', { query: filters });
 export const sellerStock = (filters: { branch_id?: number; low_stock_below?: number; limit?: number } = {}) =>
-  seller.get<{ data: SellerStock[] }>('/seller/stock', { params: filters });
+  seller.get<{ data: SellerStock[] }>('/seller/stock', { query: filters });
 export const advanceSellerOrder = (id: string, status: 'preparing' | 'ready') =>
   seller.patch('/seller/orders/' + encodeURIComponent(id) + '/status', { status });
 export const adjustSellerStock = (id: number, on_hand: number) =>
