@@ -1,27 +1,13 @@
 import { useState, type SubmitEvent } from 'react';
-import {
-  createUserWithEmailAndPassword,
-  getIdToken,
-  sendEmailVerification,
-  sendPasswordResetEmail,
-  signInWithEmailAndPassword,
-  signOut,
-} from 'firebase/auth';
 import { useTranslation } from 'react-i18next';
 import { errorCode, http, isApiError, type Data, type Schemas } from '@/shared/api';
-import { getFirebaseAuth } from '@/shared/firebase/firebase';
 import { useSession } from '@/shared/session';
-import { Button, ErrorState, Skeleton, useToast } from '@/shared/ui';
-import { ConsentForm } from './ConsentForm';
+import { Button, useToast } from '@/shared/ui';
 import { SignInSteps } from './SignInSteps';
 import { recallFlow } from './signInMemory';
 import { currentDeviceName } from './deviceName';
-import { failureKey } from './emailPasswordFailure';
 import { EmailPasswordForm } from './EmailPasswordForm';
-import { resendEmailVerification } from './resendEmailVerification';
-import { clearMarketingDraft, readMarketingDraft, saveMarketingDraft } from './marketingDraft';
 import { useConsentVersions } from './useConsentVersions';
-import type { ConsentChoice } from './authApi';
 import styles from './StepLayout.module.css';
 
 type LoginReply = {
@@ -29,219 +15,179 @@ type LoginReply = {
   user: Schemas['UserResource'];
   is_new_user: boolean;
 };
-
+type Challenge = { challenge_id: string; expires_in: number; resend_after: number };
+type Stage = 'form' | 'verify' | 'reset';
 type Props = { createAccount: boolean };
 
 /**
- * Firebase authenticates email/password. Only a confirmed Firebase email ID token
- * is exchanged for the application's regular Laravel Sanctum customer session.
- * Existing Laravel phone/email OTP remains available as an explicit alternative.
+ * Primary email/password UI backed entirely by Laravel/MySQL and Sanctum.
+ * New email accounts require the existing single-use email OTP before login.
+ * The existing OTP sign-in UI remains available for recovery or phone login.
  */
 export function EmailPasswordAccess({ createAccount }: Props) {
   const { t, i18n } = useTranslation('auth');
+  const ar = i18n.language.startsWith('ar');
+  const tr = (arabic: string, english: string) => ar ? arabic : english;
   const session = useSession();
   const { showToast } = useToast();
   const legal = useConsentVersions(null);
-  // Resume an unfinished OTP challenge after visiting the Terms or Privacy pages.
   const [useOtp, setUseOtp] = useState(() => recallFlow().step !== 'contact');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [legalAccepted, setLegalAccepted] = useState(false);
   const [marketing, setMarketing] = useState(false);
-  const [needsConsent, setNeedsConsent] = useState(false);
   const [pending, setPending] = useState(false);
   const [failure, setFailure] = useState('');
   const [notice, setNotice] = useState('');
-  const [verificationRequested, setVerificationRequested] = useState(false);
-  const [lastVerificationRequestAt, setLastVerificationRequestAt] = useState(0);
+  const [stage, setStage] = useState<Stage>('form');
+  const [challengeId, setChallengeId] = useState('');
+  const [otp, setOtp] = useState('');
+  const [lastSent, setLastSent] = useState(0);
 
-  async function exchange(consents: ConsentChoice | null): Promise<void> {
-    const auth = getFirebaseAuth();
-    const currentUser = auth.currentUser;
-    if (!currentUser?.emailVerified) {
-      throw new Error('Verified Firebase email session required');
-    }
-
-    const data = (
-      await http.post<Data<LoginReply>>('/auth/firebase/login', {
-        id_token: await getIdToken(currentUser),
-        device_name: currentDeviceName(),
-        ...(consents === null
-          ? {}
-          : {
-              consents: {
-                terms_version: consents.terms,
-                privacy_version: consents.privacy,
-                marketing: consents.marketing,
-              },
-            }),
-      })
-    ).data;
-
-    await session.signIn(data.token, data.user);
-    if (consents !== null) clearMarketingDraft(email);
-    showToast({
-      message: t(data.is_new_user ? 'welcome.newAccount' : 'welcome.returning'),
-      variant: 'success',
-    });
-  }
-
-  async function finish(consents: ConsentChoice | null): Promise<void> {
-    setPending(true);
-    setFailure('');
-    setNotice('');
-    try {
-      await exchange(consents);
-    } catch (error) {
-      if (isApiError(error) && errorCode(error) === 'consent_required') {
-        setNeedsConsent(true);
+  const showFailure = (error: unknown) => {
+    if (isApiError(error)) {
+      const code = errorCode(error);
+      if (code === 'email_exists') {
+        setFailure(tr('البريد مسجل بالفعل. سجّل الدخول أو استعد الحساب.', 'This email is already registered. Sign in or recover your account.'));
+      } else if (code === 'invalid_credentials') {
+        setFailure(tr('بيانات الدخول غير صحيحة أو البريد غير مؤكد. يمكنك التحقق باستخدام OTP.', 'Incorrect credentials or unverified email. Try email OTP.'));
+      } else if (code === 'consent_required') {
+        setFailure(tr('يلزم قبول الشروط الحالية. ادخل برمز OTP لإكمال الموافقة.', 'Current terms must be accepted. Use OTP sign-in to continue.'));
       } else {
-        setFailure(t(failureKey(error)));
+        setFailure(tr('تعذر إكمال العملية. تحقق من إعداد البريد والاتصال ثم حاول مجددًا.', 'Unable to complete the request. Check mail configuration and connectivity.'));
       }
-    } finally {
-      setPending(false);
+    } else {
+      setFailure(tr('تعذر إكمال العملية. حاول مجددًا.', 'Unable to complete the request. Try again.'));
     }
-  }
+  };
+
+  const complete = async (reply: LoginReply) => {
+    await session.signIn(reply.token, reply.user);
+    showToast({ message: t(reply.is_new_user ? 'welcome.newAccount' : 'welcome.returning'), variant: 'success' });
+  };
 
   async function submit(event: SubmitEvent<HTMLFormElement>): Promise<void> {
     event.preventDefault();
     if (pending) return;
-
-    setFailure('');
-    setNotice('');
-    if (createAccount && !verificationRequested && !legalAccepted) {
+    setFailure(''); setNotice('');
+    if (createAccount && (legal.status !== 'ready' || !legalAccepted)) {
       setFailure(t('emailPassword.acceptLegal'));
       return;
     }
-    if (createAccount && !verificationRequested && legal.status !== 'ready') {
-      setFailure(t('emailPassword.tryAgain'));
-      return;
-    }
-    if (createAccount && !verificationRequested && password.length < 12) {
+    if (createAccount && password.length < 12) {
       setFailure(t('emailPassword.weakPassword'));
       return;
     }
-
-    if (createAccount && verificationRequested && Date.now() - lastVerificationRequestAt < 60_000) {
-      setFailure(t('emailPassword.resendWait'));
-      return;
-    }
-    if (createAccount && verificationRequested && password.length === 0) {
-      setFailure(t('emailPassword.resendPasswordRequired'));
-      return;
-    }
-
     setPending(true);
     try {
-      const auth = getFirebaseAuth();
-      auth.languageCode = i18n.resolvedLanguage ?? i18n.language;
-      if (createAccount && verificationRequested) {
-        try {
-          const sent = await resendEmailVerification(auth, email, password);
-          setNotice(t(sent ? 'emailPassword.verificationResent' : 'emailPassword.alreadyVerified'));
-          if (sent) setLastVerificationRequestAt(Date.now());
-        } finally {
-          setPassword('');
-        }
-      } else if (createAccount) {
-        const credential = await createUserWithEmailAndPassword(auth, email.trim(), password);
-        saveMarketingDraft(email, marketing);
-        // The Firebase account now exists even if email sending fails.
-        // Switch to the resend flow before requesting the email so customers
-        // never accidentally submit another create-account request.
-        setVerificationRequested(true);
-        try {
-          await sendEmailVerification(credential.user);
-          setNotice(t('emailPassword.verificationSent'));
-          setLastVerificationRequestAt(Date.now());
-        } finally {
-          setPassword('');
-          // An unverified Firebase account never receives a Laravel customer session.
-          await signOut(auth);
-        }
+      if (createAccount) {
+        if (legal.status !== 'ready') return;
+        const response = await http.post<Data<Challenge>>('/auth/email/register', {
+          email: email.trim().toLowerCase(), password,
+          consents: {
+            terms_version: legal.versions.terms,
+            privacy_version: legal.versions.privacy,
+            marketing,
+          },
+        });
+        setChallengeId(response.data.challenge_id);
+        setLastSent(Date.now());
+        setStage('verify');
+        setPassword('');
+        setNotice(tr('أرسلنا رمز التحقق إلى بريدك. أدخليه لتفعيل الحساب.', 'We sent a verification code to your email. Enter it to activate your account.'));
       } else {
-        const credential = await signInWithEmailAndPassword(auth, email.trim(), password);
-        if (!credential.user.emailVerified) {
-          try {
-            await sendEmailVerification(credential.user);
-            setNotice(t('emailPassword.verificationRequired'));
-            setPassword('');
-          } finally {
-            await signOut(auth);
-          }
-        } else {
-          await exchange(null);
-        }
+        const response = await http.post<Data<LoginReply>>('/auth/email/login', {
+          email: email.trim().toLowerCase(), password, device_name: currentDeviceName(),
+        });
+        await complete(response.data);
       }
-    } catch (error) {
-      if (isApiError(error) && errorCode(error) === 'consent_required') {
-        setNeedsConsent(true);
-      } else {
-        setFailure(t(failureKey(error)));
-      }
-    } finally {
-      setPending(false);
-    }
+    } catch (error) { showFailure(error); }
+    finally { setPending(false); }
   }
 
-  async function resetPassword(): Promise<void> {
+  async function sendCode(recovery: boolean): Promise<void> {
     if (pending) return;
-    if (email.trim() === '') {
-      setFailure(t('emailPassword.enterEmail'));
-      return;
-    }
-    setPending(true);
-    setFailure('');
-    setNotice('');
+    if (!email.trim()) { setFailure(t('emailPassword.enterEmail')); return; }
+    setPending(true); setFailure('');
     try {
-      await sendPasswordResetEmail(getFirebaseAuth(), email.trim());
-      setNotice(t('emailPassword.resetSent'));
-    } catch (error) {
-      setFailure(t(failureKey(error)));
-    } finally {
-      setPending(false);
-    }
+      const response = await http.post<Data<Challenge>>('/auth/otp/request', {
+        channel: 'email', destination: email.trim().toLowerCase(),
+      });
+      setChallengeId(response.data.challenge_id);
+      setStage(recovery ? 'reset' : 'verify');
+      setOtp('');
+      setLastSent(Date.now());
+      setNotice(tr('تم إرسال رمز إلى البريد الإلكتروني.', 'A code was sent to your email.'));
+    } catch (error) { showFailure(error); }
+    finally { setPending(false); }
+  }
+
+  async function verifyCode(event: SubmitEvent<HTMLFormElement>): Promise<void> {
+    event.preventDefault();
+    if (pending || !challengeId || !/^\\d{6}$/.test(otp)) return;
+    setPending(true); setFailure('');
+    try {
+      if (stage === 'reset') {
+        if (password.length < 12) {
+          setFailure(t('emailPassword.weakPassword'));
+          return;
+        }
+        const response = await http.post<Data<LoginReply>>('/auth/email/password-reset', {
+          challenge_id: challengeId, code: otp, password, device_name: currentDeviceName(),
+        });
+        await complete(response.data);
+      } else {
+        const response = await http.post<Data<LoginReply>>('/auth/otp/verify', {
+          challenge_id: challengeId, code: otp, device_name: currentDeviceName(),
+        });
+        await complete(response.data);
+      }
+    } catch (error) { showFailure(error); }
+    finally { setPending(false); }
   }
 
   if (useOtp) {
     return (
       <div className={styles.step}>
-        <Button
-          variant="ghost"
-          onClick={() => {
-            setUseOtp(false);
-          }}
-        >
-          {t('emailPassword.backToEmail')}
-        </Button>
+        <Button variant="ghost" onClick={() => setUseOtp(false)}>{t('emailPassword.backToEmail')}</Button>
         <SignInSteps />
       </div>
     );
   }
 
-  if (needsConsent) {
+  if (stage !== 'form') {
     return (
       <div className={styles.step}>
-        <h2 className={styles.stepTitle}>{t('consent.title')}</h2>
-        {legal.status === 'loading' && <Skeleton height="8rem" />}
-        {legal.status === 'error' && <ErrorState headingLevel={3} onRetry={legal.retry} />}
-        {legal.status === 'ready' && (
-          <ConsentForm
-            channel="email"
-            versions={legal.versions}
-            versionsChanged={false}
-            verify={{ pending, failure: null }}
-            initialMarketing={readMarketingDraft(email)}
-            onAccept={(choice) => {
-              void finish(choice);
-            }}
-          />
-        )}
-        {failure && (
-          <p role="alert" className={styles.alert}>
-            {failure}
-          </p>
-        )}
+        <h2 className={styles.stepTitle}>
+          {stage === 'reset' ? tr('استعادة كلمة المرور', 'Reset password') : tr('تأكيد البريد الإلكتروني', 'Verify your email')}
+        </h2>
+        <p>{email}</p>
+        {notice && <p role="status">{notice}</p>}
+        {failure && <p role="alert" className={styles.alert}>{failure}</p>}
+        <form className={styles.form} onSubmit={(event) => void verifyCode(event)}>
+          <label>
+            {tr('رمز التحقق المكون من 6 أرقام', 'Six-digit verification code')}
+            <input autoComplete="one-time-code" inputMode="numeric" pattern="[0-9]{6}"
+              maxLength={6} required value={otp} onChange={(event) => setOtp(event.target.value)} />
+          </label>
+          {stage === 'reset' && (
+            <label>
+              {tr('كلمة المرور الجديدة (12 حرفًا على الأقل)', 'New password (at least 12 characters)')}
+              <input type="password" minLength={12} required autoComplete="new-password" value={password}
+                onChange={(event) => setPassword(event.target.value)} />
+            </label>
+          )}
+          <Button type="submit" size="lg" fullWidth loading={pending}>
+            {stage === 'reset' ? tr('تغيير كلمة المرور والدخول', 'Reset password and sign in') : tr('تأكيد البريد والدخول', 'Verify email and sign in')}
+          </Button>
+        </form>
+        <Button variant="ghost" disabled={pending || Date.now() - lastSent < 60_000}
+          onClick={() => void sendCode(stage === 'reset')}>
+          {tr('إعادة إرسال الرمز بعد دقيقة', 'Resend code after one minute')}
+        </Button>
+        <Button variant="ghost" onClick={() => { setStage('form'); setFailure(''); setNotice(''); }}>
+          {tr('العودة', 'Back')}
+        </Button>
       </div>
     );
   }
@@ -249,7 +195,7 @@ export function EmailPasswordAccess({ createAccount }: Props) {
   return (
     <EmailPasswordForm
       createAccount={createAccount}
-      verificationRequested={verificationRequested}
+      verificationRequested={false}
       email={email}
       password={password}
       pending={pending}
@@ -262,15 +208,9 @@ export function EmailPasswordAccess({ createAccount }: Props) {
       onPassword={setPassword}
       onLegal={setLegalAccepted}
       onMarketing={setMarketing}
-      onSubmit={(event) => {
-        void submit(event);
-      }}
-      onReset={() => {
-        void resetPassword();
-      }}
-      onOtp={() => {
-        setUseOtp(true);
-      }}
+      onSubmit={(event) => { void submit(event); }}
+      onReset={() => { void sendCode(true); }}
+      onOtp={() => setUseOtp(true)}
     />
   );
 }
