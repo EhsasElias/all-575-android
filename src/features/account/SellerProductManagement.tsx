@@ -4,7 +4,7 @@ import {
   addSellerProductVariant, createSellerProduct, importSellerProductCsv, uploadSellerProductImage,
   sellerCategories, sellerCatalogTemplate,
   submitSellerProduct, updateSellerProduct,
-  type SellerCategory, type SellerMembership, type SellerProduct, type SellerProductInput,
+  type SellerCategory, type SellerMembership, type SellerProduct, type SellerProductInput, type SellerCsvPreview,
 } from './sellerWorkspaceApi';
 
 type Props = {
@@ -47,6 +47,7 @@ export function SellerProductManagement({ products, memberships, onUpdated }: Pr
   const [coverFile, setCoverFile] = useState<File | null>(null);
   const [importFile, setImportFile] = useState<File | null>(null);
   const [importSeller, setImportSeller] = useState('');
+  const [csvPreview, setCsvPreview] = useState<SellerCsvPreview | null>(null);
   const [error, setError] = useState('');
   const [success, setSuccess] = useState('');
 
@@ -184,22 +185,34 @@ export function SellerProductManagement({ products, memberships, onUpdated }: Pr
     } finally { setBusy(false); }
   };
 
-  const uploadCsv = async () => {
+  const uploadCsv = async (dryRun = false) => {
     const sellerId = Number(importSeller || sellerIds[0]);
     if (busy || importFile === null || !sellerIds.includes(sellerId)) return;
     if (importFile.size > 1024 * 1024 || !/[.]csv$/i.test(importFile.name)) {
       setError(tr('اختاري ملف CSV لا يتجاوز 1 ميجابايت.', 'Choose a CSV file under 1 MB.'));
       return;
     }
-    if (!window.confirm(tr('استيراد المنتجات كمسودات فقط؟', 'Import products as drafts only?'))) return;
+    if (!dryRun && !window.confirm(tr('استيراد المنتجات كمسودات فقط؟', 'Import products as drafts only?'))) return;
     setBusy(true); setError(''); setSuccess('');
     try {
-      const result = await importSellerProductCsv(sellerId, importFile);
-      setImportFile(null);
-      setSuccess(tr('تم استيراد مسودات المنتجات: ', 'Imported product drafts: ') + result.data.created_drafts);
-      onUpdated();
-    } catch {
-      setError(tr('فشل الاستيراد. تأكدي من ترتيب أعمدة القالب وصحة التصنيفات والأسعار وعدم تكرار SKU.', 'Import failed. Check template columns, categories, prices and duplicate SKUs.'));
+      const result = await importSellerProductCsv(sellerId, importFile, dryRun);
+      if (dryRun) {
+        setCsvPreview({
+          valid_rows: result.data.valid_rows ?? 0,
+          created_drafts: 0,
+          preview: result.data.preview ?? [],
+        });
+        setSuccess(tr('تم فحص الملف دون إضافة منتجات.', 'CSV validated without importing products.'));
+      } else {
+        setImportFile(null);
+        setCsvPreview(null);
+        setSuccess(tr('تم استيراد مسودات المنتجات: ', 'Imported product drafts: ') + result.data.created_drafts);
+        onUpdated();
+      }
+    } catch (cause) {
+      setCsvPreview(null);
+      const validation = cause && typeof cause === 'object' && 'fieldErrors' in cause ? (cause as { fieldErrors?: Record<string, string[]> }).fieldErrors?.file : null;
+      setError(validation?.join(' | ') ?? tr('فشل الاستيراد. تأكدي من ترتيب أعمدة القالب وصحة التصنيفات والأسعار وعدم تكرار SKU.', 'Import failed. Check template columns, categories, prices and duplicate SKUs.'));
     } finally { setBusy(false); }
   };
 
@@ -221,17 +234,37 @@ export function SellerProductManagement({ products, memberships, onUpdated }: Pr
           <p>{tr('حمّلي القالب وأدخلي حتى 200 منتج. سيتم حفظها كمسودات للمراجعة.', 'Download the template and enter up to 200 products. They will be saved as drafts.')}</p>
           <div style={controls}>
             <label style={field}>{tr('المتجر', 'Store')}
-              <select value={importSeller || String(sellerIds[0])} onChange={(event) => setImportSeller(event.target.value)}>
+              <select value={importSeller || String(sellerIds[0])} onChange={(event) => { setImportSeller(event.target.value); setCsvPreview(null); }}>
                 {sellerIds.map((id) => <option key={id} value={id}>{ar ? allowed.find((m) => m.seller_id === id)?.name_ar : allowed.find((m) => m.seller_id === id)?.name_en}</option>)}
               </select>
             </label>
             <label style={field}>{tr('ملف CSV', 'CSV file')}
-              <input type="file" accept=".csv,text/csv" onChange={(event) => setImportFile(event.target.files?.[0] ?? null)}/>
+              <input type="file" accept=".csv,text/csv" onChange={(event) => { setImportFile(event.target.files?.[0] ?? null); setCsvPreview(null); }}/>
             </label>
           </div>
-          <button type="button" style={{ ...button, marginTop: 12 }} disabled={busy || importFile === null} onClick={() => void uploadCsv()}>
-            {tr('استيراد المسودات', 'Import drafts')}
-          </button>
+          <div style={{ ...controls, marginTop: 12 }}>
+            <button type="button" style={button} disabled={busy || importFile === null} onClick={() => void uploadCsv(true)}>
+              {tr('فحص ومعاينة CSV', 'Validate & preview CSV')}
+            </button>
+            <button type="button" style={button} disabled={busy || importFile === null || csvPreview === null} onClick={() => void uploadCsv(false)}>
+              {tr('تأكيد استيراد المسودات', 'Confirm draft import')}
+            </button>
+          </div>
+          {csvPreview && (
+            <div role="status" style={{ marginTop: 12, overflowX: 'auto' }}>
+              <strong>{tr('صفوف سليمة: ', 'Valid rows: ')}{csvPreview.valid_rows}</strong>
+              <p>{tr('معاينة أول 10 منتجات. لم تُضف أي منتجات بعد.', 'First 10 products previewed. Nothing has been imported yet.')}</p>
+              <table style={{ width: '100%', borderCollapse: 'collapse' }}>
+                <thead><tr><th>SKU</th><th>{tr('اسم المنتج', 'Product')}</th><th>{tr('السعر (ر.س)', 'Price (SAR)')}</th></tr></thead>
+                <tbody>{csvPreview.preview.map((row) => (
+                  <tr key={row.sku}>
+                    <td>{row.sku}</td><td>{ar ? row.name_ar : row.name_en}</td>
+                    <td>{(row.price_halalas / 100).toFixed(2)}</td>
+                  </tr>
+                ))}</tbody>
+              </table>
+            </div>
+          )}
         </div>
       )}
       {sellerIds.length === 0 && <p>{tr('يمكن للمالك ومدير الفرع فقط إضافة وتعديل المنتجات.', 'Only owners and branch managers can add or edit products.')}</p>}
