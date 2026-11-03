@@ -156,7 +156,7 @@ export function SellerWorkspaceScreen() {
         <div style={panel}>
           <p>{tr('هذه اللوحة متاحة للبائعين المعتمدين فقط.', 'This workspace is for approved sellers only.')}</p>
           <Link to={routePaths.sellerApplication}>{tr('طلب التسجيل كبائع', 'Apply to become a seller')}</Link>
-          <div style={{ marginTop: 12 }}><button type="button" style={action} onClick={reload}>{tr('إعادة المحاولة', 'Retry')}</button></div>
+          <div style={{ marginTop: 12 }}><button type="button" style={action} onClick={() => window.location.reload()}>{tr('إعادة المحاولة', 'Retry')}</button></div>
         </div>
       )}
       {eligible && (
@@ -205,7 +205,7 @@ export function SellerWorkspaceScreen() {
                   <option value="all">{tr('كل الحالات', 'All statuses')}</option>
                   <option value="draft">{tr('مسودة', 'Draft')}</option>
                   <option value="pending_review">{tr('بانتظار المراجعة', 'Pending review')}</option>
-                  <option value="approved">{tr('معتمد', 'Approved')}</option>
+                  <option value="published">{tr('منشور', 'Published')}</option>
                   <option value="rejected">{tr('مرفوض', 'Rejected')}</option>
                 </select>
               </label>
