@@ -84,7 +84,7 @@ export function SellerProductManagement({ products, memberships, onUpdated }: Pr
     if (busy) return;
     const price = Number(draft.price);
     const priceHalalas = Math.round(price * 100);
-    if (!Number.isFinite(price) || !/^\\d+(\\.\\d{1,2})?$/.test(draft.price) ||
+    if (!Number.isFinite(price) || !/^[0-9]+(\x5c\x5c.[0-9]{1,2})?$/.test(draft.price) ||
         priceHalalas < 100 || priceHalalas > 575 || !Number.isSafeInteger(Number(draft.categoryId))) {
       setError(tr('السعر يجب أن يكون بين 1 و5.75 ريال، مع اختيار تصنيف صحيح.', 'Price must be SAR 1–5.75, with a valid category.'));
       return;
