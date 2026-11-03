@@ -42,7 +42,6 @@ export function EmailPasswordAccess({ createAccount }: Props) {
   const [stage, setStage] = useState<Stage>('form');
   const [challengeId, setChallengeId] = useState('');
   const [otp, setOtp] = useState('');
-  const [lastSent, setLastSent] = useState(0);
 
   const showFailure = (error: unknown) => {
     if (isApiError(error)) {
@@ -91,8 +90,7 @@ export function EmailPasswordAccess({ createAccount }: Props) {
           },
         });
         setChallengeId(response.data.challenge_id);
-        setLastSent(Date.now());
-        setStage('verify');
+          setStage('verify');
         setPassword('');
         setNotice(tr('أرسلنا رمز التحقق إلى بريدك. أدخليه لتفعيل الحساب.', 'We sent a verification code to your email. Enter it to activate your account.'));
       } else {
@@ -116,7 +114,6 @@ export function EmailPasswordAccess({ createAccount }: Props) {
       setChallengeId(response.data.challenge_id);
       setStage(recovery ? 'reset' : 'verify');
       setOtp('');
-      setLastSent(Date.now());
       setNotice(tr('تم إرسال رمز إلى البريد الإلكتروني.', 'A code was sent to your email.'));
     } catch (error) { showFailure(error); }
     finally { setPending(false); }
