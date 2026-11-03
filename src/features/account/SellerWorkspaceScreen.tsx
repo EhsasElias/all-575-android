@@ -9,7 +9,7 @@ import { SellerFinanceOverview } from './SellerFinanceOverview';
 import {
   memberships, openSellerSession, closeSellerSession, sellerDashboard,
   sellerOrders, sellerBranches, sellerProducts, sellerStock,
-  advanceSellerOrder, adjustSellerStock,
+  advanceSellerOrder, adjustSellerStock, exportSellerOrdersCsv,
   type SellerBranch, type SellerDashboard, type SellerOrder,
   type SellerProduct, type SellerStock, type SellerMembership,
 } from './sellerWorkspaceApi';
@@ -108,6 +108,27 @@ export function SellerWorkspaceScreen() {
     // Translation text is based on UI locale; it must not issue duplicate API requests.
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [eligible, section, branchId, orderStatus, productStatus, lowStockOnly, revision]);
+
+  const exportOrders = async () => {
+    if (busy) return;
+    setBusy(true); setError('');
+    try {
+      const file = await exportSellerOrdersCsv({
+        ...(branchId ? { branch_id: Number(branchId) } : {}),
+        ...(orderStatus !== 'all' ? { status: orderStatus } : {}),
+      });
+      const url = URL.createObjectURL(file.blob);
+      const link = document.createElement('a');
+      link.href = url;
+      link.download = file.filename ?? 'seller-orders.csv';
+      document.body.appendChild(link);
+      link.click();
+      link.remove();
+      URL.revokeObjectURL(url);
+    } catch {
+      setError(tr('تعذر تصدير الطلبات. تحققي من الصلاحيات والاتصال.', 'Could not export orders. Check permissions and connectivity.'));
+    } finally { setBusy(false); }
+  };
 
   const changeStatus = async (id: string, status: 'preparing' | 'ready') => {
     if (busy) return;
@@ -267,6 +288,7 @@ export function SellerWorkspaceScreen() {
           {!loading && section === 'orders' && (
             <section>
               <h2>{tr('طلبات التجهيز', 'Fulfilment orders')}</h2>
+              <button type="button" style={action} disabled={busy} onClick={() => void exportOrders()}>{tr('تصدير الطلبات CSV', 'Export orders CSV')}</button>
               {orders.length === 0 && <p>{tr('لا توجد طلبات مطابقة.', 'No matching orders.')}</p>}
               {orders.map((order) => (
                 <article key={order.id} style={panel}>
