@@ -142,3 +142,18 @@ export const exportSellerOrdersCsv = (filters: { branch_id?: number; status?: st
   const params = query.toString();
   return seller.download('/seller/orders/export.csv' + (params ? '?' + params : ''));
 };
+
+export type SellerStaffMember = {
+  id: number;
+  user_id: string | number;
+  seller_id: number;
+  branch_id: number | null;
+  role: 'owner' | 'branch_manager' | 'picker' | string;
+  is_active: boolean;
+};
+
+export const sellerStaff = (sellerId: number) =>
+  seller.get<{ data: SellerStaffMember[] }>('/seller/staff', { query: { seller_id: sellerId, limit: 100 } });
+
+export const deactivateSellerStaff = (membershipId: number) =>
+  seller.patch<{ data: { id: number; is_active: boolean } }>('/seller/staff/' + membershipId + '/deactivate', {});
