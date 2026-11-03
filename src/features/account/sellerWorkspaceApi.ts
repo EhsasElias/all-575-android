@@ -134,3 +134,10 @@ export const sellerFinanceLedger = (sellerId: number, from: string, to: string) 
   seller.get<{ data: SellerFinanceLedgerRow[]; payout_calculated: boolean }>('/seller/finance/ledger', {
     query: { seller_id: sellerId, from, to, limit: 20 },
   });
+
+export const exportSellerOrdersCsv = (filters: { branch_id?: number; status?: string } = {}) => {
+  const query = new URLSearchParams();
+  if (filters.branch_id) query.set('branch_id', String(filters.branch_id));
+  if (filters.status) query.set('status', filters.status);
+  return seller.download('/seller/orders/export.csv' + (query.size ? '?' + query.toString() : ''));
+};
