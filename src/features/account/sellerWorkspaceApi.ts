@@ -94,9 +94,16 @@ export const uploadSellerProductImage = (productId: number, image: File) => {
   );
 };
 
-export const importSellerProductCsv = (sellerId: number, file: File) => {
+export type SellerCsvPreview = {
+  valid_rows: number;
+  created_drafts: number;
+  preview: Array<{ category_id: number; name_ar: string; name_en: string; price_halalas: number; sku: string }>;
+};
+
+export const importSellerProductCsv = (sellerId: number, file: File, dryRun = false) => {
   const form = new FormData();
   form.append('seller_id', String(sellerId));
   form.append('file', file);
-  return seller.upload<{ data: { created_drafts: number } }>('/seller/products/import', form);
+  if (dryRun) form.append('dry_run', '1');
+  return seller.upload<{ data: { created_drafts: number } & Partial<SellerCsvPreview> }>('/seller/products/import', form);
 };
