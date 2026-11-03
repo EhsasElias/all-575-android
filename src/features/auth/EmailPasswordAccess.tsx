@@ -124,7 +124,7 @@ export function EmailPasswordAccess({ createAccount }: Props) {
 
   async function verifyCode(event: SubmitEvent<HTMLFormElement>): Promise<void> {
     event.preventDefault();
-    if (pending || !challengeId || !/^\\d{6}$/.test(otp)) return;
+    if (pending || !challengeId || !/^[0-9]{6}$/.test(otp)) return;
     setPending(true); setFailure('');
     try {
       if (stage === 'reset') {
