@@ -59,7 +59,7 @@ export function SellerStaffManagement({ memberships }: Props) {
         'Store owners can review staff permissions and deactivate staff. Ownership changes require administrator approval.')}</p>
       <form onSubmit={(event) => void load(event)} style={{ display: 'flex', gap: 12, flexWrap: 'wrap', alignItems: 'end' }}>
         <label>{tr('المتجر', 'Store')}
-          <select style={{ display: 'block' }} value={sellerId || String(owners[0].seller_id)}
+          <select style={{ display: 'block' }} value={sellerId || String(owners[0]?.seller_id ?? '')}
             onChange={(event) => { setSellerId(event.target.value); setRows(null); setError(''); }}>
             {owners.map((owner) => <option value={owner.seller_id} key={owner.seller_id}>
               {ar ? owner.name_ar : owner.name_en}
