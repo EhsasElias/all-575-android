@@ -1,6 +1,6 @@
 import { http } from '@/shared/api';
 
-export type SellerApplication = { id: number; status: string; review_note?: string | null; submitted_at?: string | null; legal_name: string; commercial_registration: string; contact_name: string; contact_email: string; contact_phone: string; city: string; national_unified_number: string | null; vat_number: string | null };
+export type SellerApplication = { id: number; status: string; review_note?: string | null; submitted_at?: string | null; legal_name: string; commercial_registration: string; contact_name: string; contact_email: string; contact_phone: string; city: string; national_unified_number: string | null; vat_number: string | null } & SellerExtendedFields;
 export type SellerExtendedFields = {
   entity_type?: string | null;
   commercial_registration_status?: string | null;
