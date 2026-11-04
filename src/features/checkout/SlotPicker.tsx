@@ -1,7 +1,7 @@
 import { useId, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useLanguage } from '@/shared/i18n';
-import { ErrorState, Icon, Skeleton } from '@/shared/ui';
+import { Button, ErrorState, Icon, Skeleton } from '@/shared/ui';
 import type { Slot } from './api';
 import section from './section.module.css';
 import { describeSlotTimes, groupSlotsByDay } from './slots';
@@ -97,7 +97,20 @@ export function SlotPicker({
       )}
       {hasAddress && isError && <ErrorState headingLevel={3} onRetry={onRetry} />}
       {hasAddress && !isLoading && !isError && availableDays.length === 0 && (
-        <p className={section.hint}>{t('slots.none')}</p>
+        <div className={styles.noSlots}>
+          <p className={section.hint}>
+            {slots.length === 0
+              ? t('slots.none')
+              : language === 'ar' ? 'جميع مواعيد التوصيل الحالية ممتلئة.'
+                : language === 'fr' ? 'Tous les créneaux de livraison sont complets.'
+                  : 'All current delivery slots are fully booked.'}
+          </p>
+          <Button variant="secondary" onClick={onRetry}>
+            {language === 'ar' ? 'تحديث مواعيد التوصيل'
+              : language === 'fr' ? 'Actualiser les créneaux'
+                : 'Refresh delivery times'}
+          </Button>
+        </div>
       )}
       {hasAddress && !isLoading && !isError && availableDays.length > 0 && (
         <div className={styles.calendar}>
