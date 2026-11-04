@@ -16,6 +16,7 @@ export type SellerProduct = {
   id: number; seller_id: number; category_id: number; slug: string;
   name_ar: string; name_en: string; description_ar?: string | null; description_en?: string | null;
   price_halalas: number; vat_class: string; status: string; created_at: string;
+  rejection_reason?: string | null;
 };
 export type SellerStock = {
   id: number; branch_id: number; variant_id: number; on_hand: number;
