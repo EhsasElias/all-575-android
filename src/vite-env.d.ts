@@ -2,6 +2,8 @@
 /* eslint-disable @typescript-eslint/consistent-type-definitions */
 interface ImportMetaEnv {
   readonly VITE_API_BASE_URL?: string;
+  /** Public browser tile key (restrict to allowed domains in Geoapify). Never reuse the server-only key. */
+  readonly VITE_GEOAPIFY_MAP_KEY?: string;
   /** `true` only in a tester's build: shows the buttons that play the payment provider on a test server. */
   readonly VITE_TEST_PANEL?: string;
   /** Public Firebase web-app configuration (never put Admin credentials in VITE_*). */
