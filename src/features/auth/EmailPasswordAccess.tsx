@@ -4,6 +4,7 @@ import { errorCode, http, isApiError, type Data, type Schemas } from '@/shared/a
 import { useSession } from '@/shared/session';
 import { Button, useToast } from '@/shared/ui';
 import { SignInSteps } from './SignInSteps';
+import { recallFlow } from './signInMemory';
 import { currentDeviceName } from './deviceName';
 import { EmailPasswordForm } from './EmailPasswordForm';
 import { useConsentVersions } from './useConsentVersions';
@@ -30,7 +31,9 @@ export function EmailPasswordAccess({ createAccount }: Props) {
   const session = useSession();
   const { showToast } = useToast();
   const legal = useConsentVersions(null);
-  const [useOtp, setUseOtp] = useState(false);
+  // Restore the OTP view after visiting Terms/Privacy during an active code or consent step.
+  // The one-time flow itself remains in memory and is independently expiry-checked.
+  const [useOtp, setUseOtp] = useState(() => recallFlow().step !== 'contact');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [legalAccepted, setLegalAccepted] = useState(false);
