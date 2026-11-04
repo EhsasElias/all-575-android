@@ -1,0 +1,21 @@
+name: Seller frontend checks
+on:
+  push:
+    branches: [v2]
+  workflow_dispatch:
+
+jobs:
+  seller-build:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: npm
+      - run: npm ci
+      - name: Typecheck and production build
+        run: npm run build
+      - name: Unit and component tests
+        run: npm test -- --run
