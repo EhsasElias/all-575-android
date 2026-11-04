@@ -100,3 +100,10 @@
 .slot:has(.input:checked) .check { display: block; }
 .slot[data-full='true'] .times { color: var(--color-text-muted); }
 .full { display: inline-flex; align-items: center; gap: var(--space-1); color: var(--color-text-muted); font-size: var(--font-size-small); font-weight: var(--font-weight-strong); }
+
+.noSlots {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: var(--space-3);
+}
