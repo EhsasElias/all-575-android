@@ -30,7 +30,8 @@ function showIntroForThisTab(): boolean {
 }
 
 function redirectFromRoot() {
-  return redirect(routePaths.home);
+  // The root URL is an explicit app entry, unlike navigation among other pages.
+  return redirect(routePaths.logoIntro);
 }
 
 /**
