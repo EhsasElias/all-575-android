@@ -16,8 +16,21 @@ import { RootLayout } from './layout/RootLayout';
 import { RouteError } from './layout/RouteError';
 import { ShellLayout } from './layout/ShellLayout';
 
+// Non-sensitive marker: only the intro state for this browser tab.
+const INTRO_SHOWN_KEY = 'all575:introShown';
+
+function showIntroForThisTab(): boolean {
+  try {
+    if (window.sessionStorage.getItem(INTRO_SHOWN_KEY) === '1') return false;
+    window.sessionStorage.setItem(INTRO_SHOWN_KEY, '1');
+    return true;
+  } catch {
+    return false;
+  }
+}
+
 function redirectFromRoot() {
-  return redirect(routePaths.logoIntro);
+  return redirect(routePaths.home);
 }
 
 /**
@@ -64,7 +77,11 @@ export const appRoutes: RouteObject[] = [
 ];
 
 export function createAppRouter() {
-  const launchPath = initialWelcomePath(window.location);
-  if (launchPath !== null) window.history.replaceState(window.history.state, '', launchPath);
+  // Display the logo only at the start of this tab, never on ordinary page reload.
+  // The native app has a separate app-visibility intro handler.
+  if (showIntroForThisTab()) {
+    const launchPath = initialWelcomePath(window.location) ?? routePaths.logoIntro;
+    window.history.replaceState(window.history.state, '', launchPath);
+  }
   return createBrowserRouter(appRoutes);
 }
