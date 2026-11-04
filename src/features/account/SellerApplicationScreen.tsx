@@ -1,5 +1,6 @@
 import { useEffect, useState, type FormEvent } from 'react';
 import { useTranslation } from 'react-i18next';
+import { isApiError } from '@/shared/api';
 import { Link } from 'react-router';
 import { routePaths } from '@/shared/lib';
 import { Page } from './components/Page';
@@ -32,9 +33,10 @@ export function SellerApplicationScreen() {
   const ar = i18n.language.startsWith('ar');
   const [form, setForm] = useState<SellerApplicationInput>(empty);
   const [status, setStatus] = useState<string | null>(null);
+  const [reviewNote, setReviewNote] = useState<string | null>(null);
   const [loading, setLoading] = useState(true);
   const [busy, setBusy] = useState(false);
-  const [error, setError] = useState(false);
+  const [error, setError] = useState('');
   const [saved, setSaved] = useState(false);
 
   useEffect(() => {
@@ -43,6 +45,7 @@ export function SellerApplicationScreen() {
       if (!live) return;
       if (result) {
         setStatus(result.status);
+        setReviewNote(result.review_note ?? null);
         setForm({
           legal_name: result.legal_name,
           commercial_registration: result.commercial_registration,
@@ -54,7 +57,7 @@ export function SellerApplicationScreen() {
           city: result.city,
         });
       }
-    }).catch(() => { if (live) setError(true); })
+    }).catch(() => { if (live) setError(ar ? 'تعذر تحميل طلب البائع.' : 'Could not load seller application.'); })
       .finally(() => { if (live) setLoading(false); });
     return () => { live = false; };
   }, []);
@@ -62,23 +65,32 @@ export function SellerApplicationScreen() {
   const submit = async (event: FormEvent) => {
     event.preventDefault();
     if (busy || status === 'submitted' || status === 'reviewed') return;
-    setBusy(true); setError(false); setSaved(false);
+    setBusy(true); setError(''); setSaved(false);
     try {
       const result = await saveSellerApplication(form);
       setStatus(result.status);
+      setReviewNote(result.review_note ?? null);
       setSaved(true);
-    } catch { setError(true); }
+    } catch (cause) {
+      const fieldError = isApiError(cause) ? Object.values(cause.fieldErrors).flat()[0] : null;
+      setError(fieldError ?? (ar ? 'تعذر حفظ الطلب. تحققي من الحقول.' : 'Could not save application. Check the fields.'));
+    }
     finally { setBusy(false); }
   };
 
   const sendForReview = async () => {
     if (busy || status !== 'draft') return;
-    setBusy(true); setError(false);
+    setBusy(true); setError('');
     try {
       const result = await submitSellerApplication();
       setStatus(result.status);
+      setReviewNote(result.review_note ?? null);
       setSaved(false);
-    } catch { setError(true); }
+    } catch (cause) {
+      setError(isApiError(cause) && cause.status === 409
+        ? (ar ? 'الطلب مُرسل بالفعل. حدّثي الصفحة.' : 'Application already submitted. Refresh this page.')
+        : (ar ? 'تعذر إرسال الطلب للمراجعة.' : 'Could not submit application.'));
+    }
     finally { setBusy(false); }
   };
 
@@ -91,7 +103,11 @@ export function SellerApplicationScreen() {
       {loading ? <p role="status">{ar ? 'جار التحميل…' : 'Loading…'}</p> : (
         <>
           {status && <p role="status">{ar ? 'حالة الطلب: ' : 'Application status: '}{status}</p>}
-          {error && <p role="alert">{ar ? 'تعذر إتمام العملية. تحقق من البيانات وحاول مجددًا.' : 'Could not complete your request. Check the fields and retry.'}</p>}
+          {status === 'correction' && reviewNote && <p role="status" style={{ padding: 12, border: '1px solid #d8e1db', borderRadius: 8 }}>
+            <strong>{ar ? 'ملاحظات الإدارة للتصحيح:' : 'Administrator correction request:'}</strong>{' '}{reviewNote}
+          </p>}
+          {status === 'correction' && <p>{ar ? 'عدّلي البيانات واحفظي المسودة ثم أرسليها للمراجعة مرة أخرى.' : 'Edit the information, save a draft, then submit it for review again.'}</p>}
+          {error && <p role="alert">{error}</p>}
           {saved && <p role="status">{ar ? 'تم حفظ المسودة.' : 'Draft saved.'}</p>}
           <form onSubmit={(event) => void submit(event)} style={{ display: 'grid', gap: 12 }}>
             {fields.map(([key, en, arabic]) => (
