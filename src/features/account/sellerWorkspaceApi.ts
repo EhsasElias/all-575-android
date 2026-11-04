@@ -179,3 +179,20 @@ export const respondSellerReturn = (caseId: string, position: 'accept' | 'disput
   seller.post<{ data: { id: number; case_id: string; position: string } }>(
     '/seller/returns/' + encodeURIComponent(caseId) + '/response', { position, explanation },
   );
+
+export type SellerPackingList = {
+  order_number: string;
+  suborder_id: string;
+  branch_id: number;
+  status: string;
+  created_at: string;
+  items: Array<{
+    product: { ar: string; en: string };
+    variant: { ar: string | null; en: string | null };
+    quantity: number;
+    variant_id: number;
+  }>;
+};
+
+export const sellerPackingList = (suborderId: string) =>
+  seller.get<{ data: SellerPackingList }>('/seller/orders/' + encodeURIComponent(suborderId) + '/packing-list');
