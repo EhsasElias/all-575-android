@@ -14,6 +14,7 @@ import { ProfileSummary } from './ProfileSummary';
 import { Section } from './Section';
 import { SignOutSection } from './SignOutSection';
 import { BiometricPreference } from './BiometricPreference';
+import { SellerReviewEntry } from './SellerReviewEntry';
 
 type SignedInAccountProps = {
   user: SessionUser;
@@ -31,6 +32,7 @@ export function SignedInAccount({ user }: SignedInAccountProps) {
       <AccountMenu />
       <ButtonLink to={routePaths.sellerApplication}>{'التسجيل كبائع / Become a seller'}</ButtonLink>
       <ButtonLink to={routePaths.sellerWorkspace}>{'لوحة البائع / Seller workspace'}</ButtonLink>
+      <SellerReviewEntry />
       <CustomerNotifications />
       <Section title={t('preferences.title')}>
         <LanguagePreference />
