@@ -54,3 +54,11 @@
   color: var(--color-danger);
   font-weight: var(--font-weight-strong);
 }
+
+.googleMapsLink {
+  color: var(--color-primary, #20664e);
+  text-decoration: underline;
+  text-underline-offset: 3px;
+  align-self: flex-start;
+  overflow-wrap: anywhere;
+}
