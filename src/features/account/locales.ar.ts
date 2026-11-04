@@ -5,6 +5,8 @@ import type { en } from './locales.en';
 
 export const ar: Translations<typeof en> = {
   dashboard: dashboardAr,
+  sellerApply: 'التسجيل كبائع',
+  sellerWorkspace: 'لوحة البائع',
   title: 'حسابي',
   loading: 'جارٍ تحميل حسابك',
   back: 'رجوع',
