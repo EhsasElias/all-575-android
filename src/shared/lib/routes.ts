@@ -23,6 +23,7 @@ export const routePaths = {
   account: '/account',
   sellerApplication: '/account/seller-application',
   sellerWorkspace: '/account/seller-workspace',
+  sellerReview: '/account/seller-review',
   dashboard: '/account/dashboard',
   billing: '/account/billing',
   customerRequests: '/account/requests',
