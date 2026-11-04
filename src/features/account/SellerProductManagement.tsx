@@ -365,6 +365,11 @@ export function SellerProductManagement({ products, memberships, onUpdated }: Pr
         <article key={product.id} style={card}>
           <strong>{ar ? product.name_ar : product.name_en}</strong>
           <p>{tr('السعر', 'Price')}: {(product.price_halalas / 100).toFixed(2)} {tr('ر.س', 'SAR')} · {tr('الحالة', 'Status')}: {product.status}</p>
+          {product.status === 'rejected' && product.rejection_reason && (
+            <p role="status" style={{ padding: 10, border: '1px solid #d8e1db', borderRadius: 8 }}>
+              <strong>{tr('سبب رفض المنتج:', 'Rejection reason:')}</strong>{' '}{product.rejection_reason}
+            </p>
+          )}
           <small>{tr('تصنيف', 'Category')} #{product.category_id} · {tr('متجر', 'Store')} #{product.seller_id}</small>
           {editable(product) && sellerIds.includes(product.seller_id) && (
             <div style={{ ...controls, marginTop: 10 }}>
