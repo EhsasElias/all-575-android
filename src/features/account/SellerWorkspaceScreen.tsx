@@ -11,9 +11,9 @@ import { SellerReturnManagement } from './SellerReturnManagement';
 import {
   memberships, openSellerSession, closeSellerSession, sellerDashboard,
   sellerOrders, sellerBranches, sellerProducts, sellerStock,
-  advanceSellerOrder, adjustSellerStock, exportSellerOrdersCsv,
+  advanceSellerOrder, adjustSellerStock, exportSellerOrdersCsv, sellerPackingList,
   type SellerBranch, type SellerDashboard, type SellerOrder,
-  type SellerProduct, type SellerStock, type SellerMembership,
+  type SellerProduct, type SellerStock, type SellerMembership, type SellerPackingList,
 } from './sellerWorkspaceApi';
 
 type Section = 'overview' | 'products' | 'inventory' | 'orders' | 'returns' | 'finance' | 'staff';
@@ -40,6 +40,7 @@ export function SellerWorkspaceScreen() {
   const [loadingMoreProducts, setLoadingMoreProducts] = useState(false);
   const [stock, setStock] = useState<SellerStock[]>([]);
   const [orders, setOrders] = useState<SellerOrder[]>([]);
+  const [packing, setPacking] = useState<SellerPackingList | null>(null);
   const [branchId, setBranchId] = useState('');
   const [orderStatus, setOrderStatus] = useState('all');
   const [productStatus, setProductStatus] = useState('all');
@@ -156,6 +157,18 @@ export function SellerWorkspaceScreen() {
       URL.revokeObjectURL(url);
     } catch {
       setError(tr('تعذر تصدير الطلبات. تحققي من الصلاحيات والاتصال.', 'Could not export orders. Check permissions and connectivity.'));
+    } finally { setBusy(false); }
+  };
+
+  const viewPacking = async (id: string) => {
+    if (busy) return;
+    if (packing?.suborder_id === id) { setPacking(null); return; }
+    setBusy(true); setPacking(null); setError('');
+    try {
+      const result = await sellerPackingList(id);
+      setPacking(result.data);
+    } catch {
+      setError(tr('تعذر تحميل قائمة التجهيز. تحققي من الصلاحيات.', 'Could not load packing list. Check order access.'));
     } finally { setBusy(false); }
   };
 
@@ -339,6 +352,26 @@ export function SellerWorkspaceScreen() {
                   <ul>{order.items.map((item) => (
                     <li key={item.id}>{ar ? item.name.ar : item.name.en} × {item.quantity}</li>
                   ))}</ul>
+                  <div style={{ marginTop: 10 }}>
+                    <button type="button" style={action} disabled={busy}
+                      onClick={() => void viewPacking(order.id)}>
+                      {packing?.suborder_id === order.id ? tr('إخفاء قائمة التجهيز', 'Hide packing list') : tr('عرض قائمة التجهيز', 'View packing list')}
+                    </button>
+                    {packing?.suborder_id === order.id && (
+                      <div style={{ marginTop: 10, padding: 12, border: '1px solid #d8e1db', borderRadius: 8 }}>
+                        <strong>{tr('قائمة تجهيز الطلب', 'Order packing list')} — {packing.order_number}</strong>
+                        <p>{tr('الفرع', 'Branch')} #{packing.branch_id} · {packing.status}</p>
+                        <ul>{packing.items.map((item) => (
+                          <li key={item.variant_id}>
+                            {ar ? item.product.ar : item.product.en}
+                            {' — '}
+                            {(ar ? item.variant.ar : item.variant.en) || ('#' + item.variant_id)}
+                            {' × '}{item.quantity}
+                          </li>
+                        ))}</ul>
+                      </div>
+                    )}
+                  </div>
                   {order.status === 'awaiting_seller' && (
                     <button type="button" style={action} disabled={busy}
                       onClick={() => void changeStatus(order.id, 'preparing')}>
