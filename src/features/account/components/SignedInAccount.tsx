@@ -30,8 +30,8 @@ export function SignedInAccount({ user }: SignedInAccountProps) {
       <ButtonLink to={routePaths.dashboard}>{t('dashboard.title')}</ButtonLink>
       {user.consents.needs_update && <ConsentNotice />}
       <AccountMenu />
-      <ButtonLink to={routePaths.sellerApplication}>{'التسجيل كبائع / Become a seller'}</ButtonLink>
-      <ButtonLink to={routePaths.sellerWorkspace}>{'لوحة البائع / Seller workspace'}</ButtonLink>
+      <ButtonLink to={routePaths.sellerApplication}>{t('sellerApply')}</ButtonLink>
+      <ButtonLink to={routePaths.sellerWorkspace}>{t('sellerWorkspace')}</ButtonLink>
       <SellerReviewEntry />
       <CustomerNotifications />
       <Section title={t('preferences.title')}>
