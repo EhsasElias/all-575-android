@@ -198,3 +198,19 @@ export type SellerPackingList = {
 
 export const sellerPackingList = (suborderId: string) =>
   seller.get<{ data: SellerPackingList }>('/seller/orders/' + encodeURIComponent(suborderId) + '/packing-list');
+
+export type SellerSettlementReadiness = {
+  seller_id: number;
+  currency: 'SAR';
+  state: string;
+  commission_configured: boolean;
+  refund_allocation_verified: boolean;
+  finance_approval_verified: boolean;
+  payable_halalas: number | null;
+  transfer_enabled: boolean;
+};
+
+export const sellerSettlementReadiness = (sellerId: number) =>
+  seller.get<{ data: SellerSettlementReadiness }>('/seller/finance/settlement-readiness', {
+    query: { seller_id: sellerId },
+  });
