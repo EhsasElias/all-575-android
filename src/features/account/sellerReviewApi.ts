@@ -33,3 +33,16 @@ export const decideSellerProduct = (id: number, decision: 'publish' | 'reject', 
   );
 export const downloadReviewDocument = (applicationId: number, documentId: number) =>
   http.download('/seller-review/applications/' + applicationId + '/documents/' + documentId);
+
+export type SellerBranchReview = {
+  id: number; seller_id: number; service_zone_id: number; code: string;
+  name_ar: string; name_en: string; lat: number; lng: number;
+};
+
+export const reviewSellerBranches = () =>
+  http.get<{ data: SellerBranchReview[] }>('/seller-review/branches');
+
+export const activateSellerBranch = (branchId: number) =>
+  http.post<{ data: { id: number; is_active: boolean } }>(
+    '/seller-review/branches/' + branchId + '/decision', { decision: 'activate' },
+  );
