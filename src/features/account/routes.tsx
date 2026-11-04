@@ -9,6 +9,7 @@ import { ProfileScreen } from './ProfileScreen';
 import { SessionsScreen } from './SessionsScreen';
 import { SellerApplicationScreen } from './SellerApplicationScreen';
 import { SellerWorkspaceScreen } from './SellerWorkspaceScreen';
+import { SellerReviewScreen } from './SellerReviewScreen';
 
 /** The account screen itself handles guests, and the legal texts are public. */
 export const accountRoutes: RouteObject[] = [
@@ -28,6 +29,7 @@ export const accountRoutes: RouteObject[] = [
 /** Routes that need a signed-in customer: the router wraps them in RequireAuth. */
 export const protectedAccountRoutes: RouteObject[] = [
   { path: routePaths.sellerWorkspace, element: <SellerWorkspaceScreen />, handle: titled((t) => t('nav.account')) },
+  { path: routePaths.sellerReview, element: <SellerReviewScreen />, handle: titled((t) => t('nav.account')) },
   {
     path: routePaths.sellerApplication,
     element: <SellerApplicationScreen />,
