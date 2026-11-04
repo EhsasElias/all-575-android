@@ -1,7 +1,18 @@
 import { useCallback, useEffect, useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { getNotifications, markAllNotificationsRead, markNotificationRead, type NotificationInbox } from '../notificationsApi';
+import styles from './CustomerNotifications.module.css';
+
+const labels = {
+  ar: { title: 'الإشعارات', refresh: 'تحديث', all: 'تحديد الكل كمقروء', read: 'تحديد كمقروء', empty: 'لا توجد إشعارات حاليًا', failure: 'تعذر تحميل الإشعارات. حاولي التحديث.', loading: 'جارٍ تحميل الإشعارات', unread: 'غير مقروء' },
+  en: { title: 'Notifications', refresh: 'Refresh', all: 'Mark all as read', read: 'Mark as read', empty: 'No notifications yet', failure: 'Could not load notifications. Try refreshing.', loading: 'Loading notifications', unread: 'Unread' },
+  fr: { title: 'Notifications', refresh: 'Actualiser', all: 'Tout marquer comme lu', read: 'Marquer comme lu', empty: 'Aucune notification pour le moment', failure: 'Impossible de charger les notifications. Réessayez.', loading: 'Chargement des notifications', unread: 'Non lu' },
+} as const;
 
 export function CustomerNotifications() {
+  const { i18n } = useTranslation();
+  const language = i18n.language.startsWith('ar') ? 'ar' : i18n.language.startsWith('fr') ? 'fr' : 'en';
+  const t = labels[language];
   const [inbox, setInbox] = useState<NotificationInbox | null>(null);
   const [error, setError] = useState(false);
   const [busy, setBusy] = useState(false);
@@ -47,30 +58,56 @@ export function CustomerNotifications() {
   };
 
   return (
-    <section aria-label="إشعارات العميل" style={{ marginBlock: 16 }}>
-      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 12 }}>
-        <h2 style={{ margin: 0 }}>الإشعارات {inbox?.unread_count ? '(' + inbox.unread_count + ')' : ''}</h2>
-        <button type="button" onClick={() => void load()}>تحديث</button>
-      </div>
-      {error && <p role="alert">تعذر تحميل الإشعارات. حاول التحديث.</p>}
-      {inbox && inbox.unread_count > 0 && (
-        <button type="button" disabled={busy} onClick={() => void markAll()}>
-          تحديد الكل كمقروء
-        </button>
-      )}
-      {inbox?.data.length === 0 && <p>لا توجد إشعارات حاليًا.</p>}
-      {inbox?.data.map((notice) => (
-        <article key={notice.id} style={{ paddingBlock: 12, borderBottom: '1px solid var(--color-border)' }}>
-          <strong>{notice.title}</strong>
-          <p>{notice.message}</p>
-          <small>{new Date(notice.created_at).toLocaleString()}</small>
-          {!notice.read_at && (
-            <button type="button" disabled={busy} onClick={() => void markRead(notice.id)}>
-              تحديد كمقروء
-            </button>
+    <section className={styles.section} aria-label={t.title}>
+      <header className={styles.heading}>
+        <div className={styles.titleLine}>
+          <h2>{t.title}</h2>
+          {(inbox?.unread_count ?? 0) > 0 && (
+            <span className={styles.count} aria-label={t.unread}>{inbox?.unread_count}</span>
           )}
-        </article>
-      ))}
+        </div>
+        <button type="button" className={styles.refresh} onClick={() => void load()} disabled={busy}>
+          {t.refresh}
+        </button>
+      </header>
+      {error && <p role="alert" className={styles.error}>{t.failure}</p>}
+      {inbox === null && !error && <p role="status" className={styles.empty}>{t.loading}</p>}
+      {inbox && inbox.unread_count > 0 && (
+        <div className={styles.toolbar}>
+          <button type="button" className={styles.markAll} disabled={busy} onClick={() => void markAll()}>
+            {t.all}
+          </button>
+        </div>
+      )}
+      {inbox?.data.length === 0 && <p className={styles.empty}>{t.empty}</p>}
+      {inbox && inbox.data.length > 0 && (
+        <ul className={styles.list}>
+          {inbox.data.map((notice) => (
+            <li key={notice.id}>
+              <article className={styles.notice} data-unread={!notice.read_at}>
+                <div className={styles.noticeTitle}>
+                  <strong>{notice.title}</strong>
+                  {!notice.read_at && <span className={styles.unreadDot} aria-label={t.unread} />}
+                </div>
+                <p className={styles.message}>{notice.message}</p>
+                <div className={styles.meta}>
+                  <time dateTime={notice.created_at}>
+                    {new Date(notice.created_at).toLocaleString(
+                      language === 'ar' ? 'ar-SA' : language === 'fr' ? 'fr-FR' : 'en-GB',
+                    )}
+                  </time>
+                  {!notice.read_at && (
+                    <button type="button" className={styles.markRead} disabled={busy}
+                      onClick={() => void markRead(notice.id)}>
+                      {t.read}
+                    </button>
+                  )}
+                </div>
+              </article>
+            </li>
+          ))}
+        </ul>
+      )}
     </section>
   );
 }
