@@ -117,6 +117,18 @@ export function LocationPicker({
         </Suspense>
       </MapBoundary>
 
+      {pin !== null && Number.isFinite(pin.lat) && Number.isFinite(pin.lng) && (
+        <a
+          href={`https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(`${pin.lat},${pin.lng}`)}`}
+          target="_blank"
+          rel="noopener noreferrer"
+          className={styles.googleMapsLink}
+        >
+          {t('form.pin.useMyLocation') === 'استخدم موقعي الحالي'
+            ? 'عرض هذا الموقع في خرائط Google'
+            : 'View this location in Google Maps'}
+        </a>
+      )}
       <PinStatus pin={pin} error={error} />
       <MapAddressStatus status={lookupStatus} onRetry={onRetryLookup} />
     </section>
