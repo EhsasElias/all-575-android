@@ -35,6 +35,8 @@ export function SellerWorkspaceScreen() {
   const [dashboard, setDashboard] = useState<SellerDashboard | null>(null);
   const [branches, setBranches] = useState<SellerBranch[]>([]);
   const [products, setProducts] = useState<SellerProduct[]>([]);
+  const [hasMoreProducts, setHasMoreProducts] = useState(false);
+  const [loadingMoreProducts, setLoadingMoreProducts] = useState(false);
   const [stock, setStock] = useState<SellerStock[]>([]);
   const [orders, setOrders] = useState<SellerOrder[]>([]);
   const [branchId, setBranchId] = useState('');
@@ -85,7 +87,7 @@ export function SellerWorkspaceScreen() {
           if (active) { setDashboard(summary.data); setBranches(branchList.data); }
         } else if (section === 'products') {
           const result = await sellerProducts({ limit: 50, ...(productStatus !== 'all' ? { status: productStatus } : {}) });
-          if (active) setProducts(result.data);
+          if (active) { setProducts(result.data); setHasMoreProducts(result.data.length === 50); }
         } else if (section === 'inventory') {
           const [result, branchList] = await Promise.all([
             sellerStock({
@@ -115,6 +117,25 @@ export function SellerWorkspaceScreen() {
     // Translation text is based on UI locale; it must not issue duplicate API requests.
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [eligible, section, branchId, orderStatus, productStatus, lowStockOnly, revision]);
+
+  const loadMoreProducts = async () => {
+    const lastId = products[products.length - 1]?.id;
+    if (loading || loadingMoreProducts || !hasMoreProducts || !lastId) return;
+    setLoadingMoreProducts(true); setError('');
+    try {
+      const next = await sellerProducts({
+        limit: 50, before_id: lastId,
+        ...(productStatus !== 'all' ? { status: productStatus } : {}),
+      });
+      setProducts((current) => {
+        const existing = new Set(current.map((product) => product.id));
+        return [...current, ...next.data.filter((product) => !existing.has(product.id))];
+      });
+      setHasMoreProducts(next.data.length === 50);
+    } catch {
+      setError(tr('تعذر تحميل المزيد من المنتجات.', 'Could not load more products.'));
+    } finally { setLoadingMoreProducts(false); }
+  };
 
   const exportOrders = async () => {
     if (busy) return;
@@ -269,11 +290,19 @@ export function SellerWorkspaceScreen() {
             </>
           )}
           {section === 'products' && (
-            <SellerProductManagement
-              products={products}
-              memberships={sellerMemberships}
-              onUpdated={reload}
-            />
+            <>
+              <SellerProductManagement
+                products={products}
+                memberships={sellerMemberships}
+                onUpdated={reload}
+              />
+              {hasMoreProducts && !loading && (
+                <button type="button" style={action} disabled={loadingMoreProducts}
+                  onClick={() => void loadMoreProducts()}>
+                  {loadingMoreProducts ? tr('جار التحميل…', 'Loading…') : tr('عرض المزيد من المنتجات', 'Load more products')}
+                </button>
+              )}
+            </>
           )}
           {section === 'finance' && <SellerFinanceOverview memberships={sellerMemberships} />}
           {section === 'staff' && <SellerStaffManagement memberships={sellerMemberships} />}
