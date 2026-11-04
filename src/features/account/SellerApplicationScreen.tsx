@@ -5,6 +5,7 @@ import { Link } from 'react-router';
 import { routePaths } from '@/shared/lib';
 import { Page } from './components/Page';
 import { PageHeader } from './components/PageHeader';
+import styles from './SellerApplicationScreen.module.css';
 import {
   getSellerApplication,
   getSellerApplicationDocuments,
@@ -46,9 +47,22 @@ const fields = [
   ['iban', 'IBAN (optional)', 'الآيبان (اختياري)'],
 ] as const;
 
+const formGroups = [
+  { id: 'company', title: { ar: 'بيانات الشركة', en: 'Company details', fr: "Informations de l’entreprise" },
+    keys: ['legal_name', 'commercial_registration', 'national_unified_number', 'vat_number', 'entity_type', 'commercial_registration_status', 'commercial_registration_issue_date', 'commercial_registration_expiry_date', 'chamber_of_commerce_number'] },
+  { id: 'contact', title: { ar: 'بيانات التواصل', en: 'Contact details', fr: 'Coordonnées' },
+    keys: ['contact_name', 'contact_email', 'contact_phone'] },
+  { id: 'address', title: { ar: 'العنوان الوطني', en: 'National address', fr: 'Adresse nationale' },
+    keys: ['city', 'district', 'street', 'building_number', 'additional_number', 'postal_code'] },
+  { id: 'bank', title: { ar: 'البيانات البنكية', en: 'Bank details', fr: 'Coordonnées bancaires' },
+    keys: ['iban'] },
+] as const;
+
 export function SellerApplicationScreen() {
   const { i18n } = useTranslation();
   const ar = i18n.language.startsWith('ar');
+  const fr = i18n.language.startsWith('fr');
+  const localized = (arLabel: string, enLabel: string, frLabel?: string) => ar ? arLabel : fr ? (frLabel ?? enLabel) : enLabel;
   const [form, setForm] = useState<SellerApplicationInput>(empty);
   const [status, setStatus] = useState<string | null>(null);
   const [reviewNote, setReviewNote] = useState<string | null>(null);
@@ -150,35 +164,56 @@ export function SellerApplicationScreen() {
   const readonly = status !== null && status !== 'draft' && status !== 'correction';
   return (
     <Page>
+      <div className={styles.application}>
       <PageHeader title={ar ? 'طلب التسجيل كبائع' : 'Seller application'}
         lead={ar ? 'احفظ البيانات أولًا ثم أرسل الطلب للمراجعة. لا يتم تفعيل المتجر تلقائيًا.' : 'Save your details before submitting for review. Store activation requires approval.'}
         back={<Link to={routePaths.account}>{ar ? 'العودة إلى حسابي' : 'Back to account'}</Link>} />
       {loading ? <p role="status">{ar ? 'جار التحميل…' : 'Loading…'}</p> : (
         <>
-          {status && <p role="status">{ar ? 'حالة الطلب: ' : 'Application status: '}{status}</p>}
+          {status && <p className={styles.status} role="status">{ar ? 'حالة الطلب: ' : 'Application status: '}{status}</p>}
           {status === 'correction' && reviewNote && <p role="status" style={{ padding: 12, border: '1px solid #d8e1db', borderRadius: 8 }}>
             <strong>{ar ? 'ملاحظات الإدارة للتصحيح:' : 'Administrator correction request:'}</strong>{' '}{reviewNote}
           </p>}
           {status === 'correction' && <p>{ar ? 'عدّلي البيانات واحفظي المسودة ثم أرسليها للمراجعة مرة أخرى.' : 'Edit the information, save a draft, then submit it for review again.'}</p>}
-          {error && <p role="alert">{error}</p>}
-          {saved && <p role="status">{ar ? 'تم حفظ المسودة.' : 'Draft saved.'}</p>}
-          <form onSubmit={(event) => void submit(event)} style={{ display: 'grid', gap: 12 }}>
-            {fields.map(([key, en, arabic]) => (
-              <label key={key} style={{ display: 'grid', gap: 4 }}>
-                <span>{ar ? arabic : en}</span>
-                <input
-                  required={['legal_name', 'commercial_registration', 'contact_name', 'contact_email', 'contact_phone', 'city'].includes(key)}
-                  type={key === 'contact_email' ? 'email' : key.endsWith('_date') ? 'date' : 'text'}
-                  maxLength={key === 'legal_name' || key === 'contact_email' || key === 'street' ? 180 : key === 'contact_name' ? 120 : 100}
-                  value={form[key] ?? ''}
-                  disabled={busy || readonly}
-                  onChange={(event) => setForm((previous) => ({ ...previous, [key]: event.target.value || null }))}
-                />
-              </label>
+          {error && <p className={styles.error} role="alert">{error}</p>}
+          {saved && <p className={styles.success} role="status">{ar ? 'تم حفظ المسودة.' : 'Draft saved.'}</p>}
+          <form onSubmit={(event) => void submit(event)} className={styles.form}>
+            {formGroups.map((group, index) => (
+              <fieldset key={group.id} className={styles.group} disabled={busy || readonly}>
+                <legend className={styles.legend}>
+                  <span className={styles.stepNumber}>{index + 1}</span>
+                  {group.title[ar ? 'ar' : fr ? 'fr' : 'en']}
+                </legend>
+                <div className={styles.fieldGrid}>
+                  {group.keys.map((key) => {
+                    const field = fields.find(([name]) => name === key);
+                    if (!field) return null;
+                    const [, en, arabic] = field;
+                    const required = ['legal_name', 'commercial_registration', 'contact_name', 'contact_email', 'contact_phone', 'city'].includes(key);
+                    return (
+                      <label key={key} className={styles.field}>
+                        <span>{ar ? arabic : en}{required && <span aria-hidden="true" className={styles.required}> *</span>}</span>
+                        <input
+                          required={required}
+                          type={key === 'contact_email' ? 'email' : key.endsWith('_date') ? 'date' : key === 'contact_phone' ? 'tel' : 'text'}
+                          inputMode={key === 'contact_phone' ? 'tel' : 'text'}
+                          autoComplete={key === 'contact_email' ? 'email' : key === 'contact_phone' ? 'tel' : undefined}
+                          dir={key === 'contact_email' || key === 'iban' || key === 'contact_phone' || key.endsWith('_date') ? 'ltr' : undefined}
+                          maxLength={key === 'legal_name' || key === 'contact_email' || key === 'street' ? 180 : key === 'contact_name' ? 120 : 100}
+                          value={form[key] ?? ''}
+                          onChange={(event) => setForm((previous) => ({ ...previous, [key]: event.target.value || null }))}
+                        />
+                      </label>
+                    );
+                  })}
+                </div>
+              </fieldset>
             ))}
-            {!readonly && <button type="submit" disabled={busy}>{ar ? 'حفظ المسودة' : 'Save draft'}</button>}
+            {!readonly && <button type="submit" className={styles.primaryButton} disabled={busy}>
+              {localized('حفظ المسودة', 'Save draft', 'Enregistrer le brouillon')}
+            </button>}
           </form>
-          <section style={{ padding: 14, border: '1px solid #d8e1db', borderRadius: 12, marginTop: 16 }}>
+          <section className={styles.documents}>
             <h2>{ar ? 'مستندات البائع' : 'Seller documents'}</h2>
             <p>{ar ? 'تُحفظ المستندات في التخزين الخاص ولا تُنشر للعامة. ارفعي المستندات بعد حفظ مسودة الطلب وقبل إرسالها للمراجعة.' :
               'Documents are stored privately, not published. Save the application first, then upload documents before submitting for review.'}</p>
@@ -187,7 +222,7 @@ export function SellerApplicationScreen() {
             </li>)}</ul>
             {documents.length === 0 && <p>{ar ? 'لم تُرفع مستندات بعد.' : 'No documents uploaded yet.'}</p>}
             {(status === 'draft' || status === 'correction') && (
-              <div style={{ display: 'grid', gap: 10 }}>
+              <div className={styles.uploadFields}>
                 <label>{ar ? 'نوع المستند' : 'Document type'}
                   <select style={{ display: 'block' }} value={documentType}
                     disabled={documentsBusy} onChange={(event) => setDocumentType(event.target.value as SellerApplicationDocument['document_type'])}>
@@ -201,16 +236,17 @@ export function SellerApplicationScreen() {
                   <input type="file" accept=".pdf,.jpg,.jpeg,.png,application/pdf,image/jpeg,image/png"
                     onChange={(event) => setDocumentFile(event.target.files?.[0] ?? null)} />
                 </label>
-                <button type="button" disabled={documentsBusy || busy || !documentFile}
+                <button type="button" className={styles.secondaryButton} disabled={documentsBusy || busy || !documentFile}
                   onClick={() => void uploadDocument()}>{ar ? 'رفع المستند' : 'Upload document'}</button>
               </div>
             )}
           </section>
-          {status === 'draft' && <button type="button" disabled={busy} onClick={() => void sendForReview()}>
+          {status === 'draft' && <button type="button" className={styles.primaryButton} disabled={busy} onClick={() => void sendForReview()}>
             {ar ? 'إرسال للمراجعة' : 'Submit for review'}
           </button>}
         </>
       )}
+      </div>
     </Page>
   );
 }
