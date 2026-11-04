@@ -8,6 +8,7 @@ import { SellerProductManagement } from './SellerProductManagement';
 import { SellerFinanceOverview } from './SellerFinanceOverview';
 import { SellerStaffManagement } from './SellerStaffManagement';
 import { SellerReturnManagement } from './SellerReturnManagement';
+import { SellerStoreManagement } from './SellerStoreManagement';
 import {
   memberships, openSellerSession, closeSellerSession, sellerDashboard,
   sellerOrders, sellerBranches, sellerProducts, sellerStock,
@@ -16,7 +17,7 @@ import {
   type SellerProduct, type SellerStock, type SellerMembership, type SellerPackingList,
 } from './sellerWorkspaceApi';
 
-type Section = 'overview' | 'products' | 'inventory' | 'orders' | 'returns' | 'finance' | 'staff';
+type Section = 'overview' | 'store' | 'products' | 'inventory' | 'orders' | 'returns' | 'finance' | 'staff';
 const orderStatuses = ['all', 'awaiting_seller', 'preparing', 'ready', 'on_the_way', 'delivered'] as const;
 
 const panel: React.CSSProperties = {
@@ -204,6 +205,7 @@ export function SellerWorkspaceScreen() {
 
   const sections: Array<{ id: Section; ar: string; en: string }> = [
     { id: 'overview', ar: 'الرئيسية', en: 'Overview' },
+    { id: 'store', ar: 'المتجر والفروع', en: 'Store & branches' },
     { id: 'products', ar: 'المنتجات', en: 'Products' },
     { id: 'inventory', ar: 'المخزون', en: 'Inventory' },
     { id: 'orders', ar: 'الطلبات', en: 'Orders' },
@@ -342,6 +344,7 @@ export function SellerWorkspaceScreen() {
               )}
             </>
           )}
+          {section === 'store' && <SellerStoreManagement memberships={sellerMemberships} />}
           {section === 'returns' && <SellerReturnManagement />}
           {section === 'finance' && <SellerFinanceOverview memberships={sellerMemberships} />}
           {section === 'staff' && <SellerStaffManagement memberships={sellerMemberships} />}
