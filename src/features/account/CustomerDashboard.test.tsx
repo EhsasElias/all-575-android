@@ -71,6 +71,28 @@ describe('Customer dashboard', () => {
     },
   );
 
+  it.each(['en', 'ar', 'fr'] as const)(
+    'filters orders using only %s labels and preserves search query parameters',
+    async (language) => {
+      installFakeApi({ ...signedIn, 'GET /me/dashboard': { body: { data: summary } } });
+      const user = userEvent.setup();
+      const { router } = await renderApp({
+        route: '/account/dashboard', signedIn: true, seenWelcome: true, language,
+      });
+      const labels = accountLocales[language].dashboard.filters;
+      const filters = await screen.findByRole('region', { name: labels.filterLabel });
+      expect(within(filters).getByRole('heading', { name: labels.title })).toBeVisible();
+      await user.type(within(filters).getByRole('searchbox', { name: labels.product }), 'Biscuits');
+      await user.click(within(filters).getByRole('button', { name: labels.advanced }));
+      await user.type(within(filters).getByRole('spinbutton', { name: labels.minimum }), '2');
+      await user.click(within(filters).getByRole('button', { name: labels.search }));
+      expect(router.state.location.pathname).toBe('/orders');
+      const params = new URLSearchParams(router.state.location.search);
+      expect(params.get('product')).toBe('Biscuits');
+      expect(params.get('min_price')).toBe('2');
+    },
+  );
+
   it('gives a new customer useful empty actions without invented orders', async () => {
     installFakeApi({
       ...signedIn,
