@@ -67,7 +67,7 @@ export function SellerFinanceOverview({ memberships }: Props) {
       <p>{tr('للعرض فقط. لا يمثل هذا التقرير رصيدًا قابلًا للتحويل.', 'Read-only report. These amounts are not an available payout balance.')}</p>
       <form onSubmit={(event) => void load(event)} style={{ display: 'flex', flexWrap: 'wrap', gap: 12, alignItems: 'end' }}>
         <label>{tr('المتجر', 'Store')}
-          <select style={{ display: 'block' }} value={sellerId || String(owners[0].seller_id)}
+          <select style={{ display: 'block' }} value={sellerId || String(owners[0]?.seller_id ?? '')}
             onChange={(event) => { setSellerId(event.target.value); setSummary(null); setLedger([]); setReadiness(null); }}>
             {[...new Map(owners.map((item) => [item.seller_id, item])).values()].map((item) => (
               <option key={item.seller_id} value={item.seller_id}>{ar ? item.name_ar : item.name_en}</option>
