@@ -3,7 +3,7 @@ import { getCurrentLanguage } from '@/shared/i18n';
 import { env } from '@/shared/lib';
 
 const tokens = createMemoryTokenStore();
-const seller = createHttpClient({ baseUrl: env.apiBaseUrl, tokenStore: tokens, getLanguage: getCurrentLanguage });
+export const seller = createHttpClient({ baseUrl: env.apiBaseUrl, tokenStore: tokens, getLanguage: getCurrentLanguage });
 
 export type SellerMembership = {
   id: number; seller_id: number; branch_id: number | null; role: string;
