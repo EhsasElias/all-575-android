@@ -157,3 +157,25 @@ export const sellerStaff = (sellerId: number) =>
 
 export const deactivateSellerStaff = (membershipId: number) =>
   seller.patch<{ data: { id: number; is_active: boolean } }>('/seller/staff/' + membershipId + '/deactivate', {});
+
+export type SellerReturnCase = {
+  id: string;
+  order_id: string;
+  order_item_id: number;
+  status: 'submitted' | 'in_review' | 'resolved' | 'rejected';
+  subject: string;
+  quantity: number;
+  created_at: string;
+  seller_id: number;
+  branch_id: number;
+  name_ar: string;
+  name_en: string;
+};
+
+export const sellerReturns = (filters: { status?: string; limit?: number; before_id?: string } = {}) =>
+  seller.get<{ data: SellerReturnCase[] }>('/seller/returns', { query: filters });
+
+export const respondSellerReturn = (caseId: string, position: 'accept' | 'dispute', explanation: string) =>
+  seller.post<{ data: { id: number; case_id: string; position: string } }>(
+    '/seller/returns/' + encodeURIComponent(caseId) + '/response', { position, explanation },
+  );
