@@ -376,7 +376,7 @@ export function SellerProductManagement({ products, memberships, onUpdated }: Pr
           )}
         </article>
       ))}
-      <p>{tr('تعرض القائمة أول 50 منتجًا، والنشر النهائي يتم بواسطة الإدارة فقط.', 'Up to 50 products are shown. Final publishing is controlled by administrators.')}</p>
+      <p>{tr('تُعرض المنتجات على دفعات، والنشر النهائي يتم بواسطة الإدارة فقط.', 'Products are listed in batches. Final publishing is controlled by administrators.')}</p>
     </section>
   );
 }
