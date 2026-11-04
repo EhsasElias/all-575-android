@@ -5,6 +5,8 @@ import type { en } from './locales.en';
 
 export const fr: Translations<typeof en> = {
   dashboard: dashboardFr,
+  sellerApply: 'Devenir vendeur',
+  sellerWorkspace: 'Espace vendeur',
   title: 'Compte',
   loading: 'Chargement de votre compte',
   back: 'Retour',
