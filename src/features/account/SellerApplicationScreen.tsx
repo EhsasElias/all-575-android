@@ -1,4 +1,4 @@
-import { useEffect, useState, type FormEvent } from 'react';
+import { useEffect, useRef, useState, type ChangeEvent, type DragEvent, type FormEvent } from 'react';
 import { useTranslation } from 'react-i18next';
 import { isApiError } from '@/shared/api';
 import { Link } from 'react-router';
@@ -74,6 +74,18 @@ const statusLabels = {
   rejected: { ar: 'مرفوض', en: 'Rejected', fr: 'Refusée' },
 } as const;
 
+const MAX_DOCUMENT_BYTES = 10 * 1024 * 1024;
+const ALLOWED_DOCUMENT_MIMES = ['application/pdf', 'image/jpeg', 'image/png'];
+const documentLabels: Record<SellerApplicationDocument['document_type'], { ar: string; en: string; fr: string }> = {
+  commercial_registration: { ar: 'السجل التجاري', en: 'Commercial registration', fr: 'Registre du commerce' },
+  vat_certificate: { ar: 'شهادة ضريبة القيمة المضافة', en: 'VAT certificate', fr: 'Certificat de TVA' },
+  national_address: { ar: 'العنوان الوطني', en: 'National address', fr: 'Adresse nationale' },
+  iban_certificate: { ar: 'شهادة الآيبان', en: 'IBAN certificate', fr: 'Certificat IBAN' },
+};
+const fileSizeLabel = (bytes: number): string => bytes >= 1024 * 1024
+  ? (bytes / (1024 * 1024)).toFixed(1) + ' MB'
+  : Math.max(1, Math.round(bytes / 1024)) + ' KB';
+
 const formGroups = [
   { id: 'company', title: { ar: 'بيانات الشركة', en: 'Company details', fr: "Informations de l’entreprise" },
     keys: ['legal_name', 'commercial_registration', 'national_unified_number', 'vat_number', 'entity_type', 'commercial_registration_status', 'commercial_registration_issue_date', 'commercial_registration_expiry_date', 'chamber_of_commerce_number'] },
@@ -101,6 +113,10 @@ export function SellerApplicationScreen() {
   const [documentType, setDocumentType] = useState<SellerApplicationDocument['document_type']>('commercial_registration');
   const [documentFile, setDocumentFile] = useState<File | null>(null);
   const [documentsBusy, setDocumentsBusy] = useState(false);
+  const [documentError, setDocumentError] = useState('');
+  const [documentSuccess, setDocumentSuccess] = useState('');
+  const [dragging, setDragging] = useState(false);
+  const documentInputRef = useRef<HTMLInputElement>(null);
 
   useEffect(() => {
     let live = true;
@@ -169,22 +185,57 @@ export function SellerApplicationScreen() {
     finally { setBusy(false); }
   };
 
+  const chooseDocument = (file: File | null) => {
+    setDocumentError('');
+    setDocumentSuccess('');
+    if (!file) {
+      setDocumentFile(null);
+      return;
+    }
+    const extension = file.name.split('.').pop()?.toLowerCase();
+    if (file.size === 0 || file.size > MAX_DOCUMENT_BYTES ||
+      !ALLOWED_DOCUMENT_MIMES.includes(file.type) ||
+      !['pdf', 'jpg', 'jpeg', 'png'].includes(extension ?? '')) {
+      setDocumentFile(null);
+      setDocumentError(localized(
+        'اختاري ملف PDF أو JPG أو PNG بحجم لا يتجاوز 10 ميجابايت.',
+        'Choose a PDF, JPG or PNG file of 10 MB or less.',
+        'Choisissez un fichier PDF, JPG ou PNG de 10 Mo maximum.',
+      ));
+      return;
+    }
+    setDocumentFile(file);
+  };
+
+  const onFileChange = (event: ChangeEvent<HTMLInputElement>) => {
+    chooseDocument(event.target.files?.[0] ?? null);
+  };
+
+  const onDropFile = (event: DragEvent<HTMLDivElement>) => {
+    event.preventDefault();
+    setDragging(false);
+    if (documentsBusy || busy) return;
+    chooseDocument(event.dataTransfer.files[0] ?? null);
+  };
+
   const uploadDocument = async () => {
     if (!documentFile || documentsBusy || busy || status !== 'draft' && status !== 'correction') return;
     if (documentFile.size > 10 * 1024 * 1024 ||
       !['application/pdf', 'image/jpeg', 'image/png'].includes(documentFile.type)) {
-      setError(ar ? 'اختاري ملف PDF أو JPG أو PNG لا يتجاوز 10 ميجابايت.' : 'Choose a PDF, JPG or PNG under 10 MB.');
+      setDocumentError(localized('الملف غير صالح.', 'Invalid document.', 'Document non valide.'));
       return;
     }
-    setDocumentsBusy(true); setError(''); setSaved(false);
+    setDocumentsBusy(true); setError(''); setDocumentError(''); setDocumentSuccess(''); setSaved(false);
     try {
       await uploadSellerApplicationDocument(documentType, documentFile);
       setDocuments(await getSellerApplicationDocuments());
       setDocumentFile(null);
+      if (documentInputRef.current) documentInputRef.current.value = '';
+      setDocumentSuccess(localized('تم رفع المستند بنجاح.', 'Document uploaded successfully.', 'Document téléchargé avec succès.'));
       setSaved(true);
     } catch (cause) {
       const fieldError = isApiError(cause) ? Object.values(cause.fieldErrors).flat()[0] : null;
-      setError(fieldError ?? (ar ? 'تعذر رفع المستند. تحققي من نوع الملف والصلاحيات.' : 'Document upload failed. Check file type and permissions.'));
+      setDocumentError(fieldError ?? localized('تعذر رفع المستند. تحققي من نوع الملف والصلاحيات.', 'Document upload failed. Check file type and permissions.', 'Échec du transfert. Vérifiez le type de fichier et les autorisations.'));
     } finally { setDocumentsBusy(false); }
   };
 
@@ -240,31 +291,92 @@ export function SellerApplicationScreen() {
               {localized('حفظ المسودة', 'Save draft', 'Enregistrer le brouillon')}
             </button>}
           </form>
-          <section className={styles.documents}>
-            <h2>{ar ? 'مستندات البائع' : 'Seller documents'}</h2>
-            <p>{ar ? 'تُحفظ المستندات في التخزين الخاص ولا تُنشر للعامة. ارفعي المستندات بعد حفظ مسودة الطلب وقبل إرسالها للمراجعة.' :
-              'Documents are stored privately, not published. Save the application first, then upload documents before submitting for review.'}</p>
-            <ul>{documents.map((document) => <li key={document.document_type}>
-              {document.document_type.replace(/_/g, ' ')} — {document.original_name} ({(document.size_bytes / 1024).toFixed(0)} KB)
-            </li>)}</ul>
-            {documents.length === 0 && <p>{ar ? 'لم تُرفع مستندات بعد.' : 'No documents uploaded yet.'}</p>}
+          <section className={styles.documents} aria-labelledby="seller-documents-heading">
+            <div className={styles.documentsHeader}>
+              <div>
+                <h2 id="seller-documents-heading">
+                  {localized('مستندات البائع', 'Seller documents', 'Documents du vendeur')}
+                </h2>
+                <p>{localized(
+                  'ارفعي المستندات المطلوبة بعد حفظ المسودة. الملفات خاصة ومتاحة للمراجعين المخوّلين فقط.',
+                  'Upload supporting documents after saving the draft. Files remain private to authorized reviewers.',
+                  'Ajoutez les justificatifs après l’enregistrement du brouillon. Seuls les examinateurs autorisés y ont accès.',
+                )}</p>
+              </div>
+              <span className={styles.documentCount}>
+                {documents.length} / {Object.keys(documentLabels).length}
+              </span>
+            </div>
+            {documents.length > 0 ? (
+              <ul className={styles.documentList}>
+                {documents.map((document) => (
+                  <li key={document.document_type} className={styles.documentCard}>
+                    <span className={styles.documentIcon} aria-hidden="true">✓</span>
+                    <div className={styles.documentInfo}>
+                      <strong>{documentLabels[document.document_type][ar ? 'ar' : fr ? 'fr' : 'en']}</strong>
+                      <span className={styles.documentName} title={document.original_name}>{document.original_name}</span>
+                      <small>{fileSizeLabel(document.size_bytes)}</small>
+                    </div>
+                    <span className={styles.uploadedBadge}>
+                      {localized('مرفوع', 'Uploaded', 'Ajouté')}
+                    </span>
+                  </li>
+                ))}
+              </ul>
+            ) : (
+              <div className={styles.documentsEmpty}>
+                {localized('لم تُرفع مستندات بعد.', 'No documents uploaded yet.', 'Aucun document ajouté pour le moment.')}
+              </div>
+            )}
             {(status === 'draft' || status === 'correction') && (
               <div className={styles.uploadFields}>
-                <label>{ar ? 'نوع المستند' : 'Document type'}
-                  <select style={{ display: 'block' }} value={documentType}
-                    disabled={documentsBusy} onChange={(event) => setDocumentType(event.target.value as SellerApplicationDocument['document_type'])}>
-                    <option value="commercial_registration">{ar ? 'السجل التجاري' : 'Commercial registration'}</option>
-                    <option value="vat_certificate">{ar ? 'شهادة ضريبة القيمة المضافة' : 'VAT certificate'}</option>
-                    <option value="national_address">{ar ? 'العنوان الوطني' : 'National address'}</option>
-                    <option value="iban_certificate">{ar ? 'شهادة الآيبان' : 'IBAN certificate'}</option>
-                  </select>
+                <label className={styles.selectLabel} htmlFor="seller-document-type">
+                  {localized('نوع المستند', 'Document type', 'Type de document')}
                 </label>
-                <label>{ar ? 'ملف PDF أو صورة حتى 10 ميجابايت' : 'PDF or image up to 10 MB'}
-                  <input type="file" accept=".pdf,.jpg,.jpeg,.png,application/pdf,image/jpeg,image/png"
-                    onChange={(event) => setDocumentFile(event.target.files?.[0] ?? null)} />
-                </label>
-                <button type="button" className={styles.secondaryButton} disabled={documentsBusy || busy || !documentFile}
-                  onClick={() => void uploadDocument()}>{ar ? 'رفع المستند' : 'Upload document'}</button>
+                <select id="seller-document-type" value={documentType} disabled={documentsBusy}
+                  onChange={(event) => { setDocumentType(event.target.value as SellerApplicationDocument['document_type']); setDocumentSuccess(''); }}>
+                  {Object.entries(documentLabels).map(([value, label]) => (
+                    <option key={value} value={value}>{label[ar ? 'ar' : fr ? 'fr' : 'en']}</option>
+                  ))}
+                </select>
+                <div className={styles.dropzone} data-dragging={dragging}
+                  onDragOver={(event) => { event.preventDefault(); if (!documentsBusy && !busy) setDragging(true); }}
+                  onDragLeave={(event) => { event.preventDefault(); setDragging(false); }}
+                  onDrop={onDropFile}>
+                  <input ref={documentInputRef} className={styles.visuallyHidden}
+                    id="seller-document-file" type="file"
+                    accept=".pdf,.jpg,.jpeg,.png,application/pdf,image/jpeg,image/png"
+                    disabled={documentsBusy || busy} onChange={onFileChange} />
+                  <label className={styles.dropLabel} htmlFor="seller-document-file">
+                    <span className={styles.uploadSymbol} aria-hidden="true">↑</span>
+                    <strong>{localized('اختيار ملف من الجهاز', 'Choose a file', 'Choisir un fichier')}</strong>
+                    <span>{localized('أو اسحبيه إلى هنا', 'or drag and drop here', 'ou glissez-le ici')}</span>
+                    <small>PDF, JPG, PNG · {localized('حد أقصى 10 ميجابايت', 'Maximum 10 MB', '10 Mo maximum')}</small>
+                  </label>
+                </div>
+                {documentFile && (
+                  <div className={styles.selectedFile} role="status">
+                    <div className={styles.documentInfo}>
+                      <strong>{documentFile.name}</strong>
+                      <small>{fileSizeLabel(documentFile.size)} · {documentFile.type === 'application/pdf' ? 'PDF' : 'Image'}</small>
+                    </div>
+                    <button type="button" className={styles.removeFile} disabled={documentsBusy}
+                      onClick={() => { setDocumentFile(null); setDocumentError(''); if (documentInputRef.current) documentInputRef.current.value = ''; }}>
+                      {localized('إزالة', 'Remove', 'Supprimer')}
+                    </button>
+                  </div>
+                )}
+                {documentError && <p className={styles.error} role="alert">{documentError}</p>}
+                {documentSuccess && <p className={styles.success} role="status">{documentSuccess}</p>}
+                <button type="button" className={styles.primaryButton}
+                  disabled={documentsBusy || busy || !documentFile}
+                  onClick={() => void uploadDocument()}>
+                  {documentsBusy
+                    ? localized('جارٍ رفع المستند…', 'Uploading document…', 'Transfert en cours…')
+                    : documents.some((document) => document.document_type === documentType)
+                      ? localized('استبدال المستند', 'Replace document', 'Remplacer le document')
+                      : localized('رفع المستند', 'Upload document', 'Ajouter le document')}
+                </button>
               </div>
             )}
           </section>
