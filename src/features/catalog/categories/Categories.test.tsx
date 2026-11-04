@@ -1,7 +1,7 @@
 import { screen, within } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { describe, expect, it, vi } from 'vitest';
-import { setPreference } from '@/shared/storage';
+import { saveDeliveryZone } from '../delivery/deliveryZone';
 import { renderApp } from '@/test/render';
 import { installCatalogApi, queriesOf } from '../testApi';
 import { biscuits, categories, page } from '../testData';
@@ -127,7 +127,7 @@ describe('Products of a category', () => {
   it('sends the chosen area as zone_id', async () => {
     const api = installCatalogApi();
     const { router } = await renderRoute('/categories');
-    setPreference('deliveryZone', JSON.stringify({ id: 1, name: { ar: 'الرياض', en: 'Riyadh' } }));
+    saveDeliveryZone({ id: 1, name: { ar: 'الرياض', en: 'Riyadh' } });
     await router.navigate('/categories/food');
 
     await screen.findByRole('link', { name: 'Biscuits' });
