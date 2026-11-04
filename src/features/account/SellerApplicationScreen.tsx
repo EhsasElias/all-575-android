@@ -7,6 +7,9 @@ import { Page } from './components/Page';
 import { PageHeader } from './components/PageHeader';
 import {
   getSellerApplication,
+  getSellerApplicationDocuments,
+  uploadSellerApplicationDocument,
+  type SellerApplicationDocument,
   saveSellerApplication,
   submitSellerApplication,
   type SellerApplicationInput,
@@ -38,10 +41,15 @@ export function SellerApplicationScreen() {
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState('');
   const [saved, setSaved] = useState(false);
+  const [documents, setDocuments] = useState<SellerApplicationDocument[]>([]);
+  const [documentType, setDocumentType] = useState<SellerApplicationDocument['document_type']>('commercial_registration');
+  const [documentFile, setDocumentFile] = useState<File | null>(null);
+  const [documentsBusy, setDocumentsBusy] = useState(false);
 
   useEffect(() => {
     let live = true;
-    void getSellerApplication().then((result) => {
+    void Promise.all([getSellerApplication(), getSellerApplicationDocuments()]).then(([result, uploaded]) => {
+      if (live) setDocuments(uploaded);
       if (!live) return;
       if (result) {
         setStatus(result.status);
@@ -94,6 +102,25 @@ export function SellerApplicationScreen() {
     finally { setBusy(false); }
   };
 
+  const uploadDocument = async () => {
+    if (!documentFile || documentsBusy || busy || status !== 'draft' && status !== 'correction') return;
+    if (documentFile.size > 10 * 1024 * 1024 ||
+      !['application/pdf', 'image/jpeg', 'image/png'].includes(documentFile.type)) {
+      setError(ar ? 'اختاري ملف PDF أو JPG أو PNG لا يتجاوز 10 ميجابايت.' : 'Choose a PDF, JPG or PNG under 10 MB.');
+      return;
+    }
+    setDocumentsBusy(true); setError(''); setSaved(false);
+    try {
+      await uploadSellerApplicationDocument(documentType, documentFile);
+      setDocuments(await getSellerApplicationDocuments());
+      setDocumentFile(null);
+      setSaved(true);
+    } catch (cause) {
+      const fieldError = isApiError(cause) ? Object.values(cause.fieldErrors).flat()[0] : null;
+      setError(fieldError ?? (ar ? 'تعذر رفع المستند. تحققي من نوع الملف والصلاحيات.' : 'Document upload failed. Check file type and permissions.'));
+    } finally { setDocumentsBusy(false); }
+  };
+
   const readonly = status !== null && status !== 'draft' && status !== 'correction';
   return (
     <Page>
@@ -125,6 +152,34 @@ export function SellerApplicationScreen() {
             ))}
             {!readonly && <button type="submit" disabled={busy}>{ar ? 'حفظ المسودة' : 'Save draft'}</button>}
           </form>
+          <section style={{ padding: 14, border: '1px solid #d8e1db', borderRadius: 12, marginTop: 16 }}>
+            <h2>{ar ? 'مستندات البائع' : 'Seller documents'}</h2>
+            <p>{ar ? 'تُحفظ المستندات في التخزين الخاص ولا تُنشر للعامة. ارفعي المستندات بعد حفظ مسودة الطلب وقبل إرسالها للمراجعة.' :
+              'Documents are stored privately, not published. Save the application first, then upload documents before submitting for review.'}</p>
+            <ul>{documents.map((document) => <li key={document.document_type}>
+              {document.document_type.replace(/_/g, ' ')} — {document.original_name} ({(document.size_bytes / 1024).toFixed(0)} KB)
+            </li>)}</ul>
+            {documents.length === 0 && <p>{ar ? 'لم تُرفع مستندات بعد.' : 'No documents uploaded yet.'}</p>}
+            {(status === 'draft' || status === 'correction') && (
+              <div style={{ display: 'grid', gap: 10 }}>
+                <label>{ar ? 'نوع المستند' : 'Document type'}
+                  <select style={{ display: 'block' }} value={documentType}
+                    disabled={documentsBusy} onChange={(event) => setDocumentType(event.target.value as SellerApplicationDocument['document_type'])}>
+                    <option value="commercial_registration">{ar ? 'السجل التجاري' : 'Commercial registration'}</option>
+                    <option value="vat_certificate">{ar ? 'شهادة ضريبة القيمة المضافة' : 'VAT certificate'}</option>
+                    <option value="national_address">{ar ? 'العنوان الوطني' : 'National address'}</option>
+                    <option value="iban_certificate">{ar ? 'شهادة الآيبان' : 'IBAN certificate'}</option>
+                  </select>
+                </label>
+                <label>{ar ? 'ملف PDF أو صورة حتى 10 ميجابايت' : 'PDF or image up to 10 MB'}
+                  <input type="file" accept=".pdf,.jpg,.jpeg,.png,application/pdf,image/jpeg,image/png"
+                    onChange={(event) => setDocumentFile(event.target.files?.[0] ?? null)} />
+                </label>
+                <button type="button" disabled={documentsBusy || busy || !documentFile}
+                  onClick={() => void uploadDocument()}>{ar ? 'رفع المستند' : 'Upload document'}</button>
+              </div>
+            )}
+          </section>
           {status === 'draft' && <button type="button" disabled={busy} onClick={() => void sendForReview()}>
             {ar ? 'إرسال للمراجعة' : 'Submit for review'}
           </button>}
