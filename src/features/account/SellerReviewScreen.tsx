@@ -112,15 +112,15 @@ export function SellerReviewScreen() {
     } finally { setBusy(false); }
   };
 
-  const downloadDoc = async (applicationId: number, document: SellerReviewDocument) => {
+  const downloadDoc = async (applicationId: number, file: SellerReviewDocument) => {
     if (busy) return;
     setBusy(true); setError('');
     try {
-      const result = await downloadReviewDocument(applicationId, document.id);
+      const result = await downloadReviewDocument(applicationId, file.id);
       const url = URL.createObjectURL(result.blob);
       const link = document.createElement('a');
       link.href = url;
-      link.download = result.filename ?? ('review-document-' + document.id);
+      link.download = result.filename ?? ('review-document-' + file.id);
       document.body.appendChild(link);
       link.click();
       link.remove();
