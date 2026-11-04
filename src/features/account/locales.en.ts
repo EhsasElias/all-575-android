@@ -3,6 +3,8 @@ import { legalLocales } from './legalLocales';
 
 export const en = {
   dashboard: dashboardEn,
+  sellerApply: 'Become a seller',
+  sellerWorkspace: 'Seller workspace',
   title: 'Account',
   loading: 'Loading your account',
   back: 'Back',
