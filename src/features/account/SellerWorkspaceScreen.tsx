@@ -41,6 +41,9 @@ export function SellerWorkspaceScreen() {
   const [loadingMoreProducts, setLoadingMoreProducts] = useState(false);
   const [stock, setStock] = useState<SellerStock[]>([]);
   const [orders, setOrders] = useState<SellerOrder[]>([]);
+  const [hasMoreOrders, setHasMoreOrders] = useState(false);
+  const [hasMoreStock, setHasMoreStock] = useState(false);
+  const [loadingMore, setLoadingMore] = useState(false);
   const [packing, setPacking] = useState<SellerPackingList | null>(null);
   const [branchId, setBranchId] = useState('');
   const [orderStatus, setOrderStatus] = useState('all');
@@ -101,7 +104,7 @@ export function SellerWorkspaceScreen() {
             }),
             sellerBranches(),
           ]);
-          if (active) { setStock(result.data); setBranches(branchList.data); }
+          if (active) { setStock(result.data); setBranches(branchList.data); setHasMoreStock(result.data.length === 50); }
         } else if (section === 'orders') {
           const [result, branchList] = await Promise.all([
             sellerOrders({
@@ -112,7 +115,7 @@ export function SellerWorkspaceScreen() {
             }),
             sellerBranches(),
           ]);
-          if (active) { setOrders(result.data); setBranches(branchList.data); }
+          if (active) { setOrders(result.data); setBranches(branchList.data); setHasMoreOrders(result.data.length === 50); }
         }
       } catch {
         if (active) setError(tr('تعذر تحميل البيانات. تحقق من الاتصال أو صلاحيات حسابك.', 'Unable to load data. Check your connection or account permissions.'));
@@ -142,6 +145,48 @@ export function SellerWorkspaceScreen() {
     } catch {
       setError(tr('تعذر تحميل المزيد من المنتجات.', 'Could not load more products.'));
     } finally { setLoadingMoreProducts(false); }
+  };
+
+  const loadMoreOrders = async () => {
+    const lastId = orders[orders.length - 1]?.id;
+    if (!lastId || loading || loadingMore || !hasMoreOrders) return;
+    setLoadingMore(true); setError('');
+    try {
+      const result = await sellerOrders({
+        limit: 50, before_id: lastId,
+        ...(branchId ? { branch_id: Number(branchId) } : {}),
+        ...(orderStatus !== 'all' ? { status: orderStatus } : {}),
+        ...(orderFrom ? { from: orderFrom } : {}),
+        ...(orderTo ? { to: orderTo } : {}),
+      });
+      setOrders((current) => {
+        const ids = new Set(current.map((item) => item.id));
+        return [...current, ...result.data.filter((item) => !ids.has(item.id))];
+      });
+      setHasMoreOrders(result.data.length === 50);
+    } catch {
+      setError(tr('تعذر جلب المزيد من الطلبات.', 'Could not load more orders.'));
+    } finally { setLoadingMore(false); }
+  };
+
+  const loadMoreStock = async () => {
+    const lastId = stock[stock.length - 1]?.id;
+    if (!lastId || loading || loadingMore || !hasMoreStock) return;
+    setLoadingMore(true); setError('');
+    try {
+      const result = await sellerStock({
+        limit: 50, before_id: lastId,
+        ...(branchId ? { branch_id: Number(branchId) } : {}),
+        ...(lowStockOnly ? { low_stock_below: 5 } : {}),
+      });
+      setStock((current) => {
+        const ids = new Set(current.map((item) => item.id));
+        return [...current, ...result.data.filter((item) => !ids.has(item.id))];
+      });
+      setHasMoreStock(result.data.length === 50);
+    } catch {
+      setError(tr('تعذر جلب المزيد من المخزون.', 'Could not load more stock records.'));
+    } finally { setLoadingMore(false); }
   };
 
   const exportOrders = async () => {
@@ -363,6 +408,8 @@ export function SellerWorkspaceScreen() {
                 </article>
               ))}
               <p>{tr('تعديل الكمية متاح فقط للحسابات المخوّلة، ويمنع الخادم تخفيضها عن المحجوز.', 'Only authorized accounts may update stock; the server prevents reducing it below reservations.')}</p>
+              {hasMoreStock && <button type="button" style={action} disabled={loadingMore}
+                onClick={() => void loadMoreStock()}>{loadingMore ? tr('جار التحميل…', 'Loading…') : tr('عرض المزيد من المخزون', 'Load more inventory')}</button>}
             </section>
           )}
           {!loading && section === 'orders' && (
@@ -412,6 +459,8 @@ export function SellerWorkspaceScreen() {
                   )}
                 </article>
               ))}
+              {hasMoreOrders && <button type="button" style={action} disabled={loadingMore}
+                onClick={() => void loadMoreOrders()}>{loadingMore ? tr('جار التحميل…', 'Loading…') : tr('عرض المزيد من الطلبات', 'Load more orders')}</button>}
             </section>
           )}
         </>
