@@ -41,7 +41,7 @@ export const sellerOrders = (filters: { branch_id?: number; status?: string; lim
   seller.get<{ data: SellerOrder[] }>('/seller/orders', { query: filters });
 export const sellerDashboard = () => seller.get<{ data: SellerDashboard }>('/seller/dashboard');
 export const sellerBranches = () => seller.get<{ data: SellerBranch[] }>('/seller/branches');
-export const sellerProducts = (filters: { status?: string; limit?: number } = {}) =>
+export const sellerProducts = (filters: { status?: string; limit?: number; before_id?: number } = {}) =>
   seller.get<{ data: SellerProduct[] }>('/seller/products', { query: filters });
 export const sellerStock = (filters: { branch_id?: number; low_stock_below?: number; limit?: number } = {}) =>
   seller.get<{ data: SellerStock[] }>('/seller/stock', { query: filters });
