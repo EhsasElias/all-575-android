@@ -148,7 +148,7 @@ export function SellerStoreManagement({ memberships }: Props) {
       'You can update display names only. Addresses, delivery zones, activation and legal records remain administrator-controlled.')}</p>
     <div style={{ ...row, marginBottom: 12 }}>
       <label style={field}>{tr('المتجر', 'Store')}
-        <select value={sellerId || String(owners[0].seller_id)} disabled={saving}
+        <select value={sellerId || String(owners[0]?.seller_id ?? '')} disabled={saving}
           onChange={(event) => { setSellerId(event.target.value); setEditBranch(null); setNotice(''); }}>
           {owners.map((item) => <option key={item.seller_id} value={item.seller_id}>
             {ar ? item.name_ar : item.name_en}
