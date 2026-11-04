@@ -47,6 +47,33 @@ const fields = [
   ['iban', 'IBAN (optional)', 'الآيبان (اختياري)'],
 ] as const;
 
+const frenchFields: Partial<Record<keyof SellerApplicationInput, string>> = {
+  legal_name: "Raison sociale", commercial_registration: "Registre du commerce",
+  national_unified_number: "Numéro national unifié 700 (facultatif)",
+  vat_number: "Numéro de TVA (facultatif)",
+  contact_name: "Nom du responsable", contact_email: "Adresse e-mail",
+  contact_phone: "Téléphone", city: "Ville",
+  entity_type: "Type d'entreprise (facultatif)",
+  commercial_registration_status: "Statut du registre (facultatif)",
+  commercial_registration_issue_date: "Date de délivrance (facultatif)",
+  commercial_registration_expiry_date: "Date d'expiration (facultatif)",
+  chamber_of_commerce_number: "Numéro de chambre de commerce (facultatif)",
+  building_number: "Numéro du bâtiment (facultatif)",
+  postal_code: "Code postal (facultatif)",
+  additional_number: "Numéro supplémentaire (facultatif)",
+  street: "Rue (facultatif)", district: "Quartier (facultatif)",
+  iban: "IBAN (facultatif)",
+};
+
+const statusLabels = {
+  draft: { ar: 'مسودة', en: 'Draft', fr: 'Brouillon' },
+  correction: { ar: 'يحتاج تصحيحًا', en: 'Needs changes', fr: 'Corrections requises' },
+  submitted: { ar: 'قيد المراجعة', en: 'Under review', fr: 'En cours d’examen' },
+  reviewed: { ar: 'تمت المراجعة', en: 'Reviewed', fr: 'Examinée' },
+  approved: { ar: 'تم الاعتماد', en: 'Approved', fr: 'Approuvée' },
+  rejected: { ar: 'مرفوض', en: 'Rejected', fr: 'Refusée' },
+} as const;
+
 const formGroups = [
   { id: 'company', title: { ar: 'بيانات الشركة', en: 'Company details', fr: "Informations de l’entreprise" },
     keys: ['legal_name', 'commercial_registration', 'national_unified_number', 'vat_number', 'entity_type', 'commercial_registration_status', 'commercial_registration_issue_date', 'commercial_registration_expiry_date', 'chamber_of_commerce_number'] },
@@ -165,12 +192,12 @@ export function SellerApplicationScreen() {
   return (
     <Page>
       <div className={styles.application}>
-      <PageHeader title={ar ? 'طلب التسجيل كبائع' : 'Seller application'}
-        lead={ar ? 'احفظ البيانات أولًا ثم أرسل الطلب للمراجعة. لا يتم تفعيل المتجر تلقائيًا.' : 'Save your details before submitting for review. Store activation requires approval.'}
-        back={<Link to={routePaths.account}>{ar ? 'العودة إلى حسابي' : 'Back to account'}</Link>} />
+      <PageHeader title={localized('طلب التسجيل كبائع', 'Seller application', 'Demande de compte vendeur')}
+        lead={localized('احفظ البيانات أولًا ثم أرسل الطلب للمراجعة. لا يتم تفعيل المتجر تلقائيًا.', 'Save your details before submitting for review. Store activation requires approval.', 'Enregistrez vos informations avant de soumettre votre demande à validation.')}
+        back={<Link to={routePaths.account}>{localized('العودة إلى حسابي', 'Back to account', 'Retour au compte')}</Link>} />
       {loading ? <p role="status">{ar ? 'جار التحميل…' : 'Loading…'}</p> : (
         <>
-          {status && <p className={styles.status} role="status">{ar ? 'حالة الطلب: ' : 'Application status: '}{status}</p>}
+          {status && <p className={styles.status} role="status">{localized('حالة الطلب: ', 'Application status: ', 'Statut de la demande : ')}{statusLabels[status as keyof typeof statusLabels]?.[ar ? 'ar' : fr ? 'fr' : 'en'] ?? status}</p>}
           {status === 'correction' && reviewNote && <p role="status" style={{ padding: 12, border: '1px solid #d8e1db', borderRadius: 8 }}>
             <strong>{ar ? 'ملاحظات الإدارة للتصحيح:' : 'Administrator correction request:'}</strong>{' '}{reviewNote}
           </p>}
@@ -192,7 +219,7 @@ export function SellerApplicationScreen() {
                     const required = ['legal_name', 'commercial_registration', 'contact_name', 'contact_email', 'contact_phone', 'city'].includes(key);
                     return (
                       <label key={key} className={styles.field}>
-                        <span>{ar ? arabic : en}{required && <span aria-hidden="true" className={styles.required}> *</span>}</span>
+                        <span>{ar ? arabic : fr ? frenchFields[key] ?? en : en}{required && <span aria-hidden="true" className={styles.required}> *</span>}</span>
                         <input
                           required={required}
                           type={key === 'contact_email' ? 'email' : key.endsWith('_date') ? 'date' : key === 'contact_phone' ? 'tel' : 'text'}
