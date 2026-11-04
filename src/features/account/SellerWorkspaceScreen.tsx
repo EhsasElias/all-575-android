@@ -43,6 +43,8 @@ export function SellerWorkspaceScreen() {
   const [packing, setPacking] = useState<SellerPackingList | null>(null);
   const [branchId, setBranchId] = useState('');
   const [orderStatus, setOrderStatus] = useState('all');
+  const [orderFrom, setOrderFrom] = useState('');
+  const [orderTo, setOrderTo] = useState('');
   const [productStatus, setProductStatus] = useState('all');
   const [lowStockOnly, setLowStockOnly] = useState(false);
   const [loading, setLoading] = useState(true);
@@ -104,6 +106,8 @@ export function SellerWorkspaceScreen() {
             sellerOrders({
               limit: 50, ...(branchId ? { branch_id: Number(branchId) } : {}),
               ...(orderStatus !== 'all' ? { status: orderStatus } : {}),
+              ...(orderFrom ? { from: orderFrom } : {}),
+              ...(orderTo ? { to: orderTo } : {}),
             }),
             sellerBranches(),
           ]);
@@ -118,7 +122,7 @@ export function SellerWorkspaceScreen() {
     return () => { active = false; };
     // Translation text is based on UI locale; it must not issue duplicate API requests.
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [eligible, section, branchId, orderStatus, productStatus, lowStockOnly, revision]);
+  }, [eligible, section, branchId, orderStatus, orderFrom, orderTo, productStatus, lowStockOnly, revision]);
 
   const loadMoreProducts = async () => {
     const lastId = products[products.length - 1]?.id;
@@ -146,6 +150,8 @@ export function SellerWorkspaceScreen() {
       const file = await exportSellerOrdersCsv({
         ...(branchId ? { branch_id: Number(branchId) } : {}),
         ...(orderStatus !== 'all' ? { status: orderStatus } : {}),
+        ...(orderFrom ? { from: orderFrom } : {}),
+        ...(orderTo ? { to: orderTo } : {}),
       });
       const url = URL.createObjectURL(file.blob);
       const link = document.createElement('a');
@@ -260,6 +266,23 @@ export function SellerWorkspaceScreen() {
                     ))}
                   </select>
                 </label>
+              )}
+              {section === 'orders' && (
+                <>
+                  <label>{tr('من تاريخ', 'From')}{' '}
+                    <input type="date" value={orderFrom} max={orderTo || undefined}
+                      onChange={(event) => setOrderFrom(event.target.value)} />
+                  </label>
+                  <label>{tr('إلى تاريخ', 'To')}{' '}
+                    <input type="date" value={orderTo} min={orderFrom || undefined}
+                      onChange={(event) => setOrderTo(event.target.value)} />
+                  </label>
+                  {(orderFrom || orderTo) && (
+                    <button type="button" style={action} onClick={() => { setOrderFrom(''); setOrderTo(''); }}>
+                      {tr('مسح التواريخ', 'Clear dates')}
+                    </button>
+                  )}
+                </>
               )}
               {section === 'inventory' && (
                 <label><input type="checkbox" checked={lowStockOnly} onChange={(event) => setLowStockOnly(event.target.checked)}/>{' '}
