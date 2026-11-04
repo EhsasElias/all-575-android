@@ -5,6 +5,7 @@ import {
 } from './sellerWorkspaceApi';
 import {
   getSellerStoreProfile, saveSellerStoreProfile, saveSellerBranchProfile,
+  getSellerServiceZones, proposeSellerBranch, type SellerServiceZone,
   type SellerStoreProfile,
 } from './sellerStoreProfileApi';
 import { isApiError } from '@/shared/api';
@@ -25,6 +26,9 @@ export function SellerStoreManagement({ memberships }: Props) {
   const selectedId = Number(sellerId || owners[0]?.seller_id);
   const [profile, setProfile] = useState<SellerStoreProfile | null>(null);
   const [branches, setBranches] = useState<SellerBranch[]>([]);
+  const [zones, setZones] = useState<SellerServiceZone[]>([]);
+  const [propose, setPropose] = useState(false);
+  const [newBranch, setNewBranch] = useState({ code: '', name_ar: '', name_en: '', service_zone_id: '', lat: '', lng: '' });
   const [storeAr, setStoreAr] = useState('');
   const [storeEn, setStoreEn] = useState('');
   const [editBranch, setEditBranch] = useState<number | null>(null);
@@ -42,8 +46,9 @@ export function SellerStoreManagement({ memberships }: Props) {
     setLoading(true);
     setError('');
     setProfile(null);
-    void Promise.all([getSellerStoreProfile(selectedId), sellerBranches()])
-      .then(([store, branchList]) => {
+    void Promise.all([getSellerStoreProfile(selectedId), sellerBranches(), getSellerServiceZones()])
+      .then(([store, branchList, zoneList]) => {
+        setZones(zoneList.data);
         if (!active) return;
         setProfile(store.data);
         setStoreAr(store.data.name_ar);
@@ -104,6 +109,34 @@ export function SellerStoreManagement({ memberships }: Props) {
     finally { setSaving(false); }
   };
 
+  const createBranch = async (event: FormEvent<HTMLFormElement>) => {
+    event.preventDefault();
+    if (saving) return;
+    const zoneId = Number(newBranch.service_zone_id);
+    const lat = Number(newBranch.lat);
+    const lng = Number(newBranch.lng);
+    if (!zoneId || !Number.isFinite(lat) || !Number.isFinite(lng) || !newBranch.lat || !newBranch.lng) {
+      setError(tr('اختاري المنطقة وحددي إحداثيات صحيحة للفرع.', 'Choose a zone and valid branch coordinates.'));
+      return;
+    }
+    setSaving(true); setError(''); setNotice('');
+    try {
+      await proposeSellerBranch({
+        seller_id: selectedId,
+        service_zone_id: zoneId,
+        code: newBranch.code.trim(),
+        name_ar: newBranch.name_ar.trim(),
+        name_en: newBranch.name_en.trim(),
+        lat, lng,
+      });
+      setPropose(false);
+      setNewBranch({ code: '', name_ar: '', name_en: '', service_zone_id: '', lat: '', lng: '' });
+      setNotice(tr('تم إرسال الفرع، وهو غير نشط حتى تعتمد الإدارة موقعه.', 'Branch submitted. It stays inactive until its location is approved.'));
+      setRevision((v) => v + 1);
+    } catch (cause) { setError(errorMessage(cause)); }
+    finally { setSaving(false); }
+  };
+
   if (owners.length === 0) {
     return <section style={card}><p>{tr('إدارة المتجر والفروع متاحة لمالك المتجر المعتمد فقط.',
       'Store and branch management is available only to approved store owners.')}</p></section>;
@@ -149,6 +182,46 @@ export function SellerStoreManagement({ memberships }: Props) {
       </form>
       <div style={card}>
         <h3>{tr('الفروع الحالية', 'Existing branches')}</h3>
+        <button type="button" disabled={saving} onClick={() => setPropose((value) => !value)}>
+          {propose ? tr('إلغاء إضافة فرع', 'Cancel new branch') : tr('طلب إضافة فرع', 'Request new branch')}
+        </button>
+        {propose && <form onSubmit={(event) => void createBranch(event)} style={{ ...card, marginTop: 12 }}>
+          <p>{tr('سيظل الفرع غير نشط حتى تراجع الإدارة موقعه. يمكنك استخدام مركز المنطقة كنقطة بداية وتعديل الإحداثيات.',
+            'The branch remains inactive until location approval. Start from a service-zone center and adjust coordinates.')}</p>
+          <div style={row}>
+            <label style={field}>{tr('منطقة التوصيل', 'Delivery zone')}
+              <select required value={newBranch.service_zone_id} onChange={(event) => {
+                const zone = zones.find((item) => item.id === Number(event.target.value));
+                setNewBranch((current) => ({
+                  ...current, service_zone_id: event.target.value,
+                  lat: zone ? String(zone.center_lat) : '',
+                  lng: zone ? String(zone.center_lng) : '',
+                }));
+              }}>
+                <option value="">{tr('اختاري المنطقة', 'Choose zone')}</option>
+                {zones.map((zone) => <option key={zone.id} value={zone.id}>
+                  {ar ? zone.name_ar : zone.name_en}
+                </option>)}
+              </select>
+            </label>
+            {([
+              ['code', tr('رمز الفرع', 'Branch code')],
+              ['name_ar', tr('اسم الفرع بالعربية', 'Arabic branch name')],
+              ['name_en', tr('اسم الفرع بالإنجليزية', 'English branch name')],
+            ] as const).map(([key, label]) => <label key={key} style={field}>
+              {label}<input required maxLength={key === 'code' ? 32 : 180} value={newBranch[key]}
+                onChange={(event) => setNewBranch((current) => ({ ...current, [key]: event.target.value }))} />
+            </label>)}
+            {(['lat', 'lng'] as const).map((key) => <label key={key} style={field}>
+              {key === 'lat' ? tr('خط العرض', 'Latitude') : tr('خط الطول', 'Longitude')}
+              <input type="number" step="any" required value={newBranch[key]}
+                onChange={(event) => setNewBranch((current) => ({ ...current, [key]: event.target.value }))} />
+            </label>)}
+          </div>
+          <button type="submit" disabled={saving || zones.length === 0}>
+            {tr('إرسال الفرع للمراجعة', 'Submit branch for review')}
+          </button>
+        </form>}
         {branches.length === 0 && <p>{tr('لا توجد فروع مرتبطة بالمتجر.', 'No branches assigned to this store.')}</p>}
         {branches.map((branch) => <article key={branch.id} style={{ borderTop: '1px solid #d8e1db', padding: '12px 0' }}>
           <strong>{ar ? branch.name_ar : branch.name_en}</strong>
