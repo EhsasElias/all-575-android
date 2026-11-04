@@ -15,6 +15,7 @@ import { Section } from './Section';
 import { SignOutSection } from './SignOutSection';
 import { BiometricPreference } from './BiometricPreference';
 import { SellerReviewEntry } from './SellerReviewEntry';
+import styles from './SignedInAccount.module.css';
 
 type SignedInAccountProps = {
   user: SessionUser;
@@ -30,8 +31,10 @@ export function SignedInAccount({ user }: SignedInAccountProps) {
       <ButtonLink to={routePaths.dashboard}>{t('dashboard.title')}</ButtonLink>
       {user.consents.needs_update && <ConsentNotice />}
       <AccountMenu />
-      <ButtonLink to={routePaths.sellerApplication}>{t('sellerApply')}</ButtonLink>
-      <ButtonLink to={routePaths.sellerWorkspace}>{t('sellerWorkspace')}</ButtonLink>
+      <div className={styles.sellerActions}>
+        <ButtonLink to={routePaths.sellerApplication}>{t('sellerApply')}</ButtonLink>
+        <ButtonLink to={routePaths.sellerWorkspace} variant="secondary">{t('sellerWorkspace')}</ButtonLink>
+      </div>
       <SellerReviewEntry />
       <CustomerNotifications />
       <Section title={t('preferences.title')}>
