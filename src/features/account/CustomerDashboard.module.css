@@ -110,10 +110,124 @@
   }
 }
 
-.filterGrid { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 14rem), 1fr)); gap: var(--space-3); padding: var(--space-4); border: 1px solid var(--color-border); border-radius: var(--radius-lg); background: var(--color-surface); }
-.filterGrid label { display: grid; gap: var(--space-2); font-weight: var(--font-weight-strong); }
-.filterGrid input, .filterGrid select { inline-size: 100%; min-block-size: var(--size-target); padding: var(--space-2); border: 1px solid var(--color-border); border-radius: var(--radius-md); color: var(--color-text); background: var(--color-surface); font: inherit; }
-.filterSubmit, .filterReset { min-block-size: var(--size-target); border-radius: var(--radius-md); padding: var(--space-2); font: inherit; cursor: pointer; }
-.filterSubmit { background: var(--color-brand); color: var(--color-text); border: 1px solid var(--color-brand); }
-.filterReset { background: var(--color-surface); color: var(--color-text); border: 1px solid var(--color-border); }
+/* Responsive customer order search. The language and text direction come from i18n. */
+.filterSection {
+  display: grid;
+  gap: var(--space-3);
+}
+.filterHeading {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: var(--space-3);
+}
+.filterHeading h2 {
+  margin: 0;
+  font-size: var(--font-size-title);
+  font-weight: var(--font-weight-bold);
+}
+.filterHeading p {
+  margin-block: var(--space-2) 0;
+  color: var(--color-text-muted);
+  line-height: 1.6;
+}
+.filterForm {
+  display: grid;
+  gap: var(--space-4);
+  padding: clamp(1rem, 2.5vw, 1.5rem);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-lg);
+  background: var(--color-surface);
+  box-shadow: 0 8px 28px rgba(20, 64, 48, 0.04);
+}
+.filterGrid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: var(--space-4);
+}
+.filterField {
+  display: grid;
+  min-inline-size: 0;
+  align-content: start;
+  gap: var(--space-2);
+  color: var(--color-text);
+  font-weight: var(--font-weight-strong);
+}
+.filterField > span { line-height: 1.5; }
+.filterField input,
+.filterField select {
+  box-sizing: border-box;
+  display: block;
+  inline-size: 100%;
+  min-inline-size: 0;
+  min-block-size: 3rem;
+  padding: .65rem .85rem;
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+  background: var(--color-surface);
+  color: var(--color-text);
+  font: inherit;
+  font-weight: 400;
+}
+.filterField input:focus-visible,
+.filterField select:focus-visible,
+.filterMore:focus-visible,
+.filterSubmit:focus-visible,
+.filterReset:focus-visible {
+  outline: 2px solid var(--color-brand);
+  outline-offset: 2px;
+}
+.filterField input[type="date"],
+.filterField input[type="number"] {
+  direction: ltr;
+  text-align: start;
+}
+.filterMore {
+  display: inline-flex;
+  gap: var(--space-2);
+  justify-content: space-between;
+  align-items: center;
+  justify-self: start;
+  min-block-size: var(--size-target);
+  padding: .45rem .8rem;
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+  background: var(--color-surface);
+  color: var(--color-brand-text);
+  font: inherit;
+  font-weight: 600;
+  cursor: pointer;
+}
+.filterActions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-3);
+}
+.filterSubmit,
+.filterReset {
+  min-block-size: 3rem;
+  padding: .65rem 1.25rem;
+  border-radius: var(--radius-md);
+  font: inherit;
+  font-weight: 700;
+  cursor: pointer;
+}
+.filterSubmit {
+  flex: 1 1 12rem;
+  border: 1px solid var(--color-brand);
+  background: var(--color-brand);
+  color: #fff;
+}
+.filterReset {
+  flex: 0 1 auto;
+  border: 1px solid var(--color-border);
+  background: var(--color-surface);
+  color: var(--color-text);
+}
 .filterSubmit:disabled { opacity: .5; cursor: not-allowed; }
+.filterError { color: var(--color-danger); margin: 0; }
+@media (max-width: 38rem) {
+  .filterGrid { grid-template-columns: minmax(0, 1fr); gap: var(--space-3); }
+  .filterActions { display: grid; grid-template-columns: 1fr 1fr; }
+  .filterSubmit, .filterReset { inline-size: 100%; }
+}
