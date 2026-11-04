@@ -67,7 +67,7 @@ export function LocationPicker({
   lookupStatus,
   onRetryLookup,
 }: LocationPickerProps) {
-  const { t } = useTranslation('addresses');
+  const { t, i18n } = useTranslation('addresses');
   const { t: tCommon } = useTranslation();
   const headingId = useId();
   const { location, locate } = useCurrentLocation(onPinChange);
@@ -124,7 +124,7 @@ export function LocationPicker({
           rel="noopener noreferrer"
           className={styles.googleMapsLink}
         >
-          {t('form.pin.useMyLocation') === 'استخدم موقعي الحالي'
+          {i18n.language.startsWith('ar')
             ? 'عرض هذا الموقع في خرائط Google'
             : 'View this location in Google Maps'}
         </a>
