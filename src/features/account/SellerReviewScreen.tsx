@@ -7,6 +7,7 @@ import { Page } from './components/Page';
 import { PageHeader } from './components/PageHeader';
 import {
   reviewSellerApplications, reviewSellerApplication, reviewSellerProducts,
+  reviewSellerBranches, activateSellerBranch, type SellerBranchReview,
   decideSellerApplication, decideSellerProduct, downloadReviewDocument,
   type SellerReviewApplication, type SellerReviewDocument, type PendingSellerProduct,
 } from './sellerReviewApi';
@@ -18,9 +19,10 @@ export function SellerReviewScreen() {
   const { i18n } = useTranslation();
   const ar = i18n.language.startsWith('ar');
   const tr = (a: string, en: string) => ar ? a : en;
-  const [tab, setTab] = useState<'applications' | 'products'>('applications');
+  const [tab, setTab] = useState<'applications' | 'products' | 'branches'>('applications');
   const [applications, setApplications] = useState<SellerReviewApplication[]>([]);
   const [products, setProducts] = useState<PendingSellerProduct[]>([]);
+  const [branches, setBranches] = useState<SellerBranchReview[]>([]);
   const [selected, setSelected] = useState<number | null>(null);
   const [documents, setDocuments] = useState<SellerReviewDocument[]>([]);
   const [reason, setReason] = useState('');
@@ -34,11 +36,13 @@ export function SellerReviewScreen() {
   useEffect(() => {
     let active = true;
     setLoading(true); setError('');
-    void (tab === 'applications' ? reviewSellerApplications() : reviewSellerProducts())
+    void (tab === 'applications' ? reviewSellerApplications()
+      : tab === 'products' ? reviewSellerProducts() : reviewSellerBranches())
       .then((reply) => {
         if (!active) return;
         if (tab === 'applications') setApplications(reply.data as SellerReviewApplication[]);
-        else setProducts(reply.data as PendingSellerProduct[]);
+        else if (tab === 'products') setProducts(reply.data as PendingSellerProduct[]);
+        else setBranches(reply.data as SellerBranchReview[]);
       })
       .catch((cause) => {
         if (!active) return;
@@ -94,6 +98,20 @@ export function SellerReviewScreen() {
     } finally { setBusy(false); }
   };
 
+  const approveBranch = async (branchId: number) => {
+    if (busy || !window.confirm(tr('تفعيل الفرع بعد التحقق من الموقع؟',
+      'Activate this branch after verifying its physical location?'))) return;
+    setBusy(true); setError(''); setNotice('');
+    try {
+      await activateSellerBranch(branchId);
+      setRevision((value) => value + 1);
+      setNotice(tr('تم تفعيل الفرع وتسجيل القرار.', 'Branch activated and review recorded.'));
+    } catch {
+      setError(tr('تعذر تفعيل الفرع. تحققي من الموقع ومنطقة التوصيل.',
+        'Could not activate branch. Check location and delivery zone.'));
+    } finally { setBusy(false); }
+  };
+
   const downloadDoc = async (applicationId: number, document: SellerReviewDocument) => {
     if (busy) return;
     setBusy(true); setError('');
@@ -121,6 +139,9 @@ export function SellerReviewScreen() {
       <nav style={{ ...fields, marginBottom: 12 }} aria-label={tr('نوع المراجعة', 'Review type')}>
         <button type="button" onClick={() => { setTab('applications'); setSelected(null); }} disabled={busy}>
           {tr('طلبات البائعين', 'Seller applications')}
+        </button>
+        <button type="button" onClick={() => { setTab('branches'); setSelected(null); }} disabled={busy}>
+          {tr('الفروع الجديدة', 'New branches')}
         </button>
         <button type="button" onClick={() => { setTab('products'); setSelected(null); }} disabled={busy}>
           {tr('المنتجات', 'Products')}
@@ -168,6 +189,18 @@ export function SellerReviewScreen() {
               </button>
             </div>
           </div>}
+        </article>)}
+      </>}
+      {!loading && tab === 'branches' && <>
+        {branches.length === 0 && <p>{tr('لا توجد فروع قيد الاعتماد.', 'No branches awaiting activation.')}</p>}
+        {branches.map((branch) => <article key={branch.id} style={panel}>
+          <h3>{ar ? branch.name_ar : branch.name_en}</h3>
+          <p>{tr('المتجر', 'Store')} #{branch.seller_id} · {tr('رمز الفرع', 'Code')}: {branch.code}</p>
+          <p>{tr('المنطقة', 'Zone')} #{branch.service_zone_id} ·
+            {' '}{tr('الموقع', 'Coordinates')}: {branch.lat}, {branch.lng}</p>
+          <button type="button" disabled={busy} onClick={() => void approveBranch(branch.id)}>
+            {tr('اعتماد وتفعيل الفرع', 'Approve & activate')}
+          </button>
         </article>)}
       </>}
       {!loading && tab === 'products' && <>
