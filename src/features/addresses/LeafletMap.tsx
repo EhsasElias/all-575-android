@@ -69,7 +69,10 @@ export function LeafletMap({ pin, labels, onPinChange }: PinMapProps) {
     L.control
       .zoom({ zoomInTitle: startLabels.zoomIn, zoomOutTitle: startLabels.zoomOut })
       .addTo(map);
-    L.control.attribution({ prefix: false }).addAttribution(ATTRIBUTION).addTo(map);
+    const attribution = L.control.attribution({ prefix: false }).addAttribution(ATTRIBUTION).addTo(map);
+    if (GEOAPIFY_TILE_URL) {
+      attribution.addAttribution('Powered by <a href="https://www.geoapify.com/" target="_blank" rel="noopener noreferrer">Geoapify</a>');
+    }
     // Try the configured map-tile service first. If it is unreachable, use
     // OpenStreetMap tiles and show an error instead of an empty grey map when
     // neither service can load. Requests are only for visible map tiles.
