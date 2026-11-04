@@ -1,6 +1,6 @@
 import L from 'leaflet';
 import 'leaflet/dist/leaflet.css';
-import { useEffect, useRef } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { Button } from '@/shared/ui';
 import type { MapPin, PinMapProps } from './mapTypes';
 import styles from './LeafletMap.module.css';
@@ -11,7 +11,13 @@ const PIN_ZOOM = 16;
 const MAX_ZOOM = 19;
 const COORDINATE_DECIMALS = 6;
 
-const TILE_URL = 'https://tile.openstreetmap.org/{z}/{x}/{y}.png';
+const OSM_TILE_URL = 'https://tile.openstreetmap.org/{z}/{x}/{y}.png';
+// Public map-display keys must be restricted to the project's web origins.
+// Never put backend/private service credentials into VITE_ variables.
+const GEOAPIFY_MAP_KEY = import.meta.env.VITE_GEOAPIFY_MAP_KEY?.trim() ?? '';
+const GEOAPIFY_TILE_URL = GEOAPIFY_MAP_KEY
+  ? `https://maps.geoapify.com/v1/tile/osm-carto/{z}/{x}/{y}.png?apiKey=${encodeURIComponent(GEOAPIFY_MAP_KEY)}`
+  : null;
 const ATTRIBUTION =
   '&copy; <a href="https://www.openstreetmap.org/copyright" target="_blank" rel="noopener noreferrer">OpenStreetMap</a> contributors';
 
@@ -42,6 +48,7 @@ export function LeafletMap({ pin, labels, onPinChange }: PinMapProps) {
   const markerRef = useRef<L.Marker | null>(null);
   const startRef = useRef({ pin, labels });
   const onPinChangeRef = useRef(onPinChange);
+  const [tileFailure, setTileFailure] = useState(false);
 
   useEffect(() => {
     onPinChangeRef.current = onPinChange;
@@ -63,13 +70,37 @@ export function LeafletMap({ pin, labels, onPinChange }: PinMapProps) {
       .zoom({ zoomInTitle: startLabels.zoomIn, zoomOutTitle: startLabels.zoomOut })
       .addTo(map);
     L.control.attribution({ prefix: false }).addAttribution(ATTRIBUTION).addTo(map);
-    L.tileLayer(TILE_URL, { maxZoom: MAX_ZOOM }).addTo(map);
+    // Try the configured map-tile service first. If it is unreachable, use
+    // OpenStreetMap tiles and show an error instead of an empty grey map when
+    // neither service can load. Requests are only for visible map tiles.
+    const primaryUrl = GEOAPIFY_TILE_URL ?? OSM_TILE_URL;
+    let usingFallback = false;
+    let failures = 0;
+    let tilesLoaded = false;
+    const layer = L.tileLayer(primaryUrl, { maxZoom: MAX_ZOOM }).addTo(map);
+    const onTileError = () => {
+      failures += 1;
+      if (tilesLoaded || failures < 2) return;
+      if (GEOAPIFY_TILE_URL && !usingFallback) {
+        usingFallback = true;
+        failures = 0;
+        layer.setUrl(OSM_TILE_URL);
+        return;
+      }
+      setTileFailure(true);
+    };
+    layer.on('tileerror', onTileError);
+    layer.on('tileload', () => {
+      tilesLoaded = true;
+      setTileFailure(false);
+    });
     map.on('click', (event: L.LeafletMouseEvent) => {
       onPinChangeRef.current(toPin(event.latlng));
     });
     mapRef.current = map;
 
     return () => {
+      layer.off();
       map.remove();
       mapRef.current = null;
       markerRef.current = null;
@@ -113,7 +144,14 @@ export function LeafletMap({ pin, labels, onPinChange }: PinMapProps) {
       <div dir="ltr" className={styles.frame}>
         <div ref={containerRef} className={styles.map} role="region" aria-label={labels.map} />
       </div>
-      <Button variant="secondary" onClick={placeAtCenter}>
+      {tileFailure && (
+        <p role="alert" className={styles.tileFailure}>
+          {navigator.language.startsWith('ar')
+            ? 'تعذر تحميل صور الخريطة من مزود الخدمة. يمكنك استخدام رابط خرائط Google أدناه أو المحاولة عبر شبكة أخرى.'
+            : 'Map imagery is unavailable. Use the Google Maps link below or try another network.'}
+        </p>
+      )}
+            <Button variant="secondary" onClick={placeAtCenter}>
         {labels.placeAtCenter}
       </Button>
     </div>
