@@ -37,7 +37,7 @@ export async function openSellerSession() {
   await tokens.set(result.data.token);
 }
 export const closeSellerSession = () => tokens.clear();
-export const sellerOrders = (filters: { branch_id?: number; status?: string; limit?: number } = {}) =>
+export const sellerOrders = (filters: { branch_id?: number; status?: string; limit?: number; from?: string; to?: string } = {}) =>
   seller.get<{ data: SellerOrder[] }>('/seller/orders', { query: filters });
 export const sellerDashboard = () => seller.get<{ data: SellerDashboard }>('/seller/dashboard');
 export const sellerBranches = () => seller.get<{ data: SellerBranch[] }>('/seller/branches');
@@ -135,10 +135,12 @@ export const sellerFinanceLedger = (sellerId: number, from: string, to: string) 
     query: { seller_id: sellerId, from, to, limit: 20 },
   });
 
-export const exportSellerOrdersCsv = (filters: { branch_id?: number; status?: string } = {}) => {
+export const exportSellerOrdersCsv = (filters: { branch_id?: number; status?: string; from?: string; to?: string } = {}) => {
   const query = new URLSearchParams();
   if (filters.branch_id) query.set('branch_id', String(filters.branch_id));
   if (filters.status) query.set('status', filters.status);
+  if (filters.from) query.set('from', filters.from);
+  if (filters.to) query.set('to', filters.to);
   const params = query.toString();
   return seller.download('/seller/orders/export.csv' + (params ? '?' + params : ''));
 };
