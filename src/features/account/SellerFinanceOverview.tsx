@@ -1,8 +1,8 @@
 import { useState, type FormEvent } from 'react';
 import { useTranslation } from 'react-i18next';
 import {
-  sellerFinanceLedger, sellerFinanceSummary,
-  type SellerFinanceLedgerRow, type SellerFinanceSummary, type SellerMembership,
+  sellerFinanceLedger, sellerFinanceSummary, sellerSettlementReadiness,
+  type SellerFinanceLedgerRow, type SellerFinanceSummary, type SellerMembership, type SellerSettlementReadiness,
 } from './sellerWorkspaceApi';
 
 type Props = { memberships: SellerMembership[] };
@@ -26,6 +26,7 @@ export function SellerFinanceOverview({ memberships }: Props) {
   const [to, setTo] = useState(() => dateInput(0));
   const [summary, setSummary] = useState<SellerFinanceSummary | null>(null);
   const [ledger, setLedger] = useState<SellerFinanceLedgerRow[]>([]);
+  const [readiness, setReadiness] = useState<SellerSettlementReadiness | null>(null);
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState('');
   const selected = Number(sellerId || owners[0]?.seller_id);
@@ -36,18 +37,21 @@ export function SellerFinanceOverview({ memberships }: Props) {
     setError('');
     setSummary(null);
     setLedger([]);
+    setReadiness(null);
     if (!owners.some((item) => item.seller_id === selected) || from > to) {
       setError(tr('اختاري متجرًا وفترة زمنية صحيحة.', 'Choose an authorized store and valid date range.'));
       return;
     }
     setBusy(true);
     try {
-      const [sales, transactions] = await Promise.all([
+      const [sales, transactions, status] = await Promise.all([
         sellerFinanceSummary(selected, from, to),
         sellerFinanceLedger(selected, from, to),
+        sellerSettlementReadiness(selected),
       ]);
       setSummary(sales.data);
       setLedger(transactions.data);
+      setReadiness(status.data);
     } catch {
       setError(tr('تعذر تحميل التقرير المالي. تحققي من صلاحية مالك المتجر والاتصال.', 'Could not load finance report. Check owner permissions and connectivity.'));
     } finally { setBusy(false); }
@@ -64,16 +68,16 @@ export function SellerFinanceOverview({ memberships }: Props) {
       <form onSubmit={(event) => void load(event)} style={{ display: 'flex', flexWrap: 'wrap', gap: 12, alignItems: 'end' }}>
         <label>{tr('المتجر', 'Store')}
           <select style={{ display: 'block' }} value={sellerId || String(owners[0].seller_id)}
-            onChange={(event) => { setSellerId(event.target.value); setSummary(null); setLedger([]); }}>
+            onChange={(event) => { setSellerId(event.target.value); setSummary(null); setLedger([]); setReadiness(null); }}>
             {[...new Map(owners.map((item) => [item.seller_id, item])).values()].map((item) => (
               <option key={item.seller_id} value={item.seller_id}>{ar ? item.name_ar : item.name_en}</option>
             ))}
           </select>
         </label>
         <label>{tr('من', 'From')}<input style={{ display: 'block' }} type="date" required value={from}
-          onChange={(event) => { setFrom(event.target.value); setSummary(null); }} /></label>
+          onChange={(event) => { setFrom(event.target.value); setSummary(null); setReadiness(null); }} /></label>
         <label>{tr('إلى', 'To')}<input style={{ display: 'block' }} type="date" required value={to}
-          onChange={(event) => { setTo(event.target.value); setSummary(null); }} /></label>
+          onChange={(event) => { setTo(event.target.value); setSummary(null); setReadiness(null); }} /></label>
         <button type="submit" disabled={busy}>{busy ? tr('جار التحميل…', 'Loading…') : tr('عرض التقرير', 'View report')}</button>
       </form>
       {error && <p role="alert" style={{ color: '#a52e2e' }}>{error}</p>}
@@ -86,6 +90,20 @@ export function SellerFinanceOverview({ memberships }: Props) {
           </div>
           <p>{tr('لم تُحسب عمولات المنصة أو المبالغ النهائية المستحقة بعد. لا يمكن تنفيذ تحويلات من هذا التقرير.',
             'Platform commission and final seller payouts have not been calculated. No transfers can be initiated here.')}</p>
+          {readiness && (
+            <div style={box}>
+              <h3>{tr('جاهزية التسوية المالية', 'Settlement readiness')}</h3>
+              <p>{tr('الحالة: ', 'Status: ')}{readiness.state}</p>
+              <ul>
+                <li>{tr('إعداد العمولات', 'Commission configuration')}: {readiness.commission_configured ? tr('مكتمل', 'Complete') : tr('غير مكتمل', 'Pending')}</li>
+                <li>{tr('مراجعة توزيع المرتجعات', 'Refund allocation verification')}: {readiness.refund_allocation_verified ? tr('مكتمل', 'Complete') : tr('غير مكتمل', 'Pending')}</li>
+                <li>{tr('موافقة الإدارة المالية', 'Finance approval')}: {readiness.finance_approval_verified ? tr('مكتمل', 'Complete') : tr('غير مكتمل', 'Pending')}</li>
+              </ul>
+              <p>{readiness.transfer_enabled
+                ? tr('النظام يشير إلى الجاهزية. التحويلات غير متاحة عبر هذه الشاشة.', 'Readiness indicated. Transfers cannot be initiated from this page.')
+                : tr('التحويلات المالية معطلة حتى استكمال الاعتمادات.', 'Financial transfers are disabled until all approvals are complete.')}</p>
+            </div>
+          )}
           <h3>{tr('آخر 20 عملية مسلّمة', 'Latest 20 delivered transactions')}</h3>
           {ledger.length === 0 ? <p>{tr('لا توجد عمليات في هذه الفترة.', 'No transactions for this period.')}</p> : (
             <div style={{ overflowX: 'auto' }}>
