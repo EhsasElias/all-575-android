@@ -18,6 +18,10 @@ import {
 const empty: SellerApplicationInput = {
   legal_name: '', commercial_registration: '', national_unified_number: null,
   vat_number: null, contact_name: '', contact_email: '', contact_phone: '', city: '',
+  entity_type: null, commercial_registration_status: null,
+  commercial_registration_issue_date: null, commercial_registration_expiry_date: null,
+  chamber_of_commerce_number: null, building_number: null, postal_code: null,
+  additional_number: null, street: null, district: null, iban: null,
 };
 
 const fields = [
@@ -29,6 +33,17 @@ const fields = [
   ['contact_email', 'Contact email', 'البريد الإلكتروني'],
   ['contact_phone', 'Contact phone', 'رقم الهاتف'],
   ['city', 'City', 'المدينة'],
+  ['entity_type', 'Entity type (optional)', 'نوع المنشأة (اختياري)'],
+  ['commercial_registration_status', 'CR status (optional)', 'حالة السجل التجاري (اختياري)'],
+  ['commercial_registration_issue_date', 'CR issue date (optional)', 'تاريخ إصدار السجل (اختياري)'],
+  ['commercial_registration_expiry_date', 'CR expiry date (optional)', 'تاريخ انتهاء السجل (اختياري)'],
+  ['chamber_of_commerce_number', 'Chamber of Commerce No. (optional)', 'رقم الغرفة التجارية (اختياري)'],
+  ['building_number', 'Building number (optional)', 'رقم المبنى (اختياري)'],
+  ['postal_code', 'Postal code (optional)', 'الرمز البريدي (اختياري)'],
+  ['additional_number', 'Additional number (optional)', 'الرقم الإضافي (اختياري)'],
+  ['street', 'Street (optional)', 'الشارع (اختياري)'],
+  ['district', 'District (optional)', 'الحي (اختياري)'],
+  ['iban', 'IBAN (optional)', 'الآيبان (اختياري)'],
 ] as const;
 
 export function SellerApplicationScreen() {
@@ -63,6 +78,17 @@ export function SellerApplicationScreen() {
           contact_email: result.contact_email,
           contact_phone: result.contact_phone,
           city: result.city,
+          entity_type: result.entity_type ?? null,
+          commercial_registration_status: result.commercial_registration_status ?? null,
+          commercial_registration_issue_date: result.commercial_registration_issue_date ?? null,
+          commercial_registration_expiry_date: result.commercial_registration_expiry_date ?? null,
+          chamber_of_commerce_number: result.chamber_of_commerce_number ?? null,
+          building_number: result.building_number ?? null,
+          postal_code: result.postal_code ?? null,
+          additional_number: result.additional_number ?? null,
+          street: result.street ?? null,
+          district: result.district ?? null,
+          iban: result.iban ?? null,
         });
       }
     }).catch(() => { if (live) setError(ar ? 'تعذر تحميل طلب البائع.' : 'Could not load seller application.'); })
@@ -141,9 +167,9 @@ export function SellerApplicationScreen() {
               <label key={key} style={{ display: 'grid', gap: 4 }}>
                 <span>{ar ? arabic : en}</span>
                 <input
-                  required={key !== 'vat_number' && key !== 'national_unified_number'}
-                  type={key === 'contact_email' ? 'email' : 'text'}
-                  maxLength={key === 'legal_name' ? 180 : key === 'contact_name' ? 120 : key === 'city' ? 100 : key === 'contact_email' ? 180 : 30}
+                  required={['legal_name', 'commercial_registration', 'contact_name', 'contact_email', 'contact_phone', 'city'].includes(key)}
+                  type={key === 'contact_email' ? 'email' : key.endsWith('_date') ? 'date' : 'text'}
+                  maxLength={key === 'legal_name' || key === 'contact_email' || key === 'street' ? 180 : key === 'contact_name' ? 120 : 100}
                   value={form[key] ?? ''}
                   disabled={busy || readonly}
                   onChange={(event) => setForm((previous) => ({ ...previous, [key]: event.target.value || null }))}
