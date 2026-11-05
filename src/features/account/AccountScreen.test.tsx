@@ -84,7 +84,8 @@ describe('Account: a signed-in customer', () => {
 
     expect(await screen.findByRole('heading', { level: 1, name: 'Account' })).toBeInTheDocument();
     expect(screen.getByRole('heading', { name: 'Security & sign-in' })).toBeVisible();
-    expect(screen.getByText(/Passkey setup is not available yet/)).toBeVisible();
+    // jsdom has no secure platform authenticator; explain unsupported WebAuthn instead.
+    expect(screen.getByText('Your browser does not support secure passkeys.')).toBeVisible();
     const summary = screen.getByRole('region', { name: 'Your details' });
     expect(within(summary).getByText('Sara')).toBeVisible();
     expect(within(summary).getByText('+966 51 234 5678')).toBeVisible();
