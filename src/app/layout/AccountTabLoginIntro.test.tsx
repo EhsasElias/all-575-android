@@ -5,7 +5,7 @@ import { installFakeApi } from '@/test/fakeApi';
 import { renderApp } from '@/test/render';
 
 describe('Account tab login transition', () => {
-  it('shows the logo before login when a guest taps Account', async () => {
+  it('opens the guest account first and then offers sign-in without replaying the launch logo', async () => {
     installFakeApi({});
     const user = userEvent.setup();
     const { router } = await renderApp({ route: '/home', seenWelcome: true });
@@ -13,19 +13,20 @@ describe('Account tab login transition', () => {
     const nav = screen.getByRole('navigation', { name: 'Main navigation' });
     await user.click(within(nav).getByRole('link', { name: 'Account' }));
 
-    expect(router.state.location.pathname).toBe('/welcome/logo');
-    expect(router.state.location.search).toBe('?mode=account');
-    const logo = within(screen.getByRole('main')).getByRole('button', { name: 'Tap the logo to shop now' });
-    expect(logo).toBeVisible();
-    expect(screen.queryByRole('navigation')).not.toBeInTheDocument();
-    await user.click(logo);
+    await waitFor(() => {
+      expect(router.state.location.pathname).toBe('/account');
+    });
+    expect(router.state.location.search).toBe('');
+    expect(screen.getByRole('navigation', { name: 'Main navigation' })).toBeInTheDocument();
+    expect(screen.queryByRole('button', { name: 'Tap the logo to shop now' })).not.toBeInTheDocument();
 
-    await waitFor(
-      () => {
-        expect(router.state.location.pathname).toBe('/sign-in');
-      },
-      { timeout: 5000 },
-    );
+    const signIn = screen.getByRole('link', { name: /sign in/i });
+    expect(signIn).toHaveAttribute('href', '/sign-in?next=%2Faccount');
+    await user.click(signIn);
+
+    await waitFor(() => {
+      expect(router.state.location.pathname).toBe('/sign-in');
+    });
     expect(router.state.location.search).toBe('?next=%2Faccount');
     expect(await screen.findByRole('heading', { name: 'Sign in' })).toBeVisible();
   });
