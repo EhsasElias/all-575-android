@@ -7,6 +7,7 @@ import { ButtonLink, Skeleton } from '@/shared/ui';
 import { afterSignInPath } from './afterSignIn';
 import { SignInSteps } from './SignInSteps';
 import { BiometricSignIn } from './BiometricSignIn';
+import { WebPasskeySignIn } from './WebPasskeySignIn';
 import styles from './SignInScreen.module.css';
 
 const EmailPasswordAccess = lazy(async () => {
@@ -58,6 +59,7 @@ export function SignInScreen({ createAccount = false }: { createAccount?: boolea
         {access(createAccount ? 'haveAccount' : 'newAccount')}
       </ButtonLink>
       {!createAccount && status === 'guest' && <BiometricSignIn />}
+      {!createAccount && status === 'guest' && <WebPasskeySignIn />}
       <ButtonLink variant="ghost" to={routePaths.home} className={styles.guest}>
         {emailLoginEnabled ? t('emailPassword.continueShoppingAsGuest') : t('continueAsGuest')}
       </ButtonLink>
