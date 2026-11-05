@@ -11,6 +11,7 @@ export type SellerMembership = {
 };
 export type SellerBranch = {
   id: number; seller_id: number; code: string; name_ar: string; name_en: string; is_active: boolean;
+  lat: number; lng: number; service_zone_id: number;
 };
 export type SellerProduct = {
   id: number; seller_id: number; category_id: number; slug: string;
