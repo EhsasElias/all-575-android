@@ -47,29 +47,51 @@ function bytesToBase64Url(value: ArrayBuffer | null): string | null {
 }
 
 function creationOptions(options: CreationOptionsJson): PublicKeyCredentialCreationOptions {
+  // Build the browser options explicitly: spreading the JSON object would retain
+  // string IDs when an optional credential list is absent.
   return {
-    ...options,
     challenge: base64UrlToBytes(options.challenge),
-    user: { ...options.user, id: base64UrlToBytes(options.user.id) },
-    ...(options.excludeCredentials !== undefined ? {
-      excludeCredentials: options.excludeCredentials.map((item) => ({
-        ...item,
-        id: base64UrlToBytes(item.id),
-      })),
-    } : {}),
+    rp: options.rp,
+    user: {
+      name: options.user.name,
+      displayName: options.user.displayName,
+      id: base64UrlToBytes(options.user.id),
+    },
+    pubKeyCredParams: options.pubKeyCredParams,
+    ...(options.timeout !== undefined ? { timeout: options.timeout } : {}),
+    ...(options.attestation !== undefined ? { attestation: options.attestation } : {}),
+    ...(options.authenticatorSelection !== undefined
+      ? { authenticatorSelection: options.authenticatorSelection }
+      : {}),
+    ...(options.excludeCredentials !== undefined
+      ? {
+          excludeCredentials: options.excludeCredentials.map((item) => ({
+            type: item.type,
+            id: base64UrlToBytes(item.id),
+            ...(item.transports !== undefined ? { transports: item.transports } : {}),
+          })),
+        }
+      : {}),
   };
 }
 
 function requestOptions(options: RequestOptionsJson): PublicKeyCredentialRequestOptions {
   return {
-    ...options,
     challenge: base64UrlToBytes(options.challenge),
-    ...(options.allowCredentials !== undefined ? {
-      allowCredentials: options.allowCredentials.map((item) => ({
-        ...item,
-        id: base64UrlToBytes(item.id),
-      })),
-    } : {}),
+    ...(options.rpId !== undefined ? { rpId: options.rpId } : {}),
+    ...(options.timeout !== undefined ? { timeout: options.timeout } : {}),
+    ...(options.userVerification !== undefined
+      ? { userVerification: options.userVerification }
+      : {}),
+    ...(options.allowCredentials !== undefined
+      ? {
+          allowCredentials: options.allowCredentials.map((item) => ({
+            type: item.type,
+            id: base64UrlToBytes(item.id),
+            ...(item.transports !== undefined ? { transports: item.transports } : {}),
+          })),
+        }
+      : {}),
   };
 }
 
