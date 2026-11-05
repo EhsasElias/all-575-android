@@ -12,19 +12,12 @@ export function AccountSecurity() {
   const { t } = useTranslation('account');
   const native = isNativeBiometry();
 
+  if (native) return <BiometricPreference />;
+
   return (
     <Section title={t('security.title')}>
-      {native ? (
-        <>
-          <p>{t('security.nativeInfo')}</p>
-          <BiometricPreference />
-        </>
-      ) : (
-        <>
-          <p>{t('security.webInfo')}</p>
-          <p role="status">{t('security.webUnavailable')}</p>
-        </>
-      )}
+      <p>{t('security.webInfo')}</p>
+      <p role="status">{t('security.webUnavailable')}</p>
       <p>{t('security.privacy')}</p>
     </Section>
   );
