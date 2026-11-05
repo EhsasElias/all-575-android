@@ -105,3 +105,32 @@ issues, 429 to usage limits, and network failures to connectivity.
   Manual verification of Saudi National Address fields is still required.
 - Maps and geocoding need internet access; a fully offline street map is
   outside the scope of this feature.
+
+## Seller account / branch mapping scenarios
+
+- Sign in using the local seller test identity (configured in the backend seed).
+  The seller must have an active owner membership; the identity does **not**
+  grant admin review rights.
+- Open **Seller workspace → Store and branches**, request a new branch and
+  select an active service zone.
+- Choose a location by tapping/dragging the map, using **Use my current
+  location** (requires device permission), or entering coordinates manually.
+- Try a pin outside the zone: the form must display a warning and refuse to
+  submit. Try an inside pin: the request button becomes available if all
+  required fields are completed.
+- After proposing a branch, ensure it is listed as **inactive** until admin
+  approval. Open its **View saved branch location** link and check the
+  coordinates. Seller must not be able to activate it.
+- Try branch creation as a seller staff member without owner access: the API
+  must deny it. A seller owner from another store must not see this store's
+  branches.
+- Log in as an explicitly granted admin reviewer, check proposed branch
+  location and approve. Confirm the branch becomes active and its coordinates
+  remain unchanged.
+- Repeat with imagery blocked: location can still be entered manually, and
+  the fallback/reload message appears.
+
+The business registration application's Saudi legal address fields are kept
+separate from the **operational branch map**: they are not automatically
+rewritten from a map pin. This prevents a map suggestion from silently
+changing submitted legal/KYC records.
