@@ -13,7 +13,7 @@ import { PageHeader } from './PageHeader';
 import { ProfileSummary } from './ProfileSummary';
 import { Section } from './Section';
 import { SignOutSection } from './SignOutSection';
-import { BiometricPreference } from './BiometricPreference';
+import { AccountSecurity } from './AccountSecurity';
 import { SellerReviewEntry } from './SellerReviewEntry';
 import styles from './SignedInAccount.module.css';
 
@@ -42,7 +42,7 @@ export function SignedInAccount({ user }: SignedInAccountProps) {
         <MarketingPreference user={user} />
       </Section>
       <LegalLinks />
-      <BiometricPreference />
+      <AccountSecurity />
       <SignOutSection />
     </Page>
   );
