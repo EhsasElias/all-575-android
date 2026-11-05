@@ -1,5 +1,6 @@
 import { lazy, Suspense, useEffect, useState, type FormEvent } from 'react';
 import { MapBoundary } from '@/features/addresses/MapBoundary';
+import { useCurrentLocation } from '@/features/addresses/useCurrentLocation';
 import type { MapPin, PinMapLabels } from '@/features/addresses/mapTypes';
 
 const BranchPinMap = lazy(() => import('@/features/addresses/LeafletMap')
@@ -52,6 +53,7 @@ export function SellerStoreManagement({ memberships }: Props) {
       lng: String(point.lng),
     }));
   };
+  const { location: branchLocation, locate: locateBranch } = useCurrentLocation(setBranchPin);
   const selectedZone = zones.find((zone) => zone.id === Number(newBranch.service_zone_id));
   const branchInZone = branchPin !== null && selectedZone !== undefined &&
     branchWithinZone(branchPin, selectedZone);
@@ -245,6 +247,19 @@ export function SellerStoreManagement({ memberships }: Props) {
             {newBranch.service_zone_id && (
               <div style={{ flex: '1 1 100%', minWidth: 0 }}>
                 <p>{tr('اختاري موقع الفرع من الخريطة بسحب الدبوس أو الضغط على المكان، ثم راجعي الإحداثيات.', 'Tap or drag the pin to the branch location, then verify its coordinates.')}</p>
+                <div style={{ display: 'flex', flexWrap: 'wrap', alignItems: 'center', gap: 10, marginBottom: 12 }}>
+                  <button type="button" disabled={saving || branchLocation.status === 'locating'}
+                    onClick={() => void locateBranch()}>
+                    {branchLocation.status === 'locating'
+                      ? tr('جارٍ تحديد الموقع…', 'Finding your location…')
+                      : tr('استخدام موقعي الحالي', 'Use my current location')}
+                  </button>
+                  {branchLocation.status === 'failed' && <span role="alert">
+                    {branchLocation.reason === 'denied'
+                      ? tr('اسمحي بالوصول للموقع من إعدادات الجهاز.', 'Enable location permission in device settings.')
+                      : tr('تعذر تحديد الموقع. اختاري نقطة على الخريطة.', 'Could not detect location. Choose a point on the map.')}
+                  </span>}
+                </div>
                 <MapBoundary fallback={<p role="alert">{tr('تعذر فتح الخريطة. يمكنك كتابة الإحداثيات أدناه.', 'Could not load map. You can enter the coordinates below.')}</p>}>
                   <Suspense fallback={<p role="status">{tr('جار تحميل الخريطة…', 'Loading map…')}</p>}>
                     <BranchPinMap
