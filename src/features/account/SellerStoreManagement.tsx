@@ -14,6 +14,7 @@ import {
   type SellerStoreProfile,
 } from './sellerStoreProfileApi';
 import { isApiError } from '@/shared/api';
+import { branchWithinZone, mapLocationUrl } from './branchMap';
 
 type Props = { memberships: SellerMembership[] };
 const card: React.CSSProperties = { padding: 14, border: '1px solid #d8e1db', borderRadius: 12, marginBottom: 12 };
@@ -51,6 +52,9 @@ export function SellerStoreManagement({ memberships }: Props) {
       lng: String(point.lng),
     }));
   };
+  const selectedZone = zones.find((zone) => zone.id === Number(newBranch.service_zone_id));
+  const branchInZone = branchPin !== null && selectedZone !== undefined &&
+    branchWithinZone(branchPin, selectedZone);
   const [storeAr, setStoreAr] = useState('');
   const [storeEn, setStoreEn] = useState('');
   const [editBranch, setEditBranch] = useState<number | null>(null);
@@ -139,6 +143,10 @@ export function SellerStoreManagement({ memberships }: Props) {
     const lng = Number(newBranch.lng);
     if (!zoneId || !Number.isFinite(lat) || !Number.isFinite(lng) || !newBranch.lat || !newBranch.lng) {
       setError(tr('اختاري المنطقة وحددي إحداثيات صحيحة للفرع.', 'Choose a zone and valid branch coordinates.'));
+      return;
+    }
+    if (!branchInZone) {
+      setError(tr('موقع الفرع خارج منطقة التوصيل المحددة. اختاري نقطة داخل المنطقة.', 'Branch location is outside the selected delivery zone. Choose a point inside it.'));
       return;
     }
     setSaving(true); setError(''); setNotice('');
@@ -249,13 +257,26 @@ export function SellerStoreManagement({ memberships }: Props) {
                 </MapBoundary>
               </div>
             )}
+            {selectedZone && branchPin && (
+              <p role="status" style={{
+                flex: '1 1 100%',
+                padding: 12, borderRadius: 10,
+                background: branchInZone ? 'var(--color-surface-mint)' : 'var(--color-surface)',
+                border: '1px solid var(--color-border)',
+                color: branchInZone ? 'var(--color-brand-text)' : 'var(--color-danger)',
+              }}>
+                {branchInZone
+                  ? tr('الموقع داخل منطقة التوصيل المحددة.', 'Location is within the selected delivery zone.')
+                  : tr('موقع الفرع خارج المنطقة. حرّكي الدبوس إلى داخل منطقة التوصيل.', 'Location is outside the delivery zone. Move the pin inside the selected zone.')}
+              </p>
+            )}
             {(['lat', 'lng'] as const).map((key) => <label key={key} style={field}>
               {key === 'lat' ? tr('خط العرض', 'Latitude') : tr('خط الطول', 'Longitude')}
               <input type="number" step="any" required value={newBranch[key]}
                 onChange={(event) => setNewBranch((current) => ({ ...current, [key]: event.target.value }))} />
             </label>)}
           </div>
-          <button type="submit" disabled={saving || zones.length === 0}>
+          <button type="submit" disabled={saving || zones.length === 0 || !branchInZone}>
             {tr('إرسال الفرع للمراجعة', 'Submit branch for review')}
           </button>
         </form>}
@@ -263,6 +284,17 @@ export function SellerStoreManagement({ memberships }: Props) {
         {branches.map((branch) => <article key={branch.id} style={{ borderTop: '1px solid #d8e1db', padding: '12px 0' }}>
           <strong>{ar ? branch.name_ar : branch.name_en}</strong>
           <p>{tr('الرمز', 'Code')}: {branch.code} · {branch.is_active ? tr('نشط', 'Active') : tr('غير نشط', 'Inactive')}</p>
+          {Number.isFinite(Number(branch.lat)) && Number.isFinite(Number(branch.lng)) && (
+            <p>
+              <a href={mapLocationUrl({ lat: Number(branch.lat), lng: Number(branch.lng) })}
+                target="_blank" rel="noopener noreferrer">
+                {tr('عرض موقع الفرع المحفوظ على الخريطة', 'View saved branch location on the map')}
+              </a>
+              {!branch.is_active && (
+                <span> · {tr('بانتظار موافقة الإدارة', 'Awaiting admin approval')}</span>
+              )}
+            </p>
+          )}
           {editBranch !== branch.id && <button type="button" disabled={saving}
             onClick={() => { setEditBranch(branch.id); setBranchAr(branch.name_ar); setBranchEn(branch.name_en); setError(''); }}>
             {tr('تعديل اسم الفرع', 'Edit branch name')}
