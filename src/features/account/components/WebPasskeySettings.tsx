@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Button } from '@/shared/ui';
-import { listWebPasskeys, registerWebPasskey, revokeWebPasskey, webPasskeysSupported, type WebPasskey } from '@/features/auth/webPasskeys';
+import { listWebPasskeys, registerWebPasskey, revokeWebPasskey, webPasskeysSupported, webPasskeysEnabled, type WebPasskey } from '@/features/auth/webPasskeys';
 import { Section } from './Section';
 
 /** Password confirmation is required for registration and revocation. */
@@ -27,7 +27,14 @@ export function WebPasskeySettings() {
   };
 
   useEffect(() => {
-    if (supported) void refresh();
+    if (!supported) return;
+    let mounted = true;
+    void webPasskeysEnabled().then(async (enabled) => {
+      if (!mounted) return;
+      if (enabled) await refresh();
+      else setAvailable(false);
+    });
+    return () => { mounted = false; };
   }, [supported]);
 
   const register = async () => {
