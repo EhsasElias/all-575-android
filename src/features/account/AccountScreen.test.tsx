@@ -83,6 +83,8 @@ describe('Account: a signed-in customer', () => {
     await renderApp({ route: '/account', signedIn: true, seenWelcome: true });
 
     expect(await screen.findByRole('heading', { level: 1, name: 'Account' })).toBeInTheDocument();
+    expect(screen.getByRole('heading', { name: 'Security & sign-in' })).toBeVisible();
+    expect(screen.getByText(/Passkey setup is not available yet/)).toBeVisible();
     const summary = screen.getByRole('region', { name: 'Your details' });
     expect(within(summary).getByText('Sara')).toBeVisible();
     expect(within(summary).getByText('+966 51 234 5678')).toBeVisible();
