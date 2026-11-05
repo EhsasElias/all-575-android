@@ -1,0 +1,112 @@
+/* Seller workspace: responsive, high-contrast visual language for every seller section. */
+.seller-workspace-shell {
+  --sw-accent: #3d9e7a;
+  --sw-accent-light: rgba(91, 191, 150, .13);
+  --sw-border: rgba(134, 171, 156, .28);
+  --sw-bg: var(--color-background, #101a16);
+  --sw-ink: var(--color-text, #e9f4ed);
+  --sw-muted: var(--color-text-secondary, #9fb6aa);
+  min-width: 0;
+  width: 100%;
+}
+.seller-workspace-shell > div { max-width: 1240px !important; width: min(100% - 32px, 1240px) !important; margin-inline: auto; }
+.seller-workspace-shell header { margin-block: 10px 26px; }
+.seller-workspace-shell header h1 { font-size: clamp(1.6rem, 3vw, 2.35rem); line-height: 1.3; letter-spacing: -.035em; }
+.seller-workspace-shell header p { max-width: 70ch; color: var(--sw-muted); line-height: 1.7; }
+.seller-workspace-shell .seller-tabs {
+  display: flex; flex-wrap: nowrap; align-items: center; gap: 8px;
+  padding: 8px; margin: 20px 0 24px; border: 1px solid var(--sw-border);
+  border-radius: 18px; background: var(--sw-accent-light);
+  overflow-x: auto; scrollbar-width: thin; -webkit-overflow-scrolling: touch;
+}
+.seller-workspace-shell .seller-tabs button {
+  flex: 0 0 auto; white-space: nowrap; min-height: 42px; padding: 10px 16px !important;
+  border: 1px solid transparent !important; border-radius: 12px !important;
+  color: inherit !important; background: transparent !important;
+  font: inherit; font-size: .9rem; font-weight: 600 !important;
+  transition: background .15s, box-shadow .15s, border-color .15s;
+}
+.seller-workspace-shell .seller-tabs button:hover { background: rgba(91, 191, 150, .16) !important; }
+.seller-workspace-shell .seller-tabs button[aria-current="page"] {
+  background: #22795c !important; color: white !important;
+  box-shadow: 0 4px 14px rgba(18, 91, 66, .2);
+}
+.seller-workspace-shell .seller-tabs button:focus-visible,
+.seller-workspace-shell :is(button, input, select, textarea, a):focus-visible {
+  outline: 3px solid #77d8af; outline-offset: 2px;
+}
+.seller-workspace-shell .seller-tabs .seller-refresh { margin-inline-start: auto; border: 1px solid var(--sw-border) !important; }
+.seller-workspace-shell section, .seller-workspace-shell article { min-width: 0; }
+.seller-workspace-shell section > h2, .seller-workspace-shell article > h2 {
+  margin: 0 0 16px; font-size: clamp(1.12rem, 2vw, 1.45rem); line-height: 1.4;
+}
+.seller-workspace-shell section > p { line-height: 1.7; }
+.seller-workspace-shell .seller-content > section,
+.seller-workspace-shell .seller-content > div > section,
+.seller-workspace-shell .seller-content article {
+  border: 1px solid var(--sw-border);
+  border-radius: 18px; padding: clamp(16px, 2.5vw, 24px);
+  margin-block: 0 18px;
+  background: var(--color-surface, rgba(155, 191, 169, .045));
+}
+.seller-workspace-shell .seller-content article article { background: transparent; }
+.seller-workspace-shell .seller-content :is(input:not([type="checkbox"]):not([type="radio"]):not([type="file"]), select, textarea) {
+  width: 100%; max-width: 100%; box-sizing: border-box;
+  min-height: 43px; padding: 10px 12px; margin-block-start: 6px;
+  border: 1px solid var(--sw-border); border-radius: 11px;
+  background: var(--color-background, #14231c); color: inherit;
+  font: inherit; font-size: .92rem;
+}
+.seller-workspace-shell .seller-content textarea { min-height: 100px; resize: vertical; }
+.seller-workspace-shell .seller-content :is(input,select,textarea):disabled { opacity: .55; cursor: not-allowed; }
+.seller-workspace-shell .seller-content :is(label) { font-weight: 600; line-height: 1.7; min-width: 0; }
+.seller-workspace-shell .seller-content :is(button:not(.seller-tabs button)) {
+  min-height: 40px; max-width: 100%; padding: 9px 15px;
+  border-radius: 10px; font: inherit; font-weight: 650;
+  border: 1px solid var(--sw-border); cursor: pointer;
+}
+.seller-workspace-shell .seller-content button:disabled { opacity: .5; cursor: not-allowed; }
+.seller-workspace-shell .seller-content button:not(:disabled):hover { border-color: var(--sw-accent); }
+.seller-workspace-shell .seller-content table {
+  border-collapse: separate; border-spacing: 0; width: 100%;
+  min-width: 580px; font-size: .9rem;
+}
+.seller-workspace-shell .seller-content th {
+  text-align: start; background: var(--sw-accent-light);
+  padding: 13px 14px; font-weight: 750; white-space: nowrap;
+  border-bottom: 1px solid var(--sw-border);
+}
+.seller-workspace-shell .seller-content td {
+  text-align: start; padding: 12px 14px;
+  border-bottom: 1px solid var(--sw-border); vertical-align: middle;
+}
+.seller-workspace-shell .seller-content tbody tr:hover { background: rgba(91, 191, 150, .06); }
+.seller-workspace-shell .seller-content :is(form, table) { max-width: 100%; }
+.seller-workspace-shell .seller-content :is(table) { display: table; }
+.seller-workspace-shell .seller-content :is(div):has(> table) { overflow-x: auto; max-width: 100%; }
+.seller-workspace-shell .seller-filters {
+  display: flex; flex-wrap: wrap; align-items: end; gap: 12px;
+  padding: 16px; border: 1px solid var(--sw-border);
+  border-radius: 16px; margin-bottom: 20px; background: var(--sw-accent-light);
+}
+.seller-workspace-shell .seller-filters label { min-width: 160px; flex: 1 1 175px; }
+.seller-workspace-shell [role="alert"] {
+  padding: 12px 16px; margin-bottom: 16px;
+  border: 1px solid rgba(211, 98, 98, .45); border-radius: 12px;
+  background: rgba(211, 98, 98, .09); line-height: 1.6;
+}
+.seller-workspace-shell [role="status"] { line-height: 1.6; }
+.seller-workspace-shell .seller-content :is(input[type="checkbox"], input[type="radio"]) { accent-color: var(--sw-accent); }
+@media (max-width: 700px) {
+  .seller-workspace-shell > div { width: min(100% - 20px, 1240px) !important; }
+  .seller-workspace-shell .seller-tabs { border-radius: 14px; margin-block: 14px 18px; }
+  .seller-workspace-shell .seller-tabs button { padding-inline: 12px !important; }
+  .seller-workspace-shell .seller-content > section,
+  .seller-workspace-shell .seller-content > div > section,
+  .seller-workspace-shell .seller-content article { padding: 14px; border-radius: 14px; }
+  .seller-workspace-shell .seller-filters label { min-width: 100%; }
+  .seller-workspace-shell .seller-content :is(button) { overflow-wrap: anywhere; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .seller-workspace-shell * { transition-duration: 0.01ms !important; }
+}
