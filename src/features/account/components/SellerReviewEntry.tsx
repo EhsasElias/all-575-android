@@ -11,14 +11,27 @@ export function SellerReviewEntry() {
 
   useEffect(() => {
     let active = true;
-    void http.get('/seller-review/applications', { query: { limit: 1 } })
-      .then(() => { if (active) setAllowed(true); })
-      .catch(() => { if (active) setAllowed(false); });
-    return () => { active = false; };
+    void http
+      .get('/seller-review/applications', { query: { limit: 1 } })
+      .then(() => {
+        if (active) setAllowed(true);
+      })
+      .catch(() => {
+        if (active) setAllowed(false);
+      });
+    return () => {
+      active = false;
+    };
   }, []);
 
   if (!allowed) return null;
-  return <p><Link to={routePaths.sellerReview}>
-    {i18n.language.startsWith('ar') ? 'مراجعة طلبات البائعين والمنتجات (إدارة)' : 'Seller & product approvals (Admin)'}
-  </Link></p>;
+  return (
+    <p>
+      <Link to={routePaths.sellerReview}>
+        {i18n.language.startsWith('ar')
+          ? 'مراجعة طلبات البائعين والمنتجات (إدارة)'
+          : 'Seller & product approvals (Admin)'}
+      </Link>
+    </p>
+  );
 }

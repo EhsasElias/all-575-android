@@ -40,7 +40,18 @@ export function OrderFilters() {
             event.preventDefault();
             if (reversed || reversedPrice) return;
             const next = new URLSearchParams();
-            for (const [key, value] of Object.entries({ q: number.trim(), product: product.trim(), seller: seller.trim(), branch: branch.trim(), payment_method: payment, min_price: minPrice, max_price: maxPrice, status, from, to })) {
+            for (const [key, value] of Object.entries({
+              q: number.trim(),
+              product: product.trim(),
+              seller: seller.trim(),
+              branch: branch.trim(),
+              payment_method: payment,
+              min_price: minPrice,
+              max_price: maxPrice,
+              status,
+              from,
+              to,
+            })) {
               if (value) next.set(key, value);
             }
             setParams(next, { replace: true });
@@ -55,18 +66,43 @@ export function OrderFilters() {
               setNumber(event.target.value);
             }}
           />
-          <TextField type="search" label="Product name / اسم المنتج" maxLength={120}
-            value={product} onChange={(event) => setProduct(event.target.value)} />
-          <TextField type="search" label="Company name / اسم الشركة" maxLength={120}
-            value={seller} onChange={(event) => setSeller(event.target.value)} />
-          <TextField type="search" label="Branch name / اسم الفرع" maxLength={120}
-            value={branch} onChange={(event) => setBranch(event.target.value)} />
+          <TextField
+            type="search"
+            label="Product name / اسم المنتج"
+            maxLength={120}
+            value={product}
+            onChange={(event) => setProduct(event.target.value)}
+          />
+          <TextField
+            type="search"
+            label="Company name / اسم الشركة"
+            maxLength={120}
+            value={seller}
+            onChange={(event) => setSeller(event.target.value)}
+          />
+          <TextField
+            type="search"
+            label="Branch name / اسم الفرع"
+            maxLength={120}
+            value={branch}
+            onChange={(event) => setBranch(event.target.value)}
+          />
           <div className={styles.dates}>
-            <TextField type="number" label="Min price (SAR) / أقل سعر" value={minPrice}
-              min="0" onChange={(event) => setMinPrice(event.target.value)} />
-            <TextField type="number" label="Max price (SAR) / أعلى سعر" value={maxPrice}
-              min="0" error={reversedPrice ? 'Maximum must be greater than minimum' : undefined}
-              onChange={(event) => setMaxPrice(event.target.value)} />
+            <TextField
+              type="number"
+              label="Min price (SAR) / أقل سعر"
+              value={minPrice}
+              min="0"
+              onChange={(event) => setMinPrice(event.target.value)}
+            />
+            <TextField
+              type="number"
+              label="Max price (SAR) / أعلى سعر"
+              value={maxPrice}
+              min="0"
+              error={reversedPrice ? 'Maximum must be greater than minimum' : undefined}
+              onChange={(event) => setMaxPrice(event.target.value)}
+            />
           </div>
           <label>
             Payment type / نوع الدفع
@@ -147,8 +183,12 @@ export function OrderFilters() {
               variant="ghost"
               onClick={() => {
                 setNumber('');
-                setProduct(''); setSeller(''); setBranch(''); setPayment('');
-                setMinPrice(''); setMaxPrice('');
+                setProduct('');
+                setSeller('');
+                setBranch('');
+                setPayment('');
+                setMinPrice('');
+                setMaxPrice('');
                 setStatus('');
                 setFrom('');
                 setTo('');

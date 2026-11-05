@@ -55,9 +55,12 @@ export const fr: Translations<typeof en> = {
     signIn: 'Se connecter avec empreinte ou clé d’accès',
     signInFailed: 'Connexion par clé d’accès indisponible ou annulée.',
     nativeInfo: 'Déverrouillez votre session avec la biométrie de votre appareil.',
-    webInfo: 'La connexion par empreinte ou reconnaissance faciale sur le site nécessite une clé d’accès.',
-    webUnavailable: 'La configuration des clés d’accès n’est pas encore disponible. Utilisez votre e-mail et mot de passe ou un code de vérification.',
-    privacy: 'Vos empreintes restent sur votre appareil. Nous ne collectons aucune donnée biométrique.',
+    webInfo:
+      'La connexion par empreinte ou reconnaissance faciale sur le site nécessite une clé d’accès.',
+    webUnavailable:
+      'La configuration des clés d’accès n’est pas encore disponible. Utilisez votre e-mail et mot de passe ou un code de vérification.',
+    privacy:
+      'Vos empreintes restent sur votre appareil. Nous ne collectons aucune donnée biométrique.',
   },
   preferences: {
     title: 'Préférences',

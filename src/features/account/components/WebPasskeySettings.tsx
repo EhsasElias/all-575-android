@@ -1,7 +1,14 @@
 import { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Button } from '@/shared/ui';
-import { listWebPasskeys, registerWebPasskey, revokeWebPasskey, webPasskeysSupported, webPasskeysEnabled, type WebPasskey } from '@/features/auth/webPasskeys';
+import {
+  listWebPasskeys,
+  registerWebPasskey,
+  revokeWebPasskey,
+  webPasskeysSupported,
+  webPasskeysEnabled,
+  type WebPasskey,
+} from '@/features/auth/webPasskeys';
 import { Section } from './Section';
 
 /** Password confirmation is required for registration and revocation. */
@@ -34,15 +41,20 @@ export function WebPasskeySettings() {
       if (enabled) await refresh();
       else setAvailable(false);
     });
-    return () => { mounted = false; };
+    return () => {
+      mounted = false;
+    };
   }, [supported]);
 
   const register = async () => {
     if (pending || !password || !name.trim()) return;
-    setPending(true); setMessage(''); setError('');
+    setPending(true);
+    setMessage('');
+    setError('');
     try {
       await registerWebPasskey(password, name.trim());
-      setPassword(''); setName('');
+      setPassword('');
+      setName('');
       await refresh();
       setMessage(t('security.registered'));
     } catch {
@@ -57,7 +69,9 @@ export function WebPasskeySettings() {
       setError(t('security.passwordRequired'));
       return;
     }
-    setPending(true); setMessage(''); setError('');
+    setPending(true);
+    setMessage('');
+    setError('');
     try {
       await revokeWebPasskey(id, password);
       setPassword('');
@@ -79,23 +93,49 @@ export function WebPasskeySettings() {
         <div style={{ display: 'grid', gap: '0.75rem' }}>
           <label style={{ display: 'grid', gap: '0.25rem' }}>
             {t('security.password')}
-            <input type="password" autoComplete="current-password" value={password}
+            <input
+              type="password"
+              autoComplete="current-password"
+              value={password}
               onChange={(event) => setPassword(event.target.value)}
-              style={{ inlineSize: '100%', minBlockSize: '2.75rem' }} />
+              style={{ inlineSize: '100%', minBlockSize: '2.75rem' }}
+            />
           </label>
           <label style={{ display: 'grid', gap: '0.25rem' }}>
             {t('security.deviceName')}
-            <input type="text" maxLength={100} value={name}
+            <input
+              type="text"
+              maxLength={100}
+              value={name}
               onChange={(event) => setName(event.target.value)}
-              style={{ inlineSize: '100%', minBlockSize: '2.75rem' }} />
+              style={{ inlineSize: '100%', minBlockSize: '2.75rem' }}
+            />
           </label>
-          <Button variant="secondary" onClick={() => void register()} disabled={!password || !name.trim() || pending}
-            loading={pending}>{t('security.register')}</Button>
+          <Button
+            variant="secondary"
+            onClick={() => void register()}
+            disabled={!password || !name.trim() || pending}
+            loading={pending}
+          >
+            {t('security.register')}
+          </Button>
           {items.length > 0 && <h3>{t('security.registeredDevices')}</h3>}
           {items.map((item) => (
-            <div key={item.id} style={{ display: 'flex', justifyContent: 'space-between', gap: '0.75rem', alignItems: 'center' }}>
+            <div
+              key={item.id}
+              style={{
+                display: 'flex',
+                justifyContent: 'space-between',
+                gap: '0.75rem',
+                alignItems: 'center',
+              }}
+            >
               <span>{item.name}</span>
-              <Button variant="ghost" onClick={() => void revoke(item.id)} disabled={pending || !password}>
+              <Button
+                variant="ghost"
+                onClick={() => void revoke(item.id)}
+                disabled={pending || !password}
+              >
                 {t('security.remove')}
               </Button>
             </div>

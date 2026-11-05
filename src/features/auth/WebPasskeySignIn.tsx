@@ -18,7 +18,9 @@ export function WebPasskeySignIn() {
     void webPasskeysEnabled().then((value) => {
       if (mounted) setEnabled(value);
     });
-    return () => { mounted = false; };
+    return () => {
+      mounted = false;
+    };
   }, [supported]);
 
   if (!supported || !enabled) return null;
@@ -39,7 +41,12 @@ export function WebPasskeySignIn() {
 
   return (
     <section aria-label={t('security.title')}>
-      <Button variant="secondary" fullWidth loading={pending} onClick={() => void signInWithPasskey()}>
+      <Button
+        variant="secondary"
+        fullWidth
+        loading={pending}
+        onClick={() => void signInWithPasskey()}
+      >
         {t('security.signIn')}
       </Button>
       {error && <p role="alert">{error}</p>}

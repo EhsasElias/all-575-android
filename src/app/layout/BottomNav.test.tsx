@@ -36,10 +36,7 @@ describe('BottomNav', () => {
   it('opens the public account screen directly when a guest taps Account', () => {
     renderNav({ guest: true });
 
-    expect(screen.getByRole('link', { name: 'Account' })).toHaveAttribute(
-      'href',
-      '/account',
-    );
+    expect(screen.getByRole('link', { name: 'Account' })).toHaveAttribute('href', '/account');
     expect(screen.getByRole('link', { name: 'Cart' })).toHaveAttribute('href', '/cart');
   });
 

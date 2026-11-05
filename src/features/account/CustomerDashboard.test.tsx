@@ -77,7 +77,10 @@ describe('Customer dashboard', () => {
       installFakeApi({ ...signedIn, 'GET /me/dashboard': { body: { data: summary } } });
       const user = userEvent.setup();
       const { router } = await renderApp({
-        route: '/account/dashboard', signedIn: true, seenWelcome: true, language,
+        route: '/account/dashboard',
+        signedIn: true,
+        seenWelcome: true,
+        language,
       });
       const labels = accountLocales[language].dashboard.filters;
       const filters = await screen.findByRole('region', { name: labels.filterLabel });

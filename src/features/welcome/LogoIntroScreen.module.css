@@ -19,8 +19,14 @@
   font-weight: var(--font-weight-strong);
   line-height: 1.5;
 }
-.lead { color: var(--color-text); font-size: var(--font-size-headline); }
-.accent { color: var(--color-heading-accent); font-size: var(--font-size-headline); }
+.lead {
+  color: var(--color-text);
+  font-size: var(--font-size-headline);
+}
+.accent {
+  color: var(--color-heading-accent);
+  font-size: var(--font-size-headline);
+}
 .tagline {
   margin: 0;
   color: var(--color-text-muted);
@@ -51,7 +57,11 @@
   font-weight: var(--font-weight-strong);
   font-size: var(--font-size-body);
 }
-.loading { display: flex; align-items: center; gap: var(--space-2); }
+.loading {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+}
 .dot {
   inline-size: 7px;
   block-size: 7px;
@@ -59,15 +69,29 @@
   background: var(--color-brand-text);
   animation: pulse var(--motion-slow) ease-in-out infinite alternate;
 }
-.dot:nth-child(2) { animation-delay: 100ms; }
-.dot:nth-child(3) { animation-delay: 200ms; }
+.dot:nth-child(2) {
+  animation-delay: 100ms;
+}
+.dot:nth-child(3) {
+  animation-delay: 200ms;
+}
 @keyframes brand-in {
-  from { opacity: 0; transform: scale(.94); }
+  from {
+    opacity: 0;
+    transform: scale(0.94);
+  }
 }
 @keyframes pulse {
-  from { opacity: .25; }
-  to { opacity: 1; }
+  from {
+    opacity: 0.25;
+  }
+  to {
+    opacity: 1;
+  }
 }
 @media (prefers-reduced-motion: reduce) {
-  .logoButton, .dot { animation: none; }
+  .logoButton,
+  .dot {
+    animation: none;
+  }
 }

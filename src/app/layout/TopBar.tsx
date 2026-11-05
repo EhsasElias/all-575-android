@@ -26,8 +26,12 @@ export function TopBar() {
     const refresh = () => {
       if (document.visibilityState === 'hidden') return;
       void getNotifications()
-        .then((inbox) => { if (active) setUnreadCount(inbox.unread_count); })
-        .catch(() => { /* Inbox displays fetch errors; keep the previous badge. */ });
+        .then((inbox) => {
+          if (active) setUnreadCount(inbox.unread_count);
+        })
+        .catch(() => {
+          /* Inbox displays fetch errors; keep the previous badge. */
+        });
     };
     refresh();
     const interval = window.setInterval(refresh, 60_000);
@@ -63,11 +67,23 @@ export function TopBar() {
         </IconButton>
         <div className={styles.actions}>
           {status === 'signed-in' && (
-            <Link to={routePaths.notifications} className={styles.notificationButton}
+            <Link
+              to={routePaths.notifications}
+              className={styles.notificationButton}
               aria-label={notificationLabel + (unreadCount > 0 ? ' (' + unreadCount + ')' : '')}
-              title={notificationLabel}>
-              <svg aria-hidden="true" width="23" height="23" viewBox="0 0 24 24" fill="none"
-                stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
+              title={notificationLabel}
+            >
+              <svg
+                aria-hidden="true"
+                width="23"
+                height="23"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                strokeWidth="1.8"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+              >
                 <path d="M18 8a6 6 0 0 0-12 0c0 7-3 7-3 9h18c0-2-3-2-3-9" />
                 <path d="M10 21h4" />
               </svg>
@@ -79,7 +95,7 @@ export function TopBar() {
             </Link>
           )}
           <Link to={routePaths.home} className={styles.brand} aria-label={t('appName')}>
-          <Logo decorative size={48} className={styles.logo} />
+            <Logo decorative size={48} className={styles.logo} />
           </Link>
         </div>
       </header>

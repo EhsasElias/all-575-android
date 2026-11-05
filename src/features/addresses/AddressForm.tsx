@@ -104,13 +104,7 @@ export function AddressForm({ address, nextPath }: AddressFormProps) {
       )}
 
       <div className={styles.actions}>
-        <Button
-          type="submit"
-          size="lg"
-          fullWidth
-          loading={form.isSaving}
-          disabled={form.isSaving}
-        >
+        <Button type="submit" size="lg" fullWidth loading={form.isSaving} disabled={form.isSaving}>
           {address === null ? t('form.submit.create') : t('form.submit.update')}
         </Button>
       </div>

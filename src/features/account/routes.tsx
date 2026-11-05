@@ -29,9 +29,21 @@ export const accountRoutes: RouteObject[] = [
 
 /** Routes that need a signed-in customer: the router wraps them in RequireAuth. */
 export const protectedAccountRoutes: RouteObject[] = [
-  { path: routePaths.notifications, element: <CustomerNotifications />, handle: titled((t) => t('nav.account')) },
-  { path: routePaths.sellerWorkspace, element: <SellerWorkspaceScreen />, handle: titled((t) => t('nav.account')) },
-  { path: routePaths.sellerReview, element: <SellerReviewScreen />, handle: titled((t) => t('nav.account')) },
+  {
+    path: routePaths.notifications,
+    element: <CustomerNotifications />,
+    handle: titled((t) => t('nav.account')),
+  },
+  {
+    path: routePaths.sellerWorkspace,
+    element: <SellerWorkspaceScreen />,
+    handle: titled((t) => t('nav.account')),
+  },
+  {
+    path: routePaths.sellerReview,
+    element: <SellerReviewScreen />,
+    handle: titled((t) => t('nav.account')),
+  },
   {
     path: routePaths.sellerApplication,
     element: <SellerApplicationScreen />,

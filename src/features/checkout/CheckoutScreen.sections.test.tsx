@@ -20,16 +20,21 @@ describe('Checkout: what the customer sees', () => {
 
     // (b) delivery calendar, with availability in Saudi time.
     const calendar = await screen.findByRole('group', { name: 'Choose delivery date' });
-    expect(within(calendar).getByRole('button', { name: '2026-10-25' })).toHaveAttribute('aria-pressed', 'true');
+    expect(within(calendar).getByRole('button', { name: '2026-10-25' })).toHaveAttribute(
+      'aria-pressed',
+      'true',
+    );
     expect(within(calendar).getByRole('button', { name: '2026-10-26' })).toBeEnabled();
     expect(screen.getByRole('radio', { name: '9:00 AM – 11:00 AM' })).toBeEnabled();
     const full = screen.getByRole('radio', { name: /11:00 AM – 1:00 PM/ });
     expect(full).toBeDisabled();
     expect(within(full.closest('label') ?? document.body).getByText('Full')).toBeVisible();
     // Switching days changes the rendered appointment options.
-    await (await import('@testing-library/user-event')).default.setup().click(
-      within(calendar).getByRole('button', { name: '2026-10-26' }),
-    );
+    await (
+      await import('@testing-library/user-event')
+    ).default
+      .setup()
+      .click(within(calendar).getByRole('button', { name: '2026-10-26' }));
     expect(screen.getByRole('radio', { name: '9:00 AM – 11:00 AM' })).toBeEnabled();
     expect(screen.queryByRole('radio', { name: '11:00 AM – 1:00 PM' })).not.toBeInTheDocument();
 

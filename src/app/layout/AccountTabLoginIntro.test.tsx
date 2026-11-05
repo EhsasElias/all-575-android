@@ -18,7 +18,9 @@ describe('Account tab login transition', () => {
     });
     expect(router.state.location.search).toBe('');
     expect(screen.getByRole('navigation', { name: 'Main navigation' })).toBeInTheDocument();
-    expect(screen.queryByRole('button', { name: 'Tap the logo to shop now' })).not.toBeInTheDocument();
+    expect(
+      screen.queryByRole('button', { name: 'Tap the logo to shop now' }),
+    ).not.toBeInTheDocument();
 
     const signIn = screen.getByRole('link', { name: /sign in/i });
     expect(signIn).toHaveAttribute('href', '/sign-in?next=%2Faccount');

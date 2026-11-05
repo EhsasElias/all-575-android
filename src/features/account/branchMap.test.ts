@@ -3,8 +3,12 @@ import { branchWithinZone, mapLocationUrl } from './branchMap';
 import type { SellerServiceZone } from './sellerStoreProfileApi';
 
 const zone: SellerServiceZone = {
-  id: 1, name_ar: 'الرياض', name_en: 'Riyadh',
-  center_lat: 24.7136, center_lng: 46.6753, radius_meters: 40000,
+  id: 1,
+  name_ar: 'الرياض',
+  name_en: 'Riyadh',
+  center_lat: 24.7136,
+  center_lng: 46.6753,
+  radius_meters: 40000,
 };
 
 describe('seller branch mapping', () => {

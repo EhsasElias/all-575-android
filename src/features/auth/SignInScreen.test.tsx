@@ -201,8 +201,13 @@ describe('Sign in: Arabic', () => {
     await waitFor(() => {
       expect(router.state.location.pathname).toBe('/account');
     });
-    expect(api.calls().find((call) => call.path === '/auth/otp/request')?.body).toEqual({ channel: 'phone', destination: '0512345678' });
-    expect(api.calls().find((call) => call.path === '/auth/otp/verify')?.body).toMatchObject({ code: '123456' });
+    expect(api.calls().find((call) => call.path === '/auth/otp/request')?.body).toEqual({
+      channel: 'phone',
+      destination: '0512345678',
+    });
+    expect(api.calls().find((call) => call.path === '/auth/otp/verify')?.body).toMatchObject({
+      code: '123456',
+    });
   });
 
   it('shows no English on the first step', async () => {

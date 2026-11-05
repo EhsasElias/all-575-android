@@ -22,7 +22,9 @@ describe('app launch', () => {
     const { router } = await renderApp({ route: '/', seenWelcome: false });
 
     expect(router.state.location.pathname).toBe('/welcome/logo');
-    const logo = within(screen.getByRole('main')).getByRole('button', { name: 'Tap the logo to shop now' });
+    const logo = within(screen.getByRole('main')).getByRole('button', {
+      name: 'Tap the logo to shop now',
+    });
     expect(logo).toBeVisible();
     await userEvent.setup().click(logo);
     expect(await screen.findByRole('link', { name: 'Skip' })).toBeVisible();
@@ -32,7 +34,9 @@ describe('app launch', () => {
     const { router } = await renderApp({ route: '/', seenWelcome: true });
 
     expect(router.state.location.pathname).toBe('/welcome/logo');
-    const logo = within(screen.getByRole('main')).getByRole('button', { name: 'Tap the logo to shop now' });
+    const logo = within(screen.getByRole('main')).getByRole('button', {
+      name: 'Tap the logo to shop now',
+    });
     expect(logo).toBeVisible();
     await userEvent.setup().click(logo);
     expect(await screen.findByRole('link', { name: 'Skip' })).toBeVisible();

@@ -49,14 +49,19 @@ describe('Laravel email account verification and retry', () => {
       'POST /auth/email/register': () => {
         attempts += 1;
         return attempts === 1
-          ? { status: 503, body: { code: 'otp_delivery_unavailable', message: 'Email unavailable' } }
+          ? {
+              status: 503,
+              body: { code: 'otp_delivery_unavailable', message: 'Email unavailable' },
+            }
           : issuedChallenge;
       },
     });
     const user = await fillSignup();
     await user.click(screen.getByRole('button', { name: 'Create account' }));
 
-    expect(await screen.findByRole('alert')).toHaveTextContent('Email verification delivery is unavailable');
+    expect(await screen.findByRole('alert')).toHaveTextContent(
+      'Email verification delivery is unavailable',
+    );
     expect(screen.getByRole('textbox', { name: 'Email address' })).toHaveValue('new@example.com');
     expect(api.calls().filter((call) => call.path === '/auth/email/register')).toHaveLength(1);
 

@@ -33,7 +33,9 @@ export function SignedInAccount({ user }: SignedInAccountProps) {
       <AccountMenu />
       <div className={styles.sellerActions}>
         <ButtonLink to={routePaths.sellerApplication}>{t('sellerApply')}</ButtonLink>
-        <ButtonLink to={routePaths.sellerWorkspace} variant="secondary">{t('sellerWorkspace')}</ButtonLink>
+        <ButtonLink to={routePaths.sellerWorkspace} variant="secondary">
+          {t('sellerWorkspace')}
+        </ButtonLink>
       </div>
       <SellerReviewEntry />
       <CustomerNotifications />

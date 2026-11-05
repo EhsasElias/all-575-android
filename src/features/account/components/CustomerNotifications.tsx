@@ -1,17 +1,53 @@
 import { useCallback, useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { getNotifications, markAllNotificationsRead, markNotificationRead, type NotificationInbox } from '../notificationsApi';
+import {
+  getNotifications,
+  markAllNotificationsRead,
+  markNotificationRead,
+  type NotificationInbox,
+} from '../notificationsApi';
 import styles from './CustomerNotifications.module.css';
 
 const labels = {
-  ar: { title: 'الإشعارات', refresh: 'تحديث', all: 'تحديد الكل كمقروء', read: 'تحديد كمقروء', empty: 'لا توجد إشعارات حاليًا', failure: 'تعذر تحميل الإشعارات. حاولي التحديث.', loading: 'جارٍ تحميل الإشعارات', unread: 'غير مقروء' },
-  en: { title: 'Notifications', refresh: 'Refresh', all: 'Mark all as read', read: 'Mark as read', empty: 'No notifications yet', failure: 'Could not load notifications. Try refreshing.', loading: 'Loading notifications', unread: 'Unread' },
-  fr: { title: 'Notifications', refresh: 'Actualiser', all: 'Tout marquer comme lu', read: 'Marquer comme lu', empty: 'Aucune notification pour le moment', failure: 'Impossible de charger les notifications. Réessayez.', loading: 'Chargement des notifications', unread: 'Non lu' },
+  ar: {
+    title: 'الإشعارات',
+    refresh: 'تحديث',
+    all: 'تحديد الكل كمقروء',
+    read: 'تحديد كمقروء',
+    empty: 'لا توجد إشعارات حاليًا',
+    failure: 'تعذر تحميل الإشعارات. حاولي التحديث.',
+    loading: 'جارٍ تحميل الإشعارات',
+    unread: 'غير مقروء',
+  },
+  en: {
+    title: 'Notifications',
+    refresh: 'Refresh',
+    all: 'Mark all as read',
+    read: 'Mark as read',
+    empty: 'No notifications yet',
+    failure: 'Could not load notifications. Try refreshing.',
+    loading: 'Loading notifications',
+    unread: 'Unread',
+  },
+  fr: {
+    title: 'Notifications',
+    refresh: 'Actualiser',
+    all: 'Tout marquer comme lu',
+    read: 'Marquer comme lu',
+    empty: 'Aucune notification pour le moment',
+    failure: 'Impossible de charger les notifications. Réessayez.',
+    loading: 'Chargement des notifications',
+    unread: 'Non lu',
+  },
 } as const;
 
 export function CustomerNotifications() {
   const { i18n } = useTranslation();
-  const language = i18n.language.startsWith('ar') ? 'ar' : i18n.language.startsWith('fr') ? 'fr' : 'en';
+  const language = i18n.language.startsWith('ar')
+    ? 'ar'
+    : i18n.language.startsWith('fr')
+      ? 'fr'
+      : 'en';
   const t = labels[language];
   const [inbox, setInbox] = useState<NotificationInbox | null>(null);
   const [error, setError] = useState(false);
@@ -63,18 +99,38 @@ export function CustomerNotifications() {
         <div className={styles.titleLine}>
           <h2>{t.title}</h2>
           {(inbox?.unread_count ?? 0) > 0 && (
-            <span className={styles.count} aria-label={t.unread}>{inbox?.unread_count}</span>
+            <span className={styles.count} aria-label={t.unread}>
+              {inbox?.unread_count}
+            </span>
           )}
         </div>
-        <button type="button" className={styles.refresh} onClick={() => void load()} disabled={busy}>
+        <button
+          type="button"
+          className={styles.refresh}
+          onClick={() => void load()}
+          disabled={busy}
+        >
           {t.refresh}
         </button>
       </header>
-      {error && <p role="alert" className={styles.error}>{t.failure}</p>}
-      {inbox === null && !error && <p role="status" className={styles.empty}>{t.loading}</p>}
+      {error && (
+        <p role="alert" className={styles.error}>
+          {t.failure}
+        </p>
+      )}
+      {inbox === null && !error && (
+        <p role="status" className={styles.empty}>
+          {t.loading}
+        </p>
+      )}
       {inbox && inbox.unread_count > 0 && (
         <div className={styles.toolbar}>
-          <button type="button" className={styles.markAll} disabled={busy} onClick={() => void markAll()}>
+          <button
+            type="button"
+            className={styles.markAll}
+            disabled={busy}
+            onClick={() => void markAll()}
+          >
             {t.all}
           </button>
         </div>
@@ -97,8 +153,12 @@ export function CustomerNotifications() {
                     )}
                   </time>
                   {!notice.read_at && (
-                    <button type="button" className={styles.markRead} disabled={busy}
-                      onClick={() => void markRead(notice.id)}>
+                    <button
+                      type="button"
+                      className={styles.markRead}
+                      disabled={busy}
+                      onClick={() => void markRead(notice.id)}
+                    >
                       {t.read}
                     </button>
                   )}

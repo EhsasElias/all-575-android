@@ -160,7 +160,12 @@ describe('Sign in: changing the number', () => {
     await user.click(screen.getByRole('button', { name: 'Send code' }));
     await screen.findByRole('heading', { level: 2, name: 'Enter your code' });
 
-    expect(api.calls().filter((call) => call.path === '/auth/otp/request').map((call) => call.body)).toEqual([
+    expect(
+      api
+        .calls()
+        .filter((call) => call.path === '/auth/otp/request')
+        .map((call) => call.body),
+    ).toEqual([
       { channel: 'phone', destination: '0512345678' },
       { channel: 'phone', destination: '0598765432' },
     ]);
@@ -225,7 +230,10 @@ describe('Sign in: email first, mobile optional', () => {
     await user.click(screen.getByRole('button', { name: 'Send code' }));
 
     expect(await screen.findByText('sara@example.com')).toBeVisible();
-    expect(api.calls().find((call) => call.path === '/auth/otp/request')?.body).toEqual({ channel: 'email', destination: 'sara@example.com' });
+    expect(api.calls().find((call) => call.path === '/auth/otp/request')?.body).toEqual({
+      channel: 'email',
+      destination: 'sara@example.com',
+    });
     expect(screen.getByRole('button', { name: 'Change email' })).toBeVisible();
   });
 

@@ -91,5 +91,7 @@
 }
 
 @media (max-width: 520px) {
-  .stepTitle { font-size: 1.25rem; }
+  .stepTitle {
+    font-size: 1.25rem;
+  }
 }

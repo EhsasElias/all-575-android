@@ -39,7 +39,9 @@
   gap: var(--space-4);
 }
 
-.guest { align-self: center; }
+.guest {
+  align-self: center;
+}
 
 .biometry {
   display: flex;
@@ -50,7 +52,9 @@
   background: var(--color-surface-mint);
 }
 
-.biometry h2 { font-size: var(--font-size-body); }
+.biometry h2 {
+  font-size: var(--font-size-body);
+}
 
 @media (max-width: 520px) {
   .screen {

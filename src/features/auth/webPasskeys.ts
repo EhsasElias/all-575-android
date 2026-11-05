@@ -9,7 +9,11 @@ type CreationOptionsJson = {
   timeout?: number;
   attestation?: AttestationConveyancePreference;
   authenticatorSelection?: AuthenticatorSelectionCriteria;
-  excludeCredentials?: Array<{ id: string; type: PublicKeyCredentialType; transports?: AuthenticatorTransport[] }>;
+  excludeCredentials?: Array<{
+    id: string;
+    type: PublicKeyCredentialType;
+    transports?: AuthenticatorTransport[];
+  }>;
 };
 
 type RequestOptionsJson = {
@@ -17,18 +21,29 @@ type RequestOptionsJson = {
   rpId?: string;
   timeout?: number;
   userVerification?: UserVerificationRequirement;
-  allowCredentials?: Array<{ id: string; type: PublicKeyCredentialType; transports?: AuthenticatorTransport[] }>;
+  allowCredentials?: Array<{
+    id: string;
+    type: PublicKeyCredentialType;
+    transports?: AuthenticatorTransport[];
+  }>;
 };
 
 type Issued<T> = { challenge_id: string; options: T };
-export type WebPasskey = { id: number; name: string; created_at: string; last_used_at: string | null };
+export type WebPasskey = {
+  id: number;
+  name: string;
+  created_at: string;
+  last_used_at: string | null;
+};
 
 export function webPasskeysSupported(): boolean {
-  return typeof window !== 'undefined'
-    && window.isSecureContext
-    && typeof window.PublicKeyCredential !== 'undefined'
-    && typeof navigator.credentials?.create === 'function'
-    && typeof navigator.credentials?.get === 'function';
+  return (
+    typeof window !== 'undefined' &&
+    window.isSecureContext &&
+    typeof window.PublicKeyCredential !== 'undefined' &&
+    typeof navigator.credentials?.create === 'function' &&
+    typeof navigator.credentials?.get === 'function'
+  );
 }
 
 function base64UrlToBytes(value: string): ArrayBuffer {
@@ -118,11 +133,14 @@ export async function listWebPasskeys(): Promise<WebPasskey[]> {
 
 export async function registerWebPasskey(password: string, name: string): Promise<void> {
   if (!webPasskeysSupported()) throw new Error('Passkeys are not supported on this browser.');
-  const issued = await http.post<Data<Issued<CreationOptionsJson>>>('/me/passkeys/options', { password });
+  const issued = await http.post<Data<Issued<CreationOptionsJson>>>('/me/passkeys/options', {
+    password,
+  });
   const credential = await navigator.credentials.create({
     publicKey: creationOptions(issued.data.options),
   });
-  if (!(credential instanceof PublicKeyCredential)) throw new Error('Passkey registration cancelled.');
+  if (!(credential instanceof PublicKeyCredential))
+    throw new Error('Passkey registration cancelled.');
 
   await http.post('/me/passkeys', {
     challenge_id: issued.data.challenge_id,

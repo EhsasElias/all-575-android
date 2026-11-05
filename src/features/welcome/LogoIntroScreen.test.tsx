@@ -9,14 +9,18 @@ describe('Logo introduction', () => {
   it('shows the greeting and waits for a logo click before showing the slider', async () => {
     installFakeApi({});
     const { router } = await renderApp({ route: '/welcome/logo?next=%2Fcart', language: 'en' });
-    expect(screen.getByRole('heading', { level: 1, name: 'Welcome, our partner in success' })).toBeInTheDocument();
+    expect(
+      screen.getByRole('heading', { level: 1, name: 'Welcome, our partner in success' }),
+    ).toBeInTheDocument();
     const logo = screen.getByRole('button', { name: 'Tap the logo to shop now' });
-    await new Promise(resolve => setTimeout(resolve, 50));
+    await new Promise((resolve) => setTimeout(resolve, 50));
     expect(router.state.location.pathname).toBe('/welcome/logo');
     await userEvent.setup().click(logo);
     expect(router.state.location.pathname).toBe('/welcome');
     expect(router.state.location.search).toBe('?next=%2Fcart');
-    expect(screen.queryByRole('heading', { name: 'Welcome, our partner in success' })).not.toBeInTheDocument();
+    expect(
+      screen.queryByRole('heading', { name: 'Welcome, our partner in success' }),
+    ).not.toBeInTheDocument();
     expect(screen.getAllByRole('button', { name: 'Tap the logo to shop now' })).toHaveLength(2);
   });
 

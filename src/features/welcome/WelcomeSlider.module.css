@@ -53,6 +53,11 @@
 }
 
 @media (max-height: 680px) {
-  .card { aspect-ratio: 343 / 230; }
-  .image { inset-block: 2%; block-size: 96%; }
+  .card {
+    aspect-ratio: 343 / 230;
+  }
+  .image {
+    inset-block: 2%;
+    block-size: 96%;
+  }
 }

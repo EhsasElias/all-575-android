@@ -72,9 +72,14 @@ export function LeafletMap({ pin, labels, onPinChange }: PinMapProps) {
     L.control
       .zoom({ zoomInTitle: startLabels.zoomIn, zoomOutTitle: startLabels.zoomOut })
       .addTo(map);
-    const attribution = L.control.attribution({ prefix: false }).addAttribution(ATTRIBUTION).addTo(map);
+    const attribution = L.control
+      .attribution({ prefix: false })
+      .addAttribution(ATTRIBUTION)
+      .addTo(map);
     if (GEOAPIFY_TILE_URL) {
-      attribution.addAttribution('Powered by <a href="https://www.geoapify.com/" target="_blank" rel="noopener noreferrer">Geoapify</a>');
+      attribution.addAttribution(
+        'Powered by <a href="https://www.geoapify.com/" target="_blank" rel="noopener noreferrer">Geoapify</a>',
+      );
     }
     // Try the configured map-tile service first. If it is unreachable, use
     // OpenStreetMap tiles and show an error instead of an empty grey map when
@@ -160,12 +165,18 @@ export function LeafletMap({ pin, labels, onPinChange }: PinMapProps) {
                 ? 'Les images de la carte sont indisponibles. Saisissez l’adresse ou ouvrez Google Maps.'
                 : 'Map imagery is unavailable. Enter the address manually or open Google Maps.'}
           </p>
-          <Button variant="secondary" onClick={() => {
-            setTileFailure(false);
-            tileLayerRef.current?.redraw();
-          }}>
-            {i18n.language.startsWith('ar') ? 'إعادة تحميل الخريطة'
-              : i18n.language.startsWith('fr') ? 'Recharger la carte' : 'Reload map'}
+          <Button
+            variant="secondary"
+            onClick={() => {
+              setTileFailure(false);
+              tileLayerRef.current?.redraw();
+            }}
+          >
+            {i18n.language.startsWith('ar')
+              ? 'إعادة تحميل الخريطة'
+              : i18n.language.startsWith('fr')
+                ? 'Recharger la carte'
+                : 'Reload map'}
           </Button>
         </div>
       )}

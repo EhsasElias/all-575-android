@@ -153,7 +153,9 @@
   color: var(--color-text);
   font-weight: var(--font-weight-strong);
 }
-.filterField > span { line-height: 1.5; }
+.filterField > span {
+  line-height: 1.5;
+}
 .filterField input,
 .filterField select {
   box-sizing: border-box;
@@ -161,7 +163,7 @@
   inline-size: 100%;
   min-inline-size: 0;
   min-block-size: 3rem;
-  padding: .65rem .85rem;
+  padding: 0.65rem 0.85rem;
   border: 1px solid var(--color-border);
   border-radius: var(--radius-md);
   background: var(--color-surface);
@@ -177,8 +179,8 @@
   outline: 2px solid var(--color-brand);
   outline-offset: 2px;
 }
-.filterField input[type="date"],
-.filterField input[type="number"] {
+.filterField input[type='date'],
+.filterField input[type='number'] {
   direction: ltr;
   text-align: start;
 }
@@ -189,7 +191,7 @@
   align-items: center;
   justify-self: start;
   min-block-size: var(--size-target);
-  padding: .45rem .8rem;
+  padding: 0.45rem 0.8rem;
   border: 1px solid var(--color-border);
   border-radius: var(--radius-md);
   background: var(--color-surface);
@@ -206,7 +208,7 @@
 .filterSubmit,
 .filterReset {
   min-block-size: 3rem;
-  padding: .65rem 1.25rem;
+  padding: 0.65rem 1.25rem;
   border-radius: var(--radius-md);
   font: inherit;
   font-weight: 700;
@@ -224,10 +226,25 @@
   background: var(--color-surface);
   color: var(--color-text);
 }
-.filterSubmit:disabled { opacity: .5; cursor: not-allowed; }
-.filterError { color: var(--color-danger); margin: 0; }
+.filterSubmit:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+.filterError {
+  color: var(--color-danger);
+  margin: 0;
+}
 @media (max-width: 38rem) {
-  .filterGrid { grid-template-columns: minmax(0, 1fr); gap: var(--space-3); }
-  .filterActions { display: grid; grid-template-columns: 1fr 1fr; }
-  .filterSubmit, .filterReset { inline-size: 100%; }
+  .filterGrid {
+    grid-template-columns: minmax(0, 1fr);
+    gap: var(--space-3);
+  }
+  .filterActions {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+  }
+  .filterSubmit,
+  .filterReset {
+    inline-size: 100%;
+  }
 }

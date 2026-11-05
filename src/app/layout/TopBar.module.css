@@ -38,7 +38,40 @@
   border-radius: var(--radius-pill);
 }
 
-.actions { display: flex; justify-self: end; align-items: center; gap: var(--space-2); }
-.notificationButton { position: relative; display: inline-flex; align-items: center; justify-content: center; min-inline-size: var(--size-target); min-block-size: var(--size-target); color: var(--color-text); border-radius: var(--radius-sm); text-decoration: none; }
-.notificationButton:focus-visible { outline: 2px solid currentColor; outline-offset: 2px; }
-.notificationCount { position: absolute; inset-block-start: 0; inset-inline-end: 0; min-inline-size: 18px; block-size: 18px; padding-inline: 4px; display: grid; place-items: center; border-radius: 999px; background: #18784b; color: white; font-size: 10px; line-height: 1; font-weight: 700; }
+.actions {
+  display: flex;
+  justify-self: end;
+  align-items: center;
+  gap: var(--space-2);
+}
+.notificationButton {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-inline-size: var(--size-target);
+  min-block-size: var(--size-target);
+  color: var(--color-text);
+  border-radius: var(--radius-sm);
+  text-decoration: none;
+}
+.notificationButton:focus-visible {
+  outline: 2px solid currentColor;
+  outline-offset: 2px;
+}
+.notificationCount {
+  position: absolute;
+  inset-block-start: 0;
+  inset-inline-end: 0;
+  min-inline-size: 18px;
+  block-size: 18px;
+  padding-inline: 4px;
+  display: grid;
+  place-items: center;
+  border-radius: 999px;
+  background: #18784b;
+  color: white;
+  font-size: 10px;
+  line-height: 1;
+  font-weight: 700;
+}

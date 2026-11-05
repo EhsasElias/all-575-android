@@ -10,11 +10,12 @@ import { welcomePath } from './introPaths';
 export function LogoIntroScreen() {
   const { t } = useTranslation('welcome');
   const { language } = useLanguage();
-  const tagline = language === 'ar'
-    ? 'كل ما تحتاجه، في مكان واحد'
-    : language === 'fr'
-      ? 'Tout ce dont vous avez besoin, au même endroit'
-      : 'Everything you need, all in one place';
+  const tagline =
+    language === 'ar'
+      ? 'كل ما تحتاجه، في مكان واحد'
+      : language === 'fr'
+        ? 'Tout ce dont vous avez besoin, au même endroit'
+        : 'Everything you need, all in one place';
   const navigate = useNavigate();
   const [params] = useSearchParams();
   const accountEntry = params.get('mode') === 'account';

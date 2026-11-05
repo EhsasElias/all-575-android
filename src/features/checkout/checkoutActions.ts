@@ -5,7 +5,9 @@ import { TOTAL_TEXT } from './testData';
 /** Picks the 9:00 AM delivery time on Sunday, October 25 (slot 8). */
 export async function chooseFirstSlot(user: UserEvent) {
   const calendar = await screen.findByRole('group', { name: 'Choose delivery date' });
-  const sunday = await import('@testing-library/react').then(({ within }) => within(calendar).findByRole('button', { name: '2026-10-25' }));
+  const sunday = await import('@testing-library/react').then(({ within }) =>
+    within(calendar).findByRole('button', { name: '2026-10-25' }),
+  );
   if (sunday.getAttribute('aria-pressed') !== 'true') await user.click(sunday);
   await user.click(await screen.findByRole('radio', { name: '9:00 AM – 11:00 AM' }));
 }
