@@ -1,4 +1,9 @@
-import { useEffect, useState, type FormEvent } from 'react';
+import { lazy, Suspense, useEffect, useState, type FormEvent } from 'react';
+import { MapBoundary } from '@/features/addresses/MapBoundary';
+import type { MapPin, PinMapLabels } from '@/features/addresses/mapTypes';
+
+const BranchPinMap = lazy(() => import('@/features/addresses/LeafletMap')
+  .then((module) => ({ default: module.LeafletMap })));
 import { useTranslation } from 'react-i18next';
 import {
   sellerBranches, type SellerBranch, type SellerMembership,
@@ -29,6 +34,23 @@ export function SellerStoreManagement({ memberships }: Props) {
   const [zones, setZones] = useState<SellerServiceZone[]>([]);
   const [propose, setPropose] = useState(false);
   const [newBranch, setNewBranch] = useState({ code: '', name_ar: '', name_en: '', service_zone_id: '', lat: '', lng: '' });
+  const branchPin: MapPin | null = newBranch.lat.trim() && newBranch.lng.trim() &&
+    Number.isFinite(Number(newBranch.lat)) && Number.isFinite(Number(newBranch.lng))
+      ? { lat: Number(newBranch.lat), lng: Number(newBranch.lng) } : null;
+  const branchMapLabels: PinMapLabels = {
+    map: tr('موقع الفرع على الخريطة', 'Branch location map'),
+    pin: tr('دبوس موقع الفرع', 'Branch location pin'),
+    zoomIn: tr('تكبير', 'Zoom in'),
+    zoomOut: tr('تصغير', 'Zoom out'),
+    placeAtCenter: tr('حدد الفرع في مركز الخريطة', 'Place branch at map center'),
+  };
+  const setBranchPin = (point: MapPin) => {
+    setNewBranch((current) => ({
+      ...current,
+      lat: String(point.lat),
+      lng: String(point.lng),
+    }));
+  };
   const [storeAr, setStoreAr] = useState('');
   const [storeEn, setStoreEn] = useState('');
   const [editBranch, setEditBranch] = useState<number | null>(null);
@@ -212,6 +234,21 @@ export function SellerStoreManagement({ memberships }: Props) {
               {label}<input required maxLength={key === 'code' ? 32 : 180} value={newBranch[key]}
                 onChange={(event) => setNewBranch((current) => ({ ...current, [key]: event.target.value }))} />
             </label>)}
+            {newBranch.service_zone_id && (
+              <div style={{ flex: '1 1 100%', minWidth: 0 }}>
+                <p>{tr('اختاري موقع الفرع من الخريطة بسحب الدبوس أو الضغط على المكان، ثم راجعي الإحداثيات.', 'Tap or drag the pin to the branch location, then verify its coordinates.')}</p>
+                <MapBoundary fallback={<p role="alert">{tr('تعذر فتح الخريطة. يمكنك كتابة الإحداثيات أدناه.', 'Could not load map. You can enter the coordinates below.')}</p>}>
+                  <Suspense fallback={<p role="status">{tr('جار تحميل الخريطة…', 'Loading map…')}</p>}>
+                    <BranchPinMap
+                      key={newBranch.service_zone_id}
+                      pin={branchPin}
+                      labels={branchMapLabels}
+                      onPinChange={setBranchPin}
+                    />
+                  </Suspense>
+                </MapBoundary>
+              </div>
+            )}
             {(['lat', 'lng'] as const).map((key) => <label key={key} style={field}>
               {key === 'lat' ? tr('خط العرض', 'Latitude') : tr('خط الطول', 'Longitude')}
               <input type="number" step="any" required value={newBranch[key]}
