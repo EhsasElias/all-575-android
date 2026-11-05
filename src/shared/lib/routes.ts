@@ -21,6 +21,7 @@ export const routePaths = {
   customerCase: '/account/support/:caseId',
   orderHelp: '/orders/:orderId/help',
   account: '/account',
+  notifications: '/account/notifications',
   sellerApplication: '/account/seller-application',
   sellerWorkspace: '/account/seller-workspace',
   sellerReview: '/account/seller-review',
