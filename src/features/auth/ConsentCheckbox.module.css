@@ -4,10 +4,16 @@
   gap: var(--space-1);
 }
 
-.row {
+/* Keep checkbox and text side-by-side even inside StepLayout's .form label rules.
+   The doubled class overrides that more-specific form label selector. */
+.row.row {
   display: flex;
+  flex-direction: row;
   align-items: flex-start;
   gap: var(--space-3);
+  inline-size: 100%;
+  min-inline-size: 0;
+  text-align: start;
   min-block-size: var(--size-target);
   padding-block: var(--space-2);
   cursor: pointer;
@@ -38,7 +44,10 @@
 }
 
 .text {
+  flex: 1 1 0;
+  min-inline-size: 0;
   line-height: var(--line-height-body);
+  overflow-wrap: anywhere;
 }
 
 .hint {
