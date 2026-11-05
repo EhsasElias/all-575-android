@@ -33,12 +33,12 @@ describe('BottomNav', () => {
     ]);
   });
 
-  it('sends guests who tap Account to the logo transition before sign-in', () => {
+  it('opens the public account screen directly when a guest taps Account', () => {
     renderNav({ guest: true });
 
     expect(screen.getByRole('link', { name: 'Account' })).toHaveAttribute(
       'href',
-      '/welcome/logo?mode=account',
+      '/account',
     );
     expect(screen.getByRole('link', { name: 'Cart' })).toHaveAttribute('href', '/cart');
   });
