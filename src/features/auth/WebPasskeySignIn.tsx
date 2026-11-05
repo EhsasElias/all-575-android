@@ -1,9 +1,9 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useSession } from '@/shared/session';
 import { Button } from '@/shared/ui';
 import { currentDeviceName } from './deviceName';
-import { loginWithWebPasskey, webPasskeysSupported } from './webPasskeys';
+import { loginWithWebPasskey, webPasskeysSupported, webPasskeysEnabled } from './webPasskeys';
 
 export function WebPasskeySignIn() {
   const { t } = useTranslation('account');
@@ -11,8 +11,17 @@ export function WebPasskeySignIn() {
   const [pending, setPending] = useState(false);
   const [error, setError] = useState('');
   const supported = webPasskeysSupported();
+  const [enabled, setEnabled] = useState(false);
+  useEffect(() => {
+    if (!supported) return;
+    let mounted = true;
+    void webPasskeysEnabled().then((value) => {
+      if (mounted) setEnabled(value);
+    });
+    return () => { mounted = false; };
+  }, [supported]);
 
-  if (!supported) return null;
+  if (!supported || !enabled) return null;
 
   const signInWithPasskey = async () => {
     if (pending) return;
