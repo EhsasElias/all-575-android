@@ -1,6 +1,7 @@
 import L from 'leaflet';
 import 'leaflet/dist/leaflet.css';
 import { useEffect, useRef, useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { Button } from '@/shared/ui';
 import type { MapPin, PinMapProps } from './mapTypes';
 import styles from './LeafletMap.module.css';
@@ -49,6 +50,8 @@ export function LeafletMap({ pin, labels, onPinChange }: PinMapProps) {
   const startRef = useRef({ pin, labels });
   const onPinChangeRef = useRef(onPinChange);
   const [tileFailure, setTileFailure] = useState(false);
+  const tileLayerRef = useRef<L.TileLayer | null>(null);
+  const { i18n } = useTranslation();
 
   useEffect(() => {
     onPinChangeRef.current = onPinChange;
@@ -79,11 +82,11 @@ export function LeafletMap({ pin, labels, onPinChange }: PinMapProps) {
     const primaryUrl = GEOAPIFY_TILE_URL ?? OSM_TILE_URL;
     let usingFallback = false;
     let failures = 0;
-    let tilesLoaded = false;
     const layer = L.tileLayer(primaryUrl, { maxZoom: MAX_ZOOM }).addTo(map);
+    tileLayerRef.current = layer;
     const onTileError = () => {
       failures += 1;
-      if (tilesLoaded || failures < 2) return;
+      if (failures < 3) return;
       if (GEOAPIFY_TILE_URL && !usingFallback) {
         usingFallback = true;
         failures = 0;
@@ -94,7 +97,7 @@ export function LeafletMap({ pin, labels, onPinChange }: PinMapProps) {
     };
     layer.on('tileerror', onTileError);
     layer.on('tileload', () => {
-      tilesLoaded = true;
+      failures = 0;
       setTileFailure(false);
     });
     map.on('click', (event: L.LeafletMouseEvent) => {
@@ -104,6 +107,7 @@ export function LeafletMap({ pin, labels, onPinChange }: PinMapProps) {
 
     return () => {
       layer.off();
+      tileLayerRef.current = null;
       map.remove();
       mapRef.current = null;
       markerRef.current = null;
@@ -148,13 +152,24 @@ export function LeafletMap({ pin, labels, onPinChange }: PinMapProps) {
         <div ref={containerRef} className={styles.map} role="region" aria-label={labels.map} />
       </div>
       {tileFailure && (
-        <p role="alert" className={styles.tileFailure}>
-          {navigator.language.startsWith('ar')
-            ? 'تعذر تحميل صور الخريطة من مزود الخدمة. يمكنك استخدام رابط خرائط Google أدناه أو المحاولة عبر شبكة أخرى.'
-            : 'Map imagery is unavailable. Use the Google Maps link below or try another network.'}
-        </p>
+        <div role="alert" className={styles.tileFailure}>
+          <p>
+            {i18n.language.startsWith('ar')
+              ? 'تعذر تحميل صور الخريطة. يمكن متابعة إدخال العنوان يدويًا أو فتح الموقع في خرائط Google.'
+              : i18n.language.startsWith('fr')
+                ? 'Les images de la carte sont indisponibles. Saisissez l’adresse ou ouvrez Google Maps.'
+                : 'Map imagery is unavailable. Enter the address manually or open Google Maps.'}
+          </p>
+          <Button variant="secondary" onClick={() => {
+            setTileFailure(false);
+            tileLayerRef.current?.redraw();
+          }}>
+            {i18n.language.startsWith('ar') ? 'إعادة تحميل الخريطة'
+              : i18n.language.startsWith('fr') ? 'Recharger la carte' : 'Reload map'}
+          </Button>
+        </div>
       )}
-            <Button variant="secondary" onClick={placeAtCenter}>
+      <Button variant="secondary" onClick={placeAtCenter}>
         {labels.placeAtCenter}
       </Button>
     </div>
