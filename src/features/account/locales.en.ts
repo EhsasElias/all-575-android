@@ -38,6 +38,13 @@ export const en = {
     sessions: 'Devices',
     sessionsHint: 'Where you are signed in',
   },
+  security: {
+    title: 'Security & sign-in',
+    nativeInfo: 'Unlock your saved session with your device biometrics.',
+    webInfo: 'Fingerprint and face sign-in on the website requires a passkey.',
+    webUnavailable: 'Passkey setup is not available yet. Continue using email and password or verification code.',
+    privacy: 'Your fingerprint stays on your device. We never collect or store biometric scans.',
+  },
   preferences: {
     title: 'Preferences',
     marketing: 'Offers and news',
