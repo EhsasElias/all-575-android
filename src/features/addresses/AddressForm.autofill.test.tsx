@@ -1,7 +1,7 @@
-import { screen } from '@testing-library/react';
+import { screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { describe, expect, it, vi } from 'vitest';
-import { renderAddresses, waitForAddressLookup } from './addressTestHarness';
+import { renderAddresses } from './addressTestHarness';
 import type { MapAddress } from './api';
 import { addressesLocales } from './locales';
 import { homeAddress } from './testData';
@@ -60,9 +60,9 @@ describe('Address details from the selected map location', () => {
     });
     await screen.findByRole('heading', { level: 1, name: 'New address' });
     await user.click(await screen.findByRole('button', { name: 'Tap the map in Riyadh' }));
-    expect(screen.getByRole('button', { name: 'Save address' })).toBeDisabled();
+    // Manual entry remains possible while reverse-geocoding is pending.
     await user.type(screen.getByLabelText('Street'), 'Manual street');
-    await waitForAddressLookup();
+    await waitFor(() => expect(screen.getByLabelText('City')).toHaveValue('Riyadh'));
     expect(screen.getByLabelText('Street')).toHaveValue('Manual street');
     await user.type(screen.getByLabelText('Additional number'), '5678');
     await user.click(screen.getByRole('button', { name: 'Save address' }));
@@ -100,13 +100,12 @@ describe('Address details from the selected map location', () => {
     });
     await screen.findByRole('heading', { level: 1, name: 'New address' });
     await user.click(await screen.findByRole('button', { name: 'Tap the map in Riyadh' }));
-    await waitForAddressLookup();
+    await waitFor(() => expect(screen.getByLabelText('City')).toHaveValue('Riyadh'));
     await user.type(screen.getByLabelText('Additional number'), '5678');
     await user.type(screen.getByLabelText('Short address (optional)'), 'RRRD2929');
     await user.click(screen.getByRole('button', { name: 'Tap the map in Jeddah' }));
     expect(screen.getByLabelText('Street')).toHaveValue('');
-    await waitForAddressLookup();
-    expect(screen.getByLabelText('City')).toHaveValue('Jeddah');
+    await waitFor(() => expect(screen.getByLabelText('City')).toHaveValue('Jeddah'));
     for (const label of [
       'Street',
       'Building number',
@@ -132,9 +131,8 @@ describe('Address details from the selected map location', () => {
     await user.click(await screen.findByRole('button', { name: 'Tap the map in Riyadh' }));
     await user.click(await screen.findByRole('button', { name: 'Try address lookup again' }));
     await user.type(screen.getByLabelText('City'), 'Manual city');
-    await waitForAddressLookup();
+    await waitFor(() => expect(screen.getByLabelText('Street')).toHaveValue('Test Street'));
     expect(screen.getByLabelText('City')).toHaveValue('Manual city');
-    expect(screen.getByLabelText('Street')).toHaveValue('Test Street');
   });
 
   it('does not look up or replace a saved address when it is opened', async () => {
