@@ -109,7 +109,7 @@ export function AddressForm({ address, nextPath }: AddressFormProps) {
           size="lg"
           fullWidth
           loading={form.isSaving}
-          disabled={form.lookupStatus === 'loading'}
+          disabled={form.isSaving}
         >
           {address === null ? t('form.submit.create') : t('form.submit.update')}
         </Button>
