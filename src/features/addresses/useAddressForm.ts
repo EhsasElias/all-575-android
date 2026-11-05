@@ -109,7 +109,8 @@ export function useAddressForm(address: Address | null) {
 
   /** Returns the first field with a problem (to focus it), or null when the form was sent. */
   const submit = (): ProblemKey | null => {
-    if (mapLookup.status === 'loading') return 'pin';
+    // Reverse geocoding is only a suggestion. Manual Saudi address entry must
+    // remain savable even while the lookup is slow or unreachable.
     const normalized = normalizeValues(values);
     const found = validateAddress(normalized, pin);
     setProblems(found);
