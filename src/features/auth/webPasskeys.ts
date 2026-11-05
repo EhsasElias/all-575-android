@@ -102,6 +102,15 @@ function assertionCredential(credential: PublicKeyCredential) {
   };
 }
 
+export async function webPasskeysEnabled(): Promise<boolean> {
+  try {
+    const result = await http.get<Data<{ enabled: boolean }>>('/auth/passkeys/status');
+    return result.data.enabled === true;
+  } catch {
+    return false;
+  }
+}
+
 export async function listWebPasskeys(): Promise<WebPasskey[]> {
   const response = await http.get<Data<WebPasskey[]>>('/me/passkeys');
   return response.data;
