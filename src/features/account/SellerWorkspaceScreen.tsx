@@ -3,6 +3,7 @@ import { Link } from 'react-router';
 import { useTranslation } from 'react-i18next';
 import { routePaths } from '@/shared/lib';
 import { Page } from './components/Page';
+import './sellerWorkspace.css';
 import { PageHeader } from './components/PageHeader';
 import { SellerProductManagement } from './SellerProductManagement';
 import { SellerFinanceOverview } from './SellerFinanceOverview';
@@ -410,6 +411,7 @@ export function SellerWorkspaceScreen() {
   };
 
   return (
+    <div className="seller-workspace-shell" dir={ar ? 'rtl' : 'ltr'}>
     <Page>
       <PageHeader
         title={tr('لوحة تشغيل البائع', 'Seller workspace')}
@@ -446,8 +448,9 @@ export function SellerWorkspaceScreen() {
         </div>
       )}
       {eligible && (
-        <>
+        <div className="seller-content">
           <nav
+            className="seller-tabs"
             aria-label={tr('أقسام البائع', 'Seller sections')}
             style={{ ...line, margin: '14px 0' }}
           >
@@ -462,12 +465,12 @@ export function SellerWorkspaceScreen() {
                 {tr(tab.ar, tab.en)}
               </button>
             ))}
-            <button type="button" style={action} disabled={loading || busy} onClick={reload}>
+            <button className="seller-refresh" type="button" style={action} disabled={loading || busy} onClick={reload}>
               {tr('تحديث', 'Refresh')}
             </button>
           </nav>
           {(section === 'orders' || section === 'inventory') && (
-            <div style={{ ...line, marginBottom: 12 }}>
+            <div className="seller-filters" style={{ ...line, marginBottom: 12 }}>
               <label>
                 {tr('الفرع', 'Branch')}{' '}
                 <select value={branchId} onChange={(event) => setBranchId(event.target.value)}>
@@ -780,8 +783,9 @@ export function SellerWorkspaceScreen() {
               )}
             </section>
           )}
-        </>
+        </div>
       )}
     </Page>
+    </div>
   );
 }
