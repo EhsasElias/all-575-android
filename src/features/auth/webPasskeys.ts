@@ -51,10 +51,12 @@ function creationOptions(options: CreationOptionsJson): PublicKeyCredentialCreat
     ...options,
     challenge: base64UrlToBytes(options.challenge),
     user: { ...options.user, id: base64UrlToBytes(options.user.id) },
-    excludeCredentials: options.excludeCredentials?.map((item) => ({
-      ...item,
-      id: base64UrlToBytes(item.id),
-    })),
+    ...(options.excludeCredentials !== undefined ? {
+      excludeCredentials: options.excludeCredentials.map((item) => ({
+        ...item,
+        id: base64UrlToBytes(item.id),
+      })),
+    } : {}),
   };
 }
 
@@ -62,10 +64,12 @@ function requestOptions(options: RequestOptionsJson): PublicKeyCredentialRequest
   return {
     ...options,
     challenge: base64UrlToBytes(options.challenge),
-    allowCredentials: options.allowCredentials?.map((item) => ({
-      ...item,
-      id: base64UrlToBytes(item.id),
-    })),
+    ...(options.allowCredentials !== undefined ? {
+      allowCredentials: options.allowCredentials.map((item) => ({
+        ...item,
+        id: base64UrlToBytes(item.id),
+      })),
+    } : {}),
   };
 }
 
