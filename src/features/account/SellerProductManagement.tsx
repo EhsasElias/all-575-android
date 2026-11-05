@@ -83,6 +83,7 @@ export function SellerProductManagement({ products, memberships, onUpdated }: Pr
   const [csvPreview, setCsvPreview] = useState<SellerCsvPreview | null>(null);
   const [error, setError] = useState('');
   const [success, setSuccess] = useState('');
+  const [quickSku, setQuickSku] = useState('');
 
   useEffect(() => {
     let active = true;
@@ -126,9 +127,9 @@ export function SellerProductManagement({ products, memberships, onUpdated }: Pr
     setSuccess('');
   };
 
-  const newProduct = () => {
+  const newProduct = (sku = '') => {
     setSelected(null);
-    setDraft(empty(String(sellerIds[0] ?? '')));
+    setDraft({ ...empty(String(sellerIds[0] ?? '')), sku: sku.trim() });
     setFormVisible(true);
     setError('');
     setSuccess('');
@@ -152,6 +153,10 @@ export function SellerProductManagement({ products, memberships, onUpdated }: Pr
           'Price must be SAR 1–5.75, with a valid category.',
         ),
       );
+      return;
+    }
+    if (selected === null && !draft.sku.trim()) {
+      setError(tr('أدخلي رمز SKU للمنتج أولاً.', 'Enter a product SKU first.'));
       return;
     }
     if (!sellerIds.includes(Number(draft.sellerId))) {
@@ -179,12 +184,31 @@ export function SellerProductManagement({ products, memberships, onUpdated }: Pr
           : await updateSellerProduct(selected, input);
       const productId = response.data.id;
       setSelected(productId);
-      setSuccess(
-        tr(
-          'تم حفظ المسودة. أضيفي SKU قبل إرسال المنتج للمراجعة.',
-          'Draft saved. Add an SKU before submitting for review.',
-        ),
-      );
+      if (selected === null && draft.sku.trim()) {
+        try {
+          await addSellerProductVariant(productId, {
+            sku: draft.sku.trim(),
+            barcode: draft.barcode.trim() || null,
+          });
+          setDraft((current) => ({ ...current, sku: '', barcode: '' }));
+          setSuccess(
+            tr(
+              'تم حفظ المنتج ورمز SKU. يمكنك رفع الصورة وإرسال المنتج للمراجعة.',
+              'Product and SKU saved. You can upload an image and submit for review.',
+            ),
+          );
+          setQuickSku('');
+        } catch {
+          setError(
+            tr(
+              'تم حفظ المسودة، لكن تعذرت إضافة SKU (ربما مستخدم بالفعل). عدّلي الرمز وأضيفيه من قسم وحدة البيع أدناه.',
+              'Draft saved, but SKU could not be added (possibly already in use). Change it and add it in the variant section below.',
+            ),
+          );
+        }
+      } else {
+        setSuccess(tr('تم تحديث مسودة المنتج.', 'Product draft updated.'));
+      }
       onUpdated();
     } catch {
       setError(
@@ -374,9 +398,46 @@ export function SellerProductManagement({ products, memberships, onUpdated }: Pr
 
   return (
     <section>
+      {sellerIds.length > 0 && (
+        <form
+          onSubmit={(event) => {
+            event.preventDefault();
+            if (!quickSku.trim()) {
+              setError(tr('أدخلي رمز SKU أولاً.', 'Enter an SKU first.'));
+              return;
+            }
+            newProduct(quickSku);
+          }}
+          style={{ ...card, marginBottom: 16 }}
+        >
+          <h3>{tr('إضافة منتج بواسطة SKU', 'Add product by SKU')}</h3>
+          <p>
+            {tr(
+              'أدخلي رمز SKU للبدء، ثم أكملي بيانات المنتج. سيتم حفظ SKU تلقائياً عند إنشاء المسودة.',
+              'Enter an SKU to start, then complete product details. The SKU will be saved automatically with the draft.',
+            )}
+          </p>
+          <div style={{ ...controls, alignItems: 'end' }}>
+            <label style={field}>
+              {tr('رمز SKU الجديد', 'New SKU code')}
+              <input
+                required
+                autoComplete="off"
+                maxLength={100}
+                value={quickSku}
+                onChange={(event) => setQuickSku(event.target.value)}
+                placeholder="SKU-001"
+              />
+            </label>
+            <button type="submit" style={button} disabled={busy}>
+              {tr('متابعة إضافة المنتج', 'Continue adding product')}
+            </button>
+          </div>
+        </form>
+      )}
       <div style={{ ...controls, marginBottom: 12 }}>
         {sellerIds.length > 0 && (
-          <button type="button" style={button} onClick={newProduct}>
+          <button type="button" style={button} onClick={() => newProduct()}>
             {tr('إضافة منتج جديد', 'Add new product')}
           </button>
         )}
@@ -503,6 +564,27 @@ export function SellerProductManagement({ products, memberships, onUpdated }: Pr
               : tr('تعديل مسودة', 'Edit draft')}{' '}
           </h3>
           <form onSubmit={(event) => void save(event)}>
+            {selected === null && (
+              <div style={{ ...controls, marginBottom: 12 }}>
+                <label style={field}>
+                  {tr('رمز SKU (مطلوب)', 'SKU code (required)')}
+                  <input
+                    required
+                    maxLength={100}
+                    value={draft.sku}
+                    onChange={(event) => set('sku', event.target.value)}
+                  />
+                </label>
+                <label style={field}>
+                  {tr('الباركود (اختياري)', 'Barcode (optional)')}
+                  <input
+                    maxLength={100}
+                    value={draft.barcode}
+                    onChange={(event) => set('barcode', event.target.value)}
+                  />
+                </label>
+              </div>
+            )}
             <div style={controls}>
               <label style={field}>
                 {tr('المتجر', 'Store')}
