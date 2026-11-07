@@ -212,9 +212,10 @@ export const submitSellerProduct = (productId: number) =>
 export const sellerCatalogTemplate = () => seller.download('/seller/products/import/template.csv');
 export const sellerCatalogExcelTemplate = () => seller.download('/seller/products/import/template.xlsx');
 
-export const uploadSellerProductImage = (productId: number, image: File) => {
+export const uploadSellerProductImage = (productId: number, image: File | string) => {
   const form = new FormData();
-  form.append('image', image);
+  if (typeof image === 'string') form.append('image_url', image);
+  else form.append('image', image);
   return seller.upload<{ data: { product_id: number; image_path: string } }>(
     '/seller/products/' + productId + '/image',
     form,
