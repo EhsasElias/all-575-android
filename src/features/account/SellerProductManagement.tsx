@@ -400,7 +400,7 @@ export function SellerProductManagement({ products, memberships, onUpdated }: Pr
     const message = cause.message?.trim() || fallback;
     const specific = details.filter((item) => !message.includes(item.split(': ').slice(1).join(': ')));
     return prefix + message + (cause.code ? ' [' + cause.code + ']' : '') +
-      (specific.length ? '\\n' + specific.join('\\n') : '');
+      (specific.length ? '\n' + specific.join('\n') : '');
   };
 
   const submit = (productId: number) => {
@@ -703,7 +703,7 @@ export function SellerProductManagement({ products, memberships, onUpdated }: Pr
         </p>
       )}
       {!formVisible && (error || formError) && (
-        <div className="seller-form-message" role="alert">{(formError || error).split('\\n').map((line, index) => <p key={index} style={{ margin: '2px 0' }}>{line}</p>)}</div>
+        <div className="seller-form-message" role="alert">{(formError || error).split('\n').map((line, index) => <p key={index} style={{ margin: '2px 0' }}>{line}</p>)}</div>
       )}
       {!formVisible && success && <p role="status">{success}</p>}
       {formVisible && (
@@ -737,7 +737,7 @@ export function SellerProductManagement({ products, memberships, onUpdated }: Pr
           <form onSubmit={save} noValidate>
             <p className="seller-required-hint">{tr('الحقول المميزة بـ * إلزامية.', 'Fields marked * are required.')}</p>
             {(formError || error) && (
-              <div className="seller-form-message" role="alert">{(formError || error).split('\\n').map((line, index) => <p key={index} style={{ margin: '2px 0' }}>{line}</p>)}</div>
+              <div className="seller-form-message" role="alert">{(formError || error).split('\n').map((line, index) => <p key={index} style={{ margin: '2px 0' }}>{line}</p>)}</div>
             )}
             {success && <div className="seller-form-success" role="status">{success}</div>}
             {selected === null && (
