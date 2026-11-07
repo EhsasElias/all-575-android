@@ -386,7 +386,7 @@ export function SellerProductManagement({ products, memberships, onUpdated }: Pr
       setError(
         validation?.join(' | ') ??
           tr(
-            'فشل الاستيراد. تأكدي من ترتيب أعمدة القالب وصحة التصنيفات والأسعار وعدم تكرار SKU.',
+            'فشل الاستيراد. استخدمي القالب الجديد دون تغيير عناوينه، وتأكدي من رقم التصنيف والسعر بالريال وعدم تكرار SKU.',
             'Import failed. Check template columns, categories, prices and duplicate SKUs.',
           ),
       );
@@ -463,14 +463,14 @@ export function SellerProductManagement({ products, memberships, onUpdated }: Pr
           <h3>{tr('استيراد المنتجات عبر CSV', 'Import products from CSV')}</h3>
           <p>
             {tr(
-              'حمّلي القالب بعناوين واضحة وأدخلي حتى 200 منتج. استخدمي رقم التصنيف الموجود بالنظام، واكتبي السعر بالهللة (مثلاً 575 تعني 5.75 ريال).',
-              'Download the template and enter up to 200 products. Use the category ID from the system and price in halalas (575 means SAR 5.75).',
+              'أعمدة القالب تطابق حقول «منتج جديد». اختاري المتجر عند الاستيراد، واكتبي رقم التصنيف والسعر بالريال (مثال: 5.75). يمكن ترك خانة المتجر فارغة في الملف.',
+              'The template columns match Add Product. Select the store during import, enter a category number and price in SAR (e.g. 5.75). You may leave the Store column blank.',
             )}
           </p>
           <p>
             {tr(
-              'فئة الضريبة: standard للقياسية، zero للصفرية، exempt للمعفاة. رمز SKU مطلوب لكل منتج والباركود اختياري. يقبل الاستيراد القوالب القديمة أيضًا.',
-              'VAT class: standard, zero or exempt. Every product needs an SKU; barcode is optional. Older templates remain supported.',
+              'فئة الضريبة: قياسية أو صفرية أو معفاة، والوصف والباركود اختياريان. يجب تعبئة رمز SKU واسمَي المنتج والتصنيف والسعر. يدعم النظام القوالب القديمة أيضًا.',
+              'VAT class: Standard, Zero-rated or Exempt. Descriptions and barcode are optional; SKU, both product names, category and price are required. Older templates still work.',
             )}
           </p>
           <div style={controls}>
