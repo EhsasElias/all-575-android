@@ -345,3 +345,68 @@
   opacity: 0.5;
   cursor: not-allowed;
 }
+
+/* Keep document uploads inside the mobile viewport in both RTL and LTR.
+   Grid children default to min-width:auto, which can expand the page when
+   the upload dropzone or a long attachment filename is displayed. */
+.application,
+.form,
+.group,
+.documents,
+.uploadFields,
+.dropzone,
+.dropLabel,
+.selectedFile,
+.documentsHeader,
+.documentList,
+.documentCard,
+.documentInfo {
+  box-sizing: border-box;
+  min-inline-size: 0;
+  max-inline-size: 100%;
+}
+.application,
+.form,
+.documents,
+.uploadFields,
+.dropLabel,
+.documentList {
+  grid-template-columns: minmax(0, 1fr);
+}
+.documentsHeader,
+.selectedFile,
+.documentCard {
+  min-width: 0;
+}
+.documentsHeader > div,
+.documentInfo {
+  overflow-wrap: anywhere;
+}
+.dropzone,
+.dropLabel,
+.documentsEmpty,
+.selectedFile {
+  overflow-wrap: anywhere;
+}
+.dropLabel > *,
+.selectedFile > *,
+.documentCard > * {
+  min-inline-size: 0;
+}
+.documentInfo strong,
+.documentName {
+  overflow-wrap: anywhere;
+  word-break: break-word;
+}
+@media (max-width: 42rem) {
+  .documents {
+    min-inline-size: 0;
+    padding-inline: 0.9rem;
+  }
+  .documentsHeader {
+    flex-wrap: wrap;
+  }
+  .dropLabel {
+    padding-inline: 0.65rem;
+  }
+}
