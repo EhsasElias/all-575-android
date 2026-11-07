@@ -1384,3 +1384,93 @@
   }
   .seller-workspace-shell .seller-stock-card-footer .seller-stock-adjust { flex: 1 1 100%; }
 }
+
+
+/* Allow the seller workspace to expand beyond narrow account-page containers on desktop. */
+.seller-workspace-shell {
+  box-sizing: border-box;
+  width: min(1240px, calc(100vw - 48px));
+  max-width: none;
+  position: relative;
+  left: 50%;
+  transform: translateX(-50%);
+}
+.seller-workspace-shell > div {
+  width: 100% !important;
+  max-width: 100% !important;
+  min-width: 0;
+  box-sizing: border-box;
+}
+.seller-workspace-shell .seller-content,
+.seller-workspace-shell .seller-orders-section { min-width: 0; width: 100%; }
+.seller-workspace-shell .seller-filters {
+  display: grid !important;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  align-items: end;
+  gap: 14px;
+  padding: clamp(14px, 2vw, 22px);
+  border: 1px solid var(--sw-border);
+  background: var(--sw-card);
+  border-radius: 16px;
+}
+.seller-workspace-shell .seller-filters label {
+  display: grid;
+  gap: 7px;
+  min-width: 0;
+  width: 100%;
+}
+.seller-workspace-shell .seller-filters :is(select,input[type="date"]) {
+  min-width: 0;
+  width: 100%;
+  min-height: 46px;
+  box-sizing: border-box;
+}
+.seller-workspace-shell .seller-orders-heading {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 12px;
+  margin-bottom: 16px;
+}
+.seller-workspace-shell .seller-orders-heading h2 { margin: 0; }
+.seller-workspace-shell .seller-orders-export {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 9px;
+}
+.seller-workspace-shell .seller-orders-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 16px;
+  align-items: start;
+}
+.seller-workspace-shell .seller-orders-grid .seller-order-card {
+  box-sizing: border-box;
+  display: grid;
+  gap: 11px;
+  min-width: 0;
+  margin: 0 !important;
+  padding: clamp(16px, 2vw, 22px);
+  border: 1px solid var(--sw-border);
+  border-radius: 16px;
+  background: var(--sw-card);
+  overflow-wrap: anywhere;
+}
+.seller-workspace-shell .seller-order-card h3,
+.seller-workspace-shell .seller-order-card p { margin: 0; }
+.seller-workspace-shell .seller-order-card ul { margin: 0; padding-inline-start: 24px; }
+.seller-workspace-shell .seller-order-card li { line-height: 1.85; }
+.seller-workspace-shell .seller-order-card small { overflow-wrap: anywhere; }
+@media (max-width: 960px) {
+  .seller-workspace-shell .seller-filters { grid-template-columns: repeat(2, minmax(0,1fr)); }
+  .seller-workspace-shell .seller-orders-grid { grid-template-columns: minmax(0,1fr); }
+}
+@media (max-width: 700px) {
+  .seller-workspace-shell { width: calc(100vw - 20px); }
+  .seller-workspace-shell .seller-filters { grid-template-columns: minmax(0,1fr); gap: 10px; }
+  .seller-workspace-shell .seller-orders-heading { align-items: stretch; }
+  .seller-workspace-shell .seller-orders-export { width: 100%; }
+  .seller-workspace-shell .seller-orders-export button { flex: 1 1 120px; }
+}
