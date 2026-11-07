@@ -921,25 +921,6 @@ export function SellerWorkspaceScreen() {
                 ))}
               </div>
               <p>
-                    SKU: {item.sku} · {tr('الفرع', 'Branch')} #{item.branch_id}
-                  </p>
-                  <p>
-                    {tr('الفعلي', 'On hand')}: {item.on_hand} · {tr('المحجوز', 'Reserved')}:{' '}
-                    {item.reserved} · {tr('المتاح', 'Available')}: {item.on_hand - item.reserved}
-                  </p>
-                  {canAdjustStock(item) && (
-                    <button
-                      type="button"
-                      style={action}
-                      disabled={busy}
-                      onClick={() => changeStock(item)}
-                    >
-                      {tr('تعديل الكمية', 'Adjust quantity')}
-                    </button>
-                  )}
-                </article>
-              ))}
-              <p>
                 {tr(
                   'تعديل الكمية متاح فقط للحسابات المخوّلة، ويمنع الخادم تخفيضها عن المحجوز.',
                   'Only authorized accounts may update stock; the server prevents reducing it below reservations.',
