@@ -540,7 +540,7 @@ export function SellerWorkspaceScreen() {
               <label>
                 {tr('الفرع', 'Branch')}{' '}
                 <select value={branchId} onChange={(event) => setBranchId(event.target.value)}>
-                  <option value="">{tr('كل الفروع المسموحة', 'All accessible branches')}</option>
+                  <option value="">{tr('كل الفروع', 'All branches')}</option>
                   {branches.map((branch) => (
                     <option value={branch.id} key={branch.id}>
                       {ar ? branch.name_ar : branch.name_en}
@@ -566,7 +566,7 @@ export function SellerWorkspaceScreen() {
               {section === 'orders' && (
                 <>
                   <label>
-                    {tr('من تاريخ', 'From')}{' '}
+                    {tr('من', 'From')}{' '}
                     <input
                       type="date"
                       value={orderFrom}
@@ -575,7 +575,7 @@ export function SellerWorkspaceScreen() {
                     />
                   </label>
                   <label>
-                    {tr('إلى تاريخ', 'To')}{' '}
+                    {tr('إلى', 'To')}{' '}
                     <input
                       type="date"
                       value={orderTo}
@@ -612,7 +612,7 @@ export function SellerWorkspaceScreen() {
           {section === 'products' && (
             <div style={{ ...line, marginBottom: 12 }}>
               <label>
-                {tr('حالة المنتج', 'Product status')}{' '}
+                {tr('الحالة', 'Status')}{' '}
                 <select
                   value={productStatus}
                   onChange={(event) => setProductStatus(event.target.value)}
@@ -716,7 +716,7 @@ export function SellerWorkspaceScreen() {
               <h2>{tr('مخزون الفروع', 'Branch inventory')}</h2>
               {stockWritableBranches.length > 0 && (
                 <form className="seller-stock-init" onSubmit={(event) => void initializeStock(event)}>
-                  <h3>{tr('إضافة منتج إلى مخزون فرع', 'Add a product to branch inventory')}</h3>
+                  <h3>{tr('إضافة للمخزون', 'Add stock')}</h3>
                   <p>{tr('أدخل SKU لوحدة بيع موجودة مسبقًا في منتجات متجرك، ثم حدد الفرع والكمية الأولية.',
                     'Enter the SKU of an existing store product variant, then choose the branch and starting quantity.')}</p>
                   <div className="seller-stock-init-fields">
@@ -733,13 +733,13 @@ export function SellerWorkspaceScreen() {
                       </select>
                     </label>
                     <label>
-                      {tr('رمز SKU', 'SKU code')}
+                      {tr('SKU *', 'SKU *')}
                       <input required maxLength={100} value={newStockSku} disabled={busy}
                         placeholder="SKU-001"
                         onChange={(event) => setNewStockSku(event.target.value)}/>
                     </label>
                     <label>
-                      {tr('الكمية الفعلية', 'Initial quantity')}
+                      {tr('الكمية *', 'Quantity *')}
                       <input required type="number" min={0} max={100000000} step={1}
                         value={newStockQuantity} disabled={busy}
                         onChange={(event) => setNewStockQuantity(event.target.value)}/>
@@ -803,7 +803,7 @@ export function SellerWorkspaceScreen() {
                 disabled={busy}
                 onClick={() => void exportOrders('xlsx')}
               >
-                {tr('تصدير الطلبات Excel', 'Export orders Excel')}
+                {tr('تصدير Excel', 'Export Excel')}
               </button>
               <button
                 type="button"
@@ -811,7 +811,7 @@ export function SellerWorkspaceScreen() {
                 disabled={busy}
                 onClick={() => void exportOrders('csv')}
               >
-                {tr('تصدير الطلبات CSV', 'Export orders CSV')}
+                {tr('تصدير CSV', 'Export CSV')}
               </button>
               {orders.length === 0 && <p>{tr('لا توجد طلبات مطابقة.', 'No matching orders.')}</p>}
               {orders.map((order) => (
