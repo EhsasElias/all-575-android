@@ -18,6 +18,35 @@ const dateAt = (daysAgo: number) => {
   date.setDate(date.getDate() - daysAgo);
   return [date.getFullYear(), pad(date.getMonth() + 1), pad(date.getDate())].join('-');
 };
+const arabicColumns: Record<string, string> = {
+  'Order': 'رقم الطلب',
+  'Date': 'تاريخ الطلب',
+  'Branch': 'الفرع',
+  'Status': 'الحالة',
+  'Subtotal SAR': 'السعر قبل الخصم (ر.س)',
+  'Discount SAR': 'الخصم (ر.س)',
+  'Merchandise SAR': 'قيمة البضاعة (ر.س)',
+  'Product ID': 'رقم المنتج',
+  'Arabic name': 'اسم المنتج بالعربية',
+  'English name': 'اسم المنتج بالإنجليزية',
+  'Units': 'الوحدات المباعة',
+  'Branch ID': 'رقم الفرع',
+  'Orders': 'عدد الطلبات',
+  'Delivered merchandise SAR': 'المبيعات المسلّمة (ر.س)',
+  'SKU': 'رمز SKU',
+  'Product': 'المنتج',
+  'On hand': 'المخزون الفعلي',
+  'Reserved': 'الكمية المحجوزة',
+  'Available': 'المتاح للبيع',
+};
+const arabicStatuses: Record<string, string> = {
+  awaiting_seller: 'بانتظار البائع',
+  preparing: 'قيد التجهيز',
+  ready: 'جاهز',
+  on_the_way: 'في الطريق',
+  delivered: 'تم التسليم',
+  cancelled: 'ملغي',
+};
 const metricNames: Record<SellerInsightMetric, [string, string]> = {
   orders: ['كل الطلبات', 'All orders'],
   awaiting_seller: ['طلبات بانتظار البائع', 'Awaiting seller'],
@@ -150,6 +179,12 @@ export function SellerInsightPanel({ metric, branches, onClose }: Props) {
       {loading && <p role="status">{tr('جار تحميل التقرير…', 'Loading report…')}</p>}
       {details && (
         <>
+          {metric === 'stock' && (
+            <p className="seller-insight-note">
+              {tr('المخزون يعرض الكميات الحالية، ولا يمثل حركة المخزون التاريخية حسب التواريخ المحددة.',
+                'Inventory is a current snapshot, not historic stock movements for the selected dates.')}
+            </p>
+          )}
           <p className="seller-insight-note">
             {tr('النتائج المعروضة: ', 'Rows shown: ')}{details.returned_rows}
             {details.returned_rows >= details.max_rows
@@ -164,10 +199,12 @@ export function SellerInsightPanel({ metric, branches, onClose }: Props) {
                 aria-label={tr('جدول تفاصيل المؤشر', 'Metric breakdown table')}>
                 <table>
                   <thead><tr>{details.columns.map((column, i) =>
-                    <th key={i} scope="col">{column}</th>)}</tr></thead>
+                    <th key={i} scope="col">{ar ? (arabicColumns[column] ?? column) : column}</th>)}</tr></thead>
                   <tbody>{details.rows.map((row, index) => (
                     <tr key={index}>{row.map((cell, i) =>
-                      <td key={i} dir="auto">{cell}</td>)}</tr>
+                      <td key={i} dir="auto">
+                        {ar && typeof cell === 'string' ? (arabicStatuses[cell] ?? cell) : cell}
+                      </td>)}</tr>
                   ))}</tbody>
                 </table>
               </div>
