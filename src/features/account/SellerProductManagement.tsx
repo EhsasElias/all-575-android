@@ -551,7 +551,7 @@ export function SellerProductManagement({ products, memberships, onUpdated }: Pr
           </p>
           <div style={{ ...controls, alignItems: 'end' }}>
             <label style={field}>
-              {tr('رمز SKU الجديد (إجباري)', 'New SKU code (required)')}
+              {tr('SKU جديد *', 'New SKU *')}
               <input
                 required
                 autoComplete="off"
@@ -620,7 +620,7 @@ export function SellerProductManagement({ products, memberships, onUpdated }: Pr
               </select>
             </label>
             <label className="seller-upload" style={field}>
-              <span>{tr('ملف CSV (إجباري)', 'CSV file (required)')}</span>
+              <span>{tr('ملف CSV *', 'CSV file *')}</span>
               <input
                 type="file"
                 accept=".csv,text/csv"
@@ -728,7 +728,7 @@ export function SellerProductManagement({ products, memberships, onUpdated }: Pr
             )}
           </div>
           <form onSubmit={save} noValidate>
-            <p className="seller-required-hint">{tr('الحقول المميزة بكلمة (إجباري) يجب تعبئتها قبل الحفظ.', 'Fields marked (required) must be completed before saving.')}</p>
+            <p className="seller-required-hint">{tr('الحقول المميزة بـ * إلزامية.', 'Fields marked * are required.')}</p>
             {(formError || error) && (
               <div className="seller-form-message" role="alert">{formError || error}</div>
             )}
@@ -736,7 +736,7 @@ export function SellerProductManagement({ products, memberships, onUpdated }: Pr
             {selected === null && (
               <div style={{ ...controls, marginBottom: 12 }}>
                 <label style={field}>
-                  {tr('رمز SKU (إجباري)', 'SKU code (required)')}
+                  {tr('SKU *', 'SKU *')}
                   <input
                     required
                     maxLength={100}
@@ -747,7 +747,7 @@ export function SellerProductManagement({ products, memberships, onUpdated }: Pr
                 {fieldError('sku')}
                 </label>
                 <label style={field}>
-                  {tr('الباركود (اختياري)', 'Barcode (optional)')}
+                  {tr('الباركود', 'Barcode')}
                   <input
                     maxLength={100}
                     {...fieldProps('barcode')}
@@ -760,7 +760,7 @@ export function SellerProductManagement({ products, memberships, onUpdated }: Pr
             )}
             <div style={controls}>
               <label style={field}>
-                {tr('المتجر (إجباري)', 'Store (required)')}
+                {tr('المتجر *', 'Store *')}
                 <select
                   required
                   {...fieldProps('sellerId')}
@@ -781,7 +781,7 @@ export function SellerProductManagement({ products, memberships, onUpdated }: Pr
                 {fieldError('sellerId')}
               </label>
               <label style={field}>
-                {tr('التصنيف (إجباري)', 'Category (required)')}
+                {tr('التصنيف *', 'Category *')}
                 <select
                   required
                   {...fieldProps('categoryId')}
@@ -800,7 +800,7 @@ export function SellerProductManagement({ products, memberships, onUpdated }: Pr
             </div>
             <div style={controls}>
               <label style={field}>
-                {tr('اسم المنتج بالعربية (إجباري)', 'Arabic product name (required)')}
+                {tr('اسم المنتج (AR) *', 'Product name (AR) *')}
                 <input
                   required
                   maxLength={180}
@@ -811,7 +811,7 @@ export function SellerProductManagement({ products, memberships, onUpdated }: Pr
                 {fieldError('nameAr')}
               </label>
               <label style={field}>
-                {tr('اسم المنتج بالإنجليزية (إجباري)', 'English product name (required)')}
+                {tr('اسم المنتج (EN) *', 'Product name (EN) *')}
                 <input
                   required
                   maxLength={180}
@@ -824,7 +824,7 @@ export function SellerProductManagement({ products, memberships, onUpdated }: Pr
             </div>
             <div style={controls}>
               <label style={field}>
-                {tr('الوصف بالعربية (اختياري)', 'Arabic description (optional)')}
+                {tr('الوصف (AR)', 'Description (AR)')}
                 <textarea
                   maxLength={10000}
                   {...fieldProps('descriptionAr')}
@@ -834,7 +834,7 @@ export function SellerProductManagement({ products, memberships, onUpdated }: Pr
                 {fieldError('descriptionAr')}
               </label>
               <label style={field}>
-                {tr('الوصف بالإنجليزية (اختياري)', 'English description (optional)')}
+                {tr('الوصف (EN)', 'Description (EN)')}
                 <textarea
                   maxLength={10000}
                   {...fieldProps('descriptionEn')}
@@ -846,7 +846,7 @@ export function SellerProductManagement({ products, memberships, onUpdated }: Pr
             </div>
             <div style={controls}>
               <label style={field}>
-                {tr('السعر بالريال (1–10) (إجباري)', 'Price SAR (1–10) (required)')}
+                {tr('السعر (ر.س) *', 'Price (SAR) *')}
                 <input
                   type="number"
                   required
@@ -860,7 +860,7 @@ export function SellerProductManagement({ products, memberships, onUpdated }: Pr
                 {fieldError('price')}
               </label>
               <label style={field}>
-                {tr('فئة الضريبة (إجباري)', 'VAT class (required)')}
+                {tr('الضريبة *', 'VAT *')}
                 <select
                   required
                   {...fieldProps('vatClass')}
@@ -892,7 +892,7 @@ export function SellerProductManagement({ products, memberships, onUpdated }: Pr
               <h4>{tr('إضافة وحدة بيع / باركود', 'Add variant / barcode')}</h4>
               <div style={controls}>
                 <label style={field}>
-                  {tr('رمز SKU (إجباري)', 'SKU code (required)')}
+                  {tr('SKU *', 'SKU *')}
                   <input
                     maxLength={100}
                     value={draft.sku}
@@ -900,7 +900,7 @@ export function SellerProductManagement({ products, memberships, onUpdated }: Pr
                   />
                 </label>
                 <label style={field}>
-                  {tr('باركود (اختياري)', 'Barcode (optional)')}
+                  {tr('الباركود', 'Barcode')}
                   <input
                     maxLength={100}
                     value={draft.barcode}
@@ -909,7 +909,7 @@ export function SellerProductManagement({ products, memberships, onUpdated }: Pr
                 </label>
               </div>
               <label className="seller-upload" style={{ ...field, marginTop: 12 }}>
-                <span>{tr('صورة غلاف المنتج (5 ميجابايت كحد أقصى)', 'Product cover image (up to 5 MB)')}</span>
+                <span>{tr('صورة المنتج (حد 5 MB)', 'Product image (max 5 MB)')}</span>
                 <input
                   type="file"
                   accept="image/*"
