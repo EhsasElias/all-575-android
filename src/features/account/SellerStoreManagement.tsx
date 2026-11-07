@@ -317,7 +317,7 @@ export function SellerStoreManagement({ memberships }: Props) {
       {loading && <p role="status">{tr('جار تحميل البيانات…', 'Loading…')}</p>}
       {!loading && profile && (
         <>
-          <form onSubmit={(event) => void saveStore(event)} style={card}>
+          <form className="seller-card seller-store-form" onSubmit={(event) => void saveStore(event)} style={card}>
             <h3>{tr('بيانات العرض', 'Display information')}</h3>
             <p>
               {tr('الحالة', 'Status')}: {profile.status} · {tr('رمز المتجر', 'Store slug')}:{' '}
@@ -349,13 +349,15 @@ export function SellerStoreManagement({ memberships }: Props) {
               {tr('حفظ بيانات المتجر', 'Save store')}
             </button>
           </form>
-          <div style={card}>
-            <h3>{tr('الفروع الحالية', 'Existing branches')}</h3>
+          <div className="seller-card seller-branches-panel" style={card}>
+            <div className="seller-section-heading">
+              <h3>{tr('الفروع الحالية', 'Existing branches')}</h3>
             <button type="button" disabled={saving} onClick={() => setPropose((value) => !value)}>
               {propose
                 ? tr('إلغاء إضافة فرع', 'Cancel new branch')
                 : tr('إضافة فرع جديد', 'Add new branch')}
             </button>
+            </div>
             {propose && (
               <form
                 onSubmit={(event) => void createBranch(event)}
@@ -523,6 +525,7 @@ export function SellerStoreManagement({ memberships }: Props) {
             )}
             {branches.map((branch) => (
               <article
+                className="seller-branch-card"
                 key={branch.id}
                 style={{ borderTop: '1px solid #d8e1db', padding: '12px 0' }}
               >
@@ -563,7 +566,7 @@ export function SellerStoreManagement({ memberships }: Props) {
                   </button>
                 )}
                 {editBranch === branch.id && (
-                  <form onSubmit={(event) => void saveBranch(event)}>
+                  <form className="seller-branch-edit" onSubmit={(event) => void saveBranch(event)}>
                     <div style={row}>
                       <label style={field}>
                         {tr('اسم الفرع بالعربية', 'Arabic branch name')}
