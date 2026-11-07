@@ -1135,3 +1135,252 @@
   text-align: end;
   font-variant-numeric: tabular-nums;
 }
+
+
+/* Seller inventory: responsive stock cards and editable quantity dialog. */
+.seller-workspace-shell .seller-stock-card-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 310px), 1fr));
+  gap: 14px;
+  margin-block: 16px;
+  min-width: 0;
+}
+.seller-workspace-shell .seller-stock-card {
+  min-width: 0;
+  padding: clamp(14px, 2vw, 20px);
+  border: 1px solid var(--sw-border);
+  border-radius: 18px;
+  background: var(--sw-card);
+  display: grid;
+  gap: 18px;
+}
+.seller-workspace-shell .seller-stock-card-head {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  flex-wrap: wrap;
+  gap: 12px;
+  min-width: 0;
+}
+.seller-workspace-shell .seller-stock-card-heading { display: grid; gap: 7px; min-width: 0; flex: 1; }
+.seller-workspace-shell .seller-stock-card-heading h3 {
+  margin: 0;
+  font-size: 1.06rem;
+  line-height: 1.5;
+  overflow-wrap: anywhere;
+}
+.seller-workspace-shell .seller-stock-sku {
+  font-size: .8rem;
+  color: var(--sw-muted);
+  overflow-wrap: anywhere;
+  text-align: start;
+  unicode-bidi: isolate;
+}
+.seller-workspace-shell .seller-stock-branch {
+  padding: 6px 10px;
+  background: var(--color-surface-mint, rgba(40,133,84,.09));
+  border: 1px solid var(--sw-border);
+  border-radius: 999px;
+  font-size: .78rem;
+  font-weight: 700;
+  max-width: 100%;
+  overflow-wrap: anywhere;
+}
+.seller-workspace-shell .seller-stock-stats {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 8px;
+  min-width: 0;
+}
+.seller-workspace-shell .seller-stock-stats > div {
+  display: grid;
+  justify-items: center;
+  align-content: center;
+  gap: 6px;
+  padding: 12px 4px;
+  border-radius: 12px;
+  border: 1px solid var(--sw-border);
+  background: var(--sw-card);
+  min-width: 0;
+}
+.seller-workspace-shell .seller-stock-stats span {
+  color: var(--sw-muted);
+  font-size: .77rem;
+  text-align: center;
+}
+.seller-workspace-shell .seller-stock-stats strong {
+  font-size: clamp(1.15rem, 2.3vw, 1.5rem);
+  font-variant-numeric: tabular-nums;
+  overflow-wrap: anywhere;
+}
+.seller-workspace-shell .seller-stock-stats .seller-stock-stat-available {
+  border-color: #83b69b;
+  background: rgba(37,137,85,.08);
+}
+.seller-workspace-shell .seller-stock-card-footer {
+  display: flex;
+  gap: 12px;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  border-top: 1px solid var(--sw-border);
+  padding-top: 14px;
+}
+.seller-workspace-shell .seller-stock-low,
+.seller-workspace-shell .seller-stock-ok {
+  font-size: .8rem;
+  font-weight: 700;
+}
+.seller-workspace-shell .seller-stock-low { color: #bb7417; }
+.seller-workspace-shell .seller-stock-ok { color: #248159; }
+.seller-workspace-shell .seller-stock-adjust {
+  display: inline-flex;
+  justify-content: center;
+  align-items: center;
+  gap: 8px;
+  min-height: 44px;
+  padding-inline: 16px;
+  border: 1px solid #7caf97;
+  background: rgba(51,145,98,.08);
+  color: var(--sw-text, inherit);
+  border-radius: 11px;
+  font-weight: 700;
+  cursor: pointer;
+}
+.seller-workspace-shell .seller-stock-adjust:focus-visible,
+.seller-workspace-shell .seller-stock-modal button:focus-visible,
+.seller-workspace-shell .seller-stock-modal input:focus-visible {
+  outline: 3px solid #56a67e;
+  outline-offset: 2px;
+}
+.seller-workspace-shell .seller-stock-modal-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 1100;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 16px;
+  background: rgba(5, 20, 14, .72);
+  backdrop-filter: blur(3px);
+}
+.seller-workspace-shell .seller-stock-modal {
+  width: min(100%, 490px);
+  max-height: min(90dvh, 760px);
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  box-sizing: border-box;
+  display: grid;
+  gap: 16px;
+  padding: clamp(18px, 3vw, 26px);
+  background: var(--sw-card);
+  color: var(--sw-text, inherit);
+  border: 1px solid var(--sw-border);
+  border-radius: 20px;
+  box-shadow: 0 28px 90px rgba(0,0,0,.32);
+}
+.seller-workspace-shell .seller-stock-modal-head {
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+  align-items: flex-start;
+}
+.seller-workspace-shell .seller-stock-modal-head h3 { margin: 5px 0 0; font-size: 1.32rem; }
+.seller-workspace-shell .seller-stock-eyebrow {
+  color: var(--sw-muted);
+  font-size: .8rem;
+  font-weight: 700;
+}
+.seller-workspace-shell .seller-stock-modal .seller-stock-close {
+  font-size: 26px;
+  line-height: 1;
+  width: 40px;
+  height: 40px;
+  flex: 0 0 40px;
+  background: transparent;
+  color: inherit;
+  border: 1px solid var(--sw-border);
+  border-radius: 10px;
+  cursor: pointer;
+}
+.seller-workspace-shell .seller-stock-modal-product {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  margin: 0;
+  overflow-wrap: anywhere;
+}
+.seller-workspace-shell .seller-stock-modal-product span { color: var(--sw-muted); font-size: .8rem; }
+.seller-workspace-shell .seller-stock-quantity-field { display: grid; gap: 8px; font-weight: 700; }
+.seller-workspace-shell .seller-stock-quantity-field input {
+  width: 100%;
+  min-width: 0;
+  min-height: 54px;
+  box-sizing: border-box;
+  border-radius: 12px;
+  border: 1px solid var(--sw-border);
+  background: var(--sw-card);
+  color: inherit;
+  padding: 12px 14px;
+  font-size: 1.15rem;
+  font-variant-numeric: tabular-nums;
+}
+.seller-workspace-shell .seller-stock-help {
+  margin: -6px 0 0;
+  color: var(--sw-muted);
+  font-size: .84rem;
+  line-height: 1.6;
+}
+.seller-workspace-shell .seller-stock-preview {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px 12px;
+  border-radius: 12px;
+  padding: 12px 14px;
+  border: 1px solid #7bb18f;
+  background: rgba(37,137,85,.08);
+}
+.seller-workspace-shell .seller-stock-preview strong { font-size: 1.25rem; }
+.seller-workspace-shell .seller-stock-preview small { margin-inline-start: auto; color: var(--sw-muted); }
+.seller-workspace-shell .seller-stock-edit-error {
+  margin: 0;
+  color: #c04840;
+  font-size: .9rem;
+}
+.seller-workspace-shell .seller-stock-modal-actions {
+  display: flex;
+  gap: 10px;
+  justify-content: flex-end;
+  flex-wrap: wrap;
+}
+.seller-workspace-shell .seller-stock-modal-actions button {
+  flex: 1 1 130px;
+  min-height: 48px;
+  border-radius: 11px;
+  font-weight: 700;
+  cursor: pointer;
+}
+.seller-workspace-shell .seller-stock-cancel {
+  background: transparent;
+  color: inherit;
+  border: 1px solid var(--sw-border);
+}
+.seller-workspace-shell .seller-stock-save {
+  background: #226d4b;
+  border: 1px solid #226d4b;
+  color: #fff;
+}
+.seller-workspace-shell .seller-stock-modal-actions button:disabled { opacity: .55; cursor: not-allowed; }
+@media (max-width: 480px) {
+  .seller-workspace-shell .seller-stock-modal-overlay { align-items: flex-end; padding: 0; }
+  .seller-workspace-shell .seller-stock-modal {
+    width: 100%;
+    max-height: 90dvh;
+    border-radius: 20px 20px 0 0;
+    padding: 20px 16px max(20px, env(safe-area-inset-bottom));
+  }
+  .seller-workspace-shell .seller-stock-card-footer .seller-stock-adjust { flex: 1 1 100%; }
+}
