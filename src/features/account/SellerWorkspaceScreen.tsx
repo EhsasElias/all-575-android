@@ -322,12 +322,12 @@ export function SellerWorkspaceScreen() {
       link.remove();
       // Android Chrome may not start the download before the current task ends.
       window.setTimeout(() => URL.revokeObjectURL(url), 30_000);
-    } catch {
+    } catch (cause) {
+      const detail = cause instanceof Error ? cause.message : '';
       setError(
-        tr(
-          'تعذر تصدير الطلبات. تحققي من الصلاحيات والاتصال وإعدادات تصدير Excel.',
-          'Could not export orders. Check permissions, connection and Excel export setup.',
-        ),
+        tr('تعذر تصدير الطلبات.', 'Could not export orders.') +
+        (detail ? ' ' + detail : ' ' +
+          tr('تحقق من صلاحية البائع والاتصال بالخادم.', 'Check seller permissions and server connectivity.')),
       );
     } finally {
       setBusy(false);
@@ -1075,13 +1075,15 @@ export function SellerWorkspaceScreen() {
                           </td>
                           <td><strong dir="ltr">{order.order_number}</strong></td>
                           <td><span className="seller-order-status">{labels[order.status] ?? order.status}</span></td>
-                          <td>{branch ? (ar ? branch.name_ar : branch.name_en) : tr('فرع', 'Branch') + ' #' + order.branch_id}</td>
+                          <td>{branch
+                            ? ((ar ? branch.name_ar : branch.name_en) || (ar ? branch.name_en : branch.name_ar) || tr('فرع غير مسمى', 'Unnamed branch'))
+                            : tr('فرع غير متاح', 'Branch unavailable')}</td>
                           <td><bdi dir="auto">{order.placed_at ? order.placed_at.replace('T', ' ').replace(/\.\d+Z?$/, '') : '—'}</bdi></td>
                           <td>
                             <div className="seller-orders-items-cell">
                               {order.items.map((item) => (
                                 <div key={item.id}>
-                                  <span>{ar ? item.name.ar : item.name.en}</span>
+                                  <span>{(ar ? item.name.ar : item.name.en) || (ar ? item.name.en : item.name.ar) || tr('منتج بدون اسم', 'Unnamed product')}</span>
                                   <strong dir="ltr">× {item.quantity}</strong>
                                 </div>
                               ))}
