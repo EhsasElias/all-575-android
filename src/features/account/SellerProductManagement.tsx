@@ -386,7 +386,7 @@ export function SellerProductManagement({ products, memberships, onUpdated }: Pr
       setError(
         validation?.join(' | ') ??
           tr(
-            'فشل الاستيراد. استخدمي القالب الجديد دون تغيير عناوينه، وتأكدي من رقم التصنيف والسعر بالريال وعدم تكرار SKU.',
+            'فشل الاستيراد. استخدمي القالب الجديد دون تغيير عناوينه، وتأكدي من اسم أو رقم التصنيف والسعر بالريال وعدم تكرار SKU.',
             'Import failed. Check template columns, categories, prices and duplicate SKUs.',
           ),
       );
@@ -463,8 +463,8 @@ export function SellerProductManagement({ products, memberships, onUpdated }: Pr
           <h3>{tr('استيراد المنتجات عبر CSV', 'Import products from CSV')}</h3>
           <p>
             {tr(
-              'أعمدة القالب تطابق حقول «منتج جديد». اختاري المتجر عند الاستيراد، واكتبي رقم التصنيف والسعر بالريال (مثال: 5.75). يمكن ترك خانة المتجر فارغة في الملف.',
-              'The template columns match Add Product. Select the store during import, enter a category number and price in SAR (e.g. 5.75). You may leave the Store column blank.',
+              'أعمدة القالب تطابق حقول «منتج جديد». اختاري المتجر عند الاستيراد، واكتبي اسم التصنيف أو رقمه والسعر بالريال (مثال: 5.75). يمكن ترك خانة المتجر فارغة في الملف.',
+              'The columns match Add Product. Choose the store at import time; enter a category name or number and price in SAR (e.g. 5.75). The Store cell can be blank.',
             )}
           </p>
           <p>
