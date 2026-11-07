@@ -37,6 +37,17 @@ export function SellerReviewScreen() {
   const { i18n } = useTranslation();
   const ar = i18n.language.startsWith('ar');
   const tr = (a: string, en: string) => (ar ? a : en);
+  const statusLabels: Record<string, string> = {
+    draft: tr('مسودة', 'Draft'),
+    submitted: tr('مُرسل للمراجعة', 'Submitted for review'),
+    pending: tr('بانتظار المراجعة', 'Pending review'),
+    pending_review: tr('بانتظار المراجعة', 'Pending review'),
+    reviewed: tr('تمت المراجعة', 'Reviewed'),
+    correction: tr('بحاجة إلى تعديل', 'Changes requested'),
+    approved: tr('معتمد', 'Approved'),
+    published: tr('منشور', 'Published'),
+    rejected: tr('مرفوض', 'Rejected'),
+  };
   const [tab, setTab] = useState<'applications' | 'products' | 'branches'>('applications');
   const [applications, setApplications] = useState<SellerReviewApplication[]>([]);
   const [products, setProducts] = useState<PendingSellerProduct[]>([]);
@@ -294,7 +305,7 @@ export function SellerReviewScreen() {
                     {item.city}
                   </p>
                   <p>
-                    {tr('الحالة', 'Status')}: {item.status}
+                    {tr('الحالة', 'Status')}: {statusLabels[item.status] ?? item.status}
                   </p>
                   <button type="button" disabled={busy} onClick={() => void inspect(item.id)}>
                     {selected === item.id
