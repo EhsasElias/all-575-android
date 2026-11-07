@@ -205,21 +205,26 @@ export function SellerProductManagement({ products, memberships, onUpdated }: Pr
     }
     const validCategory = (id: string | undefined) =>
       id && flatCategories(categories).some((item) => String(item.id) === id) ? id : undefined;
-    const candidates: Partial<Draft> = {
-      ...(validCategory(catalogMatch ? String(catalogMatch.category_id) : parsed.categoryId)
-        ? { categoryId: validCategory(catalogMatch ? String(catalogMatch.category_id) : parsed.categoryId) } : {}),
-      ...(catalogMatch?.name_ar || parsed.nameAr ? { nameAr: catalogMatch?.name_ar || parsed.nameAr } : {}),
-      ...(catalogMatch?.name_en || parsed.nameEn ? { nameEn: catalogMatch?.name_en || parsed.nameEn } : {}),
-      ...(catalogMatch?.description_ar || parsed.descriptionAr ? { descriptionAr: catalogMatch?.description_ar || parsed.descriptionAr } : {}),
-      ...(catalogMatch?.description_en || parsed.descriptionEn ? { descriptionEn: catalogMatch?.description_en || parsed.descriptionEn } : {}),
-      ...(catalogMatch ? { price: (catalogMatch.price_halalas / 100).toFixed(2) }
-        : parsed.price ? { price: parsed.price } : {}),
-      ...(catalogMatch ? { vatClass: catalogMatch.vat_class }
-        : parsed.vatClass ? { vatClass: parsed.vatClass } : {}),
-      ...(!catalogMatch && parsed.barcode ? { barcode: parsed.barcode } : {}),
-      ...(!catalogMatch && parsed.sku ? { sku: parsed.sku }
-        : !catalogMatch && parsed.barcode ? { sku: parsed.barcode } : {}),
-    };
+    const candidates: Partial<Draft> = {};
+    const categoryId = validCategory(catalogMatch ? String(catalogMatch.category_id) : parsed.categoryId);
+    if (categoryId) candidates.categoryId = categoryId;
+    const nameAr = catalogMatch?.name_ar || parsed.nameAr;
+    const nameEn = catalogMatch?.name_en || parsed.nameEn;
+    const descriptionAr = catalogMatch?.description_ar || parsed.descriptionAr;
+    const descriptionEn = catalogMatch?.description_en || parsed.descriptionEn;
+    if (nameAr) candidates.nameAr = nameAr;
+    if (nameEn) candidates.nameEn = nameEn;
+    if (descriptionAr) candidates.descriptionAr = descriptionAr;
+    if (descriptionEn) candidates.descriptionEn = descriptionEn;
+    if (catalogMatch) {
+      candidates.price = (catalogMatch.price_halalas / 100).toFixed(2);
+      candidates.vatClass = catalogMatch.vat_class;
+    } else {
+      if (parsed.price) candidates.price = parsed.price;
+      if (parsed.vatClass) candidates.vatClass = parsed.vatClass;
+      if (parsed.barcode) candidates.barcode = parsed.barcode;
+      if (parsed.sku || parsed.barcode) candidates.sku = parsed.sku || parsed.barcode;
+    }
     setDraft((current) => {
       const next = { ...current };
       for (const [key, value] of Object.entries(candidates)) {
