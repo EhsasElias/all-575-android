@@ -19,6 +19,11 @@ export function SellerStaffManagement({ memberships }: Props) {
   const { i18n } = useTranslation();
   const ar = i18n.language.startsWith('ar');
   const tr = (arabic: string, english: string) => (ar ? arabic : english);
+  const roleLabels: Record<string, string> = {
+    owner: tr('مالك المتجر', 'Store owner'),
+    branch_manager: tr('مدير الفرع', 'Branch manager'),
+    picker: tr('موظف تجهيز الطلبات', 'Order picker'),
+  };
   const owners = [
     ...new Map(
       memberships
@@ -152,8 +157,8 @@ export function SellerStaffManagement({ memberships }: Props) {
             <table style={{ width: '100%', textAlign: 'start' }}>
               <thead>
                 <tr>
-                  <th>{tr('رقم المستخدم', 'User ID')}</th>
-                  <th>{tr('الصلاحية', 'Role')}</th>
+                  <th>{tr('رقم حساب الموظف', 'Staff account number')}</th>
+                  <th>{tr('دور الموظف', 'Staff role')}</th>
                   <th>{tr('الفرع', 'Branch')}</th>
                   <th>{tr('الحالة', 'Status')}</th>
                   <th>{tr('الإجراء', 'Action')}</th>
@@ -163,7 +168,7 @@ export function SellerStaffManagement({ memberships }: Props) {
                 {rows.map((member) => (
                   <tr key={member.id}>
                     <td>{member.user_id}</td>
-                    <td>{member.role}</td>
+                    <td>{roleLabels[member.role] ?? member.role}</td>
                     <td>{member.branch_id ?? tr('كل الفروع', 'All branches')}</td>
                     <td>{member.is_active ? tr('نشط', 'Active') : tr('موقوف', 'Inactive')}</td>
                     <td>
