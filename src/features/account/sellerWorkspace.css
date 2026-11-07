@@ -937,3 +937,17 @@
     grid-template-columns: minmax(0, 1fr);
   }
 }
+
+.seller-workspace-shell .seller-zone-distance-help {
+  margin: 0;
+  line-height: 1.7;
+}
+.seller-workspace-shell .seller-zone-distance-preview {
+  margin: 0;
+  padding: 10px 14px;
+  border-radius: 12px;
+  border: 1px solid #86bea0;
+  background: rgba(96, 169, 116, 0.09);
+  color: #176347;
+  font-weight: 600;
+}
