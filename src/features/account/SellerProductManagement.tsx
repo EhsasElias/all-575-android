@@ -1,5 +1,6 @@
 import { useEffect, useState, type FormEvent } from 'react';
 import { useTranslation } from 'react-i18next';
+import { isApiError } from '@/shared/api';
 import {
   addSellerProductVariant,
   createSellerProduct,
@@ -90,6 +91,58 @@ export function SellerProductManagement({ products, memberships, onUpdated }: Pr
   const [error, setError] = useState('');
   const [success, setSuccess] = useState('');
   const [quickSku, setQuickSku] = useState('');
+  const [fieldErrors, setFieldErrors] = useState<Partial<Record<keyof Draft, string>>>({});
+  const [formError, setFormError] = useState('');
+  const [confirmation, setConfirmation] = useState<{ kind: 'save' | 'publish'; productId?: number } | null>(null);
+
+  const fieldError = (name: keyof Draft) =>
+    fieldErrors[name] ? (
+      <span className="seller-field-error" role="alert" id={'seller-error-' + name}>
+        {fieldErrors[name]}
+      </span>
+    ) : null;
+  const fieldProps = (name: keyof Draft) => ({
+    'aria-invalid': !!fieldErrors[name],
+    'aria-describedby': fieldErrors[name] ? 'seller-error-' + name : undefined,
+  });
+  const collectErrors = (): Partial<Record<keyof Draft, string>> => {
+    const next: Partial<Record<keyof Draft, string>> = {};
+    if (selected === null && !draft.sku.trim())
+      next.sku = tr('رمز SKU مطلوب.', 'SKU is required.');
+    if (selected === null && draft.sku.trim().length > 100)
+      next.sku = tr('الحد الأقصى 100 حرف.', 'Maximum 100 characters.');
+    if (!sellerIds.includes(Number(draft.sellerId)))
+      next.sellerId = tr('اختر متجرًا مسموحًا.', 'Select an authorized store.');
+    if (!draft.categoryId || !categories.some(() => true) || !/^[0-9]+$/.test(draft.categoryId))
+      next.categoryId = tr('اختر التصنيف.', 'Select a category.');
+    if (!draft.nameAr.trim()) next.nameAr = tr('اسم المنتج بالعربية مطلوب.', 'Arabic product name is required.');
+    if (!draft.nameEn.trim()) next.nameEn = tr('اسم المنتج بالإنجليزية مطلوب.', 'English product name is required.');
+    if (draft.nameAr.trim().length > 180) next.nameAr = tr('الحد الأقصى 180 حرفًا.', 'Maximum 180 characters.');
+    if (draft.nameEn.trim().length > 180) next.nameEn = tr('الحد الأقصى 180 حرفًا.', 'Maximum 180 characters.');
+    if (draft.descriptionAr.length > 10000) next.descriptionAr = tr('الوصف طويل جدًا.', 'Description is too long.');
+    if (draft.descriptionEn.length > 10000) next.descriptionEn = tr('الوصف طويل جدًا.', 'Description is too long.');
+    if (!/^[0-9]+(?:\.[0-9]{1,2})?$/.test(draft.price) ||
+        Number(draft.price) < 1 || Number(draft.price) > 10)
+      next.price = tr('أدخل سعرًا من 1 إلى 10 ريالات (حتى منزلتين عشريتين).', 'Enter a price from SAR 1 to SAR 10 (up to 2 decimals).');
+    return next;
+  };
+  const displayApiFieldErrors = (cause: unknown): boolean => {
+    if (!isApiError(cause) || cause.kind !== 'validation') return false;
+    const mapping: Record<string, keyof Draft> = {
+      sku: 'sku', barcode: 'barcode', seller_id: 'sellerId', category_id: 'categoryId',
+      name_ar: 'nameAr', name_en: 'nameEn', description_ar: 'descriptionAr',
+      description_en: 'descriptionEn', price_halalas: 'price', vat_class: 'vatClass',
+    };
+    const mapped: Partial<Record<keyof Draft, string>> = {};
+    for (const [key, messages] of Object.entries(cause.fieldErrors)) {
+      const target = mapping[key];
+      if (target && messages[0]) mapped[target] = messages[0];
+    }
+    if (Object.keys(mapped).length === 0) return false;
+    setFieldErrors(mapped);
+    return true;
+  };
+
 
   useEffect(() => {
     let active = true;
@@ -107,8 +160,11 @@ export function SellerProductManagement({ products, memberships, onUpdated }: Pr
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  const set = (fieldName: keyof Draft, value: string) =>
+  const set = (fieldName: keyof Draft, value: string) => {
     setDraft((current) => ({ ...current, [fieldName]: value }));
+    setFieldErrors((current) => ({ ...current, [fieldName]: undefined }));
+    setFormError('');
+  };
 
   const edit = (product: SellerProduct) => {
     if (!editable(product)) return;
@@ -129,6 +185,8 @@ export function SellerProductManagement({ products, memberships, onUpdated }: Pr
       barcode: '',
     });
     setFormVisible(true);
+    setFieldErrors({});
+    setFormError('');
     setError('');
     setSuccess('');
   };
@@ -137,39 +195,26 @@ export function SellerProductManagement({ products, memberships, onUpdated }: Pr
     setSelected(null);
     setDraft({ ...empty(String(sellerIds[0] ?? '')), sku: sku.trim() });
     setFormVisible(true);
+    setFieldErrors({});
+    setFormError('');
     setError('');
     setSuccess('');
   };
 
-  const save = async (event: FormEvent<HTMLFormElement>) => {
+  const save = (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     if (busy) return;
-    const price = Number(draft.price);
-    const priceHalalas = Math.round(price * 100);
-    if (
-      !Number.isFinite(price) ||
-      !/^[0-9]+([.][0-9]{1,2})?$/.test(draft.price) ||
-      priceHalalas < 100 ||
-      priceHalalas > 1000 ||
-      !Number.isSafeInteger(Number(draft.categoryId))
-    ) {
-      setError(
-        tr(
-          'السعر يجب أن يكون بين 1 و10 ريالات، مع اختيار تصنيف صحيح.',
-          'Price must be SAR 1–10, with a valid category.',
-        ),
-      );
-      return;
-    }
-    if (selected === null && !draft.sku.trim()) {
-      setError(tr('أدخل رمز SKU للمنتج أولاً.', 'Enter a product SKU first.'));
-      return;
-    }
-    if (!sellerIds.includes(Number(draft.sellerId))) {
-      setError(tr('ليس لديك صلاحية إدارة هذا المتجر.', 'You cannot manage this store.'));
-      return;
-    }
+    const validation = collectErrors();
+    setFieldErrors(validation);
+    setFormError('');
+    if (Object.keys(validation).length > 0) return;
+    setConfirmation({ kind: 'save' });
+  };
 
+  const persist = async () => {
+    if (busy) return;
+    setConfirmation(null);
+    const priceHalalas = Math.round(Number(draft.price) * 100);
     const input: SellerProductInput = {
       category_id: Number(draft.categoryId),
       name_ar: draft.nameAr.trim(),
@@ -216,13 +261,10 @@ export function SellerProductManagement({ products, memberships, onUpdated }: Pr
         setSuccess(tr('تم تحديث مسودة المنتج.', 'Product draft updated.'));
       }
       onUpdated();
-    } catch {
-      setError(
-        tr(
-          'تعذر حفظ المنتج. تأكد من التصنيف والصلاحيات والحقول المطلوبة.',
-          'Could not save product. Check category, permissions and required fields.',
-        ),
-      );
+    } catch (cause) {
+      if (!displayApiFieldErrors(cause)) {
+        setFormError(tr('تعذر حفظ المنتج. تحقق من البيانات أو الاتصال ثم أعد المحاولة.', 'Product could not be saved. Check details or connection and retry.'));
+      }
     } finally {
       setBusy(false);
     }
@@ -260,15 +302,15 @@ export function SellerProductManagement({ products, memberships, onUpdated }: Pr
     }
   };
 
-  const submit = async (productId: number) => {
-    if (
-      busy ||
-      !window.confirm(tr(
-        'هل تريد إكمال المنتج؟ سيُنشر مباشرة في وضع العرض التجريبي، وإلا سيُرسل للمراجعة.',
-        'Complete this product? It publishes immediately in demo mode; otherwise it goes to review.',
-      ))
-    )
-      return;
+  const submit = (productId: number) => {
+    if (busy) return;
+    setFormError('');
+    setConfirmation({ kind: 'publish', productId });
+  };
+
+  const publish = async (productId: number) => {
+    if (busy) return;
+    setConfirmation(null);
     setBusy(true);
     setWorkingId(productId);
     setError('');
@@ -282,13 +324,11 @@ export function SellerProductManagement({ products, memberships, onUpdated }: Pr
       );
       if (selected === productId) setFormVisible(false);
       onUpdated();
-    } catch {
-      setError(
-        tr(
-          'تعذر النشر أو الإرسال. احفظ المسودة وأضف SKU وصورة للمنتج أولاً.',
-          'Could not publish or submit. Save the draft and add an SKU and product image first.',
-        ),
-      );
+    } catch (cause) {
+      if (!displayApiFieldErrors(cause)) {
+        setFormError(tr('تعذر نشر المنتج. تحقق من حفظ المسودة وإضافة SKU وصورة المنتج.', 'Could not publish. Save the draft and add a SKU and product image.'));
+      }
+      if (selected === productId) setFormVisible(true);
     } finally {
       setBusy(false);
       setWorkingId(null);
@@ -568,20 +608,22 @@ export function SellerProductManagement({ products, memberships, onUpdated }: Pr
           )}
         </p>
       )}
-      {error && (
-        <p role="alert" style={{ color: '#a52e2e' }}>
-          {error}
-        </p>
+      {error && !formVisible && (
+        <p role="alert" style={{ color: '#a52e2e' }}>{error}</p>
       )}
       {success && <p role="status">{success}</p>}
       {formVisible && (
-        <div style={card}>
+        <div className="seller-product-form-card" style={card}>
           <h3>
             {selected === null
               ? tr('منتج جديد', 'New product')
               : tr('تعديل مسودة', 'Edit draft')}{' '}
           </h3>
-          <form onSubmit={(event) => void save(event)}>
+          <form onSubmit={save} noValidate>
+            {(formError || error) && (
+              <div className="seller-form-message" role="alert">{formError || error}</div>
+            )}
+            {success && <div className="seller-form-success" role="status">{success}</div>}
             {selected === null && (
               <div style={{ ...controls, marginBottom: 12 }}>
                 <label style={field}>
@@ -589,17 +631,21 @@ export function SellerProductManagement({ products, memberships, onUpdated }: Pr
                   <input
                     required
                     maxLength={100}
-                    value={draft.sku}
+                    {...fieldProps('sku')}
+                  value={draft.sku}
                     onChange={(event) => set('sku', event.target.value)}
                   />
+                {fieldError('sku')}
                 </label>
                 <label style={field}>
                   {tr('الباركود (اختياري)', 'Barcode (optional)')}
                   <input
                     maxLength={100}
-                    value={draft.barcode}
+                    {...fieldProps('barcode')}
+                  value={draft.barcode}
                     onChange={(event) => set('barcode', event.target.value)}
                   />
+                {fieldError('barcode')}
                 </label>
               </div>
             )}
@@ -608,6 +654,7 @@ export function SellerProductManagement({ products, memberships, onUpdated }: Pr
                 {tr('المتجر', 'Store')}
                 <select
                   required
+                  {...fieldProps('sellerId')}
                   value={draft.sellerId}
                   disabled={selected !== null}
                   onChange={(event) => set('sellerId', event.target.value)}
@@ -627,6 +674,7 @@ export function SellerProductManagement({ products, memberships, onUpdated }: Pr
                 {tr('التصنيف', 'Category')}
                 <select
                   required
+                  {...fieldProps('categoryId')}
                   value={draft.categoryId}
                   onChange={(event) => set('categoryId', event.target.value)}
                 >
@@ -645,18 +693,24 @@ export function SellerProductManagement({ products, memberships, onUpdated }: Pr
                 <input
                   required
                   maxLength={180}
+                  {...fieldProps('nameAr')}
                   value={draft.nameAr}
                   onChange={(event) => set('nameAr', event.target.value)}
                 />
+                {fieldError('nameAr')}
+                {fieldError('categoryId')}
+                {fieldError('sellerId')}
               </label>
               <label style={field}>
                 {tr('اسم المنتج بالإنجليزية', 'English product name')}
                 <input
                   required
                   maxLength={180}
+                  {...fieldProps('nameEn')}
                   value={draft.nameEn}
                   onChange={(event) => set('nameEn', event.target.value)}
                 />
+                {fieldError('nameEn')}
               </label>
             </div>
             <div style={controls}>
@@ -664,17 +718,21 @@ export function SellerProductManagement({ products, memberships, onUpdated }: Pr
                 {tr('الوصف بالعربية', 'Arabic description')}
                 <textarea
                   maxLength={10000}
+                  {...fieldProps('descriptionAr')}
                   value={draft.descriptionAr}
                   onChange={(event) => set('descriptionAr', event.target.value)}
                 />
+                {fieldError('descriptionAr')}
               </label>
               <label style={field}>
                 {tr('الوصف بالإنجليزية', 'English description')}
                 <textarea
                   maxLength={10000}
+                  {...fieldProps('descriptionEn')}
                   value={draft.descriptionEn}
                   onChange={(event) => set('descriptionEn', event.target.value)}
                 />
+                {fieldError('descriptionEn')}
               </label>
             </div>
             <div style={controls}>
@@ -686,9 +744,11 @@ export function SellerProductManagement({ products, memberships, onUpdated }: Pr
                   min="1"
                   max="10"
                   step="0.01"
+                  {...fieldProps('price')}
                   value={draft.price}
                   onChange={(event) => set('price', event.target.value)}
                 />
+                {fieldError('price')}
               </label>
               <label style={field}>
                 {tr('فئة الضريبة', 'VAT class')}
@@ -817,6 +877,33 @@ export function SellerProductManagement({ products, memberships, onUpdated }: Pr
           )}
         </article>
       ))}
+      {confirmation && (
+        <div className="seller-confirm-overlay" role="presentation" onMouseDown={(event) => {
+          if (event.target === event.currentTarget && !busy) setConfirmation(null);
+        }}>
+          <div className="seller-confirm-dialog" role="dialog" aria-modal="true"
+               aria-labelledby="seller-confirm-title" aria-describedby="seller-confirm-description">
+            <h3 id="seller-confirm-title">
+              {confirmation.kind === 'save'
+                ? tr('تأكيد حفظ المنتج', 'Confirm saving product')
+                : tr('تأكيد نشر المنتج', 'Confirm publishing product')}
+            </h3>
+            <p id="seller-confirm-description">
+              {confirmation.kind === 'save'
+                ? tr('هل تريد حفظ بيانات المنتج كمسودة؟ يمكنك إكمال الصورة والتفاصيل بعد الحفظ.', 'Save this product as a draft? You can add an image and more details afterwards.')
+                : tr('هل تريد إكمال المنتج؟ في العرض التجريبي ينشر مباشرة، وإلا يُرسل للمراجعة.', 'Complete this product? Demo mode publishes it immediately; otherwise it is sent for review.')}
+            </p>
+            <div className="seller-confirm-actions">
+              <button type="button" onClick={() => setConfirmation(null)} disabled={busy}>{tr('إلغاء', 'Cancel')}</button>
+              <button type="button" className="seller-confirm-primary" disabled={busy} autoFocus
+                onClick={() => {
+                  if (confirmation.kind === 'save') void persist();
+                  else if (confirmation.productId !== undefined) void publish(confirmation.productId);
+                }}>{tr('تأكيد', 'Confirm')}</button>
+            </div>
+          </div>
+        </div>
+      )}
       <p>
         {tr(
           'تُعرض المنتجات على دفعات. يمكن النشر المباشر للحساب التجريبي المصرّح له، وبقية الحسابات تتطلب مراجعة الإدارة.',
