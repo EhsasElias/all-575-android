@@ -145,6 +145,7 @@ export function SellerFinanceOverview({ memberships }: Props) {
             onChange={(event) => {
               setFrom(event.target.value);
               setSummary(null);
+              setLedger([]);
               setReadiness(null);
             }}
           />
@@ -159,6 +160,7 @@ export function SellerFinanceOverview({ memberships }: Props) {
             onChange={(event) => {
               setTo(event.target.value);
               setSummary(null);
+              setLedger([]);
               setReadiness(null);
             }}
           />
