@@ -2153,3 +2153,30 @@
     grid-template-columns: minmax(0, 1fr);
   }
 }
+
+
+/* SKU is shown next to the product title across Arabic and English layouts. */
+.seller-workspace-shell .seller-product-list-heading {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 8px 14px;
+}
+.seller-workspace-shell .seller-product-sku {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  max-width: 100%;
+  padding: 4px 9px;
+  border: 1px solid var(--sw-border);
+  border-radius: 7px;
+  background: var(--sw-card);
+  color: var(--sw-muted);
+  font-size: .85rem;
+  line-height: 1.4;
+}
+.seller-workspace-shell .seller-product-sku bdi {
+  color: var(--sw-ink);
+  overflow-wrap: anywhere;
+  font-weight: 600;
+}
