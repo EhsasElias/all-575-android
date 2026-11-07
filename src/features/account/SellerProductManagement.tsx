@@ -15,6 +15,7 @@ import {
   sellerCategories,
   lookupSellerProductCode,
   sellerCatalogTemplate,
+  sellerCatalogExcelTemplate,
   submitSellerProduct,
   updateSellerProduct,
   type SellerCategory,
@@ -467,22 +468,22 @@ export function SellerProductManagement({ products, memberships, onUpdated }: Pr
     }
   };
 
-  const downloadTemplate = async () => {
+  const downloadTemplate = async (format: 'csv' | 'xlsx') => {
     if (busy) return;
     setBusy(true);
     setError('');
     try {
-      const file = await sellerCatalogTemplate();
+      const file = format === 'xlsx' ? await sellerCatalogExcelTemplate() : await sellerCatalogTemplate();
       const objectUrl = URL.createObjectURL(file.blob);
       const anchor = document.createElement('a');
       anchor.href = objectUrl;
-      anchor.download = file.filename ?? 'seller-products-template.csv';
+      anchor.download = file.filename ?? ('seller-products-template.' + format);
       document.body.appendChild(anchor);
       anchor.click();
       anchor.remove();
-      URL.revokeObjectURL(objectUrl);
-    } catch {
-      setError(tr('تعذر تحميل قالب CSV.', 'Could not download the CSV template.'));
+      window.setTimeout(() => URL.revokeObjectURL(objectUrl), 30000);
+    } catch (cause) {
+      setError(explainApiError(cause, tr('تعذر تحميل القالب.', 'Could not download template.')));
     } finally {
       setBusy(false);
     }
@@ -512,8 +513,8 @@ export function SellerProductManagement({ products, memberships, onUpdated }: Pr
   const uploadCsv = async (dryRun = false) => {
     const sellerId = Number(importSeller || sellerIds[0]);
     if (busy || importFile === null || !sellerIds.includes(sellerId)) return;
-    if (importFile.size > 1024 * 1024 || !/[.]csv$/i.test(importFile.name)) {
-      setError(tr('اختر ملف CSV لا يتجاوز 1 ميجابايت.', 'Choose a CSV file under 1 MB.'));
+    if (importFile.size > 2 * 1024 * 1024 || !/[.](csv|xlsx)$/i.test(importFile.name)) {
+      setError(tr('اختر ملف CSV أو Excel لا يتجاوز 2 ميجابايت.', 'Choose a CSV or Excel file under 2 MB.'));
       return;
     }
     if (
@@ -610,14 +611,22 @@ export function SellerProductManagement({ products, memberships, onUpdated }: Pr
           type="button"
           style={button}
           disabled={busy}
-          onClick={() => void downloadTemplate()}
+          onClick={() => void downloadTemplate('xlsx')}
+        >
+          {tr('تحميل قالب Excel بالقوائم المنسدلة', 'Download Excel template with dropdowns')}
+        </button>
+        <button
+          type="button"
+          style={button}
+          disabled={busy}
+          onClick={() => void downloadTemplate('csv')}
         >
           {tr('تحميل قالب CSV', 'Download CSV template')}
         </button>
       </div>
       {sellerIds.length > 0 && (
         <div className="seller-import-card" style={card}>
-          <h3>{tr('استيراد المنتجات عبر CSV', 'Import products from CSV')}</h3>
+          <h3>{tr('استيراد المنتجات عبر Excel أو CSV', 'Import products using Excel or CSV')}</h3>
           <p className="seller-required-hint">
             {tr('في القالب: SKU والتصنيف والاسمان والسعر وفئة الضريبة إجبارية. المتجر والوصف والباركود اختيارية؛ المتجر يُحدد من هذه الصفحة.', 'In the template, SKU, category, both names, price and VAT class are required. Store, descriptions and barcode are optional; the store is selected on this page.')}
           </p>
@@ -653,16 +662,16 @@ export function SellerProductManagement({ products, memberships, onUpdated }: Pr
               </select>
             </label>
             <label className="seller-upload" style={field}>
-              <span>{tr('ملف CSV *', 'CSV file *')}</span>
+              <span>{tr('ملف Excel أو CSV *', 'Excel or CSV file *')}</span>
               <input
                 type="file"
-                accept=".csv,text/csv"
+                accept=".csv,.xlsx,text/csv,application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
                 onChange={(event) => {
                   setImportFile(event.target.files?.[0] ?? null);
                   setCsvPreview(null);
                 }}
               />
-              <span className="seller-upload-button">{tr('اختيار ملف CSV', 'Choose CSV file')}</span>
+              <span className="seller-upload-button">{tr('اختيار ملف Excel أو CSV', 'Choose Excel or CSV file')}</span>
               <span className="seller-upload-name">
                 {importFile?.name ?? tr('لم يتم اختيار ملف بعد', 'No file selected')}
               </span>
@@ -675,7 +684,7 @@ export function SellerProductManagement({ products, memberships, onUpdated }: Pr
               disabled={busy || importFile === null}
               onClick={() => void uploadCsv(true)}
             >
-              {tr('فحص ومعاينة CSV', 'Validate & preview CSV')}
+              {tr('فحص ومعاينة الملف', 'Validate & preview file')}
             </button>
             <button
               type="button"
