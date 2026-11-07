@@ -633,7 +633,7 @@ export function SellerWorkspaceScreen() {
             </button>
           </nav>
           {(section === 'orders' || section === 'inventory') && (
-            <div className="seller-filters" style={{ ...line, marginBottom: 12 }}>
+            <div className="seller-filters" style={{ marginBottom: 16 }}>
               <label>
                 {tr('الفرع', 'Branch')}{' '}
                 <select value={branchId} onChange={(event) => setBranchId(event.target.value)}>
@@ -960,8 +960,10 @@ export function SellerWorkspaceScreen() {
             </section>
           )}
           {!loading && section === 'orders' && (
-            <section>
-              <h2>{tr('طلبات التجهيز', 'Fulfilment orders')}</h2>
+            <section className="seller-orders-section">
+              <div className="seller-orders-heading">
+                <h2>{tr('طلبات التجهيز', 'Fulfilment orders')}</h2>
+                <div className="seller-orders-export">
               <button
                 type="button"
                 style={action}
@@ -978,9 +980,12 @@ export function SellerWorkspaceScreen() {
               >
                 {tr('تصدير CSV', 'Export CSV')}
               </button>
+                </div>
+              </div>
               {orders.length === 0 && <p>{tr('لا توجد طلبات مطابقة.', 'No matching orders.')}</p>}
+              <div className="seller-orders-grid">
               {orders.map((order) => (
-                <article key={order.id} style={panel}>
+                <article key={order.id} className="seller-order-card">
                   <h3>{order.order_number}</h3>
                   <p>
                     {labels[order.status] ?? order.status} · {tr('الفرع', 'Branch')} #
@@ -1060,6 +1065,7 @@ export function SellerWorkspaceScreen() {
                   )}
                 </article>
               ))}
+              </div>
               {hasMoreOrders && (
                 <button
                   type="button"
