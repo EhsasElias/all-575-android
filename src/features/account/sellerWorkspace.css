@@ -1474,3 +1474,125 @@
   .seller-workspace-shell .seller-orders-export { width: 100%; }
   .seller-workspace-shell .seller-orders-export button { flex: 1 1 120px; }
 }
+
+
+/* Fulfilment: consistent spacing, readable order contents, and responsive actions. */
+.seller-workspace-shell .seller-orders-section { display: grid; gap: 18px; min-width: 0; }
+.seller-workspace-shell .seller-orders-heading { margin-bottom: 0; }
+.seller-workspace-shell .seller-orders-grid {
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 410px), 1fr));
+  gap: clamp(14px, 2vw, 22px);
+}
+.seller-workspace-shell .seller-orders-grid .seller-order-card {
+  padding: clamp(18px, 2.4vw, 26px);
+  gap: 20px;
+  border-radius: 19px;
+}
+.seller-workspace-shell .seller-order-card-head {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 16px;
+  flex-wrap: wrap;
+}
+.seller-workspace-shell .seller-order-card-identity { display: grid; gap: 5px; min-width: 0; }
+.seller-workspace-shell .seller-order-overline { font-size: .78rem; color: var(--sw-muted); }
+.seller-workspace-shell .seller-order-card h3 {
+  margin: 0;
+  font-size: clamp(1.08rem, 2vw, 1.35rem);
+  overflow-wrap: anywhere;
+  text-align: start;
+}
+.seller-workspace-shell .seller-order-status {
+  border: 1px solid var(--sw-border);
+  background: var(--color-surface-mint, rgba(70,140,103,.12));
+  border-radius: 999px;
+  padding: 7px 12px;
+  font-size: .82rem;
+  line-height: 1.4;
+  font-weight: 700;
+}
+.seller-workspace-shell .seller-order-meta {
+  display: flex;
+  gap: 8px 16px;
+  flex-wrap: wrap;
+  color: var(--sw-muted);
+  font-size: .84rem;
+  line-height: 1.75;
+  overflow-wrap: anywhere;
+}
+.seller-workspace-shell .seller-order-meta bdi { unicode-bidi: isolate; }
+.seller-workspace-shell .seller-order-items-block {
+  padding: clamp(12px, 2vw, 17px);
+  border: 1px solid var(--sw-border);
+  border-radius: 14px;
+  display: grid;
+  gap: 13px;
+  min-width: 0;
+}
+.seller-workspace-shell .seller-order-items-heading {
+  display: flex;
+  gap: 10px;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  font-size: .9rem;
+}
+.seller-workspace-shell .seller-order-items-heading span { color: var(--sw-muted); font-size: .8rem; }
+.seller-workspace-shell .seller-order-card .seller-order-items {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: grid;
+  gap: 0;
+}
+.seller-workspace-shell .seller-order-items li {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  flex-wrap: wrap;
+  gap: 8px 12px;
+  padding: 10px 0;
+  border-top: 1px solid var(--sw-border);
+  overflow-wrap: anywhere;
+}
+.seller-workspace-shell .seller-order-items li strong {
+  white-space: nowrap;
+  font-variant-numeric: tabular-nums;
+}
+.seller-workspace-shell .seller-order-actions {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: stretch;
+  gap: 10px;
+  margin-top: auto;
+}
+.seller-workspace-shell .seller-order-actions button {
+  flex: 1 1 160px;
+  min-height: 46px;
+  border-radius: 11px;
+  white-space: normal;
+}
+.seller-workspace-shell .seller-order-actions .seller-order-primary {
+  background: #226d4b;
+  border-color: #226d4b;
+  color: #fff;
+}
+.seller-workspace-shell .seller-packing-box {
+  display: grid;
+  gap: 12px;
+  min-width: 0;
+  padding: 16px;
+  background: rgba(65,141,93,.08);
+  border: 1px solid var(--sw-border);
+  border-radius: 13px;
+  overflow-wrap: anywhere;
+}
+.seller-workspace-shell .seller-packing-box p,
+.seller-workspace-shell .seller-packing-box ul { margin: 0; }
+.seller-workspace-shell .seller-packing-box ul { padding-inline-start: 22px; }
+@media (max-width: 700px) {
+  .seller-workspace-shell .seller-orders-grid { grid-template-columns: minmax(0, 1fr); }
+  .seller-workspace-shell .seller-orders-grid .seller-order-card { padding: 16px; gap: 15px; }
+  .seller-workspace-shell .seller-order-actions button { flex-basis: 100%; }
+}
