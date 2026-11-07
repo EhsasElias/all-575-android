@@ -111,7 +111,7 @@ export function SellerStaffManagement({ memberships }: Props) {
 
   return (
     <section style={panel}>
-      <h2>{tr('إدارة فريق المتجر', 'Store staff')}</h2>
+      <h2>{tr('فريق المتجر', 'Store team')}</h2>
       <p>
         {tr(
           'يمكن لمالك المتجر عرض صلاحيات الفريق وإيقاف صلاحية موظف. تغيير ملكية المتجر يتطلب موافقة الإدارة.',
@@ -159,8 +159,8 @@ export function SellerStaffManagement({ memberships }: Props) {
             <table style={{ width: '100%', textAlign: 'start' }}>
               <thead>
                 <tr>
-                  <th>{tr('رقم حساب الموظف', 'Staff account number')}</th>
-                  <th>{tr('دور الموظف', 'Staff role')}</th>
+                  <th>{tr('رقم الموظف', 'Staff ID')}</th>
+                  <th>{tr('الدور', 'Role')}</th>
                   <th>{tr('الفرع', 'Branch')}</th>
                   <th>{tr('الحالة', 'Status')}</th>
                   <th>{tr('الإجراء', 'Action')}</th>
@@ -180,7 +180,7 @@ export function SellerStaffManagement({ memberships }: Props) {
                           disabled={busy}
                           onClick={() => void deactivate(member)}
                         >
-                          {tr('إيقاف الصلاحية', 'Deactivate access')}
+                          {tr('إيقاف', 'Deactivate')}
                         </button>
                       )}
                     </td>
