@@ -6,6 +6,7 @@ const ProductCameraScanner = lazy(() =>
 import { useTranslation } from 'react-i18next';
 import { isApiError } from '@/shared/api';
 import { uploadErrorMessage } from './uploadErrorMessage';
+import { env } from '@/shared/lib';
 import {
   addSellerProductVariant,
   createSellerProduct,
@@ -1010,6 +1011,15 @@ export function SellerProductManagement({ products, memberships, onUpdated }: Pr
                         {tr('حفظ صورة المنتج', 'Save product image')}
                       </button>
                     </div>
+                    {!coverFile && !coverUrl.trim() && products.find((product) => product.id === selected)?.image_path && (
+                      <div className="seller-product-image-preview">
+                        <img
+                          src={new URL('/storage/' + (products.find((product) => product.id === selected)?.image_path ?? '').split('/').map(encodeURIComponent).join('/'), env.apiBaseUrl).toString()}
+                          alt={tr('صورة المنتج الحالية', 'Current product image')}
+                        />
+                        <span>{tr('الصورة الحالية', 'Current image')}</span>
+                      </div>
+                    )}
                     {coverFile && (
                       <div className="seller-product-image-preview">
                         <span>{tr('الصورة المختارة:', 'Selected image:')}</span>
