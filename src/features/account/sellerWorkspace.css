@@ -2599,3 +2599,19 @@
   .seller-workspace-shell .seller-finance-kpis { grid-template-columns: minmax(0,1fr); }
   .seller-workspace-shell .seller-finance-readonly { white-space: normal; }
 }
+
+
+.seller-workspace-shell .seller-team-employee-number {
+  display: inline-flex;
+  align-items: center;
+  max-width: 100%;
+  border: 1px solid var(--sw-border);
+  border-radius: 8px;
+  background: rgba(58, 138, 98, .09);
+  color: var(--sw-ink);
+  padding: 6px 10px;
+  font-size: .9rem;
+  font-variant-numeric: tabular-nums;
+  letter-spacing: .02em;
+  white-space: nowrap;
+}
