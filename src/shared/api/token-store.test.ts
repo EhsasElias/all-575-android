@@ -1,6 +1,6 @@
 import { afterEach, describe, expect, it, vi } from 'vitest';
 import { createSecureTokenStore, type SecureKeyValueStorage } from './secure-token-store';
-import { createMemoryTokenStore, createTokenStore } from './token-store';
+import { createMemoryTokenStore, createTokenStore, createWebSessionTokenStore } from './token-store';
 
 function createFakeSecureStorage() {
   const items = new Map<string, string>();
@@ -88,13 +88,32 @@ describe('secure token store', () => {
   });
 });
 
-describe('createTokenStore', () => {
-  it('uses the in-memory store on the web', async () => {
-    const store = createTokenStore();
+describe('web session token store', () => {
+  it('restores an authenticated browser tab after a reload', async () => {
+    sessionStorage.clear();
+    const first = createWebSessionTokenStore();
+    await first.set('web-token');
 
+    const afterReload = createWebSessionTokenStore();
+    await expect(afterReload.get()).resolves.toBe('web-token');
+    expect(storedValues(localStorage)).not.toContain('web-token');
+
+    await afterReload.clear();
+    await expect(first.get()).resolves.toBeNull();
+    sessionStorage.clear();
+  });
+});
+
+describe('createTokenStore', () => {
+  it('uses per-tab sessionStorage on the web', async () => {
+    sessionStorage.clear();
+    const store = createTokenStore();
     await store.set('web-token');
 
     await expect(store.get()).resolves.toBe('web-token');
+    await expect(createTokenStore().get()).resolves.toBe('web-token');
     expect(storedValues(localStorage)).not.toContain('web-token');
+    await store.clear();
+    sessionStorage.clear();
   });
 });
