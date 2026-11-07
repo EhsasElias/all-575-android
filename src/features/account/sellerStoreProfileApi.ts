@@ -63,3 +63,12 @@ export const proposeSellerBranch = (input: {
     '/seller/branches',
     input,
   );
+
+export const createSellerServiceZone = (input: {
+  seller_id: number;
+  name_ar: string;
+  name_en: string;
+  center_lat: number;
+  center_lng: number;
+  radius_meters: number;
+}) => seller.post<{ data: SellerServiceZone }>('/seller/service-zones', input);
