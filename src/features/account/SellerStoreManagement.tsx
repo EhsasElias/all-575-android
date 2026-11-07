@@ -69,6 +69,8 @@ export function SellerStoreManagement({ memberships, onStoreUpdated }: Props) {
   const [zoneDraft, setZoneDraft] = useState({
     name_ar: '', name_en: '', center_lat: '', center_lng: '', radius_meters: '3000',
   });
+  const [zoneDistanceOption, setZoneDistanceOption] = useState('3000');
+  const zoneDistanceMeters = Number(zoneDraft.radius_meters);
   const zonePin: MapPin | null = zoneDraft.center_lat && zoneDraft.center_lng &&
     Number.isFinite(Number(zoneDraft.center_lat)) && Number.isFinite(Number(zoneDraft.center_lng))
       ? { lat: Number(zoneDraft.center_lat), lng: Number(zoneDraft.center_lng) } : null;
@@ -301,6 +303,7 @@ export function SellerStoreManagement({ memberships, onStoreUpdated }: Props) {
       setZones((current) => [...current, response.data]);
       setAddZoneOpen(false);
       setZoneDraft({ name_ar: '', name_en: '', center_lat: '', center_lng: '', radius_meters: '3000' });
+      setZoneDistanceOption('3000');
       setNotice(tr('تم إنشاء المنطقة. يمكنك الآن اختيارها ضمن مناطق تغطية الفرع.',
         'Zone created. You can now select it as branch coverage.'));
     } catch (cause) {
@@ -481,8 +484,8 @@ export function SellerStoreManagement({ memberships, onStoreUpdated }: Props) {
               {addZoneOpen && (
                 <form className="seller-zone-create-form" onSubmit={(event) => void createZone(event)}>
                   <h4>{tr('إضافة منطقة توصيل جديدة', 'New delivery zone')}</h4>
-                  <p>{tr('أدخل اسم المنطقة ومركزها ونصف قطر التغطية بالمتر. هذا الخيار متاح لحساب البائع التجريبي.',
-                    'Enter the zone name, center and coverage radius in meters. Available to the demo seller account.')}</p>
+                  <p>{tr('حدد مركز المنطقة ومسافة التوصيل منه. إنشاء المنطقة متاح لحساب البائع التجريبي.',
+                    'Choose the zone center and delivery distance. Zone creation is available to the demo seller account.')}</p>
                   <div className="seller-zone-create-grid">
                     <label>{tr('اسم المنطقة بالعربية (إجباري)', 'Arabic zone name (required)')}
                       <input required maxLength={180} disabled={saving} value={zoneDraft.name_ar}
@@ -492,16 +495,51 @@ export function SellerStoreManagement({ memberships, onStoreUpdated }: Props) {
                       <input required maxLength={180} disabled={saving} value={zoneDraft.name_en}
                         onChange={(event) => setZoneDraft((current) => ({ ...current, name_en: event.target.value }))}/>
                     </label>
-                    <label>{tr('نصف قطر التغطية بالمتر (إجباري)', 'Coverage radius in meters (required)')}
-                      <input type="number" required min={100} max={50000} step={100} disabled={saving}
-                        value={zoneDraft.radius_meters}
-                        onChange={(event) => setZoneDraft((current) => ({ ...current, radius_meters: event.target.value }))}/>
+                    <label>
+                      {tr('مسافة التوصيل من مركز المنطقة (إجباري)', 'Delivery distance from zone center (required)')}
+                      <select required disabled={saving} value={zoneDistanceOption}
+                        onChange={(event) => {
+                          const value = event.target.value;
+                          setZoneDistanceOption(value);
+                          if (value !== 'custom') {
+                            setZoneDraft((current) => ({ ...current, radius_meters: value }));
+                          }
+                        }}>
+                        <option value="1000">{tr('1 كم', '1 km')}</option>
+                        <option value="3000">{tr('3 كم', '3 km')}</option>
+                        <option value="5000">{tr('5 كم', '5 km')}</option>
+                        <option value="10000">{tr('10 كم', '10 km')}</option>
+                        <option value="custom">{tr('مسافة مخصصة', 'Custom distance')}</option>
+                      </select>
                     </label>
+                    {zoneDistanceOption === 'custom' && (
+                      <label>
+                        {tr('أدخل المسافة بالمتر (إجباري)', 'Enter distance in meters (required)')}
+                        <input type="number" required min={100} max={50000} step={1}
+                          placeholder={tr('مثال: 2500', 'Example: 2500')}
+                          disabled={saving} value={zoneDraft.radius_meters}
+                          onChange={(event) => setZoneDraft((current) => ({
+                            ...current, radius_meters: event.target.value,
+                          }))}/>
+                      </label>
+                    )}
                   </div>
-                  <p>{tr('حدد مركز المنطقة من الخريطة أو أدخل الإحداثيات.', 'Choose the zone center on the map or enter coordinates.')}</p>
+                  <p className="seller-zone-distance-help">
+                    {tr('حدد مركز المنطقة من الخريطة أو أدخل الإحداثيات. تُحسب المسافة بشكل دائري مباشر، وليس حسب مسار القيادة.',
+                      'Select a zone center on the map or enter coordinates. Distance is a straight-line radius, not driving distance.')}
+                  </p>
+                  {Number.isFinite(zoneDistanceMeters) && zoneDistanceMeters >= 100 && zoneDistanceMeters <= 50000 && (
+                    <p className="seller-zone-distance-preview" role="status">
+                      {tr('تغطي هذه المنطقة التوصيل حتى ', 'This zone covers delivery up to ')}
+                      {(zoneDistanceMeters / 1000).toLocaleString(ar ? 'ar-SA' : 'en-US', { maximumFractionDigits: 2 })}
+                      {tr(' كم من مركز المنطقة.', ' km from the zone center.')}
+                    </p>
+                  )}
                   <MapBoundary fallback={<p>{tr('الخريطة غير متاحة، أدخل الإحداثيات يدويًا.', 'Map unavailable. Enter coordinates manually.')}</p>}>
                     <Suspense fallback={<p>{tr('جار تحميل الخريطة…', 'Loading map…')}</p>}>
-                      <BranchPinMap pin={zonePin} labels={branchMapLabels} onPinChange={setZonePin}/>
+                      <BranchPinMap pin={zonePin} labels={branchMapLabels} onPinChange={setZonePin}
+                        coverageRadiusMeters={Number.isFinite(zoneDistanceMeters) && zoneDistanceMeters >= 100 && zoneDistanceMeters <= 50000
+                          ? zoneDistanceMeters : undefined}/>
                     </Suspense>
                   </MapBoundary>
                   <div className="seller-zone-create-grid">
