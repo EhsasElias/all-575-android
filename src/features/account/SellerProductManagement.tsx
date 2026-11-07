@@ -459,7 +459,7 @@ export function SellerProductManagement({ products, memberships, onUpdated }: Pr
         </button>
       </div>
       {sellerIds.length > 0 && (
-        <div style={card}>
+        <div className="seller-import-card" style={card}>
           <h3>{tr('استيراد المنتجات عبر CSV', 'Import products from CSV')}</h3>
           <p>
             {tr(
@@ -473,7 +473,7 @@ export function SellerProductManagement({ products, memberships, onUpdated }: Pr
               'VAT class: Standard, Zero-rated or Exempt. Descriptions and barcode are optional; SKU, both product names, category and price are required. Older templates still work.',
             )}
           </p>
-          <div style={controls}>
+          <div className="seller-import-fields" style={controls}>
             <label style={field}>
               {tr('المتجر', 'Store')}
               <select
@@ -508,7 +508,7 @@ export function SellerProductManagement({ products, memberships, onUpdated }: Pr
               </span>
             </label>
           </div>
-          <div style={{ ...controls, marginTop: 12 }}>
+          <div className="seller-import-actions" style={{ ...controls, marginTop: 12 }}>
             <button
               type="button"
               style={button}
