@@ -188,10 +188,10 @@ export function SellerProductManagement({ products, memberships, onUpdated }: Pr
     setFormError('');
   };
 
-  const applyScan = async (rawValue: string) => {
+  const applyScan = async (rawValue: string, format?: string) => {
     setScannerOpen(false);
     setScannedText(rawValue.slice(0, 400));
-    const parsed = parseProductCode(rawValue);
+    const parsed = parseProductCode(rawValue, format);
     const code = parsed.barcode || parsed.sku;
     const sellerId = Number(draft.sellerId || sellerIds[0]);
     let catalogMatch: Awaited<ReturnType<typeof lookupSellerProductCode>>['data'] = null;
@@ -715,7 +715,7 @@ export function SellerProductManagement({ products, memberships, onUpdated }: Pr
             </button>
             {scannerOpen && (
               <Suspense fallback={<p>{tr('جار تجهيز الماسح…', 'Preparing scanner…')}</p>}>
-                <ProductCameraScanner ar={ar} onRead={(text) => void applyScan(text)}
+                <ProductCameraScanner ar={ar} onRead={(text, format) => void applyScan(text, format)}
                   onClose={() => setScannerOpen(false)}/>
               </Suspense>
             )}
