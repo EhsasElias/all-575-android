@@ -66,7 +66,7 @@ export function SellerFinanceOverview({ memberships }: Props) {
     setReadiness(null);
     if (!owners.some((item) => item.seller_id === selected) || from > to) {
       setError(
-        tr('اختاري متجرًا وفترة زمنية صحيحة.', 'Choose an authorized store and valid date range.'),
+        tr('اختر متجرًا وفترة زمنية صحيحة.', 'Choose an authorized store and valid date range.'),
       );
       return;
     }
