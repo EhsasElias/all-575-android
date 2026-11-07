@@ -1076,7 +1076,7 @@ export function SellerWorkspaceScreen() {
                           <td><strong dir="ltr">{order.order_number}</strong></td>
                           <td><span className="seller-order-status">{labels[order.status] ?? order.status}</span></td>
                           <td>{branch ? (ar ? branch.name_ar : branch.name_en) : tr('فرع', 'Branch') + ' #' + order.branch_id}</td>
-                          <td><bdi dir="auto">{order.placed_at ? order.placed_at.replace('T', ' ').replace(/\\.\\d+Z?$/, '') : '—'}</bdi></td>
+                          <td><bdi dir="auto">{order.placed_at ? order.placed_at.replace('T', ' ').replace(/\.\d+Z?$/, '') : '—'}</bdi></td>
                           <td>
                             <div className="seller-orders-items-cell">
                               {order.items.map((item) => (
