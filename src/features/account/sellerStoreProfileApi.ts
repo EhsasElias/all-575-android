@@ -15,6 +15,7 @@ export type SellerBranchDetails = {
   name_ar: string;
   name_en: string;
   service_zone_id: number;
+  service_zone_ids: number[];
   lat: number;
   lng: number;
   is_active: boolean;
@@ -51,6 +52,7 @@ export const getSellerServiceZones = () =>
 export const proposeSellerBranch = (input: {
   seller_id: number;
   service_zone_id: number;
+  service_zone_ids?: number[];
   code: string;
   name_ar: string;
   name_en: string;
