@@ -105,22 +105,36 @@ export function SellerProductManagement({ products, memberships, onUpdated }: Pr
     'aria-invalid': !!fieldErrors[name],
     'aria-describedby': fieldErrors[name] ? 'seller-error-' + name : undefined,
   });
+  const flatCategories = (
+    items: SellerCategory[],
+    depth = 0,
+  ): Array<{ id: number; label: string }> =>
+    items.flatMap((item) => [
+      { id: item.id, label: '—'.repeat(depth) + (ar ? item.name.ar : item.name.en) },
+      ...flatCategories(item.children ?? [], depth + 1),
+    ]);
+
   const collectErrors = (): Partial<Record<keyof Draft, string>> => {
     const next: Partial<Record<keyof Draft, string>> = {};
     if (selected === null && !draft.sku.trim())
       next.sku = tr('رمز SKU مطلوب.', 'SKU is required.');
     if (selected === null && draft.sku.trim().length > 100)
-      next.sku = tr('الحد الأقصى 100 حرف.', 'Maximum 100 characters.');
+      next.sku = tr('رمز SKU يجب ألا يتجاوز 100 حرف.', 'SKU must be at most 100 characters.');
+    if (draft.barcode.trim().length > 100)
+      next.barcode = tr('الباركود يجب ألا يتجاوز 100 حرف.', 'Barcode must be at most 100 characters.');
     if (!sellerIds.includes(Number(draft.sellerId)))
-      next.sellerId = tr('اختر متجرًا مسموحًا.', 'Select an authorized store.');
-    if (!draft.categoryId || !/^[0-9]+$/.test(draft.categoryId))
-      next.categoryId = tr('اختر التصنيف.', 'Select a category.');
+      next.sellerId = tr('المتجر إجباري. اختر متجرًا مسموحًا.', 'Store is required. Select an authorized store.');
+    if (!draft.categoryId || !/^[0-9]+$/.test(draft.categoryId) ||
+        !flatCategories(categories).some((category) => String(category.id) === draft.categoryId))
+      next.categoryId = tr('التصنيف إجباري. اختر تصنيفًا صحيحًا.', 'Category is required. Select a valid category.');
     if (!draft.nameAr.trim()) next.nameAr = tr('اسم المنتج بالعربية مطلوب.', 'Arabic product name is required.');
     if (!draft.nameEn.trim()) next.nameEn = tr('اسم المنتج بالإنجليزية مطلوب.', 'English product name is required.');
     if (draft.nameAr.trim().length > 180) next.nameAr = tr('الحد الأقصى 180 حرفًا.', 'Maximum 180 characters.');
     if (draft.nameEn.trim().length > 180) next.nameEn = tr('الحد الأقصى 180 حرفًا.', 'Maximum 180 characters.');
-    if (draft.descriptionAr.length > 10000) next.descriptionAr = tr('الوصف طويل جدًا.', 'Description is too long.');
-    if (draft.descriptionEn.length > 10000) next.descriptionEn = tr('الوصف طويل جدًا.', 'Description is too long.');
+    if (draft.descriptionAr.length > 10000) next.descriptionAr = tr('الوصف بالعربية يجب ألا يتجاوز 10000 حرف.', 'Arabic description must not exceed 10,000 characters.');
+    if (draft.descriptionEn.length > 10000) next.descriptionEn = tr('الوصف بالإنجليزية يجب ألا يتجاوز 10000 حرف.', 'English description must not exceed 10,000 characters.');
+    if (!['standard', 'zero', 'exempt'].includes(draft.vatClass))
+      next.vatClass = tr('فئة الضريبة إجبارية. اختر فئة صحيحة.', 'VAT class is required. Select a valid class.');
     if (!/^[0-9]+(?:\.[0-9]{1,2})?$/.test(draft.price) ||
         Number(draft.price) < 1 || Number(draft.price) > 10)
       next.price = tr('أدخل سعرًا من 1 إلى 10 ريالات (حتى منزلتين عشريتين).', 'Enter a price from SAR 1 to SAR 10 (up to 2 decimals).');
@@ -435,14 +449,7 @@ export function SellerProductManagement({ products, memberships, onUpdated }: Pr
     }
   };
 
-  const flatCategories = (
-    items: SellerCategory[],
-    depth = 0,
-  ): Array<{ id: number; label: string }> =>
-    items.flatMap((item) => [
-      { id: item.id, label: '—'.repeat(depth) + (ar ? item.name.ar : item.name.en) },
-      ...flatCategories(item.children ?? [], depth + 1),
-    ]);
+
 
   return (
     <section>
@@ -467,7 +474,7 @@ export function SellerProductManagement({ products, memberships, onUpdated }: Pr
           </p>
           <div style={{ ...controls, alignItems: 'end' }}>
             <label style={field}>
-              {tr('رمز SKU الجديد', 'New SKU code')}
+              {tr('رمز SKU الجديد (إجباري)', 'New SKU code (required)')}
               <input
                 required
                 autoComplete="off"
@@ -533,7 +540,7 @@ export function SellerProductManagement({ products, memberships, onUpdated }: Pr
               </select>
             </label>
             <label className="seller-upload" style={field}>
-              <span>{tr('ملف CSV', 'CSV file')}</span>
+              <span>{tr('ملف CSV (إجباري)', 'CSV file (required)')}</span>
               <input
                 type="file"
                 accept=".csv,text/csv"
@@ -620,6 +627,7 @@ export function SellerProductManagement({ products, memberships, onUpdated }: Pr
               : tr('تعديل مسودة', 'Edit draft')}{' '}
           </h3>
           <form onSubmit={save} noValidate>
+            <p className="seller-required-hint">{tr('الحقول المميزة بكلمة (إجباري) يجب تعبئتها قبل الحفظ.', 'Fields marked (required) must be completed before saving.')}</p>
             {(formError || error) && (
               <div className="seller-form-message" role="alert">{formError || error}</div>
             )}
@@ -627,7 +635,7 @@ export function SellerProductManagement({ products, memberships, onUpdated }: Pr
             {selected === null && (
               <div style={{ ...controls, marginBottom: 12 }}>
                 <label style={field}>
-                  {tr('رمز SKU (مطلوب)', 'SKU code (required)')}
+                  {tr('رمز SKU (إجباري)', 'SKU code (required)')}
                   <input
                     required
                     maxLength={100}
@@ -651,7 +659,7 @@ export function SellerProductManagement({ products, memberships, onUpdated }: Pr
             )}
             <div style={controls}>
               <label style={field}>
-                {tr('المتجر', 'Store')}
+                {tr('المتجر (إجباري)', 'Store (required)')}
                 <select
                   required
                   {...fieldProps('sellerId')}
@@ -672,7 +680,7 @@ export function SellerProductManagement({ products, memberships, onUpdated }: Pr
                 {fieldError('sellerId')}
               </label>
               <label style={field}>
-                {tr('التصنيف', 'Category')}
+                {tr('التصنيف (إجباري)', 'Category (required)')}
                 <select
                   required
                   {...fieldProps('categoryId')}
@@ -691,7 +699,7 @@ export function SellerProductManagement({ products, memberships, onUpdated }: Pr
             </div>
             <div style={controls}>
               <label style={field}>
-                {tr('اسم المنتج بالعربية', 'Arabic product name')}
+                {tr('اسم المنتج بالعربية (إجباري)', 'Arabic product name (required)')}
                 <input
                   required
                   maxLength={180}
@@ -702,7 +710,7 @@ export function SellerProductManagement({ products, memberships, onUpdated }: Pr
                 {fieldError('nameAr')}
               </label>
               <label style={field}>
-                {tr('اسم المنتج بالإنجليزية', 'English product name')}
+                {tr('اسم المنتج بالإنجليزية (إجباري)', 'English product name (required)')}
                 <input
                   required
                   maxLength={180}
@@ -715,7 +723,7 @@ export function SellerProductManagement({ products, memberships, onUpdated }: Pr
             </div>
             <div style={controls}>
               <label style={field}>
-                {tr('الوصف بالعربية', 'Arabic description')}
+                {tr('الوصف بالعربية (اختياري)', 'Arabic description (optional)')}
                 <textarea
                   maxLength={10000}
                   {...fieldProps('descriptionAr')}
@@ -725,7 +733,7 @@ export function SellerProductManagement({ products, memberships, onUpdated }: Pr
                 {fieldError('descriptionAr')}
               </label>
               <label style={field}>
-                {tr('الوصف بالإنجليزية', 'English description')}
+                {tr('الوصف بالإنجليزية (اختياري)', 'English description (optional)')}
                 <textarea
                   maxLength={10000}
                   {...fieldProps('descriptionEn')}
@@ -737,7 +745,7 @@ export function SellerProductManagement({ products, memberships, onUpdated }: Pr
             </div>
             <div style={controls}>
               <label style={field}>
-                {tr('السعر بالريال (1–10)', 'Price SAR (1–10)')}
+                {tr('السعر بالريال (1–10) (إجباري)', 'Price SAR (1–10) (required)')}
                 <input
                   type="number"
                   required
@@ -751,8 +759,10 @@ export function SellerProductManagement({ products, memberships, onUpdated }: Pr
                 {fieldError('price')}
               </label>
               <label style={field}>
-                {tr('فئة الضريبة', 'VAT class')}
+                {tr('فئة الضريبة (إجباري)', 'VAT class (required)')}
                 <select
+                  required
+                  {...fieldProps('vatClass')}
                   value={draft.vatClass}
                   onChange={(event) => {
                     const val = event.target.value;
@@ -764,6 +774,7 @@ export function SellerProductManagement({ products, memberships, onUpdated }: Pr
                   <option value="zero">{tr('صفرية', 'Zero-rated')}</option>
                   <option value="exempt">{tr('معفاة', 'Exempt')}</option>
                 </select>
+                {fieldError('vatClass')}
               </label>
             </div>
             <div style={{ ...controls, marginTop: 12 }}>
@@ -780,7 +791,7 @@ export function SellerProductManagement({ products, memberships, onUpdated }: Pr
               <h4>{tr('إضافة وحدة بيع / باركود', 'Add variant / barcode')}</h4>
               <div style={controls}>
                 <label style={field}>
-                  SKU
+                  {tr('رمز SKU (إجباري)', 'SKU code (required)')}
                   <input
                     maxLength={100}
                     value={draft.sku}
