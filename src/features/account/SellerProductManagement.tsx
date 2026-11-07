@@ -1,4 +1,8 @@
-import { useEffect, useState, type FormEvent } from 'react';
+import { lazy, Suspense, useEffect, useState, type FormEvent } from 'react';
+import { parseProductCode } from './productCode';
+const ProductCameraScanner = lazy(() =>
+  import('./ProductCameraScanner').then((m) => ({ default: m.ProductCameraScanner })),
+);
 import { useTranslation } from 'react-i18next';
 import { isApiError } from '@/shared/api';
 import {
@@ -7,6 +11,7 @@ import {
   importSellerProductCsv,
   uploadSellerProductImage,
   sellerCategories,
+  lookupSellerProductCode,
   sellerCatalogTemplate,
   submitSellerProduct,
   updateSellerProduct,
@@ -91,6 +96,9 @@ export function SellerProductManagement({ products, memberships, onUpdated }: Pr
   const [error, setError] = useState('');
   const [success, setSuccess] = useState('');
   const [quickSku, setQuickSku] = useState('');
+  const [scannerOpen, setScannerOpen] = useState(false);
+  const [scannedText, setScannedText] = useState('');
+  const [scanNotice, setScanNotice] = useState('');
   const [fieldErrors, setFieldErrors] = useState<Partial<Record<keyof Draft, string>>>({});
   const [formError, setFormError] = useState('');
   const [confirmation, setConfirmation] = useState<{ kind: 'save' | 'publish'; productId?: number } | null>(null);
@@ -180,9 +188,69 @@ export function SellerProductManagement({ products, memberships, onUpdated }: Pr
     setFormError('');
   };
 
+  const applyScan = async (rawValue: string) => {
+    setScannerOpen(false);
+    setScannedText(rawValue.slice(0, 400));
+    const parsed = parseProductCode(rawValue);
+    const code = parsed.barcode || parsed.sku;
+    const sellerId = Number(draft.sellerId || sellerIds[0]);
+    let catalogMatch: Awaited<ReturnType<typeof lookupSellerProductCode>>['data'] = null;
+    if (code && sellerIds.includes(sellerId) && code.length <= 100) {
+      try {
+        const result = await lookupSellerProductCode(sellerId, code);
+        catalogMatch = result.data;
+      } catch {
+        // Embedded QR fields can still be read when lookup fails.
+      }
+    }
+    const validCategory = (id: string | undefined) =>
+      id && flatCategories(categories).some((item) => String(item.id) === id) ? id : undefined;
+    const candidates: Partial<Draft> = {
+      ...(validCategory(catalogMatch ? String(catalogMatch.category_id) : parsed.categoryId)
+        ? { categoryId: validCategory(catalogMatch ? String(catalogMatch.category_id) : parsed.categoryId) } : {}),
+      ...(catalogMatch?.name_ar || parsed.nameAr ? { nameAr: catalogMatch?.name_ar || parsed.nameAr } : {}),
+      ...(catalogMatch?.name_en || parsed.nameEn ? { nameEn: catalogMatch?.name_en || parsed.nameEn } : {}),
+      ...(catalogMatch?.description_ar || parsed.descriptionAr ? { descriptionAr: catalogMatch?.description_ar || parsed.descriptionAr } : {}),
+      ...(catalogMatch?.description_en || parsed.descriptionEn ? { descriptionEn: catalogMatch?.description_en || parsed.descriptionEn } : {}),
+      ...(catalogMatch ? { price: (catalogMatch.price_halalas / 100).toFixed(2) }
+        : parsed.price ? { price: parsed.price } : {}),
+      ...(catalogMatch ? { vatClass: catalogMatch.vat_class }
+        : parsed.vatClass ? { vatClass: parsed.vatClass } : {}),
+      ...(!catalogMatch && parsed.barcode ? { barcode: parsed.barcode } : {}),
+      ...(!catalogMatch && parsed.sku ? { sku: parsed.sku }
+        : !catalogMatch && parsed.barcode ? { sku: parsed.barcode } : {}),
+    };
+    setDraft((current) => {
+      const next = { ...current };
+      for (const [key, value] of Object.entries(candidates)) {
+        if (!value) continue;
+        const field = key as keyof Draft;
+        if (field === 'vatClass') {
+          if (current.vatClass === 'standard') next.vatClass = value as Draft['vatClass'];
+        } else if (!current[field].trim()) {
+          Object.assign(next, { [field]: value });
+        }
+      }
+      return next;
+    });
+    setFieldErrors({});
+    setError('');
+    setScanNotice(catalogMatch
+      ? tr('هذا الرمز موجود بالفعل في المتجر. عُرضت البيانات المتاحة دون تكرار SKU أو الباركود.',
+          'This code already exists in your store. Details were suggested without duplicating the SKU or barcode.')
+      : Object.keys(candidates).length
+        ? tr('تمت تعبئة الحقول الفارغة بالبيانات المقروءة. راجع كل البيانات قبل الحفظ.',
+            'Recognized data filled blank fields. Review the details before saving.')
+        : tr('تمت قراءة الرمز، لكن لا توجد به بيانات منتج معروفة. راجع النص المقروء.',
+            'Code read but no product fields recognized. Review the scanned text.'));
+  };
+
   const edit = (product: SellerProduct) => {
     if (!editable(product)) return;
     setSelected(product.id);
+    setScannerOpen(false);
+    setScanNotice('');
+    setScannedText('');
     setDraft({
       sellerId: String(product.seller_id),
       categoryId: String(product.category_id),
@@ -207,6 +275,9 @@ export function SellerProductManagement({ products, memberships, onUpdated }: Pr
 
   const newProduct = (sku = '') => {
     setSelected(null);
+    setScannerOpen(false);
+    setScanNotice('');
+    setScannedText('');
     setDraft({ ...empty(String(sellerIds[0] ?? '')), sku: sku.trim() });
     setFormVisible(true);
     setFieldErrors({});
@@ -629,6 +700,27 @@ export function SellerProductManagement({ products, memberships, onUpdated }: Pr
               ? tr('منتج جديد', 'New product')
               : tr('تعديل مسودة', 'Edit draft')}{' '}
           </h3>
+          <div className="seller-product-scanner-section">
+            <button type="button" className="seller-product-scan-button" disabled={busy}
+              onClick={() => setScannerOpen((open) => !open)}>
+              <span aria-hidden="true">▣</span>
+              {scannerOpen ? tr('إغلاق الكاميرا', 'Close camera')
+                : tr('مسح Barcode / QR بالكاميرا', 'Scan Barcode / QR with camera')}
+            </button>
+            {scannerOpen && (
+              <Suspense fallback={<p>{tr('جار تجهيز الماسح…', 'Preparing scanner…')}</p>}>
+                <ProductCameraScanner ar={ar} onRead={(text) => void applyScan(text)}
+                  onClose={() => setScannerOpen(false)}/>
+              </Suspense>
+            )}
+            {scanNotice && <p className="seller-form-success" role="status">{scanNotice}</p>}
+            {scannedText && (
+              <details className="seller-scanned-raw">
+                <summary>{tr('عرض النص المقروء من الرمز', 'Show scanned code content')}</summary>
+                <pre dir="auto">{scannedText}</pre>
+              </details>
+            )}
+          </div>
           <form onSubmit={save} noValidate>
             <p className="seller-required-hint">{tr('الحقول المميزة بكلمة (إجباري) يجب تعبئتها قبل الحفظ.', 'Fields marked (required) must be completed before saving.')}</p>
             {(formError || error) && (
