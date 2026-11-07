@@ -1392,8 +1392,15 @@
   width: min(1240px, calc(100vw - 48px));
   max-width: none;
   position: relative;
-  left: 50%;
+  /* Center the full-width seller workspace inside a narrower account container.
+     Logical inset + direction-aware translation works in both Arabic RTL and English LTR. */
+  left: auto;
+  right: auto;
+  inset-inline-start: 50%;
   transform: translateX(-50%);
+}
+.seller-workspace-shell[dir="rtl"] {
+  transform: translateX(50%);
 }
 .seller-workspace-shell > div {
   width: 100% !important;
