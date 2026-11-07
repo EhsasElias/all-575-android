@@ -25,15 +25,14 @@ for (const width of [320, 360, 393]) {
     });
     await openApp(page, routes[0]!);
     for (const path of routes) {
-      await page.evaluate((nextPath) => {
-        window.history.pushState({}, '', nextPath);
-        window.dispatchEvent(new PopStateEvent('popstate'));
-      }, path);
+      await page.evaluate(
+        "(nextPath) => { window.history.pushState({}, '', nextPath); window.dispatchEvent(new PopStateEvent('popstate')); }",
+        path,
+      );
       await page.locator('main').waitFor({ state: 'visible' });
-      const metrics = await page.evaluate(() => ({
-        scrollWidth: document.documentElement.scrollWidth,
-        viewport: window.innerWidth,
-      }));
+      const metrics = (await page.evaluate(
+        "() => ({ scrollWidth: document.documentElement.scrollWidth, viewport: window.innerWidth })",
+      )) as { scrollWidth: number; viewport: number };
       expect(metrics.scrollWidth, `Horizontal document overflow on ${path} at ${width}px`).toBeLessThanOrEqual(
         metrics.viewport + 1,
       );
