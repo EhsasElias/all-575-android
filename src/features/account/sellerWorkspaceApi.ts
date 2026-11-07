@@ -41,6 +41,7 @@ export type SellerProduct = {
   description_ar?: string | null;
   description_en?: string | null;
   image_path?: string | null;
+  sku?: string | null;
   price_halalas: number;
   vat_class: string;
   status: string;
