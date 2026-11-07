@@ -457,8 +457,14 @@ export function SellerProductManagement({ products, memberships, onUpdated }: Pr
           <h3>{tr('استيراد المنتجات عبر CSV', 'Import products from CSV')}</h3>
           <p>
             {tr(
-              'حمّلي القالب وأدخلي حتى 200 منتج. سيتم حفظها كمسودات للمراجعة.',
-              'Download the template and enter up to 200 products. They will be saved as drafts.',
+              'حمّلي القالب بعناوين واضحة وأدخلي حتى 200 منتج. استخدمي رقم التصنيف الموجود بالنظام، واكتبي السعر بالهللة (مثلاً 575 تعني 5.75 ريال).',
+              'Download the template and enter up to 200 products. Use the category ID from the system and price in halalas (575 means SAR 5.75).',
+            )}
+          </p>
+          <p>
+            {tr(
+              'فئة الضريبة: standard للقياسية، zero للصفرية، exempt للمعفاة. رمز SKU مطلوب لكل منتج والباركود اختياري. يقبل الاستيراد القوالب القديمة أيضًا.',
+              'VAT class: standard, zero or exempt. Every product needs an SKU; barcode is optional. Older templates remain supported.',
             )}
           </p>
           <div style={controls}>
