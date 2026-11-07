@@ -12,6 +12,7 @@ import {
   getSellerStoreProfile,
   saveSellerStoreProfile,
   saveSellerBranchProfile,
+  deleteSellerBranch,
   getSellerServiceZones,
   proposeSellerBranch,
   type SellerServiceZone,
@@ -99,8 +100,21 @@ export function SellerStoreManagement({ memberships, onStoreUpdated }: Props) {
   const [storeAr, setStoreAr] = useState('');
   const [storeEn, setStoreEn] = useState('');
   const [editBranch, setEditBranch] = useState<number | null>(null);
-  const [branchAr, setBranchAr] = useState('');
-  const [branchEn, setBranchEn] = useState('');
+  const [branchDraft, setBranchDraft] = useState({
+    code: '', name_ar: '', name_en: '', service_zone_id: '', lat: '', lng: '',
+  });
+  const [deleteTarget, setDeleteTarget] = useState<number | null>(null);
+  const editPin: MapPin | null =
+    branchDraft.lat.trim() && branchDraft.lng.trim() &&
+    Number.isFinite(Number(branchDraft.lat)) && Number.isFinite(Number(branchDraft.lng))
+      ? { lat: Number(branchDraft.lat), lng: Number(branchDraft.lng) }
+      : null;
+  const editZone = zones.find((zone) => zone.id === Number(branchDraft.service_zone_id));
+  const editPinInZone = editPin !== null && editZone !== undefined &&
+    branchWithinZone(editPin, editZone);
+  const setEditPin = (pin: MapPin) =>
+    setBranchDraft((current) => ({ ...current, lat: String(pin.lat), lng: String(pin.lng) }));
+  const { location: editLocation, locate: locateEdit } = useCurrentLocation(setEditPin);
   const [loading, setLoading] = useState(false);
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState('');
@@ -186,8 +200,15 @@ export function SellerStoreManagement({ memberships, onStoreUpdated }: Props) {
   const saveBranch = async (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     if (editBranch === null || saving) return;
-    if (!branchAr.trim() || !branchEn.trim()) {
-      setError(tr('اسم الفرع مطلوب باللغتين.', 'Branch name is required in both languages.'));
+    if (!branchDraft.name_ar.trim() || !branchDraft.name_en.trim() ||
+        !/^[A-Za-z0-9_-]{2,32}$/.test(branchDraft.code.trim())) {
+      setError(tr('أدخل أسماء الفرع ورمزًا صحيحًا (حرفان على الأقل، أرقام أو حروف إنجليزية).',
+        'Enter both branch names and a valid code (2+ Latin letters, numbers, _ or -).'));
+      return;
+    }
+    if (!editPinInZone) {
+      setError(tr('حدد موقع الفرع داخل منطقة التوصيل باستخدام الخريطة أو الإحداثيات.',
+        'Choose a location within the delivery zone, by map or coordinates.'));
       return;
     }
     setSaving(true);
@@ -195,20 +216,45 @@ export function SellerStoreManagement({ memberships, onStoreUpdated }: Props) {
     setNotice('');
     try {
       const result = await saveSellerBranchProfile(editBranch, {
-        name_ar: branchAr.trim(),
-        name_en: branchEn.trim(),
+        code: branchDraft.code.trim().toUpperCase(),
+        name_ar: branchDraft.name_ar.trim(),
+        name_en: branchDraft.name_en.trim(),
+        service_zone_id: Number(branchDraft.service_zone_id),
+        lat: Number(branchDraft.lat),
+        lng: Number(branchDraft.lng),
       });
       setBranches((current) =>
-        current.map((item) =>
-          item.id === editBranch
-            ? { ...item, name_ar: result.data.name_ar, name_en: result.data.name_en }
-            : item,
-        ),
+        current.map((item) => item.id === editBranch ? { ...item, ...result.data } : item),
       );
       setEditBranch(null);
-      setNotice(tr('تم حفظ اسم الفرع.', 'Branch name saved.'));
+      setNotice(tr('تم تحديث بيانات الفرع وموقعه مباشرة.', 'Branch details and location updated.'));
     } catch (cause) {
       setError(errorMessage(cause));
+    } finally {
+      setSaving(false);
+    }
+  };
+
+  const deleteBranch = async (id: number) => {
+    if (saving) return;
+    setSaving(true);
+    setError('');
+    setNotice('');
+    try {
+      await deleteSellerBranch(id);
+      setBranches((current) => current.filter((item) => item.id !== id));
+      setDeleteTarget(null);
+      if (editBranch === id) setEditBranch(null);
+      setNotice(tr('تم حذف الفرع غير المستخدم.', 'Unused branch deleted.'));
+      setRevision((v) => v + 1);
+    } catch (cause) {
+      if (isApiError(cause) && cause.status === 409) {
+        setError(tr('لا يمكن حذف الفرع لوجود طلبات أو مخزون أو موظفين مرتبطين به. احتفظ به لحماية السجلات.',
+          'This branch has orders, stock or staff assignments and cannot be deleted safely.'));
+      } else {
+        setError(errorMessage(cause));
+      }
+      setDeleteTarget(null);
     } finally {
       setSaving(false);
     }
@@ -573,41 +619,128 @@ export function SellerStoreManagement({ memberships, onStoreUpdated }: Props) {
                     disabled={saving}
                     onClick={() => {
                       setEditBranch(branch.id);
-                      setBranchAr(branch.name_ar);
-                      setBranchEn(branch.name_en);
+                      setBranchDraft({
+                        code: branch.code,
+                        name_ar: branch.name_ar,
+                        name_en: branch.name_en,
+                        service_zone_id: String(branch.service_zone_id),
+                        lat: String(branch.lat),
+                        lng: String(branch.lng),
+                      });
+                      setDeleteTarget(null);
                       setError('');
                     }}
                   >
-                    {tr('تعديل اسم الفرع', 'Edit branch name')}
+                    {tr('تعديل بيانات الفرع', 'Edit branch details')}
                   </button>
+                )}
+                {editBranch !== branch.id && (
+                  <div className="seller-branch-actions">
+                    {deleteTarget !== branch.id ? (
+                      <button type="button" disabled={saving} className="seller-branch-delete"
+                        onClick={() => setDeleteTarget(branch.id)}>
+                        {tr('حذف الفرع', 'Delete branch')}
+                      </button>
+                    ) : (
+                      <div className="seller-delete-confirm" role="group"
+                        aria-label={tr('تأكيد حذف الفرع', 'Confirm branch deletion')}>
+                        <p>{tr('هل تريد حذف هذا الفرع؟ لن يُحذف إذا كان مرتبطًا بطلبات أو مخزون أو موظفين.',
+                          'Delete this branch? Linked orders, stock or staff prevent deletion.')}</p>
+                        <button type="button" disabled={saving}
+                          onClick={() => void deleteBranch(branch.id)}>
+                          {tr('تأكيد الحذف', 'Confirm deletion')}
+                        </button>
+                        <button type="button" disabled={saving} onClick={() => setDeleteTarget(null)}>
+                          {tr('إلغاء', 'Cancel')}
+                        </button>
+                      </div>
+                    )}
+                  </div>
                 )}
                 {editBranch === branch.id && (
                   <form className="seller-branch-edit" onSubmit={(event) => void saveBranch(event)}>
                     <div style={row}>
+                      {([
+                        ['code', tr('رمز الفرع (إجباري)', 'Branch code (required)')],
+                        ['name_ar', tr('اسم الفرع بالعربية (إجباري)', 'Arabic branch name (required)')],
+                        ['name_en', tr('اسم الفرع بالإنجليزية (إجباري)', 'English branch name (required)')],
+                      ] as const).map(([key, label]) => (
+                        <label key={key} style={field}>
+                          {label}
+                          <input required disabled={saving} maxLength={key === 'code' ? 32 : 180}
+                            value={branchDraft[key]}
+                            onChange={(event) => setBranchDraft((current) => ({
+                              ...current, [key]: event.target.value,
+                            }))}/>
+                        </label>
+                      ))}
                       <label style={field}>
-                        {tr('اسم الفرع بالعربية', 'Arabic branch name')}
-                        <input
-                          value={branchAr}
-                          maxLength={180}
-                          required
-                          disabled={saving}
-                          onChange={(event) => setBranchAr(event.target.value)}
-                        />
-                      </label>
-                      <label style={field}>
-                        {tr('اسم الفرع بالإنجليزية', 'English branch name')}
-                        <input
-                          value={branchEn}
-                          maxLength={180}
-                          required
-                          disabled={saving}
-                          onChange={(event) => setBranchEn(event.target.value)}
-                        />
+                        {tr('منطقة التوصيل (إجباري)', 'Delivery zone (required)')}
+                        <select required disabled={saving} value={branchDraft.service_zone_id}
+                          onChange={(event) => {
+                            const zone = zones.find((item) => item.id === Number(event.target.value));
+                            setBranchDraft((current) => ({
+                              ...current,
+                              service_zone_id: event.target.value,
+                              lat: zone ? String(zone.center_lat) : '',
+                              lng: zone ? String(zone.center_lng) : '',
+                            }));
+                          }}>
+                          <option value="">{tr('اختر المنطقة', 'Choose zone')}</option>
+                          {zones.map((zone) => (
+                            <option key={zone.id} value={zone.id}>
+                              {ar ? zone.name_ar : zone.name_en}
+                            </option>
+                          ))}
+                        </select>
                       </label>
                     </div>
-                    <div style={{ ...row, marginTop: 10 }}>
-                      <button type="submit" disabled={saving}>
-                        {tr('حفظ الفرع', 'Save branch')}
+                    <div className="seller-branch-edit-map">
+                      <p>{tr('حدد الموقع بالنقر أو تحريك الدبوس على الخريطة؛ سيتم تعبئة خط العرض والطول تلقائيًا. ويمكنك إدخالهما يدويًا.',
+                        'Tap or drag the map pin to fill latitude and longitude automatically, or enter both coordinates manually.')}</p>
+                      <button type="button" disabled={saving || editLocation.status === 'locating'}
+                        onClick={() => void locateEdit()}>
+                        {editLocation.status === 'locating'
+                          ? tr('جار تحديد الموقع…', 'Finding location…')
+                          : tr('استخدام موقعي الحالي', 'Use my current location')}
+                      </button>
+                      {editLocation.status === 'failed' && (
+                        <p role="alert">{tr('تعذر تحديد الموقع تلقائيًا؛ اختر الموقع من الخريطة أو أدخل الإحداثيات.',
+                          'Could not locate automatically. Use the map or coordinates.')}</p>
+                      )}
+                      {branchDraft.service_zone_id && (
+                        <MapBoundary fallback={<p role="alert">{tr('الخريطة غير متاحة؛ أدخل الإحداثيات يدويًا.',
+                          'Map unavailable; enter coordinates manually.')}</p>}>
+                          <Suspense fallback={<p>{tr('جار تحميل الخريطة…', 'Loading map…')}</p>}>
+                            <BranchPinMap key={branchDraft.service_zone_id} pin={editPin}
+                              labels={branchMapLabels} onPinChange={setEditPin}/>
+                          </Suspense>
+                        </MapBoundary>
+                      )}
+                      <div style={row}>
+                        {(['lat', 'lng'] as const).map((key) => (
+                          <label key={key} style={field}>
+                            {key === 'lat' ? tr('خط العرض (إجباري)', 'Latitude (required)')
+                              : tr('خط الطول (إجباري)', 'Longitude (required)')}
+                            <input type="number" required step="any" disabled={saving}
+                              value={branchDraft[key]}
+                              onChange={(event) => setBranchDraft((current) => ({
+                                ...current, [key]: event.target.value,
+                              }))}/>
+                          </label>
+                        ))}
+                      </div>
+                      {editPin && editZone && (
+                        <p role="status" className={editPinInZone ? 'seller-zone-valid' : 'seller-zone-invalid'}>
+                          {editPinInZone
+                            ? tr('الموقع داخل منطقة التوصيل.', 'Location is inside the delivery zone.')
+                            : tr('الموقع خارج منطقة التوصيل؛ اختر نقطة داخل المنطقة.', 'Location is outside the delivery zone.')}
+                        </p>
+                      )}
+                    </div>
+                    <div className="seller-branch-actions">
+                      <button type="submit" disabled={saving || !editPinInZone}>
+                        {tr('حفظ جميع التعديلات', 'Save all changes')}
                       </button>
                       <button type="button" disabled={saving} onClick={() => setEditBranch(null)}>
                         {tr('إلغاء', 'Cancel')}
