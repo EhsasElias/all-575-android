@@ -110,3 +110,195 @@
 @media (prefers-reduced-motion: reduce) {
   .seller-workspace-shell * { transition-duration: 0.01ms !important; }
 }
+
+
+/* Seller workspace polish: consistent spacing, responsive navigation and controls. */
+.seller-workspace-shell {
+  --sw-card: var(--color-surface, #fff);
+  --sw-field: var(--color-surface, #fff);
+  --sw-ink: var(--color-text, #17211b);
+  --sw-muted: var(--color-text-muted, #435649);
+  --sw-border: var(--color-border, #d3ddd0);
+  --sw-accent-light: var(--color-surface-mint, #eef4ec);
+  color: var(--sw-ink);
+}
+.seller-workspace-shell .seller-tabs {
+  display: grid !important;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 8px !important;
+  align-items: stretch !important;
+  overflow: visible;
+  padding: 12px;
+  background: var(--color-surface-mint, #eef4ec);
+}
+.seller-workspace-shell .seller-tabs button {
+  width: 100%;
+  white-space: normal;
+  min-width: 0;
+  min-height: 48px;
+  padding: 10px 8px !important;
+  line-height: 1.45;
+  background: var(--sw-card) !important;
+  color: var(--sw-ink) !important;
+  border: 1px solid var(--sw-border) !important;
+  border-radius: 12px !important;
+}
+.seller-workspace-shell .seller-tabs button[aria-current="page"] {
+  color: #fff !important;
+  background: #22795c !important;
+  border-color: #22795c !important;
+}
+.seller-workspace-shell .seller-tabs .seller-refresh {
+  grid-column: 1 / -1;
+  width: fit-content;
+  min-width: 100px;
+  margin-inline-start: 0;
+  justify-self: end;
+  background: transparent !important;
+}
+/* The site's theme tokens control light and dark independently of system defaults. */
+.seller-workspace-shell .seller-content :is(input:not([type="checkbox"]):not([type="radio"]):not([type="file"]),select,textarea) {
+  background: var(--sw-field) !important;
+  color: var(--sw-ink) !important;
+  border-color: var(--sw-border) !important;
+  color-scheme: inherit;
+}
+.seller-workspace-shell .seller-content input::placeholder,
+.seller-workspace-shell .seller-content textarea::placeholder {
+  color: var(--sw-muted);
+  opacity: .9;
+}
+.seller-workspace-shell .seller-content :is(input,select,textarea):focus-visible {
+  border-color: var(--color-brand, #2b6b4f) !important;
+  box-shadow: 0 0 0 3px color-mix(in srgb, var(--color-brand, #2b6b4f) 20%, transparent);
+}
+.seller-workspace-shell .seller-content :is(form,article,.seller-card) {
+  min-width: 0;
+}
+.seller-workspace-shell .seller-content :is(form,article,.seller-card) > :is(h2,h3,h4) {
+  margin-block: 0 12px;
+  line-height: 1.5;
+}
+.seller-workspace-shell .seller-content :is(form,article,.seller-card) > p {
+  margin-block: 0 14px;
+  line-height: 1.75;
+  overflow-wrap: anywhere;
+}
+.seller-workspace-shell .seller-content :is(form,article,.seller-card) > button {
+  margin-block: 10px 2px !important;
+}
+.seller-workspace-shell .seller-content button {
+  min-height: 44px !important;
+  line-height: 1.4;
+  background: var(--color-surface-mint, #eef4ec);
+  color: var(--sw-ink);
+}
+.seller-workspace-shell .seller-content :is(form,article,.seller-card) > :is(div,form,article) {
+  min-width: 0;
+}
+.seller-workspace-shell .seller-content .seller-card {
+  padding: clamp(16px, 3vw, 24px) !important;
+  background: var(--sw-card);
+  border: 1px solid var(--sw-border) !important;
+  border-radius: 18px !important;
+  margin-block-end: 18px !important;
+}
+.seller-workspace-shell .seller-section-heading {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 14px;
+  margin-bottom: 18px;
+}
+.seller-workspace-shell .seller-section-heading h3 {
+  margin: 0;
+  line-height: 1.5;
+}
+.seller-workspace-shell .seller-section-heading button {
+  margin: 0 !important;
+}
+.seller-workspace-shell .seller-branch-card {
+  border: 1px solid var(--sw-border) !important;
+  border-radius: 16px;
+  padding: 18px !important;
+  margin-block: 12px 16px !important;
+  background: var(--sw-card) !important;
+  overflow-wrap: anywhere;
+}
+.seller-workspace-shell .seller-branch-card strong {
+  display: block;
+  font-size: 1.1rem;
+  margin-bottom: 12px;
+}
+.seller-workspace-shell .seller-branch-card p {
+  margin: 0 0 14px;
+  line-height: 1.8;
+}
+.seller-workspace-shell .seller-branch-card > button {
+  margin-top: 12px !important;
+}
+.seller-workspace-shell .seller-branch-edit {
+  display: grid;
+  gap: 16px;
+  padding-block: 14px;
+}
+.seller-workspace-shell .seller-upload {
+  display: grid !important;
+  gap: 10px;
+  padding: 16px;
+  margin-block: 12px;
+  background: var(--color-surface-mint, #eef4ec);
+  border: 1px dashed var(--sw-border);
+  border-radius: 16px;
+  cursor: pointer;
+}
+.seller-workspace-shell .seller-upload input[type="file"] {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  opacity: 0;
+  overflow: hidden;
+}
+.seller-workspace-shell .seller-upload .seller-upload-button {
+  width: fit-content;
+  border: 1px solid var(--sw-border);
+  border-radius: 12px;
+  background: var(--sw-card);
+  padding: 10px 16px;
+}
+.seller-workspace-shell .seller-upload:focus-within {
+  outline: 2px solid var(--color-brand, #2b6b4f);
+  outline-offset: 2px;
+}
+.seller-workspace-shell .seller-upload-name {
+  color: var(--sw-muted);
+  font-size: .875rem;
+  overflow-wrap: anywhere;
+}
+@media (max-width: 700px) {
+  .seller-workspace-shell .seller-tabs {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 8px !important;
+    padding: 10px;
+  }
+  .seller-workspace-shell .seller-tabs button {
+    min-height: 46px;
+    padding: 10px 6px !important;
+    font-size: .86rem;
+  }
+  .seller-workspace-shell .seller-tabs .seller-refresh {
+    width: 100%;
+    justify-self: stretch;
+  }
+  .seller-workspace-shell .seller-section-heading {
+    align-items: stretch;
+    flex-direction: column;
+  }
+  .seller-workspace-shell .seller-section-heading button {
+    width: 100%;
+  }
+  .seller-workspace-shell .seller-branch-card {
+    padding: 16px !important;
+  }
+}
