@@ -529,8 +529,8 @@ export function SellerProductManagement({ products, memberships, onUpdated }: Pr
   const uploadCsv = async (dryRun = false) => {
     const sellerId = Number(importSeller || sellerIds[0]);
     if (busy || importFile === null || !sellerIds.includes(sellerId)) return;
-    if (importFile.size > 2 * 1024 * 1024 || !/[.](csv|xlsx)$/i.test(importFile.name)) {
-      setError(tr('اختر ملف CSV أو Excel لا يتجاوز 2 ميجابايت.', 'Choose a CSV or Excel file under 2 MB.'));
+    if (importFile.size > 20 * 1024 * 1024 || !/[.](csv|xlsx)$/i.test(importFile.name)) {
+      setError(tr('اختر ملف CSV أو Excel لا يتجاوز 20 ميجابايت.', 'Choose a CSV or Excel file under 20 MB.'));
       return;
     }
     if (
@@ -652,14 +652,14 @@ export function SellerProductManagement({ products, memberships, onUpdated }: Pr
           </p>
           <p className="seller-required-hint">
             {tr(
-              'قالبا CSV وExcel يحتويان على حقول المنتج ووحدة البيع: SKU والباركود والمتجر والتصنيف والاسمين والوصفين والسعر والضريبة، مع اسمَي وحدة البيع الاختياريين. قالب Excel يتضمن قوائم منسدلة للمتجر والتصنيف والضريبة.',
-              'Both CSV and Excel templates include all product and selling-unit text fields: SKU, barcode, store, category, names, descriptions, price, VAT and optional variant names. Excel adds dropdown lists for store, category and VAT.',
+              'قالبا CSV وExcel يحتويان على بيانات المنتج واسمَي وحدة البيع ورابط صورة HTTPS الاختياري. ويدعم Excel إضافة صورة من إدراج > صور > وضع فوق الخلايا في عمود الصورة، مع قوائم منسدلة للمتجر والتصنيف والضريبة.',
+              'Both templates include product fields, optional variant names, and a HTTPS image URL column. Excel additionally supports pictures placed over cells in the image column, plus dropdowns for store, category and VAT.',
             )}
           </p>
           <p>
             {tr(
-              'صورة المنتج ملف مستقل وليست خلية Excel أو CSV؛ بعد الاستيراد افتح المسودة وارفع صورة الغلاف قبل إرسال المنتج للنشر.',
-              'Product cover images are separate files, not spreadsheet cells. After import, open the draft and upload its cover image before submitting for publication.',
+              'في Excel ضع الصورة فوق الخلية في العمود N بنفس صف المنتج (بدون دالة IMAGE). CSV يدعم روابط الصور فقط. ويمكن تعديل الصورة من بطاقة المرفقات بعد الاستيراد.',
+              'In Excel, place each picture over column N in the matching product row (not as an IMAGE() formula). CSV supports image URLs only. You can also change a cover image from the product attachment card after import.',
             )}
           </p>
           <p>
