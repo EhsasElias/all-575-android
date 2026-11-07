@@ -10,6 +10,7 @@ import { SellerFinanceOverview } from './SellerFinanceOverview';
 import { SellerStaffManagement } from './SellerStaffManagement';
 import { SellerReturnManagement } from './SellerReturnManagement';
 import { SellerStoreManagement } from './SellerStoreManagement';
+import { SellerInsightPanel } from './SellerInsightPanel';
 import {
   memberships,
   openSellerSession,
@@ -32,6 +33,7 @@ import {
   type SellerStock,
   type SellerMembership,
   type SellerPackingList,
+  type SellerInsightMetric,
 } from './sellerWorkspaceApi';
 
 type Section =
@@ -67,6 +69,7 @@ export function SellerWorkspaceScreen() {
   const [sellerMemberships, setSellerMemberships] = useState<SellerMembership[]>([]);
   const [section, setSection] = useState<Section>('overview');
   const [dashboard, setDashboard] = useState<SellerDashboard | null>(null);
+  const [insightMetric, setInsightMetric] = useState<SellerInsightMetric | null>(null);
   const [branches, setBranches] = useState<SellerBranch[]>([]);
   const [products, setProducts] = useState<SellerProduct[]>([]);
   const [hasMoreProducts, setHasMoreProducts] = useState(false);
@@ -639,24 +642,45 @@ export function SellerWorkspaceScreen() {
                 {(
                   ['awaiting_seller', 'preparing', 'ready', 'on_the_way', 'delivered'] as const
                 ).map((status) => (
-                  <div key={status} style={panel}>
-                    <div>{labels[status]}</div>
-                    <strong style={{ fontSize: 26 }}>{dashboard[status] ?? 0}</strong>
-                  </div>
+                  <button type="button" key={status} className="seller-metric-card"
+                    aria-expanded={insightMetric === status}
+                    onClick={() => setInsightMetric(insightMetric === status ? null : status)}>
+                    <span className="seller-metric-label">{labels[status]}</span>
+                    <strong>{dashboard[status] ?? 0}</strong>
+                    <span className="seller-metric-more">{tr('عرض تفاصيل الطلبات والتصدير', 'View details and export')}</span>
+                  </button>
                 ))}
               </div>
-              <section style={panel}>
-                <h2>{tr('المبيعات المسلّمة', 'Delivered merchandise')}</h2>
-                <strong>
-                  {(dashboard.delivered_merchandise_halalas / 100).toFixed(2)} {tr('ر.س', 'SAR')}
-                </strong>
-                <p>
-                  {tr(
-                    'قيمة البضاعة بعد الخصم، وليست صافي مستحقات البائع.',
-                    'Merchandise after discounts, not net seller payout.',
-                  )}
-                </p>
-              </section>
+              <div className="seller-metric-grid">
+                <button type="button" className="seller-metric-card seller-metric-featured"
+                  aria-expanded={insightMetric === 'sales'}
+                  onClick={() => setInsightMetric(insightMetric === 'sales' ? null : 'sales')}>
+                  <span className="seller-metric-label">{tr('إجمالي المبيعات المسلّمة', 'Total delivered merchandise')}</span>
+                  <strong>{(dashboard.delivered_merchandise_halalas / 100).toFixed(2)} {tr('ر.س', 'SAR')}</strong>
+                  <span className="seller-metric-more">{tr('التفاصيل حسب التاريخ والتصدير', 'Drill down by date and export')}</span>
+                </button>
+                {([
+                  ['orders', tr('جميع الطلبات', 'All orders')],
+                  ['products', tr('المنتجات الأكثر مبيعًا', 'Top products')],
+                  ['branches', tr('أداء الفروع', 'Branch performance')],
+                  ['stock', tr('تتبع المخزون', 'Inventory health')],
+                ] as Array<[SellerInsightMetric, string]>).map(([metric, title]) => (
+                  <button className="seller-metric-card seller-metric-shortcut" type="button" key={metric}
+                    aria-expanded={insightMetric === metric}
+                    onClick={() => setInsightMetric(insightMetric === metric ? null : metric)}>
+                    <span>{title}</span>
+                    <span className="seller-metric-more">{tr('عرض التفاصيل ←', 'View details →')}</span>
+                  </button>
+                ))}
+              </div>
+              <p className="seller-insight-disclaimer">
+                {tr('هذه البطاقات تعرض الإجماليات الحالية، بينما التفاصيل تتيح تصفية التاريخ والفرع. المبيعات ليست صافي الربح؛ تكلفة الشراء والعمولات غير مكتملة.',
+                  'Cards show current totals; open a report to filter dates and branches. Sales are not profit; cost and commission data are incomplete.')}
+              </p>
+              {insightMetric && (
+                <SellerInsightPanel metric={insightMetric} branches={branches}
+                  onClose={() => setInsightMetric(null)}/>
+              )}
               <section style={panel}>
                 <h2>{tr('الفروع المسموحة', 'Assigned branches')}</h2>
                 {branches.length === 0 ? (
