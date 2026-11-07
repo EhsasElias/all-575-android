@@ -450,3 +450,104 @@
     gap: 16px;
   }
 }
+
+/* Product form: actionable inline validation and accessible confirmation sheet. */
+.seller-workspace-shell .seller-product-form-card {
+  border: 1px solid var(--sw-border) !important;
+  border-radius: 18px !important;
+  padding: clamp(16px, 3vw, 24px) !important;
+  background: var(--sw-card);
+}
+.seller-workspace-shell .seller-product-form-card > form {
+  display: grid;
+  gap: 14px;
+}
+.seller-workspace-shell .seller-product-form-card form label {
+  min-width: 0;
+  align-content: start;
+}
+.seller-workspace-shell .seller-product-form-card [aria-invalid="true"] {
+  border-color: #c34d49 !important;
+  box-shadow: 0 0 0 2px rgba(195,77,73,.12);
+}
+.seller-workspace-shell .seller-field-error {
+  display: block;
+  color: var(--color-danger, #b42318);
+  font-weight: 500;
+  font-size: .81rem;
+  line-height: 1.5;
+  margin-block-start: 5px;
+  overflow-wrap: anywhere;
+}
+.seller-workspace-shell .seller-form-message,
+.seller-workspace-shell .seller-form-success {
+  padding: 12px 16px;
+  border-radius: 12px;
+  border: 1px solid var(--sw-border);
+  line-height: 1.7;
+}
+.seller-workspace-shell .seller-form-message {
+  background: var(--color-danger-surface, #fdecec);
+  color: var(--color-danger, #b42318);
+  border-color: color-mix(in srgb, var(--color-danger, #b42318) 35%, transparent);
+}
+.seller-workspace-shell .seller-form-success {
+  background: var(--color-surface-mint, #eef4ec);
+  color: var(--sw-ink);
+}
+.seller-workspace-shell .seller-confirm-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 100;
+  background: rgba(7,18,12,.62);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 16px;
+}
+.seller-workspace-shell .seller-confirm-dialog {
+  width: min(100%, 460px);
+  padding: clamp(20px, 4vw, 30px);
+  border-radius: 20px;
+  border: 1px solid var(--sw-border);
+  box-shadow: 0 18px 55px rgba(0,0,0,.25);
+  background: var(--color-surface, #fff);
+  color: var(--color-text, #17211b);
+}
+.seller-workspace-shell .seller-confirm-dialog h3 {
+  font-size: 1.25rem;
+  margin: 0 0 12px;
+  line-height: 1.5;
+}
+.seller-workspace-shell .seller-confirm-dialog p {
+  margin: 0 0 24px;
+  line-height: 1.8;
+}
+.seller-workspace-shell .seller-confirm-actions {
+  display: flex;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+.seller-workspace-shell .seller-confirm-actions button {
+  flex: 1 1 130px;
+  min-height: 48px;
+  border: 1px solid var(--sw-border);
+  border-radius: 12px;
+  color: var(--sw-ink);
+  background: var(--color-surface-mint, #eef4ec);
+  font: inherit;
+  font-weight: 700;
+}
+.seller-workspace-shell .seller-confirm-actions .seller-confirm-primary {
+  color: #fff;
+  background: #22795c;
+  border-color: #22795c;
+}
+@media (max-width: 700px) {
+  .seller-workspace-shell .seller-confirm-overlay { align-items: end; padding: 0; }
+  .seller-workspace-shell .seller-confirm-dialog {
+    width: 100%;
+    border-radius: 22px 22px 0 0;
+    padding: 24px 18px calc(22px + env(safe-area-inset-bottom, 0px));
+  }
+}
