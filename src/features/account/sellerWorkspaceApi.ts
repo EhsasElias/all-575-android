@@ -212,6 +212,18 @@ export const sellerFinanceLedger = (sellerId: number, from: string, to: string) 
     },
   );
 
+export const exportSellerOrdersExcel = (
+  filters: { branch_id?: number; status?: string; from?: string; to?: string } = {},
+) => {
+  const query = new URLSearchParams();
+  if (filters.branch_id) query.set('branch_id', String(filters.branch_id));
+  if (filters.status) query.set('status', filters.status);
+  if (filters.from) query.set('from', filters.from);
+  if (filters.to) query.set('to', filters.to);
+  const params = query.toString();
+  return seller.download('/seller/orders/export.xlsx' + (params ? '?' + params : ''));
+};
+
 export const exportSellerOrdersCsv = (
   filters: { branch_id?: number; status?: string; from?: string; to?: string } = {},
 ) => {
