@@ -94,6 +94,31 @@ export const sellerOrders = (
   } = {},
 ) => seller.get<{ data: SellerOrder[] }>('/seller/orders', { query: filters });
 export const sellerDashboard = () => seller.get<{ data: SellerDashboard }>('/seller/dashboard');
+
+export type SellerInsightMetric =
+  | 'orders' | 'awaiting_seller' | 'preparing' | 'ready' | 'on_the_way'
+  | 'delivered' | 'sales' | 'products' | 'branches' | 'stock';
+export type SellerInsightFilters = {
+  metric: SellerInsightMetric;
+  from: string;
+  to: string;
+  branch_id?: number;
+};
+export type SellerInsightDetails = {
+  metric: SellerInsightMetric;
+  from: string;
+  to: string;
+  columns: string[];
+  rows: Array<Array<string | number>>;
+  returned_rows: number;
+  max_rows: number;
+  note: string;
+};
+export const sellerInsightDetails = (filters: SellerInsightFilters) =>
+  seller.get<{ data: SellerInsightDetails }>('/seller/insights', { query: filters });
+export const exportSellerInsight = (filters: SellerInsightFilters, format: 'csv' | 'xlsx') =>
+  seller.download('/seller/insights/export/' + format, { query: filters });
+
 export const sellerBranches = () => seller.get<{ data: SellerBranch[] }>('/seller/branches');
 export const sellerProducts = (
   filters: { status?: string; limit?: number; before_id?: number } = {},
