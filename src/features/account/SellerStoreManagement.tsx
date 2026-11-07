@@ -69,6 +69,7 @@ export function SellerStoreManagement({ memberships, onStoreUpdated }: Props) {
     name_ar: '',
     name_en: '',
     service_zone_id: '',
+    service_zone_ids: [] as number[],
     lat: '',
     lng: '',
   });
@@ -101,7 +102,8 @@ export function SellerStoreManagement({ memberships, onStoreUpdated }: Props) {
   const [storeEn, setStoreEn] = useState('');
   const [editBranch, setEditBranch] = useState<number | null>(null);
   const [branchDraft, setBranchDraft] = useState({
-    code: '', name_ar: '', name_en: '', service_zone_id: '', lat: '', lng: '',
+    code: '', name_ar: '', name_en: '', service_zone_id: '',
+    service_zone_ids: [] as number[], lat: '', lng: '',
   });
   const [deleteTarget, setDeleteTarget] = useState<number | null>(null);
   const editPin: MapPin | null =
@@ -220,6 +222,7 @@ export function SellerStoreManagement({ memberships, onStoreUpdated }: Props) {
         name_ar: branchDraft.name_ar.trim(),
         name_en: branchDraft.name_en.trim(),
         service_zone_id: Number(branchDraft.service_zone_id),
+        service_zone_ids: branchDraft.service_zone_ids,
         lat: Number(branchDraft.lat),
         lng: Number(branchDraft.lng),
       });
@@ -297,6 +300,7 @@ export function SellerStoreManagement({ memberships, onStoreUpdated }: Props) {
       const created = await proposeSellerBranch({
         seller_id: selectedId,
         service_zone_id: zoneId,
+        service_zone_ids: newBranch.service_zone_ids,
         code: newBranch.code.trim(),
         name_ar: newBranch.name_ar.trim(),
         name_en: newBranch.name_en.trim(),
@@ -304,7 +308,8 @@ export function SellerStoreManagement({ memberships, onStoreUpdated }: Props) {
         lng,
       });
       setPropose(false);
-      setNewBranch({ code: '', name_ar: '', name_en: '', service_zone_id: '', lat: '', lng: '' });
+      setNewBranch({ code: '', name_ar: '', name_en: '', service_zone_id: '',
+        service_zone_ids: [], lat: '', lng: '' });
       setNotice(
         created.data.is_active
           ? tr('تم إنشاء الفرع وتفعيله مباشرة.', 'Branch created and activated immediately.')
@@ -442,6 +447,9 @@ export function SellerStoreManagement({ memberships, onStoreUpdated }: Props) {
                         setNewBranch((current) => ({
                           ...current,
                           service_zone_id: event.target.value,
+                          service_zone_ids: zone
+                            ? [...new Set([...current.service_zone_ids, zone.id])]
+                            : current.service_zone_ids,
                           lat: zone ? String(zone.center_lat) : '',
                           lng: zone ? String(zone.center_lng) : '',
                         }));
@@ -455,6 +463,30 @@ export function SellerStoreManagement({ memberships, onStoreUpdated }: Props) {
                       ))}
                     </select>
                   </label>
+                  <fieldset className="seller-coverage-fieldset">
+                    <legend>{tr('مناطق تغطية الفرع', 'Branch delivery coverage')}</legend>
+                    <p>{tr('اختر المناطق التي يخدمها الفرع. المنطقة الأساسية محددة تلقائيًا.',
+                      'Select the zones served by this branch. The primary zone is always included.')}</p>
+                    <div className="seller-coverage-options">
+                      {zones.map((zone) => (
+                        <label key={zone.id} className="seller-coverage-option">
+                          <input type="checkbox" disabled={saving ||
+                            zone.id === Number(newBranch.service_zone_id)}
+                            checked={newBranch.service_zone_ids.includes(zone.id)}
+                            onChange={(event) => setNewBranch((current) => ({
+                              ...current,
+                              service_zone_ids: event.target.checked
+                                ? [...new Set([...current.service_zone_ids, zone.id])]
+                                : current.service_zone_ids.filter((id) => id !== zone.id),
+                            }))}/>
+                          <span>{ar ? zone.name_ar : zone.name_en}</span>
+                          {zone.id === Number(newBranch.service_zone_id) && (
+                            <small>{tr('أساسية', 'Primary')}</small>
+                          )}
+                        </label>
+                      ))}
+                    </div>
+                  </fieldset>
                   {(
                     [
                       ['code', tr('رمز الفرع', 'Branch code')],
@@ -596,6 +628,19 @@ export function SellerStoreManagement({ memberships, onStoreUpdated }: Props) {
                   {tr('الرمز', 'Code')}: {branch.code} ·{' '}
                   {branch.is_active ? tr('نشط', 'Active') : tr('غير نشط', 'Inactive')}
                 </p>
+                <div className="seller-coverage-summary">
+                  <b>{tr('مناطق التغطية', 'Coverage zones')}</b>
+                  <div className="seller-coverage-tags">
+                    {(branch.service_zone_ids?.length
+                      ? branch.service_zone_ids : [branch.service_zone_id]).map((zoneId) => {
+                      const zone = zones.find((item) => item.id === zoneId);
+                      return <span key={zoneId}>
+                        {zone ? (ar ? zone.name_ar : zone.name_en) : String(zoneId)}
+                        {zoneId === branch.service_zone_id ? tr(' (أساسية)', ' (primary)') : ''}
+                      </span>;
+                    })}
+                  </div>
+                </div>
                 {Number.isFinite(Number(branch.lat)) && Number.isFinite(Number(branch.lng)) && (
                   <p>
                     <a
@@ -624,6 +669,8 @@ export function SellerStoreManagement({ memberships, onStoreUpdated }: Props) {
                         name_ar: branch.name_ar,
                         name_en: branch.name_en,
                         service_zone_id: String(branch.service_zone_id),
+                        service_zone_ids: branch.service_zone_ids?.length
+                          ? branch.service_zone_ids : [branch.service_zone_id],
                         lat: String(branch.lat),
                         lng: String(branch.lng),
                       });
@@ -682,6 +729,9 @@ export function SellerStoreManagement({ memberships, onStoreUpdated }: Props) {
                             setBranchDraft((current) => ({
                               ...current,
                               service_zone_id: event.target.value,
+                              service_zone_ids: zone
+                                ? [...new Set([...current.service_zone_ids, zone.id])]
+                                : current.service_zone_ids,
                               lat: zone ? String(zone.center_lat) : '',
                               lng: zone ? String(zone.center_lng) : '',
                             }));
@@ -695,6 +745,30 @@ export function SellerStoreManagement({ memberships, onStoreUpdated }: Props) {
                         </select>
                       </label>
                     </div>
+                    <fieldset className="seller-coverage-fieldset">
+                    <legend>{tr('مناطق تغطية الفرع', 'Branch delivery coverage')}</legend>
+                    <p>{tr('اختر المناطق التي يخدمها الفرع. المنطقة الأساسية محددة تلقائيًا.',
+                      'Select the zones served by this branch. The primary zone is always included.')}</p>
+                    <div className="seller-coverage-options">
+                      {zones.map((zone) => (
+                        <label key={zone.id} className="seller-coverage-option">
+                          <input type="checkbox" disabled={saving ||
+                            zone.id === Number(branchDraft.service_zone_id)}
+                            checked={branchDraft.service_zone_ids.includes(zone.id)}
+                            onChange={(event) => setBranchDraft((current) => ({
+                              ...current,
+                              service_zone_ids: event.target.checked
+                                ? [...new Set([...current.service_zone_ids, zone.id])]
+                                : current.service_zone_ids.filter((id) => id !== zone.id),
+                            }))}/>
+                          <span>{ar ? zone.name_ar : zone.name_en}</span>
+                          {zone.id === Number(branchDraft.service_zone_id) && (
+                            <small>{tr('أساسية', 'Primary')}</small>
+                          )}
+                        </label>
+                      ))}
+                    </div>
+                  </fieldset>
                     <div className="seller-branch-edit-map">
                       <p>{tr('حدد الموقع بالنقر أو تحريك الدبوس على الخريطة؛ سيتم تعبئة خط العرض والطول تلقائيًا. ويمكنك إدخالهما يدويًا.',
                         'Tap or drag the map pin to fill latitude and longitude automatically, or enter both coordinates manually.')}</p>
