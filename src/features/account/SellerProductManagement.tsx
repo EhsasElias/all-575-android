@@ -630,6 +630,12 @@ export function SellerProductManagement({ products, memberships, onUpdated }: Pr
           <p className="seller-required-hint">
             {tr('في القالب: SKU والتصنيف والاسمان والسعر وفئة الضريبة إجبارية. المتجر والوصف والباركود اختيارية؛ المتجر يُحدد من هذه الصفحة.', 'In the template, SKU, category, both names, price and VAT class are required. Store, descriptions and barcode are optional; the store is selected on this page.')}
           </p>
+          <p className="seller-required-hint">
+            {tr(
+              'قالب Excel يحتوي على قوائم منسدلة للمتجر والتصنيف وفئة الضريبة، والتحقق من السعر. املأ الصفوف ثم ارفع ملف XLSX مباشرة أو استخدم CSV.',
+              'The Excel template includes dropdowns for store, category and VAT class, plus price validation. Fill in the rows and upload the XLSX directly, or use CSV.',
+            )}
+          </p>
           <p>
             {tr(
               'أعمدة القالب تطابق حقول «منتج جديد». اختر المتجر عند الاستيراد، واكتب اسم التصنيف أو رقمه والسعر بالريال (مثال: 5.75). يمكن ترك خانة المتجر فارغة في الملف.',
