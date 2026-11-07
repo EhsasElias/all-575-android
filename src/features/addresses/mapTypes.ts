@@ -17,5 +17,5 @@ export type PinMapProps = {
   labels: PinMapLabels;
   onPinChange: (pin: MapPin) => void;
   /** Optional delivery coverage radius displayed as a circle around the pin. */
-  coverageRadiusMeters?: number;
+  coverageRadiusMeters?: number | undefined;
 };
