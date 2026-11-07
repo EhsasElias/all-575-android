@@ -984,45 +984,76 @@ export function SellerWorkspaceScreen() {
               </div>
               {orders.length === 0 && <p>{tr('لا توجد طلبات مطابقة.', 'No matching orders.')}</p>}
               <div className="seller-orders-grid">
-              {orders.map((order) => (
-                <article key={order.id} className="seller-order-card">
-                  <h3>{order.order_number}</h3>
-                  <p>
-                    {labels[order.status] ?? order.status} · {tr('الفرع', 'Branch')} #
-                    {order.branch_id}
-                  </p>
-                  {order.placed_at && (
-                    <small>
-                      {tr('وقت الطلب', 'Placed')}: {order.placed_at}
-                    </small>
-                  )}
-                  <ul>
-                    {order.items.map((item) => (
-                      <li key={item.id}>
-                        {ar ? item.name.ar : item.name.en} × {item.quantity}
-                      </li>
-                    ))}
-                  </ul>
-                  <div style={{ marginTop: 10 }}>
-                    <button
-                      type="button"
-                      style={action}
-                      disabled={busy}
-                      onClick={() => void viewPacking(order.id)}
-                    >
-                      {packing?.suborder_id === order.id
-                        ? tr('إخفاء قائمة التجهيز', 'Hide packing list')
-                        : tr('عرض قائمة التجهيز', 'View packing list')}
-                    </button>
-                    {packing?.suborder_id === order.id && (
-                      <div
-                        style={{
-                          marginTop: 10,
-                          padding: 12,
-                          border: '1px solid #d8e1db',
-                          borderRadius: 8,
-                        }}
+                {orders.map((order) => (
+                  <article key={order.id} className="seller-order-card">
+                    <div className="seller-order-card-head">
+                      <div className="seller-order-card-identity">
+                        <span className="seller-order-overline">{tr('رقم الطلب', 'Order number')}</span>
+                        <h3 dir="ltr">{order.order_number}</h3>
+                      </div>
+                      <span className="seller-order-status">
+                        {labels[order.status] ?? order.status}
+                      </span>
+                    </div>
+                    <div className="seller-order-meta">
+                      <span>{tr('الفرع', 'Branch')} #{order.branch_id}</span>
+                      {order.placed_at && (
+                        <span>
+                          {tr('وقت الطلب', 'Placed')}: <bdi>{order.placed_at}</bdi>
+                        </span>
+                      )}
+                    </div>
+                    <div className="seller-order-items-block">
+                      <div className="seller-order-items-heading">
+                        <strong>{tr('المنتجات المطلوبة', 'Items to prepare')}</strong>
+                        <span>{order.items.reduce((sum, item) => sum + item.quantity, 0)} {tr('قطعة', 'units')}</span>
+                      </div>
+                      <ul className="seller-order-items">
+                        {order.items.map((item) => (
+                          <li key={item.id}>
+                            <span>{ar ? item.name.ar : item.name.en}</span>
+                            <strong>× {item.quantity}</strong>
+                          </li>
+                        ))}
+                      </ul>
+                    </div>
+                    <div className="seller-order-actions">
+                      <button
+                        type="button"
+                        style={action}
+                        disabled={busy}
+                        aria-expanded={packing?.suborder_id === order.id}
+                        onClick={() => void viewPacking(order.id)}
                       >
+                        {packing?.suborder_id === order.id
+                          ? tr('إخفاء قائمة التجهيز', 'Hide packing list')
+                          : tr('عرض قائمة التجهيز', 'View packing list')}
+                      </button>
+                      {order.status === 'awaiting_seller' && (
+                        <button
+                          type="button"
+                          className="seller-order-primary"
+                          style={action}
+                          disabled={busy}
+                          onClick={() => void changeStatus(order.id, 'preparing')}
+                        >
+                          {tr('بدء التجهيز', 'Start preparing')}
+                        </button>
+                      )}
+                      {order.status === 'preparing' && (
+                        <button
+                          type="button"
+                          className="seller-order-primary"
+                          style={action}
+                          disabled={busy}
+                          onClick={() => void changeStatus(order.id, 'ready')}
+                        >
+                          {tr('جاهز للاستلام', 'Ready for pickup')}
+                        </button>
+                      )}
+                    </div>
+                    {packing?.suborder_id === order.id && (
+                      <div className="seller-packing-box">
                         <strong>
                           {tr('قائمة تجهيز الطلب', 'Order packing list')} — {packing.order_number}
                         </strong>
@@ -1042,29 +1073,8 @@ export function SellerWorkspaceScreen() {
                         </ul>
                       </div>
                     )}
-                  </div>
-                  {order.status === 'awaiting_seller' && (
-                    <button
-                      type="button"
-                      style={action}
-                      disabled={busy}
-                      onClick={() => void changeStatus(order.id, 'preparing')}
-                    >
-                      {tr('بدء التجهيز', 'Start preparing')}
-                    </button>
-                  )}
-                  {order.status === 'preparing' && (
-                    <button
-                      type="button"
-                      style={action}
-                      disabled={busy}
-                      onClick={() => void changeStatus(order.id, 'ready')}
-                    >
-                      {tr('جاهز للاستلام', 'Ready for pickup')}
-                    </button>
-                  )}
-                </article>
-              ))}
+                  </article>
+                ))}
               </div>
               {hasMoreOrders && (
                 <button
