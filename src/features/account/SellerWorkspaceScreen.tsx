@@ -90,6 +90,9 @@ export function SellerWorkspaceScreen() {
   const [newStockSku, setNewStockSku] = useState('');
   const [newStockQuantity, setNewStockQuantity] = useState('0');
   const [stockNotice, setStockNotice] = useState('');
+  const [stockEditor, setStockEditor] = useState<SellerStock | null>(null);
+  const [stockEditQuantity, setStockEditQuantity] = useState('');
+  const [stockEditError, setStockEditError] = useState('');
   const [loading, setLoading] = useState(true);
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState('');
@@ -419,40 +422,42 @@ export function SellerWorkspaceScreen() {
     }
   };
 
-  const changeStock = async (item: SellerStock) => {
+  const changeStock = (item: SellerStock) => {
     if (busy) return;
-    const value = window.prompt(
-      tr(
-        'الكمية الفعلية الجديدة (لا يمكن أن تقل عن المحجوز):',
-        'New physical stock (cannot be below reserved):',
-      ),
-      String(item.on_hand),
-    );
-    if (value === null) return;
-    const quantity = Number(value);
-    if (!Number.isSafeInteger(quantity) || quantity < item.reserved || quantity > 100000000) {
-      setError(
-        tr(
-          'أدخل كمية صحيحة لا تقل عن المخزون المحجوز.',
-          'Enter a valid quantity not below reserved stock.',
-        ),
-      );
+    setStockEditor(item);
+    setStockEditQuantity(String(item.on_hand));
+    setStockEditError('');
+  };
+
+  const saveStockQuantity = async (event: React.FormEvent<HTMLFormElement>) => {
+    event.preventDefault();
+    if (busy || stockEditor === null) return;
+    const quantity = Number(stockEditQuantity);
+    if (
+      !/^\\d+$/.test(stockEditQuantity.trim()) ||
+      !Number.isSafeInteger(quantity) ||
+      quantity < stockEditor.reserved ||
+      quantity > 100000000
+    ) {
+      setStockEditError(tr(
+        'أدخل كمية صحيحة لا تقل عن المحجوز ولا تتجاوز 100,000,000.',
+        'Enter a whole number between reserved stock and 100,000,000.',
+      ));
       return;
     }
-    if (!window.confirm(tr('هل تؤكد تعديل المخزون الفعلي؟', 'Confirm physical stock update?')))
-      return;
     setBusy(true);
+    setStockEditError('');
     setError('');
     try {
-      await adjustSellerStock(item.id, quantity);
+      await adjustSellerStock(stockEditor.id, quantity);
+      setStockEditor(null);
+      setStockNotice(tr('تم تحديث كمية المخزون بنجاح.', 'Stock quantity updated successfully.'));
       reload();
-    } catch {
-      setError(
-        tr(
-          'لم يتم حفظ الكمية. قد لا تملك الصلاحية.',
-          'Stock was not saved. You may lack permission.',
-        ),
-      );
+    } catch (cause) {
+      setStockEditError(cause instanceof Error && cause.message
+        ? cause.message
+        : tr('تعذر حفظ الكمية. تحقق من الصلاحيات وحاول مجدداً.',
+            'Could not save quantity. Check permissions and retry.'));
     } finally {
       setBusy(false);
     }
@@ -491,6 +496,78 @@ export function SellerWorkspaceScreen() {
         <p role="alert" style={{ color: '#aa3434' }}>
           {error}
         </p>
+      )}
+      {stockEditor && (
+        <div
+          role="presentation"
+          onMouseDown={(event) => {
+            if (event.target === event.currentTarget && !busy) setStockEditor(null);
+          }}
+          style={{
+            position: 'fixed', inset: 0, zIndex: 1100, background: 'rgba(0,0,0,0.62)',
+            display: 'flex', alignItems: 'center', justifyContent: 'center', padding: 16,
+          }}
+        >
+          <form
+            onSubmit={(event) => void saveStockQuantity(event)}
+            role="dialog"
+            aria-modal="true"
+            aria-labelledby="stock-editor-title"
+            aria-describedby="stock-editor-description"
+            onKeyDown={(event) => {
+              if (event.key === 'Escape' && !busy) setStockEditor(null);
+            }}
+            style={{
+              background: 'var(--color-surface, #fff)',
+              color: 'var(--color-text, #162a20)',
+              borderRadius: 16, padding: 24, width: '100%', maxWidth: 420,
+              border: '1px solid var(--color-border, #d8e1db)',
+              boxShadow: '0 20px 60px rgba(0,0,0,0.25)',
+              display: 'grid', gap: 16,
+            }}
+          >
+            <h3 id="stock-editor-title" style={{ margin: 0 }}>
+              {tr('تعديل كمية المخزون', 'Adjust stock quantity')}
+            </h3>
+            <p id="stock-editor-description" style={{ margin: 0 }}>
+              {ar ? stockEditor.name_ar : stockEditor.name_en} — SKU: {stockEditor.sku}
+            </p>
+            <p style={{ margin: 0 }}>
+              {tr('الكمية الحالية', 'Current stock')}: <strong>{stockEditor.on_hand}</strong> ·{' '}
+              {tr('المحجوز', 'Reserved')}: <strong>{stockEditor.reserved}</strong>
+            </p>
+            <label style={{ display: 'grid', gap: 7 }}>
+              {tr('الكمية الفعلية الجديدة', 'New physical stock quantity')}
+              <input
+                type="number"
+                inputMode="numeric"
+                autoFocus
+                required
+                min={stockEditor.reserved}
+                max={100000000}
+                step={1}
+                value={stockEditQuantity}
+                disabled={busy}
+                onChange={(event) => {
+                  setStockEditQuantity(event.target.value);
+                  setStockEditError('');
+                }}
+                style={{
+                  width: '100%', boxSizing: 'border-box', padding: 12, borderRadius: 9,
+                  border: '1px solid var(--color-border, #d8e1db)',
+                }}
+              />
+            </label>
+            {stockEditError && <p role="alert" style={{ color: '#b42318', margin: 0 }}>{stockEditError}</p>}
+            <div style={{ ...line, justifyContent: 'flex-end' }}>
+              <button type="button" style={action} disabled={busy}
+                onClick={() => setStockEditor(null)}>{tr('إلغاء', 'Cancel')}</button>
+              <button type="submit" style={action} disabled={busy || !stockEditQuantity.trim()}>
+                {busy ? tr('جار الحفظ…', 'Saving…') : tr('حفظ الكمية', 'Save quantity')}
+              </button>
+            </div>
+          </form>
+        </div>
       )}
       {!eligible && loading && (
         <p role="status">{tr('جار فتح حساب البائع…', 'Opening seller workspace…')}</p>
@@ -799,7 +876,7 @@ export function SellerWorkspaceScreen() {
                       type="button"
                       style={action}
                       disabled={busy}
-                      onClick={() => void changeStock(item)}
+                      onClick={() => changeStock(item)}
                     >
                       {tr('تعديل الكمية', 'Adjust quantity')}
                     </button>
