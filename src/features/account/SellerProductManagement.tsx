@@ -480,8 +480,8 @@ export function SellerProductManagement({ products, memberships, onUpdated }: Pr
                 ))}
               </select>
             </label>
-            <label style={field}>
-              {tr('ملف CSV', 'CSV file')}
+            <label className="seller-upload" style={field}>
+              <span>{tr('ملف CSV', 'CSV file')}</span>
               <input
                 type="file"
                 accept=".csv,text/csv"
@@ -490,6 +490,10 @@ export function SellerProductManagement({ products, memberships, onUpdated }: Pr
                   setCsvPreview(null);
                 }}
               />
+              <span className="seller-upload-button">{tr('اختيار ملف CSV', 'Choose CSV file')}</span>
+              <span className="seller-upload-name">
+                {importFile?.name ?? tr('لم يتم اختيار ملف بعد', 'No file selected')}
+              </span>
             </label>
           </div>
           <div style={{ ...controls, marginTop: 12 }}>
@@ -720,13 +724,17 @@ export function SellerProductManagement({ products, memberships, onUpdated }: Pr
                   />
                 </label>
               </div>
-              <label style={{ ...field, marginTop: 12 }}>
-                {tr('صورة غلاف المنتج (5 ميجابايت كحد أقصى)', 'Product cover image (up to 5 MB)')}
+              <label className="seller-upload" style={{ ...field, marginTop: 12 }}>
+                <span>{tr('صورة غلاف المنتج (5 ميجابايت كحد أقصى)', 'Product cover image (up to 5 MB)')}</span>
                 <input
                   type="file"
                   accept="image/*"
                   onChange={(event) => setCoverFile(event.target.files?.[0] ?? null)}
                 />
+                <span className="seller-upload-button">{tr('اختيار صورة المنتج', 'Choose product image')}</span>
+                <span className="seller-upload-name">
+                  {coverFile?.name ?? tr('لم يتم اختيار صورة بعد', 'No image selected')}
+                </span>
               </label>
               <button
                 type="button"
