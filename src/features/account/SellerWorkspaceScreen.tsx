@@ -21,6 +21,7 @@ import {
   sellerStock,
   advanceSellerOrder,
   adjustSellerStock,
+  createSellerStock,
   exportSellerOrdersCsv,
   exportSellerOrdersExcel,
   sellerPackingList,
@@ -82,6 +83,10 @@ export function SellerWorkspaceScreen() {
   const [orderTo, setOrderTo] = useState('');
   const [productStatus, setProductStatus] = useState('all');
   const [lowStockOnly, setLowStockOnly] = useState(false);
+  const [newStockBranch, setNewStockBranch] = useState('');
+  const [newStockSku, setNewStockSku] = useState('');
+  const [newStockQuantity, setNewStockQuantity] = useState('0');
+  const [stockNotice, setStockNotice] = useState('');
   const [loading, setLoading] = useState(true);
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState('');
@@ -368,6 +373,47 @@ export function SellerWorkspaceScreen() {
       (membership.role === 'owner' || membership.role === 'branch_manager') &&
       (membership.branch_id === null || membership.branch_id === item.branch_id),
     );
+  };
+
+  const stockWritableBranches = branches.filter((branch) =>
+    sellerMemberships.some((membership) =>
+      membership.is_active && membership.seller_status === 'approved' &&
+      membership.seller_id === branch.seller_id &&
+      (membership.role === 'owner' || membership.role === 'branch_manager') &&
+      (membership.branch_id === null || membership.branch_id === branch.id),
+    ),
+  );
+
+  const initializeStock = async (event: React.FormEvent<HTMLFormElement>) => {
+    event.preventDefault();
+    if (busy || loading) return;
+    const chosenBranch = Number(newStockBranch || stockWritableBranches[0]?.id);
+    const quantity = Number(newStockQuantity);
+    if (!stockWritableBranches.some((item) => item.id === chosenBranch) ||
+        !newStockSku.trim() || newStockSku.trim().length > 100 ||
+        !Number.isSafeInteger(quantity) || quantity < 0 || quantity > 100000000) {
+      setError(tr('اختر فرعًا ورمز SKU صحيحًا وكمية صحيحة.',
+        'Choose an authorized branch, a valid SKU and a valid quantity.'));
+      return;
+    }
+    setBusy(true);
+    setError('');
+    setStockNotice('');
+    try {
+      await createSellerStock({
+        branch_id: chosenBranch, sku: newStockSku.trim(), on_hand: quantity,
+      });
+      setNewStockSku('');
+      setNewStockQuantity('0');
+      setStockNotice(tr('تم إنشاء سجل مخزون للمنتج في الفرع.',
+        'An inventory record was created for this product and branch.'));
+      reload();
+    } catch {
+      setError(tr('تعذر إنشاء المخزون. تأكد أن SKU مسجل في منتجات المتجر ولم يُضف لهذا الفرع مسبقًا.',
+        'Could not initialize stock. Ensure the SKU belongs to your store and is not already assigned to this branch.'));
+    } finally {
+      setBusy(false);
+    }
   };
 
   const changeStock = async (item: SellerStock) => {
@@ -668,6 +714,43 @@ export function SellerWorkspaceScreen() {
           {!loading && section === 'inventory' && (
             <section>
               <h2>{tr('مخزون الفروع', 'Branch inventory')}</h2>
+              {stockWritableBranches.length > 0 && (
+                <form className="seller-stock-init" onSubmit={(event) => void initializeStock(event)}>
+                  <h3>{tr('إضافة منتج إلى مخزون فرع', 'Add a product to branch inventory')}</h3>
+                  <p>{tr('أدخل SKU لوحدة بيع موجودة مسبقًا في منتجات متجرك، ثم حدد الفرع والكمية الأولية.',
+                    'Enter the SKU of an existing store product variant, then choose the branch and starting quantity.')}</p>
+                  <div className="seller-stock-init-fields">
+                    <label>
+                      {tr('الفرع', 'Branch')}
+                      <select required value={newStockBranch || String(stockWritableBranches[0]?.id ?? '')}
+                        disabled={busy}
+                        onChange={(event) => setNewStockBranch(event.target.value)}>
+                        {stockWritableBranches.map((item) => (
+                          <option key={item.id} value={item.id}>
+                            {ar ? item.name_ar : item.name_en}
+                          </option>
+                        ))}
+                      </select>
+                    </label>
+                    <label>
+                      {tr('رمز SKU', 'SKU code')}
+                      <input required maxLength={100} value={newStockSku} disabled={busy}
+                        placeholder="SKU-001"
+                        onChange={(event) => setNewStockSku(event.target.value)}/>
+                    </label>
+                    <label>
+                      {tr('الكمية الفعلية', 'Initial quantity')}
+                      <input required type="number" min={0} max={100000000} step={1}
+                        value={newStockQuantity} disabled={busy}
+                        onChange={(event) => setNewStockQuantity(event.target.value)}/>
+                    </label>
+                  </div>
+                  <button type="submit" disabled={busy}>
+                    {tr('إضافة إلى المخزون', 'Add to inventory')}
+                  </button>
+                  {stockNotice && <p role="status">{stockNotice}</p>}
+                </form>
+              )}
               {stock.length === 0 && <p>{tr('لا توجد سجلات مخزون.', 'No stock records.')}</p>}
               {stock.map((item) => (
                 <article key={item.id} style={panel}>
