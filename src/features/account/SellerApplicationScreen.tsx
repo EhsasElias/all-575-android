@@ -266,7 +266,7 @@ export function SellerApplicationScreen() {
       setError(
         isApiError(cause) && cause.status === 409
           ? ar
-            ? 'الطلب مُرسل بالفعل. حدّثي الصفحة.'
+            ? 'الطلب مُرسل بالفعل. حدّث الصفحة.'
             : 'Application already submitted. Refresh this page.'
           : ar
             ? 'تعذر إرسال الطلب للمراجعة.'
@@ -294,7 +294,7 @@ export function SellerApplicationScreen() {
       setDocumentFile(null);
       setDocumentError(
         localized(
-          'اختاري ملف PDF أو JPG أو PNG بحجم لا يتجاوز 10 ميجابايت.',
+          'اختر ملف PDF أو JPG أو PNG بحجم لا يتجاوز 10 ميجابايت.',
           'Choose a PDF, JPG or PNG file of 10 MB or less.',
           'Choisissez un fichier PDF, JPG ou PNG de 10 Mo maximum.',
         ),
@@ -401,7 +401,7 @@ export function SellerApplicationScreen() {
             {status === 'correction' && (
               <p>
                 {ar
-                  ? 'عدّلي البيانات واحفظي المسودة ثم أرسليها للمراجعة مرة أخرى.'
+                  ? 'عدّل البيانات واحفظ المسودة ثم أرسلها للمراجعة مرة أخرى.'
                   : 'Edit the information, save a draft, then submit it for review again.'}
               </p>
             )}
@@ -508,7 +508,7 @@ export function SellerApplicationScreen() {
                   </h2>
                   <p>
                     {localized(
-                      'ارفعي المستندات المطلوبة بعد حفظ المسودة. الملفات خاصة ومتاحة للمراجعين المخوّلين فقط.',
+                      'ارفع المستندات المطلوبة بعد حفظ المسودة. الملفات خاصة ومتاحة للمراجعين المخوّلين فقط.',
                       'Upload supporting documents after saving the draft. Files remain private to authorized reviewers.',
                       'Ajoutez les justificatifs après l’enregistrement du brouillon. Seuls les examinateurs autorisés y ont accès.',
                     )}
