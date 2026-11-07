@@ -2180,3 +2180,58 @@
   overflow-wrap: anywhere;
   font-weight: 600;
 }
+
+
+/* A body-level portal avoids transformed account/page containers clipping
+   the stock editor or shifting position: always center in the viewport. */
+.seller-workspace-shell.seller-stock-portal-root {
+  position: fixed !important;
+  inset: 0 !important;
+  left: 0 !important;
+  right: 0 !important;
+  top: 0 !important;
+  bottom: 0 !important;
+  width: 100% !important;
+  max-width: none !important;
+  height: 100dvh;
+  margin: 0 !important;
+  padding: 0 !important;
+  transform: none !important;
+  z-index: 10000;
+  pointer-events: none;
+}
+.seller-workspace-shell.seller-stock-portal-root > .seller-stock-modal-overlay {
+  position: absolute;
+  inset: 0;
+  display: grid;
+  place-items: center;
+  box-sizing: border-box;
+  width: 100% !important;
+  max-width: none !important;
+  min-height: 0;
+  margin: 0 !important;
+  padding: clamp(12px, 3vh, 28px);
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  pointer-events: auto;
+}
+.seller-stock-portal-root .seller-stock-modal {
+  width: min(100%, 520px);
+  max-width: 100%;
+  max-height: calc(100dvh - 32px);
+  margin: auto;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  scrollbar-gutter: stable;
+}
+@media (max-width: 540px) {
+  .seller-workspace-shell.seller-stock-portal-root > .seller-stock-modal-overlay {
+    padding: 12px;
+  }
+  .seller-stock-portal-root .seller-stock-modal {
+    max-height: calc(100dvh - 24px);
+    border-radius: 16px;
+    padding: 16px;
+    gap: 12px;
+  }
+}
