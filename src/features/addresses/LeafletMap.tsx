@@ -43,10 +43,11 @@ function toPin(point: L.LatLng): MapPin {
  * The only module that knows about Leaflet. It draws OpenStreetMap tiles with one draggable pin, and reports
  * where the pin ends up. The map stays left-to-right in Arabic: Leaflet's own controls are built for that.
  */
-export function LeafletMap({ pin, labels, onPinChange }: PinMapProps) {
+export function LeafletMap({ pin, labels, onPinChange, coverageRadiusMeters }: PinMapProps) {
   const containerRef = useRef<HTMLDivElement>(null);
   const mapRef = useRef<L.Map | null>(null);
   const markerRef = useRef<L.Marker | null>(null);
+  const coverageRef = useRef<L.Circle | null>(null);
   const startRef = useRef({ pin, labels });
   const onPinChangeRef = useRef(onPinChange);
   const [tileFailure, setTileFailure] = useState(false);
@@ -116,6 +117,7 @@ export function LeafletMap({ pin, labels, onPinChange }: PinMapProps) {
       map.remove();
       mapRef.current = null;
       markerRef.current = null;
+      coverageRef.current = null;
     };
   }, []);
 
@@ -145,6 +147,32 @@ export function LeafletMap({ pin, labels, onPinChange }: PinMapProps) {
     }
     if (!map.getBounds().contains(point)) map.setView(point, Math.max(map.getZoom(), PIN_ZOOM));
   }, [pin]);
+
+  // Update the coverage circle in real geographic metres as the pin or distance changes.
+  useEffect(() => {
+    const map = mapRef.current;
+    if (!map || !pin || !coverageRadiusMeters || coverageRadiusMeters < 100 ||
+        coverageRadiusMeters > 50000) {
+      coverageRef.current?.remove();
+      coverageRef.current = null;
+      return;
+    }
+    const point = L.latLng(pin.lat, pin.lng);
+    if (coverageRef.current) {
+      coverageRef.current.setLatLng(point);
+      coverageRef.current.setRadius(coverageRadiusMeters);
+    } else {
+      coverageRef.current = L.circle(point, {
+        radius: coverageRadiusMeters,
+        color: '#27845c',
+        fillColor: '#62bb88',
+        fillOpacity: 0.15,
+        weight: 2,
+        interactive: false,
+      }).addTo(map);
+    }
+    map.fitBounds(coverageRef.current.getBounds().pad(0.12), { maxZoom: 15 });
+  }, [pin, coverageRadiusMeters]);
 
   const placeAtCenter = () => {
     const center = mapRef.current?.getCenter();
