@@ -162,7 +162,7 @@ export function SellerProductManagement({ products, memberships, onUpdated }: Pr
       return;
     }
     if (selected === null && !draft.sku.trim()) {
-      setError(tr('أدخلي رمز SKU للمنتج أولاً.', 'Enter a product SKU first.'));
+      setError(tr('أدخل رمز SKU للمنتج أولاً.', 'Enter a product SKU first.'));
       return;
     }
     if (!sellerIds.includes(Number(draft.sellerId))) {
@@ -207,7 +207,7 @@ export function SellerProductManagement({ products, memberships, onUpdated }: Pr
         } catch {
           setError(
             tr(
-              'تم حفظ المسودة، لكن تعذرت إضافة SKU (ربما مستخدم بالفعل). عدّلي الرمز وأضيفيه من قسم وحدة البيع أدناه.',
+              'تم حفظ المسودة، لكن تعذرت إضافة SKU (ربما مستخدم بالفعل). عدّل الرمز وأضفه من قسم وحدة البيع أدناه.',
               'Draft saved, but SKU could not be added (possibly already in use). Change it and add it in the variant section below.',
             ),
           );
@@ -219,7 +219,7 @@ export function SellerProductManagement({ products, memberships, onUpdated }: Pr
     } catch {
       setError(
         tr(
-          'تعذر حفظ المنتج. تأكدي من التصنيف والصلاحيات والحقول المطلوبة.',
+          'تعذر حفظ المنتج. تأكد من التصنيف والصلاحيات والحقول المطلوبة.',
           'Could not save product. Check category, permissions and required fields.',
         ),
       );
@@ -230,7 +230,7 @@ export function SellerProductManagement({ products, memberships, onUpdated }: Pr
 
   const addVariant = async (productId: number) => {
     if (!draft.sku.trim() || busy) {
-      setError(tr('أدخلي رمز SKU أولاً.', 'Enter an SKU first.'));
+      setError(tr('أدخل رمز SKU أولاً.', 'Enter an SKU first.'));
       return;
     }
     setBusy(true);
@@ -251,7 +251,7 @@ export function SellerProductManagement({ products, memberships, onUpdated }: Pr
     } catch {
       setError(
         tr(
-          'تعذر إضافة الوحدة. تأكدي من عدم تكرار SKU أو الباركود.',
+          'تعذر إضافة الوحدة. تأكد من عدم تكرار SKU أو الباركود.',
           'Could not add variant. Make sure SKU and barcode are unique.',
         ),
       );
@@ -264,7 +264,7 @@ export function SellerProductManagement({ products, memberships, onUpdated }: Pr
     if (
       busy ||
       !window.confirm(tr(
-        'هل تريدين إكمال المنتج؟ سيُنشر مباشرة في وضع العرض التجريبي، وإلا سيُرسل للمراجعة.',
+        'هل تريد إكمال المنتج؟ سيُنشر مباشرة في وضع العرض التجريبي، وإلا سيُرسل للمراجعة.',
         'Complete this product? It publishes immediately in demo mode; otherwise it goes to review.',
       ))
     )
@@ -285,7 +285,7 @@ export function SellerProductManagement({ products, memberships, onUpdated }: Pr
     } catch {
       setError(
         tr(
-          'تعذر النشر أو الإرسال. احفظي المسودة وأضيفي SKU وصورة للمنتج أولاً.',
+          'تعذر النشر أو الإرسال. احفظ المسودة وأضف SKU وصورة للمنتج أولاً.',
           'Could not publish or submit. Save the draft and add an SKU and product image first.',
         ),
       );
@@ -333,7 +333,7 @@ export function SellerProductManagement({ products, memberships, onUpdated }: Pr
     } catch {
       setError(
         tr(
-          'تعذر رفع الصورة. اختاري ملف صورة صالحًا لمسودة.',
+          'تعذر رفع الصورة. اختر ملف صورة صالحًا لمسودة.',
           'Image upload failed. Select a valid image for a draft.',
         ),
       );
@@ -346,7 +346,7 @@ export function SellerProductManagement({ products, memberships, onUpdated }: Pr
     const sellerId = Number(importSeller || sellerIds[0]);
     if (busy || importFile === null || !sellerIds.includes(sellerId)) return;
     if (importFile.size > 1024 * 1024 || !/[.]csv$/i.test(importFile.name)) {
-      setError(tr('اختاري ملف CSV لا يتجاوز 1 ميجابايت.', 'Choose a CSV file under 1 MB.'));
+      setError(tr('اختر ملف CSV لا يتجاوز 1 ميجابايت.', 'Choose a CSV file under 1 MB.'));
       return;
     }
     if (
@@ -386,7 +386,7 @@ export function SellerProductManagement({ products, memberships, onUpdated }: Pr
       setError(
         validation?.join(' | ') ??
           tr(
-            'فشل الاستيراد. استخدمي القالب الجديد دون تغيير عناوينه، وتأكدي من اسم أو رقم التصنيف والسعر بالريال وعدم تكرار SKU.',
+            'فشل الاستيراد. استخدم القالب الجديد دون تغيير عناوينه، وتأكد من اسم أو رقم التصنيف والسعر بالريال وعدم تكرار SKU.',
             'Import failed. Check template columns, categories, prices and duplicate SKUs.',
           ),
       );
@@ -411,7 +411,7 @@ export function SellerProductManagement({ products, memberships, onUpdated }: Pr
           onSubmit={(event) => {
             event.preventDefault();
             if (!quickSku.trim()) {
-              setError(tr('أدخلي رمز SKU أولاً.', 'Enter an SKU first.'));
+              setError(tr('أدخل رمز SKU أولاً.', 'Enter an SKU first.'));
               return;
             }
             newProduct(quickSku);
@@ -421,7 +421,7 @@ export function SellerProductManagement({ products, memberships, onUpdated }: Pr
           <h3>{tr('إضافة منتج بواسطة SKU', 'Add product by SKU')}</h3>
           <p>
             {tr(
-              'أدخلي رمز SKU للبدء، ثم أكملي بيانات المنتج. سيتم حفظ SKU تلقائياً عند إنشاء المسودة.',
+              'أدخل رمز SKU للبدء، ثم أكمل بيانات المنتج. سيتم حفظ SKU تلقائياً عند إنشاء المسودة.',
               'Enter an SKU to start, then complete product details. The SKU will be saved automatically with the draft.',
             )}
           </p>
@@ -463,7 +463,7 @@ export function SellerProductManagement({ products, memberships, onUpdated }: Pr
           <h3>{tr('استيراد المنتجات عبر CSV', 'Import products from CSV')}</h3>
           <p>
             {tr(
-              'أعمدة القالب تطابق حقول «منتج جديد». اختاري المتجر عند الاستيراد، واكتبي اسم التصنيف أو رقمه والسعر بالريال (مثال: 5.75). يمكن ترك خانة المتجر فارغة في الملف.',
+              'أعمدة القالب تطابق حقول «منتج جديد». اختر المتجر عند الاستيراد، واكتب اسم التصنيف أو رقمه والسعر بالريال (مثال: 5.75). يمكن ترك خانة المتجر فارغة في الملف.',
               'The columns match Add Product. Choose the store at import time; enter a category name or number and price in SAR (e.g. 5.75). The Store cell can be blank.',
             )}
           </p>
@@ -612,7 +612,7 @@ export function SellerProductManagement({ products, memberships, onUpdated }: Pr
                   disabled={selected !== null}
                   onChange={(event) => set('sellerId', event.target.value)}
                 >
-                  <option value="">{tr('اختاري المتجر', 'Select store')}</option>
+                  <option value="">{tr('اختر المتجر', 'Select store')}</option>
                   {sellerIds.map((id) => {
                     const membership = allowed.find((item) => item.seller_id === id);
                     return (
@@ -630,7 +630,7 @@ export function SellerProductManagement({ products, memberships, onUpdated }: Pr
                   value={draft.categoryId}
                   onChange={(event) => set('categoryId', event.target.value)}
                 >
-                  <option value="">{tr('اختاري التصنيف', 'Select category')}</option>
+                  <option value="">{tr('اختر التصنيف', 'Select category')}</option>
                   {flatCategories(categories).map((category) => (
                     <option key={category.id} value={category.id}>
                       {category.label}
