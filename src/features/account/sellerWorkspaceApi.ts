@@ -29,6 +29,7 @@ export type SellerBranch = {
   lat: number;
   lng: number;
   service_zone_id: number;
+  service_zone_ids?: number[];
 };
 export type SellerProduct = {
   id: number;
