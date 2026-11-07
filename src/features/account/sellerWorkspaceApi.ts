@@ -311,6 +311,18 @@ export const sellerStaff = (sellerId: number) =>
     query: { seller_id: sellerId, limit: 100 },
   });
 
+export type SellerStaffInput = {
+  role: 'branch_manager' | 'picker';
+  branch_id: number;
+  is_active: boolean;
+};
+export const addSellerStaff = (sellerId: number, userId: number, input: SellerStaffInput) =>
+  seller.post<{ data: SellerStaffMember }>('/seller/staff', {
+    seller_id: sellerId, user_id: userId, role: input.role, branch_id: input.branch_id,
+  });
+export const updateSellerStaff = (membershipId: number, input: SellerStaffInput) =>
+  seller.patch<{ data: SellerStaffMember }>('/seller/staff/' + membershipId, input);
+
 export const deactivateSellerStaff = (membershipId: number) =>
   seller.patch<{ data: { id: number; is_active: boolean } }>(
     '/seller/staff/' + membershipId + '/deactivate',
