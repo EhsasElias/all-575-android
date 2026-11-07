@@ -570,3 +570,84 @@
 .seller-workspace-shell .seller-product-form-card form label > :is(input,select,textarea) {
   margin-block-start: 2px;
 }
+
+
+/* Editable branch details and location. */
+.seller-workspace-shell .seller-branch-edit {
+  display: grid;
+  gap: 18px;
+  padding: 18px 0 8px;
+}
+.seller-workspace-shell .seller-branch-edit > div,
+.seller-workspace-shell .seller-branch-edit-map {
+  min-width: 0;
+}
+.seller-workspace-shell .seller-branch-edit-map {
+  display: grid;
+  gap: 12px;
+  padding: 14px;
+  border-radius: 15px;
+  border: 1px solid var(--sw-border);
+  background: var(--color-surface-mint, #eef4ec);
+}
+.seller-workspace-shell .seller-branch-edit-map p {
+  margin: 0;
+  line-height: 1.7;
+}
+.seller-workspace-shell .seller-branch-edit-map > button {
+  justify-self: start;
+}
+.seller-workspace-shell .seller-branch-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  margin-top: 14px;
+  align-items: center;
+}
+.seller-workspace-shell .seller-branch-actions > button {
+  min-height: 46px;
+  margin: 0 !important;
+}
+.seller-workspace-shell .seller-branch-delete,
+.seller-workspace-shell .seller-delete-confirm > button:first-of-type {
+  border: 1px solid #bf5a55 !important;
+  color: #a12e29 !important;
+  background: transparent !important;
+}
+.seller-workspace-shell .seller-delete-confirm {
+  padding: 16px;
+  border: 1px solid #bf5a55;
+  background: var(--sw-card);
+  border-radius: 14px;
+  width: 100%;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+}
+.seller-workspace-shell .seller-delete-confirm p {
+  flex-basis: 100%;
+  margin: 0 0 4px;
+  line-height: 1.7;
+}
+.seller-workspace-shell .seller-zone-valid,
+.seller-workspace-shell .seller-zone-invalid {
+  padding: 12px;
+  border-radius: 10px;
+  border: 1px solid var(--sw-border);
+}
+.seller-workspace-shell .seller-zone-invalid {
+  color: #a12e29;
+  border-color: #bf5a55;
+}
+@media (max-width: 700px) {
+  .seller-workspace-shell .seller-branch-edit > div:first-child {
+    display: grid !important;
+    grid-template-columns: minmax(0, 1fr);
+  }
+  .seller-workspace-shell .seller-branch-edit-map {
+    padding: 12px;
+  }
+  .seller-workspace-shell .seller-branch-actions > button {
+    flex: 1 1 140px;
+  }
+}
