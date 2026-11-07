@@ -1,5 +1,6 @@
 import { useCallback, useEffect, useState } from 'react';
 import { Link } from 'react-router';
+import { createPortal } from 'react-dom';
 import { useTranslation } from 'react-i18next';
 import { routePaths } from '@/shared/lib';
 import { Page } from './components/Page';
@@ -422,6 +423,14 @@ export function SellerWorkspaceScreen() {
     }
   };
 
+  // Keep the page stationary while the stock dialog is open. The dialog itself scrolls.
+  useEffect(() => {
+    if (!stockEditor) return;
+    const previous = document.body.style.overflow;
+    document.body.style.overflow = 'hidden';
+    return () => { document.body.style.overflow = previous; };
+  }, [stockEditor]);
+
   const changeStock = (item: SellerStock) => {
     if (busy) return;
     setStockEditor(item);
@@ -497,7 +506,8 @@ export function SellerWorkspaceScreen() {
           {error}
         </p>
       )}
-      {stockEditor && (
+      {stockEditor && createPortal(
+        <div className="seller-stock-portal-root seller-workspace-shell" dir={ar ? 'rtl' : 'ltr'}>
         <div
           className="seller-stock-modal-overlay"
           role="presentation"
@@ -585,6 +595,8 @@ export function SellerWorkspaceScreen() {
             </div>
           </form>
         </div>
+        </div>,
+        document.body,
       )}
       {!eligible && loading && (
         <p role="status">{tr('جار فتح حساب البائع…', 'Opening seller workspace…')}</p>
