@@ -64,6 +64,12 @@ export function SellerProductManagement({ products, memberships, onUpdated }: Pr
   const { i18n } = useTranslation();
   const ar = i18n.language.startsWith('ar');
   const tr = (arabic: string, english: string) => (ar ? arabic : english);
+  const productStatusLabels: Record<string, string> = {
+    draft: tr('مسودة', 'Draft'),
+    pending_review: tr('بانتظار المراجعة', 'Pending review'),
+    published: tr('منشور', 'Published'),
+    rejected: tr('مرفوض', 'Rejected'),
+  };
   const allowed = memberships.filter(
     (membership) =>
       membership.is_active &&
@@ -535,7 +541,7 @@ export function SellerProductManagement({ products, memberships, onUpdated }: Pr
               <table style={{ width: '100%', borderCollapse: 'collapse' }}>
                 <thead>
                   <tr>
-                    <th>SKU</th>
+                    <th>{tr('رمز المنتج (SKU)', 'Product code (SKU)')}</th>
                     <th>{tr('اسم المنتج', 'Product')}</th>
                     <th>{tr('السعر (ر.س)', 'Price (SAR)')}</th>
                   </tr>
@@ -780,7 +786,7 @@ export function SellerProductManagement({ products, memberships, onUpdated }: Pr
           <strong>{ar ? product.name_ar : product.name_en}</strong>
           <p>
             {tr('السعر', 'Price')}: {(product.price_halalas / 100).toFixed(2)} {tr('ر.س', 'SAR')} ·{' '}
-            {tr('الحالة', 'Status')}: {product.status}
+            {tr('الحالة', 'Status')}: {productStatusLabels[product.status] ?? product.status}
           </p>
           {product.status === 'rejected' && product.rejection_reason && (
             <p role="status" style={{ padding: 10, border: '1px solid #d8e1db', borderRadius: 8 }}>
@@ -789,7 +795,7 @@ export function SellerProductManagement({ products, memberships, onUpdated }: Pr
             </p>
           )}
           <small>
-            {tr('تصنيف', 'Category')} #{product.category_id} · {tr('متجر', 'Store')} #
+            {tr('رقم التصنيف', 'Category number')} #{product.category_id} · {tr('رقم المتجر', 'Store number')} #
             {product.seller_id}
           </small>
           {editable(product) && sellerIds.includes(product.seller_id) && (
