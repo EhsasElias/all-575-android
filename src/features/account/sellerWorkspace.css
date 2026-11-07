@@ -899,3 +899,38 @@
   .seller-scanner { padding: 10px; }
   .seller-product-scan-button { width: 100%; }
 }
+
+/* Create stock rows for newly listed product variants. */
+.seller-workspace-shell .seller-stock-init {
+  display: grid;
+  gap: 12px;
+  padding: clamp(14px, 2.5vw, 22px);
+  margin-block: 12px 18px;
+  border: 1px solid var(--sw-border);
+  border-radius: 16px;
+  background: var(--sw-card);
+}
+.seller-workspace-shell .seller-stock-init h3,
+.seller-workspace-shell .seller-stock-init p { margin: 0; }
+.seller-workspace-shell .seller-stock-init-fields {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 12px;
+}
+.seller-workspace-shell .seller-stock-init-fields label {
+  display: grid;
+  min-width: 0;
+  gap: 7px;
+}
+.seller-workspace-shell .seller-stock-init-fields :is(input, select) {
+  min-height: 46px;
+  width: 100%;
+}
+.seller-workspace-shell .seller-stock-init > button {
+  min-height: 46px;
+}
+@media (max-width: 700px) {
+  .seller-workspace-shell .seller-stock-init-fields {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}
