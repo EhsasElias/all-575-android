@@ -22,6 +22,7 @@ import {
   advanceSellerOrder,
   adjustSellerStock,
   exportSellerOrdersCsv,
+  exportSellerOrdersExcel,
   sellerPackingList,
   type SellerBranch,
   type SellerDashboard,
@@ -284,30 +285,34 @@ export function SellerWorkspaceScreen() {
     }
   };
 
-  const exportOrders = async () => {
+  const exportOrders = async (format: 'xlsx' | 'csv') => {
     if (busy) return;
     setBusy(true);
     setError('');
     try {
-      const file = await exportSellerOrdersCsv({
+      const filters = {
         ...(branchId ? { branch_id: Number(branchId) } : {}),
         ...(orderStatus !== 'all' ? { status: orderStatus } : {}),
         ...(orderFrom ? { from: orderFrom } : {}),
         ...(orderTo ? { to: orderTo } : {}),
-      });
+      };
+      const file = format === 'xlsx'
+        ? await exportSellerOrdersExcel(filters)
+        : await exportSellerOrdersCsv(filters);
       const url = URL.createObjectURL(file.blob);
       const link = document.createElement('a');
       link.href = url;
-      link.download = file.filename ?? 'seller-orders.csv';
+      link.download = format === 'xlsx' ? 'seller-orders.xlsx' : 'seller-orders.csv';
       document.body.appendChild(link);
       link.click();
       link.remove();
-      URL.revokeObjectURL(url);
+      // Android Chrome may not start the download before the current task ends.
+      window.setTimeout(() => URL.revokeObjectURL(url), 30_000);
     } catch {
       setError(
         tr(
-          'تعذر تصدير الطلبات. تحققي من الصلاحيات والاتصال.',
-          'Could not export orders. Check permissions and connectivity.',
+          'تعذر تصدير الطلبات. تحققي من الصلاحيات والاتصال وإعدادات تصدير Excel.',
+          'Could not export orders. Check permissions, connection and Excel export setup.',
         ),
       );
     } finally {
@@ -683,7 +688,15 @@ export function SellerWorkspaceScreen() {
                 type="button"
                 style={action}
                 disabled={busy}
-                onClick={() => void exportOrders()}
+                onClick={() => void exportOrders('xlsx')}
+              >
+                {tr('تصدير الطلبات Excel', 'Export orders Excel')}
+              </button>
+              <button
+                type="button"
+                style={action}
+                disabled={busy}
+                onClick={() => void exportOrders('csv')}
               >
                 {tr('تصدير الطلبات CSV', 'Export orders CSV')}
               </button>
