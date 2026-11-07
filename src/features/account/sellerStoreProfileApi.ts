@@ -8,11 +8,16 @@ export type SellerStoreProfile = {
   status: string;
 };
 
-export type SellerBranchName = {
+export type SellerBranchDetails = {
   id: number;
   seller_id: number;
+  code: string;
   name_ar: string;
   name_en: string;
+  service_zone_id: number;
+  lat: number;
+  lng: number;
+  is_active: boolean;
 };
 
 export const getSellerStoreProfile = (sellerId: number) =>
@@ -25,8 +30,11 @@ export const saveSellerStoreProfile = (
 
 export const saveSellerBranchProfile = (
   branchId: number,
-  names: { name_ar: string; name_en: string },
-) => seller.patch<{ data: SellerBranchName }>('/seller/branches/' + branchId, names);
+  details: Omit<SellerBranchDetails, 'id' | 'seller_id' | 'is_active'>,
+) => seller.patch<{ data: SellerBranchDetails }>('/seller/branches/' + branchId, details);
+
+export const deleteSellerBranch = (branchId: number) =>
+  seller.delete<{ data: { deleted: boolean } }>('/seller/branches/' + branchId);
 
 export type SellerServiceZone = {
   id: number;
