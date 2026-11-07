@@ -1091,3 +1091,47 @@
   .seller-workspace-shell .seller-metric-card { min-height: 115px; }
   .seller-workspace-shell .seller-insight-actions button { flex: 1 1 110px; }
 }
+
+.seller-workspace-shell .seller-insight-trend {
+  margin-block: 14px 22px;
+  padding: clamp(12px, 2vw, 18px);
+  border: 1px solid #d3e1d7;
+  border-radius: 14px;
+  background: var(--sw-card, #fff);
+}
+.seller-workspace-shell .seller-insight-trend h3 {
+  margin-block-end: 6px;
+  font-size: 1.05rem;
+}
+.seller-workspace-shell .seller-insight-trend-bars {
+  display: grid;
+  gap: 8px;
+  max-height: 350px;
+  overflow-y: auto;
+}
+.seller-workspace-shell .seller-insight-trend-row {
+  display: grid;
+  grid-template-columns: 50px minmax(0, 1fr) 64px;
+  align-items: center;
+  gap: 8px;
+  font-size: 0.8rem;
+  direction: ltr;
+}
+.seller-workspace-shell .seller-insight-trend-track {
+  min-width: 0;
+  height: 11px;
+  overflow: hidden;
+  border-radius: 10px;
+  background: #e8f1ea;
+}
+.seller-workspace-shell .seller-insight-trend-track span {
+  display: block;
+  height: 100%;
+  border-radius: inherit;
+  background: #2a845c;
+}
+.seller-workspace-shell .seller-insight-trend-row strong {
+  font-size: 0.79rem;
+  text-align: end;
+  font-variant-numeric: tabular-nums;
+}
