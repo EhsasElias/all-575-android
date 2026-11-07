@@ -9,6 +9,7 @@ import { uploadErrorMessage } from './uploadErrorMessage';
 import {
   addSellerProductVariant,
   createSellerProduct,
+  deleteSellerProduct,
   importSellerProductCsv,
   uploadSellerProductImage,
   sellerCategories,
@@ -102,7 +103,7 @@ export function SellerProductManagement({ products, memberships, onUpdated }: Pr
   const [scanNotice, setScanNotice] = useState('');
   const [fieldErrors, setFieldErrors] = useState<Partial<Record<keyof Draft, string>>>({});
   const [formError, setFormError] = useState('');
-  const [confirmation, setConfirmation] = useState<{ kind: 'save' | 'publish'; productId?: number } | null>(null);
+  const [confirmation, setConfirmation] = useState<{ kind: 'save' | 'publish' | 'delete'; productId?: number } | null>(null);
 
   const fieldError = (name: keyof Draft) =>
     fieldErrors[name] ? (
@@ -435,6 +436,31 @@ export function SellerProductManagement({ products, memberships, onUpdated }: Pr
       setFormError(message);
       setError(message);
       if (selected === productId) setFormVisible(true);
+    } finally {
+      setBusy(false);
+      setWorkingId(null);
+    }
+  };
+
+  const deleteDraft = async (productId: number) => {
+    if (busy) return;
+    setConfirmation(null);
+    setBusy(true);
+    setWorkingId(productId);
+    setError('');
+    setFormError('');
+    setSuccess('');
+    try {
+      await deleteSellerProduct(productId);
+      if (selected === productId) {
+        setSelected(null);
+        setFormVisible(false);
+        setCoverFile(null);
+      }
+      setSuccess(tr('تم حذف مسودة المنتج.', 'Draft product deleted.'));
+      onUpdated();
+    } catch (cause) {
+      setError(explainApiError(cause, tr('تعذر حذف المسودة.', 'Could not delete the draft.')));
     } finally {
       setBusy(false);
       setWorkingId(null);
@@ -983,14 +1009,29 @@ export function SellerProductManagement({ products, memberships, onUpdated }: Pr
                 {tr('تعديل', 'Edit')}
               </button>
               {product.status === 'draft' && (
-                <button
-                  type="button"
-                  style={button}
-                  disabled={busy}
-                  onClick={() => void submit(product.id)}
-                >
-                  {tr('نشر / إرسال المنتج', 'Publish / Submit product')}
-                </button>
+                <>
+                  <button
+                    type="button"
+                    style={button}
+                    disabled={busy}
+                    onClick={() => void submit(product.id)}
+                  >
+                    {tr('نشر / إرسال المنتج', 'Publish / Submit product')}
+                  </button>
+                  <button
+                    type="button"
+                    title={tr('حذف المسودة', 'Delete draft')}
+                    aria-label={tr('حذف مسودة المنتج', 'Delete draft product')}
+                    disabled={busy}
+                    onClick={() => setConfirmation({ kind: 'delete', productId: product.id })}
+                    style={{ ...button, color: '#b42318', border: '1px solid #e9b3ad', display: 'inline-flex', alignItems: 'center', gap: 6 }}
+                  >
+                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+                      <path d="M3 6h18M8 6V4h8v2m3 0-1 14H6L5 6m5 4v7m4-7v7"/>
+                    </svg>
+                    {tr('حذف', 'Delete')}
+                  </button>
+                </>
               )}
             </div>
           )}
@@ -1006,20 +1047,25 @@ export function SellerProductManagement({ products, memberships, onUpdated }: Pr
             <h3 id="seller-confirm-title">
               {confirmation.kind === 'save'
                 ? tr('تأكيد حفظ المنتج', 'Confirm saving product')
-                : tr('تأكيد نشر المنتج', 'Confirm publishing product')}
+                : confirmation.kind === 'delete'
+                  ? tr('تأكيد حذف المسودة', 'Confirm deleting draft')
+                  : tr('تأكيد نشر المنتج', 'Confirm publishing product')}
             </h3>
             <p id="seller-confirm-description">
               {confirmation.kind === 'save'
                 ? tr('هل تريد حفظ بيانات المنتج كمسودة؟ يمكنك إكمال الصورة والتفاصيل بعد الحفظ.', 'Save this product as a draft? You can add an image and more details afterwards.')
-                : tr('هل تريد إكمال المنتج؟ في العرض التجريبي ينشر مباشرة، وإلا يُرسل للمراجعة.', 'Complete this product? Demo mode publishes it immediately; otherwise it is sent for review.')}
+                : confirmation.kind === 'delete'
+                  ? tr('هل تريد حذف هذه المسودة نهائياً؟ لا يمكن التراجع عن هذا الإجراء.', 'Permanently delete this draft? This action cannot be undone.')
+                  : tr('هل تريد إكمال المنتج؟ في العرض التجريبي ينشر مباشرة، وإلا يُرسل للمراجعة.', 'Complete this product? Demo mode publishes it immediately; otherwise it is sent for review.')}
             </p>
             <div className="seller-confirm-actions">
               <button type="button" onClick={() => setConfirmation(null)} disabled={busy}>{tr('إلغاء', 'Cancel')}</button>
               <button type="button" className="seller-confirm-primary" disabled={busy} autoFocus
                 onClick={() => {
                   if (confirmation.kind === 'save') void persist();
+                  else if (confirmation.kind === 'delete' && confirmation.productId !== undefined) void deleteDraft(confirmation.productId);
                   else if (confirmation.productId !== undefined) void publish(confirmation.productId);
-                }}>{tr('تأكيد', 'Confirm')}</button>
+                }}>{confirmation.kind === 'delete' ? tr('حذف المسودة', 'Delete draft') : tr('تأكيد', 'Confirm')}</button>
             </div>
           </div>
         </div>
