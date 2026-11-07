@@ -2050,3 +2050,38 @@
   overflow-wrap: anywhere;
   font-variant-numeric: tabular-nums;
 }
+
+
+/* Bulk import validation: each rejected row has its own readable explanation. */
+.seller-workspace-shell .seller-import-issues {
+  border: 1px solid rgba(199, 83, 73, .55);
+  background: rgba(191, 67, 61, .09);
+  border-radius: 14px;
+  padding: 16px;
+  margin-block: 16px;
+  color: var(--sw-ink);
+}
+.seller-workspace-shell .seller-import-issues-head {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  align-items: center;
+  justify-content: space-between;
+}
+.seller-workspace-shell .seller-import-issues-head strong { font-size: 1rem; }
+.seller-workspace-shell .seller-import-issues-head span {
+  padding: 4px 10px;
+  border-radius: 99px;
+  background: rgba(191, 67, 61, .13);
+  font-weight: 700;
+}
+.seller-workspace-shell .seller-import-issues p { margin: 10px 0; line-height: 1.75; }
+.seller-workspace-shell .seller-import-issues ol {
+  margin: 0;
+  padding-inline-start: 28px;
+  display: grid;
+  gap: 10px;
+  max-height: 320px;
+  overflow-y: auto;
+}
+.seller-workspace-shell .seller-import-issues li { overflow-wrap: anywhere; line-height: 1.8; }
