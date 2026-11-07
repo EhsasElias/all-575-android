@@ -6,6 +6,7 @@ import { readToken, type TokenStore } from './token-store';
 import { buildRequestUrl } from './requestUrl';
 
 const DEFAULT_TIMEOUT_MS = 15_000;
+const DEFAULT_UPLOAD_TIMEOUT_MS = 90_000;
 const TIMEOUT = Symbol('timeout');
 
 type QueryValue = string | number | boolean | undefined;
@@ -203,7 +204,7 @@ export function createHttpClient(config: HttpClientConfig): HttpClient {
       fetchFn,
       buildRequestUrl(config.baseUrl, path, options.query),
       { method: 'POST', headers, body },
-      options.timeoutMs ?? defaultTimeoutMs,
+      options.timeoutMs ?? Math.max(defaultTimeoutMs, DEFAULT_UPLOAD_TIMEOUT_MS),
       options.signal,
       (res) => res.text(),
     );
