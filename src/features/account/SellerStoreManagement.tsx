@@ -365,8 +365,8 @@ export function SellerStoreManagement({ memberships }: Props) {
               >
                 <p>
                   {tr(
-                    'سيظل الفرع غير نشط حتى تراجع الإدارة موقعه. يمكنك استخدام مركز المنطقة كنقطة بداية وتعديل الإحداثيات.',
-                    'The branch remains inactive until location approval. Start from a service-zone center and adjust coordinates.',
+                    'أدخلي بيانات الفرع وحددي موقعه داخل منطقة التوصيل. في وضع العرض التجريبي المفعّل سيُنشأ الفرع نشطاً مباشرة.',
+                    'Enter the branch details and choose its location inside the delivery zone. Enabled demo mode creates an active branch immediately.',
                   )}
                 </p>
                 <div style={row}>
@@ -516,7 +516,7 @@ export function SellerStoreManagement({ memberships }: Props) {
                   ))}
                 </div>
                 <button type="submit" disabled={saving || zones.length === 0 || !branchInZone}>
-                  {tr('إرسال الفرع للمراجعة', 'Submit branch for review')}
+                  {tr('إنشاء فرع', 'Create branch')}
                 </button>
               </form>
             )}
