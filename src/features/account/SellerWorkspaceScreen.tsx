@@ -358,6 +358,18 @@ export function SellerWorkspaceScreen() {
     }
   };
 
+  const canAdjustStock = (item: SellerStock) => {
+    const branch = branches.find((candidate) => candidate.id === item.branch_id);
+    if (!branch) return false;
+    return sellerMemberships.some((membership) =>
+      membership.is_active &&
+      membership.seller_status === 'approved' &&
+      membership.seller_id === branch.seller_id &&
+      (membership.role === 'owner' || membership.role === 'branch_manager') &&
+      (membership.branch_id === null || membership.branch_id === item.branch_id),
+    );
+  };
+
   const changeStock = async (item: SellerStock) => {
     if (busy) return;
     const value = window.prompt(
@@ -465,7 +477,10 @@ export function SellerWorkspaceScreen() {
                 type="button"
                 style={{ ...action, fontWeight: section === tab.id ? 700 : 400 }}
                 aria-current={section === tab.id ? 'page' : undefined}
-                onClick={() => setSection(tab.id)}
+                onClick={() => {
+                  setPacking(null);
+                  setSection(tab.id);
+                }}
               >
                 {tr(tab.ar, tab.en)}
               </button>
@@ -664,14 +679,16 @@ export function SellerWorkspaceScreen() {
                     {tr('الفعلي', 'On hand')}: {item.on_hand} · {tr('المحجوز', 'Reserved')}:{' '}
                     {item.reserved} · {tr('المتاح', 'Available')}: {item.on_hand - item.reserved}
                   </p>
-                  <button
-                    type="button"
-                    style={action}
-                    disabled={busy}
-                    onClick={() => void changeStock(item)}
-                  >
-                    {tr('تعديل الكمية', 'Adjust quantity')}
-                  </button>
+                  {canAdjustStock(item) && (
+                    <button
+                      type="button"
+                      style={action}
+                      disabled={busy}
+                      onClick={() => void changeStock(item)}
+                    >
+                      {tr('تعديل الكمية', 'Adjust quantity')}
+                    </button>
+                  )}
                 </article>
               ))}
               <p>
