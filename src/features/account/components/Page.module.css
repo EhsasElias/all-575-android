@@ -1,5 +1,7 @@
 .page {
   display: flex;
   flex-direction: column;
+  min-inline-size: 0;
+  max-inline-size: 100%;
   gap: var(--space-5);
 }
