@@ -656,6 +656,8 @@
 /* Delivery coverage is a branch subsection, not another top-level workspace tab. */
 .seller-workspace-shell .seller-coverage-fieldset {
   min-inline-size: 0;
+  width: 100%;
+  flex: 1 1 100%;
   padding: 16px;
   border: 1px solid var(--sw-border);
   border-radius: 16px;
