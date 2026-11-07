@@ -150,13 +150,13 @@ export function SellerProductManagement({ products, memberships, onUpdated }: Pr
       !Number.isFinite(price) ||
       !/^[0-9]+([.][0-9]{1,2})?$/.test(draft.price) ||
       priceHalalas < 100 ||
-      priceHalalas > 575 ||
+      priceHalalas > 1000 ||
       !Number.isSafeInteger(Number(draft.categoryId))
     ) {
       setError(
         tr(
-          'السعر يجب أن يكون بين 1 و5.75 ريال، مع اختيار تصنيف صحيح.',
-          'Price must be SAR 1–5.75, with a valid category.',
+          'السعر يجب أن يكون بين 1 و10 ريالات، مع اختيار تصنيف صحيح.',
+          'Price must be SAR 1–10, with a valid category.',
         ),
       );
       return;
@@ -679,12 +679,12 @@ export function SellerProductManagement({ products, memberships, onUpdated }: Pr
             </div>
             <div style={controls}>
               <label style={field}>
-                {tr('السعر بالريال (1–5.75)', 'Price SAR (1–5.75)')}
+                {tr('السعر بالريال (1–10)', 'Price SAR (1–10)')}
                 <input
                   type="number"
                   required
                   min="1"
-                  max="5.75"
+                  max="10"
                   step="0.01"
                   value={draft.price}
                   onChange={(event) => set('price', event.target.value)}
