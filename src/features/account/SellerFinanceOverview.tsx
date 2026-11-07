@@ -105,7 +105,7 @@ export function SellerFinanceOverview({ memberships }: Props) {
 
   return (
     <section style={box}>
-      <h2>{tr('ملخص المبيعات والعمليات المالية', 'Sales and financial activity')}</h2>
+      <h2>{tr('الملخص المالي', 'Finance overview')}</h2>
       <p>
         {tr(
           'للعرض فقط. لا يمثل هذا التقرير رصيدًا قابلًا للتحويل.',
@@ -183,7 +183,7 @@ export function SellerFinanceOverview({ memberships }: Props) {
             </div>
             <div style={box}>
               <strong>{money(summary.merchandise_total_halalas)} SAR</strong>
-              <div>{tr('مبيعات البضاعة بعد الخصم', 'Merchandise after discounts')}</div>
+              <div>{tr('صافي المبيعات', 'Sales after discounts')}</div>
             </div>
             <div style={box}>
               <strong>{money(summary.discount_halalas)} SAR</strong>
@@ -236,7 +236,7 @@ export function SellerFinanceOverview({ memberships }: Props) {
               </p>
             </div>
           )}
-          <h3>{tr('آخر 20 عملية مسلّمة', 'Latest 20 delivered transactions')}</h3>
+          <h3>{tr('آخر 20 عملية', 'Latest 20 transactions')}</h3>
           {ledger.length === 0 ? (
             <p>{tr('لا توجد عمليات في هذه الفترة.', 'No transactions for this period.')}</p>
           ) : (
@@ -244,10 +244,10 @@ export function SellerFinanceOverview({ memberships }: Props) {
               <table style={{ width: '100%', textAlign: 'start' }}>
                 <thead>
                   <tr>
-                    <th>{tr('رقم الطلب', 'Order number')}</th>
-                    <th>{tr('رقم الفرع', 'Branch number')}</th>
+                    <th>{tr('الطلب', 'Order')}</th>
+                    <th>{tr('الفرع', 'Branch')}</th>
                     <th>{tr('التاريخ', 'Date')}</th>
-                    <th>{tr('قيمة البضاعة (ريال)', 'Merchandise value (SAR)')}</th>
+                    <th>{tr('القيمة (ر.س)', 'Value (SAR)')}</th>
                   </tr>
                 </thead>
                 <tbody>
