@@ -129,6 +129,25 @@ export type SellerCategory = {
 
 export const sellerCategories = () => http.get<{ data: SellerCategory[] }>('/categories');
 
+export type ScannedCatalogProduct = {
+  id: number;
+  category_id: number;
+  name_ar: string;
+  name_en: string;
+  description_ar: string | null;
+  description_en: string | null;
+  price_halalas: number;
+  vat_class: 'standard' | 'zero' | 'exempt';
+  sku: string;
+  barcode: string | null;
+  status: string;
+};
+
+export const lookupSellerProductCode = (sellerId: number, code: string) =>
+  seller.get<{ data: ScannedCatalogProduct | null }>('/seller/products/code-lookup', {
+    query: { seller_id: sellerId, code },
+  });
+
 export const createSellerProduct = (sellerId: number, input: SellerProductInput) =>
   seller.post<{ data: SellerProduct }>('/seller/products', { ...input, seller_id: sellerId });
 
