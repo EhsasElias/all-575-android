@@ -19,7 +19,7 @@ const limit = (value: unknown, max: number): string | undefined => {
 const normalize = (name: string) => name.trim().toLowerCase().replace(/[\s_-]/g, '');
 const isBarcode = (text: string) => /^(?:\d{8}|\d{12,14})$/.test(text);
 
-export function parseProductCode(raw: string): ScannedProduct {
+export function parseProductCode(raw: string, format?: string): ScannedProduct {
   const text = raw.trim().slice(0, 12000);
   if (!text) return {};
   const found: Record<string, unknown> = {};
@@ -62,7 +62,7 @@ export function parseProductCode(raw: string): ScannedProduct {
   } else if (text.includes('=') && /(?:^|[;&\n])[\w-]+=/.test(text)) {
     const params = new URLSearchParams(text.replace(/[;\n]/g, '&'));
     for (const [key, value] of params.entries()) insert(key, value);
-  } else if (isBarcode(text)) {
+  } else if (isBarcode(text) || (format && format !== 'qr_code' && text.length <= 100)) {
     insert('barcode', text);
   } else if (!parenthesizedGtin) {
     // Unstructured QR text may be an SKU, not necessarily a product barcode.
