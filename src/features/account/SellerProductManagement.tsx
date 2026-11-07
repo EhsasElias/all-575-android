@@ -5,6 +5,7 @@ const ProductCameraScanner = lazy(() =>
 );
 import { useTranslation } from 'react-i18next';
 import { isApiError } from '@/shared/api';
+import { uploadErrorMessage } from './uploadErrorMessage';
 import {
   addSellerProductVariant,
   createSellerProduct,
@@ -461,13 +462,8 @@ export function SellerProductManagement({ products, memberships, onUpdated }: Pr
       setCoverFile(null);
       setSuccess(tr('تم حفظ صورة المنتج.', 'Product cover image uploaded.'));
       onUpdated();
-    } catch {
-      setError(
-        tr(
-          'تعذر رفع الصورة. اختر ملف صورة صالحًا لمسودة.',
-          'Image upload failed. Select a valid image for a draft.',
-        ),
-      );
+    } catch (cause) {
+      setError(uploadErrorMessage(cause, ar ? 'ar' : 'en', 'image'));
     } finally {
       setBusy(false);
     }
@@ -516,10 +512,7 @@ export function SellerProductManagement({ products, memberships, onUpdated }: Pr
           : null;
       setError(
         validation?.join(' | ') ??
-          tr(
-            'فشل الاستيراد. استخدم القالب الجديد دون تغيير عناوينه، وتأكد من اسم أو رقم التصنيف والسعر بالريال وعدم تكرار SKU.',
-            'Import failed. Check template columns, categories, prices and duplicate SKUs.',
-          ),
+          uploadErrorMessage(cause, ar ? 'ar' : 'en', 'csv'),
       );
     } finally {
       setBusy(false);
