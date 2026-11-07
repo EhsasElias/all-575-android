@@ -1,8 +1,8 @@
 import { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import {
-  sellerInsightDetails, exportSellerInsight,
-  type SellerInsightMetric, type SellerInsightDetails,
+  sellerInsightDetails, sellerInsightTrend, exportSellerInsight,
+  type SellerInsightMetric, type SellerInsightDetails, type SellerDailyTrend,
   type SellerBranch,
 } from './sellerWorkspaceApi';
 
@@ -79,6 +79,7 @@ export function SellerInsightPanel({ metric, branches, onClose }: Props) {
   const [to, setTo] = useState(() => dateAt(0));
   const [branch, setBranch] = useState('');
   const [details, setDetails] = useState<SellerInsightDetails | null>(null);
+  const [trend, setTrend] = useState<SellerDailyTrend[]>([]);
   const [loading, setLoading] = useState(false);
   const [downloading, setDownloading] = useState(false);
   const [error, setError] = useState('');
@@ -109,6 +110,24 @@ export function SellerInsightPanel({ metric, branches, onClose }: Props) {
     // All filter primitives are dependencies, not the constructed object.
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [metric, from, to, branch, ar]);
+
+  useEffect(() => {
+    if (metric !== 'sales' && metric !== 'delivered') {
+      setTrend([]);
+      return;
+    }
+    if (!from || !to || from > to) return;
+    let active = true;
+    setTrend([]);
+    void sellerInsightTrend(filters).then((result) => {
+      if (active) setTrend(result.data);
+    }).catch(() => {
+      if (active) setTrend([]);
+    });
+    return () => { active = false; };
+    // Primitive filter fields are watched to avoid repeated fetches.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [metric, from, to, branch]);
 
   const download = async (format: 'csv' | 'xlsx') => {
     if (!details || downloading || loading) return;
@@ -179,6 +198,31 @@ export function SellerInsightPanel({ metric, branches, onClose }: Props) {
       {loading && <p role="status">{tr('جار تحميل التقرير…', 'Loading report…')}</p>}
       {details && (
         <>
+          {(metric === 'sales' || metric === 'delivered') && trend.length > 0 && (
+            <div className="seller-insight-trend">
+              <h3>{tr('اتجاه المبيعات حسب تاريخ الطلب', 'Delivered merchandise by order date')}</h3>
+              <p className="seller-insight-note">
+                {tr('يُعرض تاريخ إنشاء الطلب الذي وصل إلى حالة مسلّم، وليس تاريخ تحويل المستحقات.',
+                  'Grouped by the placement date of orders now delivered, not the payout date.')}
+              </p>
+              <div className="seller-insight-trend-bars" role="img"
+                aria-label={tr('مخطط قيمة المبيعات حسب اليوم', 'Daily merchandise sales chart')}>
+                {trend.slice(-30).map((row) => {
+                  const maximum = Math.max(1, ...trend.slice(-30).map((item) => item.merchandise_halalas));
+                  const ratio = row.merchandise_halalas / maximum;
+                  return (
+                    <div className="seller-insight-trend-row" key={row.day}>
+                      <time dateTime={row.day}>{row.day.slice(5)}</time>
+                      <div className="seller-insight-trend-track">
+                        <span style={{ inlineSize: `${Math.max(1, ratio * 100)}%` }} />
+                      </div>
+                      <strong>{(row.merchandise_halalas / 100).toFixed(2)}</strong>
+                    </div>
+                  );
+                })}
+              </div>
+            </div>
+          )}
           {metric === 'stock' && (
             <p className="seller-insight-note">
               {tr('المخزون يعرض الكميات الحالية، ولا يمثل حركة المخزون التاريخية حسب التواريخ المحددة.',
