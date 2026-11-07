@@ -309,6 +309,7 @@ export type SellerStaffMember = {
   id: number;
   user_id: string | number;
   employee_number: string;
+  name?: string | null;
   seller_id: number;
   branch_id: number | null;
   role: 'owner' | 'branch_manager' | 'picker' | string;
