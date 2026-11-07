@@ -651,3 +651,84 @@
     flex: 1 1 140px;
   }
 }
+
+
+/* Delivery coverage is a branch subsection, not another top-level workspace tab. */
+.seller-workspace-shell .seller-coverage-fieldset {
+  min-inline-size: 0;
+  padding: 16px;
+  border: 1px solid var(--sw-border);
+  border-radius: 16px;
+  margin-block: 14px;
+  background: var(--color-surface-mint, #eef4ec);
+}
+.seller-workspace-shell .seller-coverage-fieldset legend {
+  padding-inline: 8px;
+  font-weight: 700;
+  line-height: 1.6;
+}
+.seller-workspace-shell .seller-coverage-fieldset p {
+  margin: 0 0 12px;
+  font-size: .9rem;
+  line-height: 1.7;
+}
+.seller-workspace-shell .seller-coverage-options {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 10px;
+  max-height: 260px;
+  overflow-y: auto;
+}
+.seller-workspace-shell .seller-coverage-option {
+  display: flex !important;
+  flex-direction: row !important;
+  align-items: center !important;
+  gap: 10px !important;
+  min-width: 0;
+  padding: 12px;
+  border: 1px solid var(--sw-border);
+  background: var(--sw-card);
+  border-radius: 12px;
+  cursor: pointer;
+  line-height: 1.5;
+}
+.seller-workspace-shell .seller-coverage-option input[type="checkbox"] {
+  flex: 0 0 auto;
+  width: 20px;
+  height: 20px;
+  accent-color: #22795c;
+}
+.seller-workspace-shell .seller-coverage-option span {
+  flex: 1;
+  min-width: 0;
+  overflow-wrap: anywhere;
+}
+.seller-workspace-shell .seller-coverage-option small {
+  color: var(--sw-muted);
+}
+.seller-workspace-shell .seller-coverage-summary {
+  display: grid;
+  gap: 10px;
+  margin-block: 16px;
+  padding: 12px;
+  border-radius: 12px;
+  border: 1px solid var(--sw-border);
+}
+.seller-workspace-shell .seller-coverage-tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+.seller-workspace-shell .seller-coverage-tags span {
+  border-radius: 999px;
+  border: 1px solid var(--sw-border);
+  background: var(--color-surface-mint, #eef4ec);
+  padding: 5px 12px;
+  font-size: .85rem;
+}
+@media (max-width: 700px) {
+  .seller-workspace-shell .seller-coverage-options {
+    grid-template-columns: minmax(0,1fr);
+  }
+  .seller-workspace-shell .seller-coverage-fieldset { padding: 12px; }
+}
