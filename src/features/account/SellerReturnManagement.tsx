@@ -106,7 +106,7 @@ export function SellerReturnManagement() {
       setError(
         conflict
           ? tr(
-              'ربما تم الرد مسبقًا أو تغيرت حالة الطلب. حدّثي القائمة.',
+              'ربما تم الرد مسبقًا أو تغيرت حالة الطلب. حدّث القائمة.',
               'A response may already exist or the case changed. Refresh the list.',
             )
           : tr(
