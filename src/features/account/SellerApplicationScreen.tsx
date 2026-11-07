@@ -8,6 +8,7 @@ import {
 } from 'react';
 import { useTranslation } from 'react-i18next';
 import { isApiError } from '@/shared/api';
+import { uploadErrorMessage } from './uploadErrorMessage';
 import { Link } from 'react-router';
 import { routePaths } from '@/shared/lib';
 import { Page } from './components/Page';
@@ -331,8 +332,12 @@ export function SellerApplicationScreen() {
     setDocumentSuccess('');
     setSaved(false);
     try {
-      await uploadSellerApplicationDocument(documentType, documentFile);
-      setDocuments(await getSellerApplicationDocuments());
+      const uploaded = await uploadSellerApplicationDocument(documentType, documentFile);
+      // A successful POST is success even if the subsequent GET fails.
+      setDocuments((current) => [
+        ...current.filter((item) => item.document_type !== uploaded.document_type),
+        uploaded,
+      ]);
       setDocumentFile(null);
       if (documentInputRef.current) documentInputRef.current.value = '';
       setDocumentSuccess(
@@ -343,16 +348,13 @@ export function SellerApplicationScreen() {
         ),
       );
       setSaved(true);
+      try {
+        setDocuments(await getSellerApplicationDocuments());
+      } catch {
+        // Keep the successful upload visible; the server list can be refreshed later.
+      }
     } catch (cause) {
-      const fieldError = isApiError(cause) ? Object.values(cause.fieldErrors).flat()[0] : null;
-      setDocumentError(
-        fieldError ??
-          localized(
-            'تعذر رفع المستند. تحققي من نوع الملف والصلاحيات.',
-            'Document upload failed. Check file type and permissions.',
-            'Échec du transfert. Vérifiez le type de fichier et les autorisations.',
-          ),
-      );
+      setDocumentError(uploadErrorMessage(cause, ar ? 'ar' : fr ? 'fr' : 'en', 'document'));
     } finally {
       setDocumentsBusy(false);
     }
