@@ -82,6 +82,9 @@ export function SessionProvider({
             setStatus('guest');
             return;
           }
+          // Do not block the entire app in a loading state while offline.
+          // Preserve the token and keep retrying; an online event wakes the retry immediately.
+          setStatus('guest');
           if (!(await waitBeforeRetry(delay, controller.signal))) return;
         }
       }
