@@ -6,6 +6,10 @@ describe('parseProductCode', () => {
     expect(parseProductCode('6281234567890')).toEqual({ barcode: '6281234567890' });
   });
 
+  it('puts alpha-numeric CODE128 values in the barcode field when detected by camera', () => {
+    expect(parseProductCode('ABC-123', 'code_128')).toEqual({ barcode: 'ABC-123' });
+  });
+
   it('maps JSON product details to editable product fields', () => {
     expect(parseProductCode(JSON.stringify({
       product: {
