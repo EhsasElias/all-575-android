@@ -33,6 +33,13 @@ export function SellerFinanceOverview({ memberships }: Props) {
   const { i18n } = useTranslation();
   const ar = i18n.language.startsWith('ar');
   const tr = (arabic: string, english: string) => (ar ? arabic : english);
+  const readinessLabels: Record<string, string> = {
+    ready: tr('جاهزة', 'Ready'),
+    pending: tr('بانتظار الاستكمال', 'Pending completion'),
+    blocked: tr('غير جاهزة', 'Not ready'),
+    not_ready: tr('غير جاهزة', 'Not ready'),
+    incomplete: tr('بيانات ناقصة', 'Incomplete'),
+  };
   const owners = memberships.filter(
     (item) =>
       item.is_active &&
@@ -192,7 +199,7 @@ export function SellerFinanceOverview({ memberships }: Props) {
               <h3>{tr('جاهزية التسوية المالية', 'Settlement readiness')}</h3>
               <p>
                 {tr('الحالة: ', 'Status: ')}
-                {readiness.state}
+                {readinessLabels[readiness.state] ?? readiness.state}
               </p>
               <ul>
                 <li>
@@ -235,10 +242,10 @@ export function SellerFinanceOverview({ memberships }: Props) {
               <table style={{ width: '100%', textAlign: 'start' }}>
                 <thead>
                   <tr>
-                    <th>{tr('الطلب', 'Order')}</th>
-                    <th>{tr('الفرع', 'Branch')}</th>
+                    <th>{tr('رقم الطلب', 'Order number')}</th>
+                    <th>{tr('رقم الفرع', 'Branch number')}</th>
                     <th>{tr('التاريخ', 'Date')}</th>
-                    <th>{tr('قيمة البضاعة', 'Merchandise')}</th>
+                    <th>{tr('قيمة البضاعة (ريال)', 'Merchandise value (SAR)')}</th>
                   </tr>
                 </thead>
                 <tbody>
