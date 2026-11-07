@@ -94,6 +94,7 @@ export function SellerProductManagement({ products, memberships, onUpdated }: Pr
   const [workingId, setWorkingId] = useState<number | null>(null);
   const [busy, setBusy] = useState(false);
   const [coverFile, setCoverFile] = useState<File | null>(null);
+  const [localCoverPreview, setLocalCoverPreview] = useState<string | null>(null);
   const [coverUrl, setCoverUrl] = useState('');
   const [imageCardOpen, setImageCardOpen] = useState(true);
   const [importFile, setImportFile] = useState<File | null>(null);
@@ -109,6 +110,16 @@ export function SellerProductManagement({ products, memberships, onUpdated }: Pr
   const [fieldErrors, setFieldErrors] = useState<Partial<Record<keyof Draft, string>>>({});
   const [formError, setFormError] = useState('');
   const [confirmation, setConfirmation] = useState<{ kind: 'save' | 'publish' | 'delete'; productId?: number } | null>(null);
+
+  useEffect(() => {
+    if (!coverFile) {
+      setLocalCoverPreview(null);
+      return;
+    }
+    const objectUrl = URL.createObjectURL(coverFile);
+    setLocalCoverPreview(objectUrl);
+    return () => URL.revokeObjectURL(objectUrl);
+  }, [coverFile]);
 
   const fieldError = (name: keyof Draft) =>
     fieldErrors[name] ? (
@@ -1023,6 +1034,7 @@ export function SellerProductManagement({ products, memberships, onUpdated }: Pr
                     {coverFile && (
                       <div className="seller-product-image-preview">
                         <span>{tr('الصورة المختارة:', 'Selected image:')}</span>
+                        {localCoverPreview && <img src={localCoverPreview} alt={tr('معاينة صورة المنتج', 'Selected image preview')} />}
                         <strong>{coverFile.name}</strong>
                       </div>
                     )}
