@@ -650,6 +650,14 @@ export function SellerWorkspaceScreen() {
                     <span className="seller-metric-more">{tr('عرض تفاصيل الطلبات والتصدير', 'View details and export')}</span>
                   </button>
                 ))}
+                <button type="button" className="seller-metric-card"
+                  aria-expanded={insightMetric === 'orders'}
+                  onClick={() => setInsightMetric(insightMetric === 'orders' ? null : 'orders')}>
+                  <span className="seller-metric-label">{tr('إجمالي الطلبات المعروضة حسب الحالات', 'Orders in tracked statuses')}</span>
+                  <strong>{dashboard.awaiting_seller + dashboard.preparing + dashboard.ready +
+                    dashboard.on_the_way + dashboard.delivered}</strong>
+                  <span className="seller-metric-more">{tr('تفاصيل الطلبات والتصدير', 'Details and export')}</span>
+                </button>
               </div>
               <div className="seller-metric-grid">
                 <button type="button" className="seller-metric-card seller-metric-featured"
