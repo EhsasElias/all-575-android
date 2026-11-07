@@ -442,7 +442,7 @@ export function SellerStoreManagement({ memberships, onStoreUpdated }: Props) {
             </p>
             <div style={row}>
               <label style={field}>
-                {tr('الاسم بالعربية', 'Arabic name')}
+                {tr('اسم المتجر (AR) *', 'Store name (AR) *')}
                 <input
                   value={storeAr}
                   maxLength={180}
@@ -452,7 +452,7 @@ export function SellerStoreManagement({ memberships, onStoreUpdated }: Props) {
                 />
               </label>
               <label style={field}>
-                {tr('الاسم بالإنجليزية', 'English name')}
+                {tr('اسم المتجر (EN) *', 'Store name (EN) *')}
                 <input
                   value={storeEn}
                   maxLength={180}
@@ -483,20 +483,20 @@ export function SellerStoreManagement({ memberships, onStoreUpdated }: Props) {
               </button>
               {addZoneOpen && (
                 <form className="seller-zone-create-form" onSubmit={(event) => void createZone(event)}>
-                  <h4>{tr('إضافة منطقة توصيل جديدة', 'New delivery zone')}</h4>
+                  <h4>{tr('منطقة توصيل جديدة', 'New delivery zone')}</h4>
                   <p>{tr('حدد مركز المنطقة ومسافة التوصيل منه. إنشاء المنطقة متاح لحساب البائع التجريبي.',
                     'Choose the zone center and delivery distance. Zone creation is available to the demo seller account.')}</p>
                   <div className="seller-zone-create-grid">
-                    <label>{tr('اسم المنطقة بالعربية (إجباري)', 'Arabic zone name (required)')}
+                    <label>{tr('اسم المنطقة (AR) *', 'Zone name (AR) *')}
                       <input required maxLength={180} disabled={saving} value={zoneDraft.name_ar}
                         onChange={(event) => setZoneDraft((current) => ({ ...current, name_ar: event.target.value }))}/>
                     </label>
-                    <label>{tr('اسم المنطقة بالإنجليزية (إجباري)', 'English zone name (required)')}
+                    <label>{tr('اسم المنطقة (EN) *', 'Zone name (EN) *')}
                       <input required maxLength={180} disabled={saving} value={zoneDraft.name_en}
                         onChange={(event) => setZoneDraft((current) => ({ ...current, name_en: event.target.value }))}/>
                     </label>
                     <label>
-                      {tr('مسافة التوصيل من مركز المنطقة (إجباري)', 'Delivery distance from zone center (required)')}
+                      {tr('مدى التوصيل *', 'Delivery radius *')}
                       <select required disabled={saving} value={zoneDistanceOption}
                         onChange={(event) => {
                           const value = event.target.value;
@@ -514,7 +514,7 @@ export function SellerStoreManagement({ memberships, onStoreUpdated }: Props) {
                     </label>
                     {zoneDistanceOption === 'custom' && (
                       <label>
-                        {tr('أدخل المسافة بالمتر (إجباري)', 'Enter distance in meters (required)')}
+                        {tr('المسافة (م) *', 'Distance (m) *')}
                         <input type="number" required min={100} max={50000} step={1}
                           placeholder={tr('مثال: 2500', 'Example: 2500')}
                           disabled={saving} value={zoneDraft.radius_meters}
@@ -545,8 +545,8 @@ export function SellerStoreManagement({ memberships, onStoreUpdated }: Props) {
                   <div className="seller-zone-create-grid">
                     {(['center_lat', 'center_lng'] as const).map((key) => (
                       <label key={key}>
-                        {key === 'center_lat' ? tr('خط العرض (إجباري)', 'Latitude (required)')
-                          : tr('خط الطول (إجباري)', 'Longitude (required)')}
+                        {key === 'center_lat' ? tr('خط العرض *', 'Latitude *')
+                          : tr('خط الطول *', 'Longitude *')}
                         <input type="number" required step="any" disabled={saving}
                           min={key === 'center_lat' ? -90 : -180}
                           max={key === 'center_lat' ? 90 : 180}
@@ -579,7 +579,7 @@ export function SellerStoreManagement({ memberships, onStoreUpdated }: Props) {
                 </p>
                 <div style={row}>
                   <label style={field}>
-                    {tr('المنطقة الأساسية للفرع (إجباري)', 'Primary branch zone (required)')}
+                    {tr('المنطقة الأساسية *', 'Primary zone *')}
                     <select
                       required
                       value={newBranch.service_zone_id}
@@ -605,7 +605,7 @@ export function SellerStoreManagement({ memberships, onStoreUpdated }: Props) {
                     </select>
                   </label>
                   <fieldset className="seller-coverage-fieldset">
-                    <legend>{tr('مناطق تغطية الفرع', 'Branch delivery coverage')}</legend>
+                    <legend>{tr('مناطق التغطية', 'Coverage zones')}</legend>
                     <p>{tr('اختر المناطق التي يخدمها الفرع. المنطقة الأساسية محددة تلقائيًا.',
                       'Select the zones served by this branch. The primary zone is always included.')}</p>
                     <div className="seller-coverage-options">
@@ -630,9 +630,9 @@ export function SellerStoreManagement({ memberships, onStoreUpdated }: Props) {
                   </fieldset>
                   {(
                     [
-                      ['code', tr('رمز الفرع', 'Branch code')],
-                      ['name_ar', tr('اسم الفرع بالعربية', 'Arabic branch name')],
-                      ['name_en', tr('اسم الفرع بالإنجليزية', 'English branch name')],
+                      ['code', tr('رمز الفرع *', 'Branch code *')],
+                      ['name_ar', tr('اسم الفرع (AR) *', 'Branch name (AR) *')],
+                      ['name_en', tr('اسم الفرع (EN) *', 'Branch name (EN) *')],
                     ] as const
                   ).map(([key, label]) => (
                     <label key={key} style={field}>
@@ -851,9 +851,9 @@ export function SellerStoreManagement({ memberships, onStoreUpdated }: Props) {
                   <form className="seller-branch-edit" onSubmit={(event) => void saveBranch(event)}>
                     <div style={row}>
                       {([
-                        ['code', tr('رمز الفرع (إجباري)', 'Branch code (required)')],
-                        ['name_ar', tr('اسم الفرع بالعربية (إجباري)', 'Arabic branch name (required)')],
-                        ['name_en', tr('اسم الفرع بالإنجليزية (إجباري)', 'English branch name (required)')],
+                        ['code', tr('رمز الفرع *', 'Branch code *')],
+                        ['name_ar', tr('اسم الفرع (AR) *', 'Branch name (AR) *')],
+                        ['name_en', tr('اسم الفرع (EN) *', 'Branch name (EN) *')],
                       ] as const).map(([key, label]) => (
                         <label key={key} style={field}>
                           {label}
@@ -865,7 +865,7 @@ export function SellerStoreManagement({ memberships, onStoreUpdated }: Props) {
                         </label>
                       ))}
                       <label style={field}>
-                        {tr('المنطقة الأساسية للفرع (إجباري)', 'Primary branch zone (required)')}
+                        {tr('المنطقة الأساسية *', 'Primary zone *')}
                         <select required disabled={saving} value={branchDraft.service_zone_id}
                           onChange={(event) => {
                             const zone = zones.find((item) => item.id === Number(event.target.value));
@@ -889,7 +889,7 @@ export function SellerStoreManagement({ memberships, onStoreUpdated }: Props) {
                       </label>
                     </div>
                     <fieldset className="seller-coverage-fieldset">
-                    <legend>{tr('مناطق تغطية الفرع', 'Branch delivery coverage')}</legend>
+                    <legend>{tr('مناطق التغطية', 'Coverage zones')}</legend>
                     <p>{tr('اختر المناطق التي يخدمها الفرع. المنطقة الأساسية محددة تلقائيًا.',
                       'Select the zones served by this branch. The primary zone is always included.')}</p>
                     <div className="seller-coverage-options">
@@ -937,8 +937,8 @@ export function SellerStoreManagement({ memberships, onStoreUpdated }: Props) {
                       <div style={row}>
                         {(['lat', 'lng'] as const).map((key) => (
                           <label key={key} style={field}>
-                            {key === 'lat' ? tr('خط العرض (إجباري)', 'Latitude (required)')
-                              : tr('خط الطول (إجباري)', 'Longitude (required)')}
+                            {key === 'lat' ? tr('خط العرض *', 'Latitude *')
+                              : tr('خط الطول *', 'Longitude *')}
                             <input type="number" required step="any" disabled={saving}
                               value={branchDraft[key]}
                               onChange={(event) => setBranchDraft((current) => ({
