@@ -255,6 +255,7 @@ export function SellerStaffManagement({ memberships }: Props) {
                 onChange={(e) => setEditor({ ...editor, active: e.target.checked })}/>
               {tr('حساب الموظف نشط', 'Membership active')}
             </label>}
+            {error && <p role="alert" className="seller-team-error">{error}</p>}
             <div className="seller-team-dialog-actions">
               <button type="button" disabled={busy} onClick={() => setEditor(null)}>{tr('إلغاء', 'Cancel')}</button>
               <button type="submit" disabled={busy || !editor.branchId}>{busy ? tr('جار الحفظ…', 'Saving…') : tr('حفظ', 'Save')}</button>
