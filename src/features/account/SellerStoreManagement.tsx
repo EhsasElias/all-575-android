@@ -151,7 +151,7 @@ export function SellerStoreManagement({ memberships }: Props) {
     if (!profile || saving) return;
     if (!storeAr.trim() || !storeEn.trim()) {
       setError(
-        tr('أدخلي اسمي المتجر بالعربية والإنجليزية.', 'Enter both Arabic and English store names.'),
+        tr('أدخل اسمي المتجر بالعربية والإنجليزية.', 'Enter both Arabic and English store names.'),
       );
       return;
     }
@@ -220,7 +220,7 @@ export function SellerStoreManagement({ memberships }: Props) {
     ) {
       setError(
         tr(
-          'اختاري المنطقة وحددي إحداثيات صحيحة للفرع.',
+          'اختر المنطقة وحدد إحداثيات صحيحة للفرع.',
           'Choose a zone and valid branch coordinates.',
         ),
       );
@@ -229,7 +229,7 @@ export function SellerStoreManagement({ memberships }: Props) {
     if (!branchInZone) {
       setError(
         tr(
-          'موقع الفرع خارج منطقة التوصيل المحددة. اختاري نقطة داخل المنطقة.',
+          'موقع الفرع خارج منطقة التوصيل المحددة. اختر نقطة داخل المنطقة.',
           'Branch location is outside the selected delivery zone. Choose a point inside it.',
         ),
       );
@@ -372,7 +372,7 @@ export function SellerStoreManagement({ memberships }: Props) {
               >
                 <p>
                   {tr(
-                    'أدخلي بيانات الفرع وحددي موقعه داخل منطقة التوصيل. في وضع العرض التجريبي المفعّل سيُنشأ الفرع نشطاً مباشرة.',
+                    'أدخل بيانات الفرع وحدد موقعه داخل منطقة التوصيل. في وضع العرض التجريبي المفعّل سيُنشأ الفرع نشطاً مباشرة.',
                     'Enter the branch details and choose its location inside the delivery zone. Enabled demo mode creates an active branch immediately.',
                   )}
                 </p>
@@ -392,7 +392,7 @@ export function SellerStoreManagement({ memberships }: Props) {
                         }));
                       }}
                     >
-                      <option value="">{tr('اختاري المنطقة', 'Choose zone')}</option>
+                      <option value="">{tr('اختر المنطقة', 'Choose zone')}</option>
                       {zones.map((zone) => (
                         <option key={zone.id} value={zone.id}>
                           {ar ? zone.name_ar : zone.name_en}
@@ -423,7 +423,7 @@ export function SellerStoreManagement({ memberships }: Props) {
                     <div style={{ flex: '1 1 100%', minWidth: 0 }}>
                       <p>
                         {tr(
-                          'اختاري موقع الفرع من الخريطة بسحب الدبوس أو الضغط على المكان، ثم راجعي الإحداثيات.',
+                          'اختر موقع الفرع من الخريطة بسحب الدبوس أو الضغط على المكان، ثم راجع الإحداثيات.',
                           'Tap or drag the pin to the branch location, then verify its coordinates.',
                         )}
                       </p>
@@ -453,7 +453,7 @@ export function SellerStoreManagement({ memberships }: Props) {
                                   'Enable location permission in device settings.',
                                 )
                               : tr(
-                                  'تعذر تحديد الموقع. اختاري نقطة على الخريطة.',
+                                  'تعذر تحديد الموقع. اختر نقطة على الخريطة.',
                                   'Could not detect location. Choose a point on the map.',
                                 )}
                           </span>
