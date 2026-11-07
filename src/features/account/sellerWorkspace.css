@@ -2085,3 +2085,71 @@
   overflow-y: auto;
 }
 .seller-workspace-shell .seller-import-issues li { overflow-wrap: anywhere; line-height: 1.8; }
+
+
+/* Editable product cover — expandable attachment card below product fields. */
+.seller-workspace-shell .seller-product-image-card {
+  border: 1px solid var(--sw-border);
+  border-radius: 14px;
+  background: var(--sw-card);
+  margin-block: 14px;
+  overflow: hidden;
+}
+.seller-workspace-shell .seller-product-image-toggle {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 14px 16px;
+  color: var(--sw-ink);
+  background: var(--sw-card);
+  border: 0;
+  cursor: pointer;
+  font-weight: 700;
+  text-align: start;
+}
+.seller-workspace-shell .seller-product-image-body {
+  border-top: 1px solid var(--sw-border);
+  padding: 16px;
+  color: var(--sw-ink);
+}
+.seller-workspace-shell .seller-product-image-body p {
+  margin-block: 0 12px;
+  color: var(--sw-muted);
+  line-height: 1.7;
+}
+.seller-workspace-shell .seller-product-image-layout {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(180px, .55fr);
+  gap: 16px;
+  align-items: start;
+}
+.seller-workspace-shell .seller-product-image-controls {
+  display: grid;
+  min-width: 0;
+  gap: 12px;
+}
+.seller-workspace-shell .seller-product-image-preview {
+  border-radius: 12px;
+  border: 1px dashed var(--sw-border);
+  padding: 12px;
+  min-width: 0;
+  min-height: 120px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: 8px;
+  overflow-wrap: anywhere;
+}
+.seller-workspace-shell .seller-product-image-preview img {
+  max-width: 100%;
+  max-height: 240px;
+  object-fit: contain;
+  border-radius: 8px;
+}
+@media (max-width: 720px) {
+  .seller-workspace-shell .seller-product-image-layout {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}
