@@ -308,6 +308,7 @@ export const exportSellerOrdersCsv = (
 export type SellerStaffMember = {
   id: number;
   user_id: string | number;
+  employee_number: string;
   seller_id: number;
   branch_id: number | null;
   role: 'owner' | 'branch_manager' | 'picker' | string;
