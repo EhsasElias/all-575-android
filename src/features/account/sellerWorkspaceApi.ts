@@ -189,6 +189,9 @@ export const lookupSellerProductCode = (sellerId: number, code: string) =>
 export const createSellerProduct = (sellerId: number, input: SellerProductInput) =>
   seller.post<{ data: SellerProduct }>('/seller/products', { ...input, seller_id: sellerId });
 
+export const deleteSellerProduct = (productId: number) =>
+  seller.delete<{ message: string }>('/seller/products/' + productId);
+
 export const updateSellerProduct = (productId: number, input: SellerProductInput) =>
   seller.patch<{ data: SellerProduct }>('/seller/products/' + productId, input);
 
