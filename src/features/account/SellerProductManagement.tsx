@@ -223,7 +223,8 @@ export function SellerProductManagement({ products, memberships, onUpdated }: Pr
       if (parsed.price) candidates.price = parsed.price;
       if (parsed.vatClass) candidates.vatClass = parsed.vatClass;
       if (parsed.barcode) candidates.barcode = parsed.barcode;
-      if (parsed.sku || parsed.barcode) candidates.sku = parsed.sku || parsed.barcode;
+      const newSku = parsed.sku || parsed.barcode;
+      if (newSku) candidates.sku = newSku;
     }
     setDraft((current) => {
       const next = { ...current };
