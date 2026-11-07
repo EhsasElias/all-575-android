@@ -257,7 +257,10 @@ export function SellerProductManagement({ products, memberships, onUpdated }: Pr
   const submit = async (productId: number) => {
     if (
       busy ||
-      !window.confirm(tr('هل تريدين إرسال هذا المنتج للمراجعة؟', 'Submit this product for review?'))
+      !window.confirm(tr(
+        'هل تريدين إكمال المنتج؟ سيُنشر مباشرة في وضع العرض التجريبي، وإلا سيُرسل للمراجعة.',
+        'Complete this product? It publishes immediately in demo mode; otherwise it goes to review.',
+      ))
     )
       return;
     setBusy(true);
@@ -265,20 +268,19 @@ export function SellerProductManagement({ products, memberships, onUpdated }: Pr
     setError('');
     setSuccess('');
     try {
-      await submitSellerProduct(productId);
+      const result = await submitSellerProduct(productId);
       setSuccess(
-        tr(
-          'تم إرسال المنتج للمراجعة، ولم يُنشر بعد.',
-          'Product submitted for review; it is not yet published.',
-        ),
+        result.data.status === 'published'
+          ? tr('تم نشر المنتج مباشرة.', 'Product published immediately.')
+          : tr('تم إرسال المنتج للمراجعة، ولم يُنشر بعد.', 'Product submitted for review; it is not yet published.'),
       );
       if (selected === productId) setFormVisible(false);
       onUpdated();
     } catch {
       setError(
         tr(
-          'لم يتم الإرسال. يجب إضافة وحدة بيع واحدة على الأقل وحفظ المنتج أولاً.',
-          'Submission failed. Add at least one variant and save the product first.',
+          'تعذر النشر أو الإرسال. احفظي المسودة وأضيفي SKU وصورة للمنتج أولاً.',
+          'Could not publish or submit. Save the draft and add an SKU and product image first.',
         ),
       );
     } finally {
@@ -749,7 +751,7 @@ export function SellerProductManagement({ products, memberships, onUpdated }: Pr
                   disabled={busy || workingId === selected}
                   onClick={() => void submit(selected)}
                 >
-                  {tr('إرسال للمراجعة', 'Submit for review')}
+                  {tr('نشر / إرسال المنتج', 'Publish / Submit product')}
                 </button>
               </div>
             </div>
@@ -788,7 +790,7 @@ export function SellerProductManagement({ products, memberships, onUpdated }: Pr
                   disabled={busy}
                   onClick={() => void submit(product.id)}
                 >
-                  {tr('إرسال للمراجعة', 'Submit for review')}
+                  {tr('نشر / إرسال المنتج', 'Publish / Submit product')}
                 </button>
               )}
             </div>
@@ -797,8 +799,8 @@ export function SellerProductManagement({ products, memberships, onUpdated }: Pr
       ))}
       <p>
         {tr(
-          'تُعرض المنتجات على دفعات، والنشر النهائي يتم بواسطة الإدارة فقط.',
-          'Products are listed in batches. Final publishing is controlled by administrators.',
+          'تُعرض المنتجات على دفعات. يمكن النشر المباشر للحساب التجريبي المصرّح له، وبقية الحسابات تتطلب مراجعة الإدارة.',
+          'Products are listed in batches. Authorized demo accounts can publish directly; other accounts require admin review.',
         )}
       </p>
     </section>
