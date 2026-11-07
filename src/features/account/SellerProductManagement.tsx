@@ -508,6 +508,9 @@ export function SellerProductManagement({ products, memberships, onUpdated }: Pr
       {sellerIds.length > 0 && (
         <div className="seller-import-card" style={card}>
           <h3>{tr('استيراد المنتجات عبر CSV', 'Import products from CSV')}</h3>
+          <p className="seller-required-hint">
+            {tr('في القالب: SKU والتصنيف والاسمان والسعر وفئة الضريبة إجبارية. المتجر والوصف والباركود اختيارية؛ المتجر يُحدد من هذه الصفحة.', 'In the template, SKU, category, both names, price and VAT class are required. Store, descriptions and barcode are optional; the store is selected on this page.')}
+          </p>
           <p>
             {tr(
               'أعمدة القالب تطابق حقول «منتج جديد». اختر المتجر عند الاستيراد، واكتب اسم التصنيف أو رقمه والسعر بالريال (مثال: 5.75). يمكن ترك خانة المتجر فارغة في الملف.',
@@ -618,7 +621,7 @@ export function SellerProductManagement({ products, memberships, onUpdated }: Pr
       {!formVisible && (error || formError) && (
         <div className="seller-form-message" role="alert">{formError || error}</div>
       )}
-      {success && <p role="status">{success}</p>}
+      {!formVisible && success && <p role="status">{success}</p>}
       {formVisible && (
         <div className="seller-product-form-card" style={card}>
           <h3>
