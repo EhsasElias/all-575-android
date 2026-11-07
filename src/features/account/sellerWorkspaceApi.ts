@@ -114,6 +114,13 @@ export type SellerInsightDetails = {
   max_rows: number;
   note: string;
 };
+export type SellerDailyTrend = {
+  day: string;
+  orders: number;
+  merchandise_halalas: number;
+};
+export const sellerInsightTrend = (filters: SellerInsightFilters) =>
+  seller.get<{ data: SellerDailyTrend[]; note: string }>('/seller/insights/trend', { query: filters });
 export const sellerInsightDetails = (filters: SellerInsightFilters) =>
   seller.get<{ data: SellerInsightDetails }>('/seller/insights', { query: filters });
 export const exportSellerInsight = (filters: SellerInsightFilters, format: 'csv' | 'xlsx') =>
