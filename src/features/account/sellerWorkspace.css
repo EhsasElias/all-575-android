@@ -548,7 +548,9 @@
   .seller-workspace-shell .seller-confirm-dialog {
     width: 100%;
     border-radius: 22px 22px 0 0;
-    padding: 24px 18px calc(22px + env(safe-area-inset-bottom, 0px));
+    padding-block-start: 24px;
+    padding-inline: 18px;
+    padding-block-end: calc(22px + env(safe-area-inset-bottom, 0px));
   }
 }
 
