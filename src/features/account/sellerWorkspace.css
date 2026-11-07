@@ -551,3 +551,22 @@
     padding: 24px 18px calc(22px + env(safe-area-inset-bottom, 0px));
   }
 }
+
+/* Keep required-field guidance adjacent to its form, in both themes. */
+.seller-workspace-shell .seller-required-hint {
+  margin-block: 4px 12px !important;
+  padding: 10px 14px;
+  line-height: 1.7;
+  color: var(--sw-ink);
+  background: var(--color-surface-mint, #eef4ec);
+  border-inline-start: 3px solid #22795c;
+  border-radius: 10px;
+  font-size: .9rem;
+  overflow-wrap: anywhere;
+}
+.seller-workspace-shell .seller-product-form-card form label {
+  gap: 8px;
+}
+.seller-workspace-shell .seller-product-form-card form label > :is(input,select,textarea) {
+  margin-block-start: 2px;
+}
