@@ -34,6 +34,13 @@ export function SellerStoreManagement({ memberships }: Props) {
   const { i18n } = useTranslation();
   const ar = i18n.language.startsWith('ar');
   const tr = (arabic: string, english: string) => (ar ? arabic : english);
+  const storeStatusLabels: Record<string, string> = {
+    approved: tr('معتمد', 'Approved'),
+    pending: tr('بانتظار الاعتماد', 'Pending approval'),
+    pending_review: tr('بانتظار المراجعة', 'Pending review'),
+    rejected: tr('مرفوض', 'Rejected'),
+    suspended: tr('موقوف', 'Suspended'),
+  };
   const owners = [
     ...new Map(
       memberships
@@ -320,7 +327,7 @@ export function SellerStoreManagement({ memberships }: Props) {
           <form className="seller-card seller-store-form" onSubmit={(event) => void saveStore(event)} style={card}>
             <h3>{tr('بيانات العرض', 'Display information')}</h3>
             <p>
-              {tr('الحالة', 'Status')}: {profile.status} · {tr('رمز المتجر', 'Store slug')}:{' '}
+              {tr('الحالة', 'Status')}: {storeStatusLabels[profile.status] ?? profile.status} · {tr('معرّف المتجر', 'Store identifier')}:{' '}
               {profile.slug}
             </p>
             <div style={row}>
