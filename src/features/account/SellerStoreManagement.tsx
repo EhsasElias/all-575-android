@@ -20,7 +20,10 @@ import {
 import { isApiError } from '@/shared/api';
 import { branchWithinZone, mapLocationUrl } from './branchMap';
 
-type Props = { memberships: SellerMembership[] };
+type Props = {
+  memberships: SellerMembership[];
+  onStoreUpdated?: (sellerId: number, names: { name_ar: string; name_en: string }) => void;
+};
 const card: React.CSSProperties = {
   padding: 14,
   border: '1px solid #d8e1db',
@@ -30,7 +33,7 @@ const card: React.CSSProperties = {
 const row: React.CSSProperties = { display: 'flex', flexWrap: 'wrap', gap: 12, alignItems: 'end' };
 const field: React.CSSProperties = { display: 'grid', gap: 5, flex: 1, minWidth: 160 };
 
-export function SellerStoreManagement({ memberships }: Props) {
+export function SellerStoreManagement({ memberships, onStoreUpdated }: Props) {
   const { i18n } = useTranslation();
   const ar = i18n.language.startsWith('ar');
   const tr = (arabic: string, english: string) => (ar ? arabic : english);
@@ -137,11 +140,11 @@ export function SellerStoreManagement({ memberships }: Props) {
       const fieldError = Object.values(cause.fieldErrors).flat()[0];
       if (fieldError) return fieldError;
       if (cause.status === 403 || cause.status === 404) {
-        return tr('لا تملكين صلاحية تعديل هذا المتجر.', 'You are not allowed to edit this store.');
+        return tr('ليست لديك صلاحية تعديل هذا المتجر.', 'You are not allowed to edit this store.');
       }
     }
     return tr(
-      'تعذر حفظ البيانات. تحققي من الاتصال وحاولي مجددًا.',
+      'تعذر حفظ البيانات. تحقق من الاتصال وحاول مجددًا.',
       'Could not save changes. Check the connection and retry.',
     );
   };
@@ -166,7 +169,13 @@ export function SellerStoreManagement({ memberships }: Props) {
       setProfile(result.data);
       setStoreAr(result.data.name_ar);
       setStoreEn(result.data.name_en);
-      setNotice(tr('تم حفظ اسم المتجر.', 'Store name saved.'));
+      // Update the parent membership cache immediately so store selectors across tabs
+      // reflect the saved name without manually refreshing the workspace.
+      onStoreUpdated?.(profile.id, {
+        name_ar: result.data.name_ar,
+        name_en: result.data.name_en,
+      });
+      setNotice(tr('تم حفظ اسم المتجر وتحديثه في اللوحة.', 'Store name saved and updated in the workspace.'));
     } catch (cause) {
       setError(errorMessage(cause));
     } finally {
@@ -449,7 +458,7 @@ export function SellerStoreManagement({ memberships }: Props) {
                           <span role="alert">
                             {branchLocation.reason === 'denied'
                               ? tr(
-                                  'اسمحي بالوصول للموقع من إعدادات الجهاز.',
+                                  'اسمح بالوصول للموقع من إعدادات الجهاز.',
                                   'Enable location permission in device settings.',
                                 )
                               : tr(
@@ -502,7 +511,7 @@ export function SellerStoreManagement({ memberships }: Props) {
                             'Location is within the selected delivery zone.',
                           )
                         : tr(
-                            'موقع الفرع خارج المنطقة. حرّكي الدبوس إلى داخل منطقة التوصيل.',
+                            'موقع الفرع خارج المنطقة. حرّك الدبوس إلى داخل منطقة التوصيل.',
                             'Location is outside the delivery zone. Move the pin inside the selected zone.',
                           )}
                     </p>
