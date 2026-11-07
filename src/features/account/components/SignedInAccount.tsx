@@ -1,3 +1,4 @@
+import { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { routePaths } from '@/shared/lib';
 import { ButtonLink } from '@/shared/ui';
@@ -15,6 +16,7 @@ import { Section } from './Section';
 import { SignOutSection } from './SignOutSection';
 import { AccountSecurity } from './AccountSecurity';
 import { SellerReviewEntry } from './SellerReviewEntry';
+import { memberships } from '../sellerWorkspaceApi';
 import styles from './SignedInAccount.module.css';
 
 type SignedInAccountProps = {
@@ -23,6 +25,25 @@ type SignedInAccountProps = {
 
 export function SignedInAccount({ user }: SignedInAccountProps) {
   const { t } = useTranslation('account');
+  const [sellerState, setSellerState] = useState<'loading' | 'seller' | 'customer' | 'unavailable'>('loading');
+
+  useEffect(() => {
+    let active = true;
+    setSellerState('loading');
+    void memberships()
+      .then((result) => {
+        if (!active) return;
+        setSellerState(
+          result.data.some((membership) =>
+            membership.is_active && membership.seller_status === 'approved'
+          ) ? 'seller' : 'customer',
+        );
+      })
+      .catch(() => {
+        if (active) setSellerState('unavailable');
+      });
+    return () => { active = false; };
+  }, [user.id]);
 
   return (
     <Page>
@@ -32,10 +53,14 @@ export function SignedInAccount({ user }: SignedInAccountProps) {
       {user.consents.needs_update && <ConsentNotice />}
       <AccountMenu />
       <div className={styles.sellerActions}>
-        <ButtonLink to={routePaths.sellerApplication}>{t('sellerApply')}</ButtonLink>
-        <ButtonLink to={routePaths.sellerWorkspace} variant="secondary">
-          {t('sellerWorkspace')}
-        </ButtonLink>
+        {sellerState === 'customer' && (
+          <ButtonLink to={routePaths.sellerApplication}>{t('sellerApply')}</ButtonLink>
+        )}
+        {sellerState === 'seller' && (
+          <ButtonLink to={routePaths.sellerWorkspace} variant="secondary">
+            {t('sellerWorkspace')}
+          </ButtonLink>
+        )}
       </div>
       <SellerReviewEntry />
       <CustomerNotifications />
