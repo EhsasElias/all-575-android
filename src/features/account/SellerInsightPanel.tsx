@@ -245,13 +245,13 @@ export function SellerInsightPanel({ metric, branches, onClose }: Props) {
             : (
               <div className="seller-insight-table-scroll" role="region" tabIndex={0}
                 aria-label={tr('جدول تفاصيل المؤشر', 'Metric breakdown table')}>
-                <table>
+                <table dir={ar ? 'rtl' : 'ltr'}>
                   <thead><tr>{details.columns.map((column, i) =>
                     <th key={i} scope="col">{ar ? (arabicColumns[column] ?? column) : column}</th>)}</tr></thead>
                   <tbody>{details.rows.map((row, index) => (
                     <tr key={index}>{row.map((cell, i) =>
-                      <td key={i} dir="auto">
-                        {ar && typeof cell === 'string' ? (arabicStatuses[cell] ?? cell) : cell}
+                      <td key={i}>
+                        <bdi dir="auto">{ar && typeof cell === 'string' ? (arabicStatuses[cell] ?? cell) : cell}</bdi>
                       </td>)}</tr>
                   ))}</tbody>
                 </table>
