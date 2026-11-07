@@ -197,7 +197,8 @@
   min-width: 0;
 }
 .seller-workspace-shell .seller-content .seller-card {
-  padding: clamp(16px, 3vw, 24px) !important;
+  padding-block: clamp(16px, 3vw, 24px) !important;
+  padding-inline: clamp(16px, 3vw, 24px) !important;
   background: var(--sw-card);
   border: 1px solid var(--sw-border) !important;
   border-radius: 18px !important;
@@ -362,7 +363,8 @@
   display: grid;
   gap: 14px;
   min-width: 0;
-  padding: clamp(16px, 3vw, 24px) !important;
+  padding-block: clamp(16px, 3vw, 24px) !important;
+  padding-inline: clamp(16px, 3vw, 24px) !important;
   border: 1px solid var(--sw-border);
   border-radius: 18px;
   background: var(--sw-card);
@@ -455,7 +457,8 @@
 .seller-workspace-shell .seller-product-form-card {
   border: 1px solid var(--sw-border) !important;
   border-radius: 18px !important;
-  padding: clamp(16px, 3vw, 24px) !important;
+  padding-block: clamp(16px, 3vw, 24px) !important;
+  padding-inline: clamp(16px, 3vw, 24px) !important;
   background: var(--sw-card);
 }
 .seller-workspace-shell .seller-product-form-card > form {
