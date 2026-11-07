@@ -96,6 +96,7 @@ export function SellerProductManagement({ products, memberships, onUpdated }: Pr
   const [importFile, setImportFile] = useState<File | null>(null);
   const [importSeller, setImportSeller] = useState('');
   const [csvPreview, setCsvPreview] = useState<SellerCsvPreview | null>(null);
+  const [importIssues, setImportIssues] = useState<string[]>([]);
   const [error, setError] = useState('');
   const [success, setSuccess] = useState('');
   const [quickSku, setQuickSku] = useState('');
@@ -524,6 +525,7 @@ export function SellerProductManagement({ products, memberships, onUpdated }: Pr
       return;
     setBusy(true);
     setError('');
+    setImportIssues([]);
     setSuccess('');
     try {
       const result = await importSellerProductCsv(sellerId, importFile, dryRun);
@@ -547,14 +549,17 @@ export function SellerProductManagement({ products, memberships, onUpdated }: Pr
       }
     } catch (cause) {
       setCsvPreview(null);
-      const validation =
-        cause && typeof cause === 'object' && 'fieldErrors' in cause
-          ? (cause as { fieldErrors?: Record<string, string[]> }).fieldErrors?.file
-          : null;
-      setError(
-        validation?.join(' | ') ??
-          uploadErrorMessage(cause, ar ? 'ar' : 'en', 'csv'),
-      );
+      const fields = isApiError(cause) ? cause.fieldErrors : null;
+      const validation = fields
+        ? Object.values(fields).flat().filter((message): message is string => typeof message === 'string')
+        : [];
+      if (validation.length > 0) {
+        setImportIssues(validation);
+        setError('');
+      } else {
+        setImportIssues([]);
+        setError(uploadErrorMessage(cause, ar ? 'ar' : 'en', 'csv'));
+      }
     } finally {
       setBusy(false);
     }
@@ -656,6 +661,7 @@ export function SellerProductManagement({ products, memberships, onUpdated }: Pr
                 onChange={(event) => {
                   setImportSeller(event.target.value);
                   setCsvPreview(null);
+                  setImportIssues([]);
                 }}
               >
                 {sellerIds.map((id) => (
@@ -675,6 +681,7 @@ export function SellerProductManagement({ products, memberships, onUpdated }: Pr
                 onChange={(event) => {
                   setImportFile(event.target.files?.[0] ?? null);
                   setCsvPreview(null);
+                  setImportIssues([]);
                 }}
               />
               <span className="seller-upload-button">{tr('اختيار ملف Excel أو CSV', 'Choose Excel or CSV file')}</span>
@@ -701,6 +708,23 @@ export function SellerProductManagement({ products, memberships, onUpdated }: Pr
               {tr('استيراد المسودات', 'Import drafts')}
             </button>
           </div>
+          {importIssues.length > 0 && (
+            <div className="seller-import-issues" role="alert" aria-live="assertive">
+              <div className="seller-import-issues-head">
+                <strong>{tr('تعذر استيراد الملف — تفاصيل الأخطاء', 'Import failed — validation details')}</strong>
+                <span>{importIssues.length} {tr('ملاحظات', 'issues')}</span>
+              </div>
+              <p>{tr(
+                'راجِع الصفوف والأعمدة الموضحة أدناه، صحّح القيم في Excel أو CSV ثم أعد رفع الملف. لم يتم استيراد أي منتج.',
+                'Check the rows and columns below, correct the values in Excel or CSV, then upload again. No products were imported.',
+              )}</p>
+              <ol>
+                {importIssues.map((issue, index) => (
+                  <li key={index}>{issue}</li>
+                ))}
+              </ol>
+            </div>
+          )}
           {csvPreview && (
             <div role="status" style={{ marginTop: 12, overflowX: 'auto' }}>
               <strong>
