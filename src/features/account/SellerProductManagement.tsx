@@ -113,7 +113,7 @@ export function SellerProductManagement({ products, memberships, onUpdated }: Pr
       next.sku = tr('الحد الأقصى 100 حرف.', 'Maximum 100 characters.');
     if (!sellerIds.includes(Number(draft.sellerId)))
       next.sellerId = tr('اختر متجرًا مسموحًا.', 'Select an authorized store.');
-    if (!draft.categoryId || !categories.some(() => true) || !/^[0-9]+$/.test(draft.categoryId))
+    if (!draft.categoryId || !/^[0-9]+$/.test(draft.categoryId))
       next.categoryId = tr('اختر التصنيف.', 'Select a category.');
     if (!draft.nameAr.trim()) next.nameAr = tr('اسم المنتج بالعربية مطلوب.', 'Arabic product name is required.');
     if (!draft.nameEn.trim()) next.nameEn = tr('اسم المنتج بالإنجليزية مطلوب.', 'English product name is required.');
@@ -669,6 +669,7 @@ export function SellerProductManagement({ products, memberships, onUpdated }: Pr
                     );
                   })}
                 </select>
+                {fieldError('sellerId')}
               </label>
               <label style={field}>
                 {tr('التصنيف', 'Category')}
@@ -685,6 +686,7 @@ export function SellerProductManagement({ products, memberships, onUpdated }: Pr
                     </option>
                   ))}
                 </select>
+                {fieldError('categoryId')}
               </label>
             </div>
             <div style={controls}>
@@ -698,8 +700,6 @@ export function SellerProductManagement({ products, memberships, onUpdated }: Pr
                   onChange={(event) => set('nameAr', event.target.value)}
                 />
                 {fieldError('nameAr')}
-                {fieldError('categoryId')}
-                {fieldError('sellerId')}
               </label>
               <label style={field}>
                 {tr('اسم المنتج بالإنجليزية', 'English product name')}
