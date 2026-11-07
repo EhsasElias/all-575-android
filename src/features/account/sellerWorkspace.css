@@ -356,3 +356,97 @@
     max-width: 100%;
   }
 }
+
+/* Mobile-first CSV importer: one clear column, consistent tap targets and feedback. */
+.seller-workspace-shell .seller-import-card {
+  display: grid;
+  gap: 14px;
+  min-width: 0;
+  padding: clamp(16px, 3vw, 24px) !important;
+  border: 1px solid var(--sw-border);
+  border-radius: 18px;
+  background: var(--sw-card);
+}
+.seller-workspace-shell .seller-import-card > :is(h3,p) {
+  margin: 0;
+  line-height: 1.75;
+}
+.seller-workspace-shell .seller-import-card > h3 {
+  font-size: clamp(1.1rem, 3vw, 1.35rem);
+  line-height: 1.4;
+}
+.seller-workspace-shell .seller-import-fields {
+  display: grid !important;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  align-items: stretch !important;
+  gap: 16px !important;
+  margin-top: 4px;
+}
+.seller-workspace-shell .seller-import-fields > label {
+  min-width: 0 !important;
+  width: 100%;
+  margin: 0;
+  align-content: start;
+}
+.seller-workspace-shell .seller-import-fields > label > select {
+  min-height: 52px !important;
+  margin: 0;
+  padding: 12px;
+}
+.seller-workspace-shell .seller-import-fields > .seller-upload {
+  position: relative;
+  align-content: center !important;
+  justify-items: stretch;
+  text-align: start;
+  margin: 0;
+  gap: 10px;
+  padding: 16px;
+}
+.seller-workspace-shell .seller-import-fields .seller-upload-button {
+  display: block;
+  width: 100%;
+  text-align: center;
+  font-weight: 700;
+  min-height: 48px;
+}
+.seller-workspace-shell .seller-import-fields .seller-upload-name {
+  font-weight: 500;
+  text-align: center;
+}
+.seller-workspace-shell .seller-import-actions {
+  display: flex !important;
+  gap: 12px !important;
+  margin-top: 4px !important;
+}
+.seller-workspace-shell .seller-import-actions > button {
+  flex: 1 1 180px;
+  min-width: 0;
+  min-height: 48px !important;
+  margin: 0 !important;
+  white-space: normal;
+}
+.seller-workspace-shell .seller-import-card :is(button,select):disabled {
+  opacity: .55;
+  cursor: not-allowed;
+}
+.seller-workspace-shell .seller-content [role="alert"],
+.seller-workspace-shell .seller-content [role="status"] {
+  max-width: 100%;
+  overflow-wrap: anywhere;
+}
+@media (max-width: 700px) {
+  .seller-workspace-shell .seller-import-fields {
+    grid-template-columns: minmax(0, 1fr);
+    gap: 16px !important;
+  }
+  .seller-workspace-shell .seller-import-actions {
+    display: grid !important;
+    grid-template-columns: minmax(0, 1fr);
+  }
+  .seller-workspace-shell .seller-import-actions > button {
+    width: 100%;
+  }
+  .seller-workspace-shell .seller-import-card {
+    gap: 16px;
+  }
+}
