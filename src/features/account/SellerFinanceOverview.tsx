@@ -118,7 +118,7 @@ export function SellerFinanceOverview({ memberships }: Props) {
     },
     {
       label: tr('موافقة الإدارة المالية', 'Finance team approval'),
-      description: tr('إكمال اعتماد إدارة المالية', 'Complete the finance team's approval'),
+      description: tr('إكمال اعتماد إدارة المالية', "Complete the finance team's approval"),
       complete: readiness.finance_approval_verified,
     },
   ] : [];
