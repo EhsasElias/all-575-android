@@ -302,3 +302,57 @@
     padding: 16px !important;
   }
 }
+
+
+/* Prevent action buttons from touching the surrounding card's content. */
+.seller-workspace-shell .seller-content article > h3,
+.seller-workspace-shell .seller-content article > strong {
+  display: block;
+  margin: 0 0 14px;
+  line-height: 1.55;
+  overflow-wrap: anywhere;
+}
+.seller-workspace-shell .seller-content article > :is(p,small,ul,ol) {
+  display: block;
+  margin-block: 12px 16px;
+  line-height: 1.8;
+  overflow-wrap: anywhere;
+}
+.seller-workspace-shell .seller-content article > :is(ul,ol) {
+  padding-inline-start: 24px;
+}
+.seller-workspace-shell .seller-content article > div:has(> button) {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 12px;
+  margin-block: 18px 10px !important;
+}
+.seller-workspace-shell .seller-content article > div:has(> button) > button {
+  margin: 0 !important;
+}
+.seller-workspace-shell .seller-content article > div:has(> button) > div {
+  flex-basis: 100%;
+  margin-block-start: 10px;
+}
+.seller-workspace-shell .seller-content article + article {
+  margin-block-start: 18px;
+}
+.seller-workspace-shell .seller-content .seller-branch-card > :is(p,div,form) {
+  margin-block: 12px 16px;
+}
+.seller-workspace-shell .seller-content > section,
+.seller-workspace-shell .seller-content > div > section {
+  padding-bottom: 28px;
+}
+.seller-workspace-shell .seller-content {
+  padding-bottom: calc(96px + env(safe-area-inset-bottom, 0px));
+}
+@media (max-width: 700px) {
+  .seller-workspace-shell .seller-content article > div:has(> button) {
+    gap: 12px;
+  }
+  .seller-workspace-shell .seller-content article > div:has(> button) > button {
+    max-width: 100%;
+  }
+}
