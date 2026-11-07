@@ -222,7 +222,7 @@ export function SellerReturnManagement() {
                     style={{ display: 'grid', gap: 10, marginTop: 12 }}
                   >
                     <label>
-                      {tr('موقف البائع', 'Seller position')}
+                      {tr('القرار *', 'Position *')}
                       <select
                         style={{ display: 'block' }}
                         value={position}
@@ -235,7 +235,7 @@ export function SellerReturnManagement() {
                       </select>
                     </label>
                     <label>
-                      {tr('التوضيح (10 أحرف على الأقل)', 'Explanation (at least 10 characters)')}
+                      {tr('التوضيح *', 'Explanation *')}
                       <textarea
                         style={{ display: 'block', width: '100%' }}
                         required
