@@ -232,8 +232,8 @@ export function SellerInsightPanel({ metric, branches, onClose }: Props) {
           <p className="seller-insight-note">
             {tr('النتائج المعروضة: ', 'Rows shown: ')}{details.returned_rows}
             {details.returned_rows >= details.max_rows
-              ? tr(' — تم بلوغ حد التقرير. اختر فترة أقصر أو فرعًا واحدًا للتصدير الكامل.',
-                  ' — Report row limit reached. Narrow the date range or branch for a complete export.')
+              ? tr(' — المعاينة تعرض أول 200 سجل، والتصدير يشمل حتى 5000 سجل.',
+                  ' — Preview shows 200 rows; export includes up to 5000 records.')
               : ''}
           </p>
           {details.rows.length === 0
