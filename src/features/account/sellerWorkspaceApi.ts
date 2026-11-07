@@ -108,6 +108,12 @@ export const sellerStock = (
 ) => seller.get<{ data: SellerStock[] }>('/seller/stock', { query: filters });
 export const advanceSellerOrder = (id: string, status: 'preparing' | 'ready') =>
   seller.patch('/seller/orders/' + encodeURIComponent(id) + '/status', { status });
+export const createSellerStock = (input: { branch_id: number; sku: string; on_hand: number }) =>
+  seller.post<{ data: { id: number; branch_id: number; variant_id: number; on_hand: number; reserved: number } }>(
+    '/seller/stock',
+    input,
+  );
+
 export const adjustSellerStock = (id: number, on_hand: number) =>
   seller.patch('/seller/stock/' + id, { on_hand });
 
