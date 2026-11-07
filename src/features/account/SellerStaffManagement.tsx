@@ -1,19 +1,15 @@
-import { useState, type FormEvent } from 'react';
+import { useEffect, useState, type FormEvent } from 'react';
 import { useTranslation } from 'react-i18next';
+import { isApiError } from '@/shared/api';
 import {
-  deactivateSellerStaff,
-  sellerStaff,
-  type SellerMembership,
-  type SellerStaffMember,
+  addSellerStaff, updateSellerStaff, deactivateSellerStaff, sellerStaff, sellerBranches,
+  type SellerMembership, type SellerStaffMember, type SellerBranch,
+  type SellerStaffInput,
 } from './sellerWorkspaceApi';
 
 type Props = { memberships: SellerMembership[] };
-const panel: React.CSSProperties = {
-  padding: 14,
-  border: '1px solid #d8e1db',
-  borderRadius: 12,
-  marginBottom: 12,
-};
+type Editor = { member: SellerStaffMember | null; userId: string; role: SellerStaffInput['role']; branchId: string; active: boolean };
+const blankEditor = (): Editor => ({ member: null, userId: '', role: 'picker', branchId: '', active: true });
 
 export function SellerStaffManagement({ memberships }: Props) {
   const { i18n } = useTranslation();
@@ -24,171 +20,262 @@ export function SellerStaffManagement({ memberships }: Props) {
     branch_manager: tr('مدير الفرع', 'Branch manager'),
     picker: tr('موظف تجهيز الطلبات', 'Order picker'),
   };
-  const owners = [
-    ...new Map(
-      memberships
-        .filter(
-          (item) =>
-            item.role === 'owner' &&
-            item.is_active &&
-            item.seller_status === 'approved' &&
-            item.branch_id === null,
-        )
-        .map((item) => [item.seller_id, item]),
-    ).values(),
-  ];
+  const owners = [...new Map(memberships.filter((m) =>
+    m.role === 'owner' && m.is_active && m.seller_status === 'approved' && m.branch_id === null,
+  ).map((m) => [m.seller_id, m])).values()];
   const [sellerId, setSellerId] = useState('');
-  const [rows, setRows] = useState<SellerStaffMember[] | null>(null);
+  const selected = Number(sellerId || owners[0]?.seller_id);
+  const [rows, setRows] = useState<SellerStaffMember[]>([]);
+  const [branches, setBranches] = useState<SellerBranch[]>([]);
+  const [loaded, setLoaded] = useState(false);
   const [busy, setBusy] = useState(false);
+  const [editor, setEditor] = useState<Editor | null>(null);
+  const [detail, setDetail] = useState<SellerStaffMember | null>(null);
+  const [confirmDeactivate, setConfirmDeactivate] = useState<SellerStaffMember | null>(null);
   const [error, setError] = useState('');
   const [notice, setNotice] = useState('');
-  const selected = Number(sellerId || owners[0]?.seller_id);
+  const [revision, setRevision] = useState(0);
+  const storeBranches = branches.filter((b) => b.seller_id === selected && b.is_active);
+  const reason = (cause: unknown) => isApiError(cause)
+    ? [cause.message, ...Object.values(cause.fieldErrors).flat()].filter(Boolean).join(' · ')
+    : tr('تعذر إتمام العملية. تحقق من الاتصال والصلاحيات.', 'Action failed. Check connection and permissions.');
 
-  const load = async (event?: FormEvent<HTMLFormElement>) => {
-    event?.preventDefault();
-    if (busy) return;
+  useEffect(() => {
     if (!owners.some((owner) => owner.seller_id === selected)) return;
+    let active = true;
     setBusy(true);
-    setRows(null);
+    setError('');
+    void Promise.all([sellerStaff(selected), sellerBranches()])
+      .then(([staff, branchList]) => {
+        if (!active) return;
+        setRows(staff.data);
+        setBranches(branchList.data);
+        setLoaded(true);
+      })
+      .catch((cause: unknown) => {
+        if (active) { setError(reason(cause)); setLoaded(false); }
+      })
+      .finally(() => { if (active) setBusy(false); });
+    return () => { active = false; };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [selected, revision]);
+
+  const openEdit = (member: SellerStaffMember) => {
+    if (member.role === 'owner') return;
+    setError('');
+    setEditor({
+      member, userId: String(member.user_id),
+      role: member.role === 'branch_manager' ? 'branch_manager' : 'picker',
+      branchId: String(member.branch_id ?? ''),
+      active: member.is_active,
+    });
+  };
+
+  const save = async (event: FormEvent<HTMLFormElement>) => {
+    event.preventDefault();
+    if (!editor || busy) return;
+    const branchId = Number(editor.branchId);
+    if (!storeBranches.some((b) => b.id === branchId)) {
+      setError(tr('اختر فرعًا نشطًا تابعًا لهذا المتجر.', 'Choose an active branch belonging to this store.'));
+      return;
+    }
+    const userId = Number(editor.userId);
+    if (editor.member === null && (!Number.isSafeInteger(userId) || userId <= 0)) {
+      setError(tr('أدخل رقم حساب مستخدم مسجل صحيحًا.', 'Enter a valid existing user account ID.'));
+      return;
+    }
+    setBusy(true);
     setError('');
     setNotice('');
     try {
-      const result = await sellerStaff(selected);
-      setRows(result.data);
-    } catch {
-      setError(
-        tr(
-          'تعذر تحميل فريق المتجر. تحقق من صلاحية المالك والاتصال.',
-          'Could not load staff. Check store owner permissions and connection.',
-        ),
-      );
-    } finally {
-      setBusy(false);
-    }
+      const input: SellerStaffInput = { role: editor.role, branch_id: branchId, is_active: editor.active };
+      if (editor.member) {
+        await updateSellerStaff(editor.member.id, input);
+        setNotice(tr('تم تحديث صلاحيات الموظف.', 'Staff permissions updated.'));
+      } else {
+        await addSellerStaff(selected, userId, input);
+        setNotice(tr('تمت إضافة الموظف إلى الفريق.', 'Staff member added to the team.'));
+      }
+      setEditor(null);
+      setRevision((v) => v + 1);
+    } catch (cause) { setError(reason(cause)); }
+    finally { setBusy(false); }
   };
 
-  const deactivate = async (member: SellerStaffMember) => {
-    if (busy || member.role === 'owner' || !member.is_active) return;
-    if (
-      !window.confirm(
-        tr('هل تريد إيقاف صلاحيات هذا الموظف في المتجر؟', 'Deactivate this staff membership?'),
-      )
-    )
-      return;
-    setBusy(true);
-    setError('');
-    setNotice('');
+  const deactivate = async () => {
+    const member = confirmDeactivate;
+    if (!member || busy || member.role === 'owner' || !member.is_active) return;
+    setBusy(true); setError(''); setNotice('');
     try {
       await deactivateSellerStaff(member.id);
-      setRows(
-        (previous) =>
-          previous?.map((row) => (row.id === member.id ? { ...row, is_active: false } : row)) ??
-          null,
-      );
-      setNotice(tr('تم إيقاف صلاحية الموظف.', 'Staff access deactivated.'));
-    } catch {
-      setError(
-        tr(
-          'تعذر إيقاف الموظف. لا يمكن إيقاف حساب المالك.',
-          'Could not deactivate staff. Owner accounts cannot be deactivated here.',
-        ),
-      );
-    } finally {
-      setBusy(false);
-    }
+      setConfirmDeactivate(null);
+      setNotice(tr('تم إيقاف وصول الموظف.', 'Staff access deactivated.'));
+      setRevision((v) => v + 1);
+    } catch (cause) { setError(reason(cause)); }
+    finally { setBusy(false); }
   };
 
-  if (owners.length === 0) {
-    return (
-      <p>
-        {tr(
-          'إدارة الفريق متاحة فقط لمالك متجر معتمد.',
-          'Staff management is available only to approved store owners.',
-        )}
-      </p>
-    );
-  }
+  if (owners.length === 0) return <p>{tr('هذه الصفحة متاحة لمالك متجر معتمد فقط.', 'Only approved store owners can manage staff.')}</p>;
 
   return (
-    <section style={panel}>
-      <h2>{tr('فريق المتجر', 'Store team')}</h2>
-      <p>
-        {tr(
-          'يمكن لمالك المتجر عرض صلاحيات الفريق وإيقاف صلاحية موظف. تغيير ملكية المتجر يتطلب موافقة الإدارة.',
-          'Store owners can review staff permissions and deactivate staff. Ownership changes require administrator approval.',
-        )}
-      </p>
-      <form
-        onSubmit={(event) => void load(event)}
-        style={{ display: 'flex', gap: 12, flexWrap: 'wrap', alignItems: 'end' }}
-      >
-        <label>
-          {tr('المتجر', 'Store')}
-          <select
-            style={{ display: 'block' }}
-            disabled={busy}
-            value={sellerId || String(owners[0]?.seller_id ?? '')}
-            onChange={(event) => {
-              setSellerId(event.target.value);
-              setRows(null);
-              setError('');
-            }}
-          >
+    <section className="seller-team-section">
+      <div className="seller-team-heading">
+        <div>
+          <h2>{tr('فريق المتجر', 'Store team')}</h2>
+          <p>{tr('إدارة أعضاء الفريق وأدوارهم وفروعهم. تغيير المالك ليس متاحًا من هنا.', 'Manage team members, roles, branch access and status. Owner changes are not available here.')}</p>
+        </div>
+        <button type="button" disabled={busy || !loaded || storeBranches.length === 0}
+          onClick={() => { setEditor(blankEditor()); setError(''); }}>
+          + {tr('إضافة موظف', 'Add staff')}
+        </button>
+      </div>
+      <div className="seller-team-toolbar">
+        <label>{tr('المتجر', 'Store')}
+          <select value={sellerId || String(owners[0]?.seller_id ?? '')} disabled={busy}
+            onChange={(e) => { setSellerId(e.target.value); setEditor(null); setDetail(null); setLoaded(false); }}>
             {owners.map((owner) => (
-              <option value={owner.seller_id} key={owner.seller_id}>
-                {ar ? owner.name_ar : owner.name_en}
-              </option>
+              <option key={owner.seller_id} value={owner.seller_id}>{ar ? owner.name_ar : owner.name_en}</option>
             ))}
           </select>
         </label>
-        <button type="submit" disabled={busy}>
-          {tr('عرض الموظفين', 'View staff')}
+        <button type="button" disabled={busy} onClick={() => setRevision((v) => v + 1)}>
+          {tr('تحديث', 'Refresh')}
         </button>
-      </form>
-      {error && (
-        <p role="alert" style={{ color: '#a52e2e' }}>
-          {error}
-        </p>
-      )}
-      {notice && <p role="status">{notice}</p>}
-      {rows && (
-        <div style={{ overflowX: 'auto', marginTop: 12 }}>
-          {rows.length === 0 ? (
-            <p>{tr('لا يوجد موظفون.', 'No staff found.')}</p>
-          ) : (
-            <table style={{ width: '100%', textAlign: 'start' }}>
-              <thead>
-                <tr>
-                  <th>{tr('رقم الموظف', 'Staff ID')}</th>
-                  <th>{tr('الدور', 'Role')}</th>
-                  <th>{tr('الفرع', 'Branch')}</th>
-                  <th>{tr('الحالة', 'Status')}</th>
-                  <th>{tr('الإجراء', 'Action')}</th>
-                </tr>
-              </thead>
+      </div>
+      {error && <p className="seller-team-error" role="alert">{error}</p>}
+      {notice && <p role="status" className="seller-form-success">{notice}</p>}
+      {busy && !loaded && <p role="status">{tr('جار تحميل الفريق…', 'Loading team…')}</p>}
+      {loaded && (
+        <>
+          <div className="seller-team-summary">
+            <div><span>{tr('إجمالي العضويات', 'Memberships')}</span><strong>{rows.length}</strong></div>
+            <div><span>{tr('النشطون', 'Active')}</span><strong>{rows.filter((m) => m.is_active).length}</strong></div>
+            <div><span>{tr('الموقوفون', 'Inactive')}</span><strong>{rows.filter((m) => !m.is_active).length}</strong></div>
+          </div>
+          <div className="seller-team-table-wrap">
+            <table>
+              <thead><tr>
+                <th>{tr('رقم الحساب', 'Account ID')}</th>
+                <th>{tr('الدور', 'Role')}</th>
+                <th>{tr('الفرع', 'Branch')}</th>
+                <th>{tr('الحالة', 'Status')}</th>
+                <th>{tr('الإجراءات', 'Actions')}</th>
+              </tr></thead>
               <tbody>
                 {rows.map((member) => (
                   <tr key={member.id}>
-                    <td>{member.user_id}</td>
+                    <td><strong>{member.user_id}</strong></td>
                     <td>{roleLabels[member.role] ?? member.role}</td>
-                    <td>{member.branch_id ?? tr('كل الفروع', 'All branches')}</td>
-                    <td>{member.is_active ? tr('نشط', 'Active') : tr('موقوف', 'Inactive')}</td>
-                    <td>
-                      {member.role !== 'owner' && member.is_active && (
-                        <button
-                          type="button"
-                          disabled={busy}
-                          onClick={() => void deactivate(member)}
-                        >
-                          {tr('إيقاف', 'Deactivate')}
-                        </button>
+                    <td>{member.branch_id === null
+                      ? tr('كل الفروع', 'All branches')
+                      : (ar ? branches.find((b) => b.id === member.branch_id)?.name_ar
+                        : branches.find((b) => b.id === member.branch_id)?.name_en) ?? ('#' + member.branch_id)}</td>
+                    <td><span className={'seller-team-status ' + (member.is_active ? 'is-active' : 'is-inactive')}>
+                      {member.is_active ? tr('نشط', 'Active') : tr('موقوف', 'Inactive')}
+                    </span></td>
+                    <td><div className="seller-team-actions">
+                      <button type="button" disabled={busy} onClick={() => setDetail(member)}>
+                        {tr('تفاصيل', 'Details')}
+                      </button>
+                      {member.role !== 'owner' && (
+                        <>
+                          <button type="button" disabled={busy} onClick={() => openEdit(member)}>
+                            {tr('تعديل', 'Edit')}
+                          </button>
+                          {member.is_active && (
+                            <button type="button" className="seller-team-danger" disabled={busy}
+                              onClick={() => setConfirmDeactivate(member)}>
+                              {tr('إيقاف', 'Deactivate')}
+                            </button>
+                          )}
+                          {!member.is_active && (
+                            <button type="button" disabled={busy || storeBranches.length === 0}
+                              onClick={() => openEdit(member)}>
+                              {tr('إعادة تفعيل', 'Reactivate')}
+                            </button>
+                          )}
+                        </>
                       )}
-                    </td>
+                    </div></td>
                   </tr>
                 ))}
               </tbody>
             </table>
-          )}
+          </div>
+          {rows.length === 0 && <p>{tr('لا يوجد موظفون في هذا المتجر.', 'No staff in this store.')}</p>}
+        </>
+      )}
+
+      {detail && (
+        <div className="seller-team-overlay" role="presentation" onMouseDown={(e) => { if (e.target === e.currentTarget) setDetail(null); }}>
+          <div className="seller-team-dialog" role="dialog" aria-modal="true" aria-labelledby="seller-team-detail-title">
+            <h3 id="seller-team-detail-title">{tr('تفاصيل العضوية', 'Membership details')}</h3>
+            <dl>
+              <dt>{tr('رقم الحساب', 'Account ID')}</dt><dd>{detail.user_id}</dd>
+              <dt>{tr('الدور', 'Role')}</dt><dd>{roleLabels[detail.role] ?? detail.role}</dd>
+              <dt>{tr('رقم الفرع', 'Branch ID')}</dt><dd>{detail.branch_id ?? tr('كل الفروع', 'All branches')}</dd>
+              <dt>{tr('الحالة', 'Status')}</dt><dd>{detail.is_active ? tr('نشط', 'Active') : tr('موقوف', 'Inactive')}</dd>
+            </dl>
+            <button type="button" onClick={() => setDetail(null)}>{tr('إغلاق', 'Close')}</button>
+          </div>
+        </div>
+      )}
+
+      {editor && (
+        <div className="seller-team-overlay" role="presentation"
+          onMouseDown={(e) => { if (e.target === e.currentTarget && !busy) setEditor(null); }}>
+          <form className="seller-team-dialog" role="dialog" aria-modal="true"
+            aria-labelledby="seller-team-edit-title" onSubmit={(e) => void save(e)}>
+            <h3 id="seller-team-edit-title">{editor.member
+              ? tr('تعديل صلاحيات الموظف', 'Edit staff permissions')
+              : tr('إضافة موظف مسجل', 'Add existing user')}</h3>
+            {!editor.member && <p>{tr('يجب أن يكون الموظف لديه حساب مسجل مسبقًا في التطبيق.', 'The employee must already have a registered account in the app.')}</p>}
+            <label>{tr('رقم حساب المستخدم', 'User account ID')}
+              <input type="number" min={1} step={1} required disabled={busy || !!editor.member}
+                value={editor.userId} onChange={(e) => setEditor({ ...editor, userId: e.target.value })}/>
+            </label>
+            <label>{tr('الدور', 'Role')}
+              <select value={editor.role} disabled={busy}
+                onChange={(e) => setEditor({ ...editor, role: e.target.value as SellerStaffInput['role'] })}>
+                <option value="picker">{roleLabels.picker}</option>
+                <option value="branch_manager">{roleLabels.branch_manager}</option>
+              </select>
+            </label>
+            <label>{tr('الفرع', 'Branch')}
+              <select required value={editor.branchId} disabled={busy}
+                onChange={(e) => setEditor({ ...editor, branchId: e.target.value })}>
+                <option value="">{tr('اختر الفرع', 'Select branch')}</option>
+                {storeBranches.map((branch) => (
+                  <option key={branch.id} value={branch.id}>{ar ? branch.name_ar : branch.name_en}</option>
+                ))}
+              </select>
+            </label>
+            {editor.member && <label className="seller-team-toggle">
+              <input type="checkbox" checked={editor.active} disabled={busy}
+                onChange={(e) => setEditor({ ...editor, active: e.target.checked })}/>
+              {tr('حساب الموظف نشط', 'Membership active')}
+            </label>}
+            <div className="seller-team-dialog-actions">
+              <button type="button" disabled={busy} onClick={() => setEditor(null)}>{tr('إلغاء', 'Cancel')}</button>
+              <button type="submit" disabled={busy || !editor.branchId}>{busy ? tr('جار الحفظ…', 'Saving…') : tr('حفظ', 'Save')}</button>
+            </div>
+          </form>
+        </div>
+      )}
+
+      {confirmDeactivate && (
+        <div className="seller-team-overlay" role="presentation"
+          onMouseDown={(e) => { if (e.target === e.currentTarget && !busy) setConfirmDeactivate(null); }}>
+          <div className="seller-team-dialog" role="alertdialog" aria-modal="true" aria-labelledby="seller-team-confirm-title">
+            <h3 id="seller-team-confirm-title">{tr('تأكيد إيقاف العضوية', 'Confirm deactivation')}</h3>
+            <p>{tr('سيتم منع هذا الموظف من استخدام صلاحيات الفريق في المتجر. يمكن إعادة تفعيله لاحقًا.', 'This employee will lose store team access. You can reactivate later.')}</p>
+            <div className="seller-team-dialog-actions">
+              <button type="button" disabled={busy} onClick={() => setConfirmDeactivate(null)}>{tr('إلغاء', 'Cancel')}</button>
+              <button type="button" className="seller-team-danger" disabled={busy} onClick={() => void deactivate()}>
+                {tr('تأكيد الإيقاف', 'Deactivate')}
+              </button>
+            </div>
+          </div>
         </div>
       )}
     </section>
