@@ -341,13 +341,11 @@ export function SellerProductManagement({ products, memberships, onUpdated }: Pr
             ),
           );
           setQuickSku('');
-        } catch {
-          setError(
-            tr(
-              'تم حفظ المسودة، لكن تعذرت إضافة SKU (ربما مستخدم بالفعل). عدّل الرمز وأضفه من قسم وحدة البيع أدناه.',
-              'Draft saved, but SKU could not be added (possibly already in use). Change it and add it in the variant section below.',
-            ),
-          );
+        } catch (cause) {
+          setError(explainApiError(cause, tr(
+            'تم حفظ المسودة، لكن تعذرت إضافة SKU. عدّل الرمز وأضفه من قسم وحدة البيع أدناه.',
+            'Draft saved, but SKU could not be added. Correct it in the variant section below.',
+          )));
         }
       } else {
         setSuccess(tr('تم تحديث مسودة المنتج.', 'Product draft updated.'));
@@ -382,16 +380,27 @@ export function SellerProductManagement({ products, memberships, onUpdated }: Pr
           'Variant added. You can submit the product for review.',
         ),
       );
-    } catch {
-      setError(
-        tr(
-          'تعذر إضافة الوحدة. تأكد من عدم تكرار SKU أو الباركود.',
-          'Could not add variant. Make sure SKU and barcode are unique.',
-        ),
-      );
+    } catch (cause) {
+      setError(explainApiError(cause, tr(
+        'تعذر إضافة وحدة البيع. تحقق من SKU والباركود.',
+        'Could not add the variant. Check SKU and barcode.',
+      )));
     } finally {
       setBusy(false);
     }
+  };
+
+  const explainApiError = (cause: unknown, fallback: string): string => {
+    if (!isApiError(cause)) {
+      return cause instanceof Error && cause.message ? cause.message : fallback;
+    }
+    const details = Object.entries(cause.fieldErrors)
+      .flatMap(([field, messages]) => messages.map((message) => field + ': ' + message));
+    const prefix = cause.status === null ? '' : 'HTTP ' + cause.status + ' — ';
+    const message = cause.message?.trim() || fallback;
+    const specific = details.filter((item) => !message.includes(item.split(': ').slice(1).join(': ')));
+    return prefix + message + (cause.code ? ' [' + cause.code + ']' : '') +
+      (specific.length ? '\\n' + specific.join('\\n') : '');
   };
 
   const submit = (productId: number) => {
@@ -417,9 +426,14 @@ export function SellerProductManagement({ products, memberships, onUpdated }: Pr
       if (selected === productId) setFormVisible(false);
       onUpdated();
     } catch (cause) {
-      if (!displayApiFieldErrors(cause)) {
-        setFormError(tr('تعذر نشر المنتج. تحقق من حفظ المسودة وإضافة SKU وصورة المنتج.', 'Could not publish. Save the draft and add a SKU and product image.'));
-      }
+      displayApiFieldErrors(cause);
+      const message = explainApiError(
+        cause,
+        tr('تعذر نشر المنتج. تحقق من متطلبات النشر ثم أعد المحاولة.',
+          'Could not publish the product. Check the publishing requirements and try again.'),
+      );
+      setFormError(message);
+      setError(message);
       if (selected === productId) setFormVisible(true);
     } finally {
       setBusy(false);
@@ -689,7 +703,7 @@ export function SellerProductManagement({ products, memberships, onUpdated }: Pr
         </p>
       )}
       {!formVisible && (error || formError) && (
-        <div className="seller-form-message" role="alert">{formError || error}</div>
+        <div className="seller-form-message" role="alert">{(formError || error).split('\\n').map((line, index) => <p key={index} style={{ margin: '2px 0' }}>{line}</p>)}</div>
       )}
       {!formVisible && success && <p role="status">{success}</p>}
       {formVisible && (
@@ -723,7 +737,7 @@ export function SellerProductManagement({ products, memberships, onUpdated }: Pr
           <form onSubmit={save} noValidate>
             <p className="seller-required-hint">{tr('الحقول المميزة بـ * إلزامية.', 'Fields marked * are required.')}</p>
             {(formError || error) && (
-              <div className="seller-form-message" role="alert">{formError || error}</div>
+              <div className="seller-form-message" role="alert">{(formError || error).split('\\n').map((line, index) => <p key={index} style={{ margin: '2px 0' }}>{line}</p>)}</div>
             )}
             {success && <div className="seller-form-success" role="status">{success}</div>}
             {selected === null && (
