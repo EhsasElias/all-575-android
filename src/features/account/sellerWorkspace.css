@@ -1062,9 +1062,22 @@
 .seller-workspace-shell .seller-insight-actions { margin-block: 12px 16px; }
 .seller-workspace-shell .seller-insight-actions button {
   min-height: 45px;
-  background: #edf6ef;
-  border: 1px solid #a8cbb6;
+  background: var(--sw-card);
+  color: var(--sw-ink);
+  border: 1px solid var(--sw-border);
   border-radius: 10px;
+  font-weight: 700;
+}
+.seller-workspace-shell .seller-insight-actions button:disabled {
+  background: var(--sw-card);
+  color: var(--sw-muted);
+  border-color: var(--sw-border);
+  opacity: 0.72;
+  cursor: not-allowed;
+}
+.seller-workspace-shell .seller-insight-actions button:not(:disabled):hover {
+  border-color: var(--sw-accent);
+  background: var(--sw-accent-light);
 }
 .seller-workspace-shell .seller-insight-error { color: #a52e2e; }
 .seller-workspace-shell .seller-insight-table-scroll {
