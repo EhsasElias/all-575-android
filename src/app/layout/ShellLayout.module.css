@@ -8,7 +8,9 @@
   display: flex;
   flex: 1;
   flex-direction: column;
+  min-inline-size: 0;
   inline-size: 100%;
+  max-inline-size: 100%;
   max-inline-size: var(--size-content-max);
   margin-inline: auto;
   padding-block: var(--space-4) calc(var(--size-tabbar) + var(--safe-bottom) + var(--space-4));
