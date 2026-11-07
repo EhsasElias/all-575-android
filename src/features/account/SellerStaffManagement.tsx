@@ -155,7 +155,8 @@ export function SellerStaffManagement({ memberships }: Props) {
           <div className="seller-team-table-wrap">
             <table>
               <thead><tr>
-                <th>{tr('رقم الحساب', 'Account ID')}</th>
+                <th>{tr('رقم الموظف', 'Employee number')}</th>
+                <th>{tr('اسم الموظف', 'Employee name')}</th>
                 <th>{tr('الدور', 'Role')}</th>
                 <th>{tr('الفرع', 'Branch')}</th>
                 <th>{tr('الحالة', 'Status')}</th>
@@ -164,7 +165,8 @@ export function SellerStaffManagement({ memberships }: Props) {
               <tbody>
                 {rows.map((member) => (
                   <tr key={member.id}>
-                    <td><strong>{member.user_id}</strong></td>
+                    <td><strong className="seller-team-employee-number" dir="ltr">{member.employee_number ?? '—'}</strong></td>
+                    <td>{member.name ?? tr('موظف المتجر', 'Store team member')}</td>
                     <td>{roleLabels[member.role] ?? member.role}</td>
                     <td>{member.branch_id === null
                       ? tr('كل الفروع', 'All branches')
@@ -211,7 +213,9 @@ export function SellerStaffManagement({ memberships }: Props) {
           <div className="seller-team-dialog" role="dialog" aria-modal="true" aria-labelledby="seller-team-detail-title">
             <h3 id="seller-team-detail-title">{tr('تفاصيل العضوية', 'Membership details')}</h3>
             <dl>
-              <dt>{tr('رقم الحساب', 'Account ID')}</dt><dd>{detail.user_id}</dd>
+              <dt>{tr('رقم الموظف', 'Employee number')}</dt><dd dir="ltr">{detail.employee_number ?? '—'}</dd>
+              <dt>{tr('اسم الموظف', 'Employee name')}</dt><dd>{detail.name ?? '—'}</dd>
+              <dt>{tr('رقم الحساب الداخلي', 'Internal account ID')}</dt><dd>{detail.user_id}</dd>
               <dt>{tr('الدور', 'Role')}</dt><dd>{roleLabels[detail.role] ?? detail.role}</dd>
               <dt>{tr('رقم الفرع', 'Branch ID')}</dt><dd>{detail.branch_id ?? tr('كل الفروع', 'All branches')}</dd>
               <dt>{tr('الحالة', 'Status')}</dt><dd>{detail.is_active ? tr('نشط', 'Active') : tr('موقوف', 'Inactive')}</dd>
@@ -229,6 +233,7 @@ export function SellerStaffManagement({ memberships }: Props) {
             <h3 id="seller-team-edit-title">{editor.member
               ? tr('تعديل صلاحيات الموظف', 'Edit staff permissions')
               : tr('إضافة موظف مسجل', 'Add existing user')}</h3>
+            {editor.member && <p>{tr('رقم الموظف', 'Employee number')}: <strong dir="ltr">{editor.member.employee_number}</strong></p>}
             {!editor.member && <p>{tr('يجب أن يكون الموظف لديه حساب مسجل مسبقًا في التطبيق.', 'The employee must already have a registered account in the app.')}</p>}
             <label>{tr('رقم حساب المستخدم', 'User account ID')}
               <input type="number" min={1} step={1} required disabled={busy || !!editor.member}
