@@ -93,6 +93,8 @@ export function SellerProductManagement({ products, memberships, onUpdated }: Pr
   const [workingId, setWorkingId] = useState<number | null>(null);
   const [busy, setBusy] = useState(false);
   const [coverFile, setCoverFile] = useState<File | null>(null);
+  const [coverUrl, setCoverUrl] = useState('');
+  const [imageCardOpen, setImageCardOpen] = useState(true);
   const [importFile, setImportFile] = useState<File | null>(null);
   const [importSeller, setImportSeller] = useState('');
   const [csvPreview, setCsvPreview] = useState<SellerCsvPreview | null>(null);
@@ -258,6 +260,9 @@ export function SellerProductManagement({ products, memberships, onUpdated }: Pr
   const edit = (product: SellerProduct) => {
     if (!editable(product)) return;
     setSelected(product.id);
+    setCoverFile(null);
+    setCoverUrl('');
+    setImageCardOpen(true);
     setScannerOpen(false);
     setScanNotice('');
     setScannedText('');
@@ -285,6 +290,9 @@ export function SellerProductManagement({ products, memberships, onUpdated }: Pr
 
   const newProduct = (sku = '') => {
     setSelected(null);
+    setCoverFile(null);
+    setCoverUrl('');
+    setImageCardOpen(true);
     setScannerOpen(false);
     setScanNotice('');
     setScannedText('');
@@ -491,21 +499,28 @@ export function SellerProductManagement({ products, memberships, onUpdated }: Pr
   };
 
   const uploadCover = async () => {
-    if (selected === null || coverFile === null || busy) return;
-    if (!coverFile.type.startsWith('image/') || coverFile.size > 5 * 1024 * 1024) {
-      setError(tr('الصورة يجب أن تكون بحد أقصى 5 ميجابايت.', 'Image must be at most 5 MB.'));
+    if (selected === null || busy) return;
+    const imageUrl = coverUrl.trim();
+    if (!coverFile && !/^https:\/\/[^\s]+$/i.test(imageUrl)) {
+      setError(tr('اختر صورة أو أدخل رابط HTTPS صالحًا.', 'Choose an image or enter a valid HTTPS URL.'));
+      return;
+    }
+    if (coverFile && (!['image/jpeg', 'image/png', 'image/webp'].includes(coverFile.type) ||
+        coverFile.size > 5 * 1024 * 1024)) {
+      setError(tr('اختر صورة JPG أو PNG أو WebP لا تتجاوز 5 ميجابايت.', 'Choose a JPG, PNG or WebP image under 5 MB.'));
       return;
     }
     setBusy(true);
     setError('');
     setSuccess('');
     try {
-      await uploadSellerProductImage(selected, coverFile);
+      await uploadSellerProductImage(selected, coverFile ?? imageUrl);
       setCoverFile(null);
-      setSuccess(tr('تم حفظ صورة المنتج.', 'Product cover image uploaded.'));
+      setCoverUrl('');
+      setSuccess(tr('تم حفظ صورة المنتج.', 'Product cover image saved.'));
       onUpdated();
     } catch (cause) {
-      setError(uploadErrorMessage(cause, ar ? 'ar' : 'en', 'image'));
+      setError(explainApiError(cause, uploadErrorMessage(cause, ar ? 'ar' : 'en', 'image')));
     } finally {
       setBusy(false);
     }
@@ -966,6 +981,52 @@ export function SellerProductManagement({ products, memberships, onUpdated }: Pr
             </div>
           </form>
           {selected !== null && (
+            <section className="seller-product-image-card">
+              <button type="button" className="seller-product-image-toggle"
+                aria-expanded={imageCardOpen} onClick={() => setImageCardOpen((value) => !value)}>
+                {tr('مرفقات المنتج — صورة الغلاف', 'Product attachments — cover image')}
+                <span aria-hidden="true">{imageCardOpen ? '−' : '+'}</span>
+              </button>
+              {imageCardOpen && (
+                <div className="seller-product-image-body">
+                  <p>{tr('يمكنك رفع صورة من الجهاز أو إدخال رابط صورة HTTPS.', 'Upload an image file or use an HTTPS image URL.')}</p>
+                  <div className="seller-product-image-layout">
+                    <div className="seller-product-image-controls">
+                      <label className="seller-upload" style={field}>
+                        <span>{tr('ملف الصورة (حتى 5 MB)', 'Image file (up to 5 MB)')}</span>
+                        <input type="file" accept="image/jpeg,image/png,image/webp"
+                          onChange={(event) => { setCoverFile(event.target.files?.[0] ?? null); setCoverUrl(''); }} />
+                        <span className="seller-upload-button">{tr('اختيار صورة', 'Choose image')}</span>
+                        <span className="seller-upload-name">{coverFile?.name ?? tr('لا توجد صورة محددة', 'No selected image')}</span>
+                      </label>
+                      <label style={field}>
+                        {tr('أو رابط الصورة (HTTPS)', 'Or image URL (HTTPS)')}
+                        <input type="url" dir="ltr" maxLength={2048}
+                          placeholder="https://example.com/image.jpg" value={coverUrl}
+                          onChange={(event) => { setCoverUrl(event.target.value); if (event.target.value) setCoverFile(null); }} />
+                      </label>
+                      <button type="button" style={button} disabled={busy || (!coverFile && !coverUrl.trim())}
+                        onClick={() => void uploadCover()}>
+                        {tr('حفظ صورة المنتج', 'Save product image')}
+                      </button>
+                    </div>
+                    {coverFile && (
+                      <div className="seller-product-image-preview">
+                        <span>{tr('الصورة المختارة:', 'Selected image:')}</span>
+                        <strong>{coverFile.name}</strong>
+                      </div>
+                    )}
+                    {!coverFile && /^https:\/\//i.test(coverUrl.trim()) && (
+                      <div className="seller-product-image-preview">
+                        <img key={coverUrl} src={coverUrl} alt={tr('معاينة الصورة', 'Image preview')} />
+                      </div>
+                    )}
+                  </div>
+                </div>
+              )}
+            </section>
+          )}
+          {selected !== null && (
             <div style={{ ...card, marginTop: 12 }}>
               <h4>{tr('إضافة وحدة بيع / باركود', 'Add variant / barcode')}</h4>
               <div style={controls}>
@@ -986,26 +1047,6 @@ export function SellerProductManagement({ products, memberships, onUpdated }: Pr
                   />
                 </label>
               </div>
-              <label className="seller-upload" style={{ ...field, marginTop: 12 }}>
-                <span>{tr('صورة المنتج (حد 5 MB)', 'Product image (max 5 MB)')}</span>
-                <input
-                  type="file"
-                  accept="image/*"
-                  onChange={(event) => setCoverFile(event.target.files?.[0] ?? null)}
-                />
-                <span className="seller-upload-button">{tr('اختيار صورة المنتج', 'Choose product image')}</span>
-                <span className="seller-upload-name">
-                  {coverFile?.name ?? tr('لم يتم اختيار صورة بعد', 'No image selected')}
-                </span>
-              </label>
-              <button
-                type="button"
-                style={button}
-                disabled={busy || coverFile === null}
-                onClick={() => void uploadCover()}
-              >
-                {tr('رفع الصورة', 'Upload image')}
-              </button>
               <div style={{ ...controls, marginTop: 12 }}>
                 <button
                   type="button"
