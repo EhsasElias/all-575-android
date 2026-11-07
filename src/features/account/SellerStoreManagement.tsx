@@ -438,7 +438,7 @@ export function SellerStoreManagement({ memberships, onStoreUpdated }: Props) {
                 </p>
                 <div style={row}>
                   <label style={field}>
-                    {tr('منطقة التوصيل', 'Delivery zone')}
+                    {tr('المنطقة الأساسية للفرع (إجباري)', 'Primary branch zone (required)')}
                     <select
                       required
                       value={newBranch.service_zone_id}
@@ -722,7 +722,7 @@ export function SellerStoreManagement({ memberships, onStoreUpdated }: Props) {
                         </label>
                       ))}
                       <label style={field}>
-                        {tr('منطقة التوصيل (إجباري)', 'Delivery zone (required)')}
+                        {tr('المنطقة الأساسية للفرع (إجباري)', 'Primary branch zone (required)')}
                         <select required disabled={saving} value={branchDraft.service_zone_id}
                           onChange={(event) => {
                             const zone = zones.find((item) => item.id === Number(event.target.value));
