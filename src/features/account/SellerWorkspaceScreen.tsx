@@ -559,7 +559,7 @@ export function SellerWorkspaceScreen() {
               {tr('أدخل الإجمالي الجديد، وليس الكمية المراد إضافتها. الحد الأدنى هو المحجوز.',
                 'Enter the new total, not the quantity to add. Minimum is reserved stock.')}
             </p>
-            {/***** Preview is informational only; the server validates the actual update. *****/}
+            {/* Preview is informational only; the server validates the actual update. */}
             {stockEditQuantity.trim() !== '' && Number.isSafeInteger(Number(stockEditQuantity)) &&
               Number(stockEditQuantity) >= stockEditor.reserved && Number(stockEditQuantity) <= 100000000 && (
                 <div className="seller-stock-preview" role="status">
