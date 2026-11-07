@@ -210,6 +210,7 @@ export const submitSellerProduct = (productId: number) =>
   seller.post<{ data: SellerProduct }>('/seller/products/' + productId + '/submit');
 
 export const sellerCatalogTemplate = () => seller.download('/seller/products/import/template.csv');
+export const sellerCatalogExcelTemplate = () => seller.download('/seller/products/import/template.xlsx');
 
 export const uploadSellerProductImage = (productId: number, image: File) => {
   const form = new FormData();
