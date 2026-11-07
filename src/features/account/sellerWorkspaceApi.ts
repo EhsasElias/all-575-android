@@ -287,6 +287,7 @@ export type SellerReturnCase = {
   order_id: string;
   order_item_id: number;
   status: 'submitted' | 'in_review' | 'resolved' | 'rejected';
+  seller_responded: number | boolean;
   subject: string;
   quantity: number;
   created_at: string;
