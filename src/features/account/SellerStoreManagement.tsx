@@ -142,8 +142,8 @@ export function SellerStoreManagement({ memberships, onStoreUpdated }: Props) {
     setProfile(null);
     void Promise.all([getSellerStoreProfile(selectedId), sellerBranches(), getSellerServiceZones()])
       .then(([store, branchList, zoneList]) => {
-        setZones(zoneList.data);
         if (!active) return;
+        setZones(zoneList.data);
         setProfile(store.data);
         setStoreAr(store.data.name_ar);
         setStoreEn(store.data.name_en);
