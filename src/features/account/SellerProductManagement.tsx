@@ -608,8 +608,8 @@ export function SellerProductManagement({ products, memberships, onUpdated }: Pr
           )}
         </p>
       )}
-      {error && !formVisible && (
-        <p role="alert" style={{ color: '#a52e2e' }}>{error}</p>
+      {!formVisible && (error || formError) && (
+        <div className="seller-form-message" role="alert">{formError || error}</div>
       )}
       {success && <p role="status">{success}</p>}
       {formVisible && (
@@ -882,7 +882,8 @@ export function SellerProductManagement({ products, memberships, onUpdated }: Pr
           if (event.target === event.currentTarget && !busy) setConfirmation(null);
         }}>
           <div className="seller-confirm-dialog" role="dialog" aria-modal="true"
-               aria-labelledby="seller-confirm-title" aria-describedby="seller-confirm-description">
+               aria-labelledby="seller-confirm-title" aria-describedby="seller-confirm-description"
+               onKeyDown={(event) => { if (event.key === 'Escape' && !busy) setConfirmation(null); }}>
             <h3 id="seller-confirm-title">
               {confirmation.kind === 'save'
                 ? tr('تأكيد حفظ المنتج', 'Confirm saving product')
