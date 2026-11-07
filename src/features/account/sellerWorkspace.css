@@ -2357,3 +2357,245 @@
   .seller-workspace-shell .seller-orders-bulkbar > button { flex: 1 1 135px; }
   .seller-workspace-shell .seller-orders-table :is(th,td) { padding: 11px 9px; }
 }
+
+
+/* Finance overview: consistent, theme-aware dashboard cards. */
+.seller-workspace-shell .seller-finance-section {
+  display: grid;
+  gap: 20px;
+  width: 100%;
+  min-width: 0;
+  padding: clamp(16px, 2.2vw, 28px);
+  box-sizing: border-box;
+  border: 1px solid var(--sw-border);
+  border-radius: 18px;
+  background: var(--sw-card);
+  color: var(--sw-ink);
+}
+.seller-workspace-shell .seller-finance-section :is(h2,h3,p) { margin: 0; }
+.seller-workspace-shell .seller-finance-header,
+.seller-workspace-shell .seller-finance-readiness-head,
+.seller-workspace-shell .seller-finance-transactions-head {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 12px 20px;
+}
+.seller-workspace-shell .seller-finance-header h2 {
+  margin: 5px 0 8px;
+  font-size: clamp(1.25rem, 2.2vw, 1.7rem);
+}
+.seller-workspace-shell .seller-finance-header p,
+.seller-workspace-shell .seller-finance-transactions-head p {
+  color: var(--sw-muted);
+  line-height: 1.75;
+}
+.seller-workspace-shell .seller-finance-eyebrow {
+  font-size: .8rem;
+  font-weight: 700;
+  color: var(--sw-accent);
+}
+.seller-workspace-shell .seller-finance-readonly {
+  border-radius: 999px;
+  padding: 7px 12px;
+  border: 1px solid var(--sw-border);
+  color: var(--sw-muted);
+  font-size: .83rem;
+  white-space: nowrap;
+}
+.seller-workspace-shell .seller-finance-filters {
+  display: grid;
+  grid-template-columns: minmax(160px, 1.4fr) repeat(2,minmax(145px,1fr)) auto;
+  gap: 12px;
+  align-items: end;
+  padding: 16px;
+  background: var(--sw-card);
+  border: 1px solid var(--sw-border);
+  border-radius: 14px;
+}
+.seller-workspace-shell .seller-finance-filters label {
+  display: grid;
+  gap: 8px;
+  min-width: 0;
+  color: var(--sw-ink);
+  font-weight: 700;
+}
+.seller-workspace-shell .seller-finance-filters :is(select,input,button) {
+  box-sizing: border-box;
+  width: 100%;
+  min-width: 0;
+  min-height: 46px;
+}
+.seller-workspace-shell .seller-finance-filters :is(select,input) {
+  border: 1px solid var(--sw-border);
+  border-radius: 10px;
+  background: var(--sw-card);
+  color: var(--sw-ink);
+  padding: 8px 12px;
+}
+.seller-workspace-shell .seller-finance-load {
+  border: 1px solid #24795d;
+  border-radius: 10px;
+  background: #24795d;
+  color: #fff;
+  font-weight: 800;
+  padding: 9px 18px;
+  cursor: pointer;
+}
+.seller-workspace-shell .seller-finance-load:disabled { opacity: .6; cursor: wait; }
+.seller-workspace-shell .seller-finance-results { display: grid; gap: 20px; min-width: 0; }
+.seller-workspace-shell .seller-finance-kpis {
+  display: grid;
+  grid-template-columns: repeat(3,minmax(0,1fr));
+  gap: 12px;
+}
+.seller-workspace-shell .seller-finance-kpi {
+  border: 1px solid var(--sw-border);
+  border-radius: 14px;
+  background: var(--sw-card);
+  padding: clamp(14px, 2vw, 22px);
+  display: grid;
+  gap: 10px;
+  min-width: 0;
+}
+.seller-workspace-shell .seller-finance-kpi > span,
+.seller-workspace-shell .seller-finance-kpi small { color: var(--sw-muted); }
+.seller-workspace-shell .seller-finance-kpi > strong {
+  font-size: clamp(1.3rem, 2.4vw, 2rem);
+  font-variant-numeric: tabular-nums;
+  overflow-wrap: anywhere;
+}
+.seller-workspace-shell .seller-finance-note {
+  display: flex;
+  gap: 10px;
+  padding: 13px 16px;
+  align-items: flex-start;
+  border: 1px solid var(--sw-border);
+  background: rgba(49, 137, 95, .07);
+  border-radius: 12px;
+  line-height: 1.8;
+}
+.seller-workspace-shell .seller-finance-note > span { color: var(--sw-accent); font-size: 1.25rem; }
+.seller-workspace-shell .seller-finance-readiness,
+.seller-workspace-shell .seller-finance-transactions {
+  display: grid;
+  gap: 16px;
+  border: 1px solid var(--sw-border);
+  border-radius: 15px;
+  padding: clamp(15px, 2vw, 22px);
+  min-width: 0;
+}
+.seller-workspace-shell .seller-finance-readiness h3,
+.seller-workspace-shell .seller-finance-transactions h3 { margin-top: 5px; font-size: 1.14rem; }
+.seller-workspace-shell .seller-finance-status {
+  display: inline-flex;
+  align-items: center;
+  max-width: 100%;
+  padding: 7px 12px;
+  border: 1px solid #af894a;
+  border-radius: 999px;
+  background: rgba(177,126,48,.10);
+  color: #cb9447;
+  font-weight: 800;
+  font-size: .87rem;
+  overflow-wrap: anywhere;
+}
+.seller-workspace-shell .seller-finance-status.is-ready {
+  color: #2a9a70;
+  background: rgba(42,154,112,.10);
+  border-color: #369771;
+}
+.seller-workspace-shell .seller-finance-progress-label {
+  display: flex;
+  justify-content: space-between;
+  gap: 10px;
+  font-size: .91rem;
+}
+.seller-workspace-shell .seller-finance-progress {
+  height: 9px;
+  width: 100%;
+  background: rgba(125,143,130,.2);
+  border-radius: 999px;
+  overflow: hidden;
+}
+.seller-workspace-shell .seller-finance-progress span {
+  display: block;
+  height: 100%;
+  background: #278363;
+  border-radius: 999px;
+}
+.seller-workspace-shell .seller-finance-checks { display: grid; gap: 9px; }
+.seller-workspace-shell .seller-finance-check {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 12px;
+  padding: 13px 14px;
+  border: 1px solid var(--sw-border);
+  border-radius: 11px;
+  min-width: 0;
+}
+.seller-workspace-shell .seller-finance-check > div { display: grid; gap: 5px; flex: 1 1 200px; }
+.seller-workspace-shell .seller-finance-check > div small { color: var(--sw-muted); }
+.seller-workspace-shell .seller-finance-check-icon {
+  flex: 0 0 28px;
+  display: grid;
+  place-items: center;
+  height: 28px;
+  border-radius: 50%;
+  color: #c99a51;
+  background: rgba(177,126,48,.12);
+  font-weight: 800;
+}
+.seller-workspace-shell .seller-finance-check.is-complete .seller-finance-check-icon {
+  color: #2b9c73; background: rgba(42,154,112,.13);
+}
+.seller-workspace-shell .seller-finance-check-state { font-size: .84rem; font-weight: 700; color: var(--sw-muted); }
+.seller-workspace-shell .seller-finance-readiness-foot { color: var(--sw-muted); line-height: 1.8; }
+.seller-workspace-shell .seller-finance-transactions-head > span {
+  padding: 6px 11px;
+  border: 1px solid var(--sw-border);
+  border-radius: 9px;
+}
+.seller-workspace-shell .seller-finance-table-wrap {
+  width: 100%;
+  overflow-x: auto;
+  border-radius: 11px;
+  border: 1px solid var(--sw-border);
+}
+.seller-workspace-shell .seller-finance-table-wrap table {
+  border-collapse: collapse;
+  min-width: 600px;
+  width: 100%;
+}
+.seller-workspace-shell .seller-finance-table-wrap :is(th,td) {
+  padding: 13px 12px;
+  text-align: start;
+  border-bottom: 1px solid var(--sw-border);
+  font-variant-numeric: tabular-nums;
+}
+.seller-workspace-shell .seller-finance-table-wrap th { background: rgba(68,129,89,.08); }
+.seller-workspace-shell .seller-finance-table-wrap tbody tr:last-child td { border-bottom: 0; }
+.seller-workspace-shell .seller-finance-empty {
+  padding: 28px 18px;
+  text-align: center;
+  border: 1px dashed var(--sw-border);
+  border-radius: 14px;
+  color: var(--sw-muted);
+  line-height: 1.8;
+}
+.seller-workspace-shell .seller-finance-error {
+  padding: 13px 16px; border-radius: 11px;
+  border: 1px solid #b65d57; color: #d97870;
+}
+.seller-workspace-shell .seller-finance-loading { color: var(--sw-muted); }
+@media (max-width: 1000px) {
+  .seller-workspace-shell .seller-finance-filters { grid-template-columns: repeat(2, minmax(0,1fr)); }
+  .seller-workspace-shell .seller-finance-load { align-self: end; }
+}
+@media (max-width: 680px) {
+  .seller-workspace-shell .seller-finance-filters,
+  .seller-workspace-shell .seller-finance-kpis { grid-template-columns: minmax(0,1fr); }
+  .seller-workspace-shell .seller-finance-readonly { white-space: normal; }
+}
