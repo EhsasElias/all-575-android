@@ -680,10 +680,10 @@ export function SellerProductManagement({ products, memberships, onUpdated }: Pr
             <button
               type="button"
               style={button}
-              disabled={busy || importFile === null || csvPreview === null}
+              disabled={busy || importFile === null}
               onClick={() => void uploadCsv(false)}
             >
-              {tr('تأكيد استيراد المسودات', 'Confirm draft import')}
+              {tr('استيراد المسودات', 'Import drafts')}
             </button>
           </div>
           {csvPreview && (
