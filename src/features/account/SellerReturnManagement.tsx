@@ -3,12 +3,6 @@ import { useTranslation } from 'react-i18next';
 import { isApiError } from '@/shared/api';
 import { respondSellerReturn, sellerReturns, type SellerReturnCase } from './sellerWorkspaceApi';
 
-const card: React.CSSProperties = {
-  padding: 14,
-  border: '1px solid #d8e1db',
-  borderRadius: 12,
-  marginBottom: 12,
-};
 const action: React.CSSProperties = { padding: '9px 12px', borderRadius: 9 };
 
 type ReturnFilter = 'all' | 'submitted' | 'in_review' | 'resolved' | 'rejected';
@@ -127,23 +121,19 @@ export function SellerReturnManagement() {
   };
 
   return (
-    <section>
-      <h2>{tr('طلبات الإرجاع', 'Return requests')}</h2>
-      <p>
-        {tr(
-          'يمكن للمالك أو مدير الفرع تسجيل موقفه من طلب الإرجاع. لا يتم إصدار استرداد مالي أو اعتماد قرار نهائي من هنا.',
-          'Owners and branch managers may record a response. This screen does not approve refunds or make final return decisions.',
-        )}
-      </p>
-      <div
-        style={{
-          display: 'flex',
-          gap: 10,
-          alignItems: 'center',
-          flexWrap: 'wrap',
-          marginBottom: 12,
-        }}
-      >
+    <section className="seller-returns-section">
+      <div className="seller-returns-header">
+        <div>
+          <h2>{tr('طلبات الإرجاع', 'Return requests')}</h2>
+          <p>
+            {tr(
+              'يمكن للمالك أو مدير الفرع تسجيل موقفه من طلب الإرجاع. لا يتم إصدار استرداد مالي أو اعتماد قرار نهائي من هنا.',
+              'Owners and branch managers may record a response. This screen does not approve refunds or make final return decisions.',
+            )}
+          </p>
+        </div>
+      </div>
+      <div className="seller-returns-toolbar">
         <label>
           {tr('الحالة', 'Status')}{' '}
           <select
@@ -178,11 +168,15 @@ export function SellerReturnManagement() {
       {notice && <p role="status">{notice}</p>}
       {loading && <p role="status">{tr('جار التحميل…', 'Loading…')}</p>}
       {!loading && cases.length === 0 && (
-        <p>{tr('لا توجد طلبات إرجاع مطابقة.', 'No return cases match.')}</p>
+        <div className="seller-returns-empty" role="status">
+          <strong>{tr('لا توجد طلبات إرجاع مطابقة', 'No matching return requests')}</strong>
+          <p>{tr('عند وصول طلبات إرجاع ستظهر هنا. جرّب تغيير فلتر الحالة أو تحديث القائمة.', 'New return requests will appear here. Try another status or refresh the list.')}</p>
+        </div>
       )}
+      <div className="seller-returns-grid">
       {!loading &&
         cases.map((item) => (
-          <article key={item.id} style={card}>
+          <article key={item.id} className="seller-return-card">
             <strong>{ar ? item.name_ar : item.name_en}</strong>
             <p>
               {tr('الحالة', 'Status')}: {labels[item.status] ?? item.status} ·{' '}
@@ -259,6 +253,7 @@ export function SellerReturnManagement() {
             )}
           </article>
         ))}
+      </div>
       {!loading && hasMore && (
         <button type="button" style={action} disabled={busy} onClick={() => void loadMore()}>
           {tr('عرض المزيد', 'Load more')}
