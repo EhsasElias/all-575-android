@@ -81,6 +81,8 @@ export function SellerWorkspaceScreen() {
   const [hasMoreStock, setHasMoreStock] = useState(false);
   const [loadingMore, setLoadingMore] = useState(false);
   const [packing, setPacking] = useState<SellerPackingList | null>(null);
+  const [selectedOrderIds, setSelectedOrderIds] = useState<string[]>([]);
+  const [orderBulkNotice, setOrderBulkNotice] = useState('');
   const [branchId, setBranchId] = useState('');
   const [orderStatus, setOrderStatus] = useState('all');
   const [orderFrom, setOrderFrom] = useState('');
@@ -368,6 +370,53 @@ export function SellerWorkspaceScreen() {
     } finally {
       setBusy(false);
     }
+  };
+
+  const selectedVisibleOrders = orders.filter((order) => selectedOrderIds.includes(order.id));
+  const selectableOrderIds = orders.filter((order) =>
+    order.status === 'awaiting_seller' || order.status === 'preparing',
+  ).map((order) => order.id);
+  const allSelectableOrdersSelected = selectableOrderIds.length > 0 &&
+    selectableOrderIds.every((id) => selectedOrderIds.includes(id));
+
+  // Use the same authenticated and authorized endpoint as single-order updates.
+  // Each request is checked individually by the API and failures are reported.
+  const bulkAdvanceOrders = async (status: 'preparing' | 'ready') => {
+    if (busy) return;
+    const eligible = selectedVisibleOrders.filter((order) =>
+      status === 'preparing' ? order.status === 'awaiting_seller' : order.status === 'preparing',
+    );
+    if (!eligible.length) {
+      setOrderBulkNotice(tr('الطلبات المحددة ليست في الحالة المناسبة لهذا الإجراء.',
+        'No selected orders are eligible for this action.'));
+      return;
+    }
+    if (!window.confirm(tr(
+      'تأكيد تنفيذ الإجراء على ' + eligible.length + ' طلب؟',
+      'Apply this action to ' + eligible.length + ' orders?',
+    ))) return;
+    setBusy(true);
+    setError('');
+    setOrderBulkNotice('');
+    const succeeded: string[] = [];
+    const failed: string[] = [];
+    for (const order of eligible) {
+      try {
+        await advanceSellerOrder(order.id, status);
+        succeeded.push(order.id);
+      } catch {
+        failed.push(order.order_number);
+      }
+    }
+    setSelectedOrderIds((previous) => previous.filter((id) => !succeeded.includes(id)));
+    setOrderBulkNotice(tr(
+      'تم تحديث ' + succeeded.length + ' طلب. ' +
+        (failed.length ? 'تعذر تحديث: ' + failed.join('، ') : ''),
+      'Updated ' + succeeded.length + ' orders. ' +
+        (failed.length ? 'Failed: ' + failed.join(', ') : ''),
+    ));
+    setBusy(false);
+    reload();
   };
 
   const canAdjustStock = (item: SellerStock) => {
@@ -976,99 +1025,114 @@ export function SellerWorkspaceScreen() {
                 </div>
               </div>
               {orders.length === 0 && <p>{tr('لا توجد طلبات مطابقة.', 'No matching orders.')}</p>}
-              <div className="seller-orders-grid">
-                {orders.map((order) => (
-                  <article key={order.id} className="seller-order-card">
-                    <div className="seller-order-card-head">
-                      <div className="seller-order-card-identity">
-                        <span className="seller-order-overline">{tr('رقم الطلب', 'Order number')}</span>
-                        <h3 dir="ltr">{order.order_number}</h3>
-                      </div>
-                      <span className="seller-order-status">
-                        {labels[order.status] ?? order.status}
-                      </span>
-                    </div>
-                    <div className="seller-order-meta">
-                      <span>{tr('الفرع', 'Branch')} #{order.branch_id}</span>
-                      {order.placed_at && (
-                        <span>
-                          {tr('وقت الطلب', 'Placed')}: <bdi>{order.placed_at}</bdi>
-                        </span>
-                      )}
-                    </div>
-                    <div className="seller-order-items-block">
-                      <div className="seller-order-items-heading">
-                        <strong>{tr('المنتجات المطلوبة', 'Items to prepare')}</strong>
-                        <span>{order.items.reduce((sum, item) => sum + item.quantity, 0)} {tr('قطعة', 'units')}</span>
-                      </div>
-                      <ul className="seller-order-items">
-                        {order.items.map((item) => (
-                          <li key={item.id}>
-                            <span>{ar ? item.name.ar : item.name.en}</span>
-                            <strong>× {item.quantity}</strong>
-                          </li>
-                        ))}
-                      </ul>
-                    </div>
-                    <div className="seller-order-actions">
-                      <button
-                        type="button"
-                        style={action}
-                        disabled={busy}
-                        aria-expanded={packing?.suborder_id === order.id}
-                        onClick={() => void viewPacking(order.id)}
-                      >
-                        {packing?.suborder_id === order.id
-                          ? tr('إخفاء قائمة التجهيز', 'Hide packing list')
-                          : tr('عرض قائمة التجهيز', 'View packing list')}
-                      </button>
-                      {order.status === 'awaiting_seller' && (
-                        <button
-                          type="button"
-                          className="seller-order-primary"
-                          style={action}
-                          disabled={busy}
-                          onClick={() => void changeStatus(order.id, 'preparing')}
-                        >
-                          {tr('بدء التجهيز', 'Start preparing')}
-                        </button>
-                      )}
-                      {order.status === 'preparing' && (
-                        <button
-                          type="button"
-                          className="seller-order-primary"
-                          style={action}
-                          disabled={busy}
-                          onClick={() => void changeStatus(order.id, 'ready')}
-                        >
-                          {tr('جاهز للاستلام', 'Ready for pickup')}
-                        </button>
-                      )}
-                    </div>
-                    {packing?.suborder_id === order.id && (
-                      <div className="seller-packing-box">
-                        <strong>
-                          {tr('قائمة تجهيز الطلب', 'Order packing list')} — {packing.order_number}
-                        </strong>
-                        <p>
-                          {tr('الفرع', 'Branch')} #{packing.branch_id} · {packing.status}
-                        </p>
-                        <ul>
-                          {packing.items.map((item) => (
-                            <li key={item.variant_id}>
-                              {ar ? item.product.ar : item.product.en}
-                              {' — '}
-                              {(ar ? item.variant.ar : item.variant.en) || '#' + item.variant_id}
-                              {' × '}
-                              {item.quantity}
-                            </li>
-                          ))}
-                        </ul>
-                      </div>
-                    )}
-                  </article>
-                ))}
+              <div className="seller-orders-bulkbar">
+                <span>{tr('المحدد:', 'Selected:')} <strong>{selectedVisibleOrders.length}</strong></span>
+                <button type="button" disabled={busy || !selectedVisibleOrders.some((order) => order.status === 'awaiting_seller')}
+                  onClick={() => void bulkAdvanceOrders('preparing')}>
+                  {tr('بدء التجهيز للمحدد', 'Start preparing selected')}
+                </button>
+                <button type="button" disabled={busy || !selectedVisibleOrders.some((order) => order.status === 'preparing')}
+                  onClick={() => void bulkAdvanceOrders('ready')}>
+                  {tr('تحديد المحدد كجاهز', 'Mark selected ready')}
+                </button>
+                <button type="button" disabled={busy || selectedOrderIds.length === 0}
+                  onClick={() => setSelectedOrderIds([])}>
+                  {tr('إلغاء التحديد', 'Clear selection')}
+                </button>
               </div>
+              {orderBulkNotice && <p role="status" className="seller-orders-bulknotice">{orderBulkNotice}</p>}
+              <div className="seller-orders-table-wrap">
+                <table className="seller-orders-table">
+                  <thead>
+                    <tr>
+                      <th scope="col" className="seller-orders-select-cell">
+                        <input type="checkbox" aria-label={tr('تحديد كل الطلبات القابلة للتحديث', 'Select all actionable orders')}
+                          checked={allSelectableOrdersSelected}
+                          disabled={busy || selectableOrderIds.length === 0}
+                          onChange={(event) => setSelectedOrderIds(event.target.checked ? selectableOrderIds : [])} />
+                      </th>
+                      <th scope="col">{tr('رقم الطلب', 'Order number')}</th>
+                      <th scope="col">{tr('الحالة', 'Status')}</th>
+                      <th scope="col">{tr('الفرع', 'Branch')}</th>
+                      <th scope="col">{tr('وقت الطلب', 'Placed at')}</th>
+                      <th scope="col">{tr('المنتجات المطلوبة', 'Items to prepare')}</th>
+                      <th scope="col">{tr('الإجراءات', 'Actions')}</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {orders.map((order) => {
+                      const actionable = order.status === 'awaiting_seller' || order.status === 'preparing';
+                      const branch = branches.find((item) => item.id === order.branch_id);
+                      return (
+                        <tr key={order.id} className={selectedOrderIds.includes(order.id) ? 'seller-order-selected' : ''}>
+                          <td className="seller-orders-select-cell">
+                            <input type="checkbox" checked={selectedOrderIds.includes(order.id)}
+                              disabled={busy || !actionable}
+                              aria-label={tr('تحديد الطلب ', 'Select order ') + order.order_number}
+                              onChange={(event) => setSelectedOrderIds((previous) =>
+                                event.target.checked ? [...previous, order.id] : previous.filter((id) => id !== order.id),
+                              )} />
+                          </td>
+                          <td><strong dir="ltr">{order.order_number}</strong></td>
+                          <td><span className="seller-order-status">{labels[order.status] ?? order.status}</span></td>
+                          <td>{branch ? (ar ? branch.name_ar : branch.name_en) : tr('فرع', 'Branch') + ' #' + order.branch_id}</td>
+                          <td><bdi dir="auto">{order.placed_at ? order.placed_at.replace('T', ' ').replace(/\\.\\d+Z?$/, '') : '—'}</bdi></td>
+                          <td>
+                            <div className="seller-orders-items-cell">
+                              {order.items.map((item) => (
+                                <div key={item.id}>
+                                  <span>{ar ? item.name.ar : item.name.en}</span>
+                                  <strong dir="ltr">× {item.quantity}</strong>
+                                </div>
+                              ))}
+                            </div>
+                          </td>
+                          <td>
+                            <div className="seller-orders-row-actions">
+                              <button type="button" disabled={busy}
+                                aria-expanded={packing?.suborder_id === order.id}
+                                onClick={() => void viewPacking(order.id)}>
+                                {packing?.suborder_id === order.id
+                                  ? tr('إخفاء القائمة', 'Hide list') : tr('قائمة التجهيز', 'Packing list')}
+                              </button>
+                              {order.status === 'awaiting_seller' && (
+                                <button type="button" className="seller-order-primary" disabled={busy}
+                                  onClick={() => void changeStatus(order.id, 'preparing')}>
+                                  {tr('بدء التجهيز', 'Start preparing')}
+                                </button>
+                              )}
+                              {order.status === 'preparing' && (
+                                <button type="button" className="seller-order-primary" disabled={busy}
+                                  onClick={() => void changeStatus(order.id, 'ready')}>
+                                  {tr('جاهز للاستلام', 'Ready for pickup')}
+                                </button>
+                              )}
+                            </div>
+                          </td>
+                        </tr>
+                      );
+                    })}
+                  </tbody>
+                </table>
+              </div>
+              {packing && orders.some((order) => order.id === packing.suborder_id) && (
+                <section className="seller-orders-packing-detail">
+                  <div className="seller-orders-packing-head">
+                    <h3>{tr('قائمة تجهيز الطلب', 'Order packing list')} — <bdi>{packing.order_number}</bdi></h3>
+                    <button type="button" onClick={() => setPacking(null)}>{tr('إغلاق', 'Close')}</button>
+                  </div>
+                  <p>{tr('الفرع', 'Branch')} #{packing.branch_id} · {labels[packing.status] ?? packing.status}</p>
+                  <ul>
+                    {packing.items.map((item) => (
+                      <li key={item.variant_id}>
+                        <span>{ar ? item.product.ar : item.product.en}
+                          {' — '}{(ar ? item.variant.ar : item.variant.en) || '#' + item.variant_id}</span>
+                        <strong>× {item.quantity}</strong>
+                      </li>
+                    ))}
+                  </ul>
+                </section>
+              )}
               {hasMoreOrders && (
                 <button
                   type="button"
