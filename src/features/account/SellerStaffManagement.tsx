@@ -49,6 +49,7 @@ export function SellerStaffManagement({ memberships }: Props) {
     if (busy) return;
     if (!owners.some((owner) => owner.seller_id === selected)) return;
     setBusy(true);
+    setRows(null);
     setError('');
     setNotice('');
     try {
@@ -125,6 +126,7 @@ export function SellerStaffManagement({ memberships }: Props) {
           {tr('المتجر', 'Store')}
           <select
             style={{ display: 'block' }}
+            disabled={busy}
             value={sellerId || String(owners[0]?.seller_id ?? '')}
             onChange={(event) => {
               setSellerId(event.target.value);
