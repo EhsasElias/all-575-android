@@ -637,8 +637,14 @@ export function SellerProductManagement({ products, memberships, onUpdated }: Pr
           </p>
           <p className="seller-required-hint">
             {tr(
-              'قالب Excel يحتوي على قوائم منسدلة للمتجر والتصنيف وفئة الضريبة، والتحقق من السعر. املأ الصفوف ثم ارفع ملف XLSX مباشرة أو استخدم CSV.',
-              'The Excel template includes dropdowns for store, category and VAT class, plus price validation. Fill in the rows and upload the XLSX directly, or use CSV.',
+              'قالبا CSV وExcel يحتويان على حقول المنتج ووحدة البيع: SKU والباركود والمتجر والتصنيف والاسمين والوصفين والسعر والضريبة، مع اسمَي وحدة البيع الاختياريين. قالب Excel يتضمن قوائم منسدلة للمتجر والتصنيف والضريبة.',
+              'Both CSV and Excel templates include all product and selling-unit text fields: SKU, barcode, store, category, names, descriptions, price, VAT and optional variant names. Excel adds dropdown lists for store, category and VAT.',
+            )}
+          </p>
+          <p>
+            {tr(
+              'صورة المنتج ملف مستقل وليست خلية Excel أو CSV؛ بعد الاستيراد افتح المسودة وارفع صورة الغلاف قبل إرسال المنتج للنشر.',
+              'Product cover images are separate files, not spreadsheet cells. After import, open the draft and upload its cover image before submitting for publication.',
             )}
           </p>
           <p>
