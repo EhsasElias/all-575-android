@@ -2033,3 +2033,20 @@
   .seller-workspace-shell .seller-team-toolbar label { max-width: none; }
   .seller-workspace-shell .seller-team-toolbar button { flex: 1 1 100%; }
 }
+
+
+/* Align report values with their column headings in both writing directions. */
+.seller-workspace-shell .seller-insight-table-scroll table {
+  direction: inherit;
+  table-layout: auto;
+}
+.seller-workspace-shell .seller-insight-table-scroll :is(th, td) {
+  text-align: start;
+  vertical-align: middle;
+  white-space: normal;
+}
+.seller-workspace-shell .seller-insight-table-scroll td bdi {
+  unicode-bidi: isolate;
+  overflow-wrap: anywhere;
+  font-variant-numeric: tabular-nums;
+}
