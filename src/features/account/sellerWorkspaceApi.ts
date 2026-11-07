@@ -124,7 +124,9 @@ export const sellerInsightTrend = (filters: SellerInsightFilters) =>
 export const sellerInsightDetails = (filters: SellerInsightFilters) =>
   seller.get<{ data: SellerInsightDetails }>('/seller/insights', { query: filters });
 export const exportSellerInsight = (filters: SellerInsightFilters, format: 'csv' | 'xlsx') =>
-  seller.download('/seller/insights/export/' + format, { query: filters });
+  seller.download('/seller/insights/export/' + format, {
+    query: { ...filters, lang: getCurrentLanguage() },
+  });
 
 export const sellerBranches = () => seller.get<{ data: SellerBranch[] }>('/seller/branches');
 export const sellerProducts = (
@@ -281,6 +283,7 @@ export const exportSellerOrdersExcel = (
   if (filters.status) query.set('status', filters.status);
   if (filters.from) query.set('from', filters.from);
   if (filters.to) query.set('to', filters.to);
+  query.set('lang', getCurrentLanguage());
   const params = query.toString();
   return seller.download('/seller/orders/export.xlsx' + (params ? '?' + params : ''));
 };
@@ -293,6 +296,7 @@ export const exportSellerOrdersCsv = (
   if (filters.status) query.set('status', filters.status);
   if (filters.from) query.set('from', filters.from);
   if (filters.to) query.set('to', filters.to);
+  query.set('lang', getCurrentLanguage());
   const params = query.toString();
   return seller.download('/seller/orders/export.csv' + (params ? '?' + params : ''));
 };
