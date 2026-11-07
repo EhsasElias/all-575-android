@@ -194,7 +194,13 @@ export function SellerReturnManagement() {
             <small>
               {tr('الفرع', 'Branch')} #{item.branch_id} · {item.created_at}
             </small>
-            {(item.status === 'submitted' || item.status === 'in_review') && (
+            {Boolean(item.seller_responded) && (
+              <p role="status" className="seller-form-success">
+                {tr('تم تسجيل رد البائع مسبقًا، ولا يمكن إرسال رد آخر.', 'Seller response already recorded; another reply cannot be submitted.')}
+              </p>
+            )}
+            {!Boolean(item.seller_responded) &&
+              (item.status === 'submitted' || item.status === 'in_review') && (
               <div style={{ marginTop: 12 }}>
                 <button
                   type="button"
