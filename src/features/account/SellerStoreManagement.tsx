@@ -232,7 +232,7 @@ export function SellerStoreManagement({ memberships }: Props) {
     setError('');
     setNotice('');
     try {
-      await proposeSellerBranch({
+      const created = await proposeSellerBranch({
         seller_id: selectedId,
         service_zone_id: zoneId,
         code: newBranch.code.trim(),
@@ -244,10 +244,12 @@ export function SellerStoreManagement({ memberships }: Props) {
       setPropose(false);
       setNewBranch({ code: '', name_ar: '', name_en: '', service_zone_id: '', lat: '', lng: '' });
       setNotice(
-        tr(
-          'تم إرسال الفرع، وهو غير نشط حتى تعتمد الإدارة موقعه.',
-          'Branch submitted. It stays inactive until its location is approved.',
-        ),
+        created.data.is_active
+          ? tr('تم إنشاء الفرع وتفعيله مباشرة.', 'Branch created and activated immediately.')
+          : tr(
+              'تم إرسال الفرع، وهو غير نشط حتى تعتمد الإدارة موقعه.',
+              'Branch submitted. It stays inactive until its location is approved.',
+            ),
       );
       setRevision((v) => v + 1);
     } catch (cause) {
@@ -352,7 +354,7 @@ export function SellerStoreManagement({ memberships }: Props) {
             <button type="button" disabled={saving} onClick={() => setPropose((value) => !value)}>
               {propose
                 ? tr('إلغاء إضافة فرع', 'Cancel new branch')
-                : tr('طلب إضافة فرع', 'Request new branch')}
+                : tr('إضافة فرع جديد', 'Add new branch')}
             </button>
             {propose && (
               <form
