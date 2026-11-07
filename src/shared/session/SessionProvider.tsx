@@ -75,12 +75,13 @@ export function SessionProvider({
           return;
         } catch (error) {
           if (controller.signal.aborted || current !== revision.current) return;
-          // Meanwhile the customer can browse as a guest. A 401 has already made the client drop the token, so
-          // that is final; anything else (offline, a timeout, a server error) leaves the token and asks again.
-          setStatus('guest');
+          // Do not redirect to sign-in on transient network failures while the
+          // stored session is still being verified. A rejected token is final.
           const delay = RESTORE_RETRY_DELAYS_MS[attempt];
-          if ((isApiError(error) && error.kind === 'unauthenticated') || delay === undefined)
+          if ((isApiError(error) && error.kind === 'unauthenticated') || delay === undefined) {
+            setStatus('guest');
             return;
+          }
           if (!(await waitBeforeRetry(delay, controller.signal))) return;
         }
       }
