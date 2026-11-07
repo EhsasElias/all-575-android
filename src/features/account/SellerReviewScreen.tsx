@@ -164,7 +164,7 @@ export function SellerReviewScreen() {
     } catch {
       setError(
         tr(
-          'تعذر اعتماد المنتج. تأكدي من الصورة والتصنيف وSKU.',
+          'تعذر اعتماد المنتج. تأكد من الصورة والتصنيف وSKU.',
           'Could not publish product. Check image, category and SKU.',
         ),
       );
