@@ -434,7 +434,7 @@ export function SellerWorkspaceScreen() {
     if (busy || stockEditor === null) return;
     const quantity = Number(stockEditQuantity);
     if (
-      !/^\\d+$/.test(stockEditQuantity.trim()) ||
+      !/^\d+$/.test(stockEditQuantity.trim()) ||
       !Number.isSafeInteger(quantity) ||
       quantity < stockEditor.reserved ||
       quantity > 100000000
@@ -499,16 +499,14 @@ export function SellerWorkspaceScreen() {
       )}
       {stockEditor && (
         <div
+          className="seller-stock-modal-overlay"
           role="presentation"
           onMouseDown={(event) => {
             if (event.target === event.currentTarget && !busy) setStockEditor(null);
           }}
-          style={{
-            position: 'fixed', inset: 0, zIndex: 1100, background: 'rgba(0,0,0,0.62)',
-            display: 'flex', alignItems: 'center', justifyContent: 'center', padding: 16,
-          }}
         >
           <form
+            className="seller-stock-modal"
             onSubmit={(event) => void saveStockQuantity(event)}
             role="dialog"
             aria-modal="true"
@@ -517,28 +515,29 @@ export function SellerWorkspaceScreen() {
             onKeyDown={(event) => {
               if (event.key === 'Escape' && !busy) setStockEditor(null);
             }}
-            style={{
-              background: 'var(--color-surface, #fff)',
-              color: 'var(--color-text, #162a20)',
-              borderRadius: 16, padding: 24, width: '100%', maxWidth: 420,
-              border: '1px solid var(--color-border, #d8e1db)',
-              boxShadow: '0 20px 60px rgba(0,0,0,0.25)',
-              display: 'grid', gap: 16,
-            }}
           >
-            <h3 id="stock-editor-title" style={{ margin: 0 }}>
-              {tr('تعديل كمية المخزون', 'Adjust stock quantity')}
-            </h3>
-            <p id="stock-editor-description" style={{ margin: 0 }}>
-              {ar ? stockEditor.name_ar : stockEditor.name_en} — SKU: {stockEditor.sku}
+            <div className="seller-stock-modal-head">
+              <div>
+                <span className="seller-stock-eyebrow">{tr('إدارة المخزون', 'Inventory management')}</span>
+                <h3 id="stock-editor-title">{tr('تعديل كمية المخزون', 'Adjust stock quantity')}</h3>
+              </div>
+              <button type="button" className="seller-stock-close" disabled={busy}
+                aria-label={tr('إغلاق', 'Close')} onClick={() => setStockEditor(null)}>×</button>
+            </div>
+            <p id="stock-editor-description" className="seller-stock-modal-product">
+              <strong>{ar ? stockEditor.name_ar : stockEditor.name_en}</strong>
+              <span dir="ltr">SKU: {stockEditor.sku}</span>
             </p>
-            <p style={{ margin: 0 }}>
-              {tr('الكمية الحالية', 'Current stock')}: <strong>{stockEditor.on_hand}</strong> ·{' '}
-              {tr('المحجوز', 'Reserved')}: <strong>{stockEditor.reserved}</strong>
-            </p>
-            <label style={{ display: 'grid', gap: 7 }}>
+            <div className="seller-stock-stats seller-stock-modal-stats">
+              <div><span>{tr('الفعلي الآن', 'Current stock')}</span><strong>{stockEditor.on_hand.toLocaleString()}</strong></div>
+              <div><span>{tr('المحجوز', 'Reserved')}</span><strong>{stockEditor.reserved.toLocaleString()}</strong></div>
+              <div className="seller-stock-stat-available"><span>{tr('المتاح الآن', 'Available')}</span>
+                <strong>{Math.max(0, stockEditor.on_hand - stockEditor.reserved).toLocaleString()}</strong></div>
+            </div>
+            <label className="seller-stock-quantity-field" htmlFor="seller-stock-new-quantity">
               {tr('الكمية الفعلية الجديدة', 'New physical stock quantity')}
               <input
+                id="seller-stock-new-quantity"
                 type="number"
                 inputMode="numeric"
                 autoFocus
@@ -548,21 +547,39 @@ export function SellerWorkspaceScreen() {
                 step={1}
                 value={stockEditQuantity}
                 disabled={busy}
+                aria-invalid={Boolean(stockEditError)}
+                aria-describedby="seller-stock-quantity-help"
                 onChange={(event) => {
                   setStockEditQuantity(event.target.value);
                   setStockEditError('');
                 }}
-                style={{
-                  width: '100%', boxSizing: 'border-box', padding: 12, borderRadius: 9,
-                  border: '1px solid var(--color-border, #d8e1db)',
-                }}
               />
             </label>
-            {stockEditError && <p role="alert" style={{ color: '#b42318', margin: 0 }}>{stockEditError}</p>}
-            <div style={{ ...line, justifyContent: 'flex-end' }}>
-              <button type="button" style={action} disabled={busy}
+            <p className="seller-stock-help" id="seller-stock-quantity-help">
+              {tr('أدخل الإجمالي الجديد، وليس الكمية المراد إضافتها. الحد الأدنى هو المحجوز.',
+                'Enter the new total, not the quantity to add. Minimum is reserved stock.')}
+            </p>
+            {/***** Preview is informational only; the server validates the actual update. *****/}
+            {stockEditQuantity.trim() !== '' && Number.isSafeInteger(Number(stockEditQuantity)) &&
+              Number(stockEditQuantity) >= stockEditor.reserved && Number(stockEditQuantity) <= 100000000 && (
+                <div className="seller-stock-preview" role="status">
+                  <span>{tr('المتاح بعد التعديل', 'Available after update')}</span>
+                  <strong>{(Number(stockEditQuantity) - stockEditor.reserved).toLocaleString()}</strong>
+                  <small>
+                    {Number(stockEditQuantity) === stockEditor.on_hand
+                      ? tr('لا يوجد تغيير في الكمية', 'No change to quantity')
+                      : Number(stockEditQuantity) > stockEditor.on_hand
+                        ? tr('زيادة', 'Increase') + ': +' + (Number(stockEditQuantity) - stockEditor.on_hand).toLocaleString()
+                        : tr('نقصان', 'Decrease') + ': -' + (stockEditor.on_hand - Number(stockEditQuantity)).toLocaleString()}
+                  </small>
+                </div>
+              )}
+            {stockEditError && <p role="alert" className="seller-stock-edit-error">{stockEditError}</p>}
+            <div className="seller-stock-modal-actions">
+              <button type="button" className="seller-stock-cancel" disabled={busy}
                 onClick={() => setStockEditor(null)}>{tr('إلغاء', 'Cancel')}</button>
-              <button type="submit" style={action} disabled={busy || !stockEditQuantity.trim()}>
+              <button type="submit" className="seller-stock-save"
+                disabled={busy || !stockEditQuantity.trim() || Number(stockEditQuantity) === stockEditor.on_hand}>
                 {busy ? tr('جار الحفظ…', 'Saving…') : tr('حفظ الكمية', 'Save quantity')}
               </button>
             </div>
@@ -861,10 +878,49 @@ export function SellerWorkspaceScreen() {
                 </form>
               )}
               {stock.length === 0 && <p>{tr('لا توجد سجلات مخزون.', 'No stock records.')}</p>}
-              {stock.map((item) => (
-                <article key={item.id} style={panel}>
-                  <strong>{ar ? item.name_ar : item.name_en}</strong>
-                  <p>
+              <div className="seller-stock-card-grid">
+                {stock.map((item) => (
+                  <article key={item.id} className="seller-stock-card">
+                    <div className="seller-stock-card-head">
+                      <div className="seller-stock-card-heading">
+                        <h3>{ar ? item.name_ar : item.name_en}</h3>
+                        <span className="seller-stock-sku" dir="ltr">SKU: {item.sku}</span>
+                      </div>
+                      <span className="seller-stock-branch">
+                        {branches.find((branch) => branch.id === item.branch_id)
+                          ? (ar ? branches.find((branch) => branch.id === item.branch_id)?.name_ar
+                            : branches.find((branch) => branch.id === item.branch_id)?.name_en)
+                          : tr('فرع', 'Branch') + ' #' + item.branch_id}
+                      </span>
+                    </div>
+                    <div className="seller-stock-stats">
+                      <div><span>{tr('الفعلي', 'On hand')}</span><strong>{item.on_hand.toLocaleString()}</strong></div>
+                      <div><span>{tr('المحجوز', 'Reserved')}</span><strong>{item.reserved.toLocaleString()}</strong></div>
+                      <div className="seller-stock-stat-available">
+                        <span>{tr('المتاح', 'Available')}</span>
+                        <strong>{Math.max(0, item.on_hand - item.reserved).toLocaleString()}</strong>
+                      </div>
+                    </div>
+                    <div className="seller-stock-card-footer">
+                      {item.on_hand - item.reserved <= 5
+                        ? <span className="seller-stock-low">{tr('مخزون منخفض', 'Low stock')}</span>
+                        : <span className="seller-stock-ok">{tr('متوفر', 'In stock')}</span>}
+                      {canAdjustStock(item) && (
+                        <button type="button" className="seller-stock-adjust" disabled={busy}
+                          onClick={() => changeStock(item)}>
+                          <svg width="16" height="16" viewBox="0 0 24 24" fill="none"
+                            stroke="currentColor" strokeWidth="2" strokeLinecap="round"
+                            strokeLinejoin="round" aria-hidden="true">
+                            <path d="M12 20h9M16.5 3.5a2.12 2.12 0 0 1 3 3L9 17l-4 1 1-4Z"/>
+                          </svg>
+                          {tr('تعديل الكمية', 'Adjust quantity')}
+                        </button>
+                      )}
+                    </div>
+                  </article>
+                ))}
+              </div>
+              <p>
                     SKU: {item.sku} · {tr('الفرع', 'Branch')} #{item.branch_id}
                   </p>
                   <p>
