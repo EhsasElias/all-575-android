@@ -1096,7 +1096,15 @@ export function SellerProductManagement({ products, memberships, onUpdated }: Pr
       )}
       {products.map((product) => (
         <article key={product.id} style={card}>
-          <strong>{ar ? product.name_ar : product.name_en}</strong>
+          <div className="seller-product-list-heading">
+            <strong>{ar ? product.name_ar : product.name_en}</strong>
+            {product.sku && (
+              <span className="seller-product-sku" title={tr('رمز المنتج SKU', 'Product SKU')}>
+                <span>SKU</span>
+                <bdi dir="ltr">{product.sku}</bdi>
+              </span>
+            )}
+          </div>
           <p>
             {tr('السعر', 'Price')}: {(product.price_halalas / 100).toFixed(2)} {tr('ر.س', 'SAR')} ·{' '}
             {tr('الحالة', 'Status')}: {productStatusLabels[product.status] ?? product.status}
