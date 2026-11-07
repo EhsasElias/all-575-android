@@ -6,7 +6,7 @@ type DetectorClass = new (options?: { formats: string[] }) => Detector;
 type DetectorWindow = Window & { BarcodeDetector?: DetectorClass };
 
 export type ProductCameraScannerProps = {
-  onRead: (text: string) => void;
+  onRead: (text: string, format?: string) => void;
   onClose: () => void;
   ar: boolean;
 };
@@ -56,10 +56,10 @@ export function ProductCameraScanner({ onRead, onClose, ar }: ProductCameraScann
         detecting = true;
         try {
           const hits = await detector.detect(video);
-          const value = hits.find((hit) => hit.rawValue.trim())?.rawValue;
-          if (value && !stopped) {
+          const hit = hits.find((item) => item.rawValue.trim());
+          if (hit && !stopped) {
             stopped = true;
-            callback.current(value);
+            callback.current(hit.rawValue, hit.format);
             return;
           }
         } catch {
@@ -115,11 +115,11 @@ export function ProductCameraScanner({ onRead, onClose, ar }: ProductCameraScann
       const bitmap = await createImageBitmap(file);
       try {
         const result = await new Detector().detect(bitmap);
-        const value = result.find((item) => item.rawValue.trim())?.rawValue;
-        if (!value) {
+        const hit = result.find((item) => item.rawValue.trim());
+        if (!hit) {
           setMessage(ar ? 'لم يتم العثور على رمز واضح في الصورة.' : 'No readable code found in the photo.');
         } else {
-          onRead(value);
+          onRead(hit.rawValue, hit.format);
         }
       } finally {
         bitmap.close();
