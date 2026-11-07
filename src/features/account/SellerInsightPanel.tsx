@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
+import { isApiError } from '@/shared/api';
 import {
   sellerInsightDetails, sellerInsightTrend, exportSellerInsight,
   type SellerInsightMetric, type SellerInsightDetails, type SellerDailyTrend,
@@ -130,16 +131,19 @@ export function SellerInsightPanel({ metric, branches, onClose }: Props) {
   }, [metric, from, to, branch]);
 
   const download = async (format: 'csv' | 'xlsx') => {
-    if (!details || downloading || loading) return;
+    if (downloading || !from || !to || from > to) return;
     setDownloading(true);
     setError('');
     try {
       const result = await exportSellerInsight(filters, format);
       saveDownload(result.blob, result.filename ??
         `seller-${metric}-${from}-${to}.${format}`);
-    } catch {
+    } catch (cause) {
+      const context = isApiError(cause)
+        ? ` (HTTP ${cause.status}: ${cause.message})`
+        : cause instanceof Error ? ` (${cause.message})` : '';
       setError(tr('تعذر تصدير التقرير. تحقق من الاتصال أو الصلاحيات.',
-        'Export failed. Check permissions or connectivity.'));
+        'Export failed. Check permissions or connectivity.') + context);
     } finally {
       setDownloading(false);
     }
@@ -187,10 +191,10 @@ export function SellerInsightPanel({ metric, branches, onClose }: Props) {
         </label>
       </div>
       <div className="seller-insight-actions">
-        <button type="button" disabled={!details || downloading || loading} onClick={() => void download('csv')}>
+        <button type="button" disabled={downloading || !from || !to || from > to} onClick={() => void download('csv')}>
           {tr('تصدير CSV', 'Export CSV')}
         </button>
-        <button type="button" disabled={!details || downloading || loading} onClick={() => void download('xlsx')}>
+        <button type="button" disabled={downloading || !from || !to || from > to} onClick={() => void download('xlsx')}>
           {tr('تصدير Excel', 'Export Excel')}
         </button>
       </div>
