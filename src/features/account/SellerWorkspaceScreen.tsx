@@ -633,7 +633,20 @@ export function SellerWorkspaceScreen() {
               )}
             </>
           )}
-          {section === 'store' && <SellerStoreManagement memberships={sellerMemberships} />}
+          {section === 'store' && (
+            <SellerStoreManagement
+              memberships={sellerMemberships}
+              onStoreUpdated={(sellerId, names) => {
+                setSellerMemberships((current) =>
+                  current.map((membership) =>
+                    membership.seller_id === sellerId
+                      ? { ...membership, name_ar: names.name_ar, name_en: names.name_en }
+                      : membership,
+                  ),
+                );
+              }}
+            />
+          )}
           {section === 'returns' && <SellerReturnManagement />}
           {section === 'finance' && <SellerFinanceOverview memberships={sellerMemberships} />}
           {section === 'staff' && <SellerStaffManagement memberships={sellerMemberships} />}
