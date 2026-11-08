@@ -133,7 +133,7 @@ export const exportSellerInsight = (filters: SellerInsightFilters, format: 'csv'
 
 export const sellerBranches = () => seller.get<{ data: SellerBranch[] }>('/seller/branches');
 export const sellerProducts = (
-  filters: { status?: string; limit?: number; before_id?: number } = {},
+  filters: { status?: string; q?: string; limit?: number; before_id?: number } = {},
 ) => seller.get<{ data: SellerProduct[] }>('/seller/products', { query: filters });
 export const sellerStock = (
   filters: {
