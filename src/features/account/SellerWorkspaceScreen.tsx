@@ -92,6 +92,8 @@ export function SellerWorkspaceScreen() {
   const [productSearchDraft, setProductSearchDraft] = useState('');
   const [productSearch, setProductSearch] = useState('');
   const [lowStockOnly, setLowStockOnly] = useState(false);
+  const [stockSearchDraft, setStockSearchDraft] = useState('');
+  const [stockSearch, setStockSearch] = useState('');
   const [newStockBranch, setNewStockBranch] = useState('');
   const [newStockSku, setNewStockSku] = useState('');
   const [newStockQuantity, setNewStockQuantity] = useState('0');
@@ -176,6 +178,7 @@ export function SellerWorkspaceScreen() {
               limit: 50,
               ...(branchId ? { branch_id: Number(branchId) } : {}),
               ...(lowStockOnly ? { low_stock_below: 5 } : {}),
+              ...(stockSearch ? { q: stockSearch } : {}),
             }),
             sellerBranches(),
           ]);
@@ -228,6 +231,7 @@ export function SellerWorkspaceScreen() {
     productStatus,
     productSearch,
     lowStockOnly,
+    stockSearch,
     revision,
   ]);
 
@@ -292,6 +296,7 @@ export function SellerWorkspaceScreen() {
         before_id: lastId,
         ...(branchId ? { branch_id: Number(branchId) } : {}),
         ...(lowStockOnly ? { low_stock_below: 5 } : {}),
+        ...(stockSearch ? { q: stockSearch } : {}),
       });
       setStock((current) => {
         const ids = new Set(current.map((item) => item.id));
@@ -784,14 +789,40 @@ export function SellerWorkspaceScreen() {
                 </>
               )}
               {section === 'inventory' && (
-                <label className="seller-low-stock-filter">
-                  <input
-                    type="checkbox"
-                    checked={lowStockOnly}
-                    onChange={(event) => setLowStockOnly(event.target.checked)}
-                  />
-                  <span>{tr('المتاح 5 أو أقل', 'Available stock 5 or less')}</span>
-                </label>
+                <>
+                  <form role="search" onSubmit={(event) => {
+                    event.preventDefault();
+                    setStockSearch(stockSearchDraft.trim());
+                  }} style={{ ...line, flex: '1 1 320px', alignItems: 'flex-end' }}>
+                    <label style={{ display: 'grid', gap: 6, flex: '1 1 220px' }}>
+                      {tr('البحث في المخزون', 'Search inventory')}
+                      <input
+                        type="search"
+                        maxLength={100}
+                        value={stockSearchDraft}
+                        placeholder={tr('اسم المنتج أو SKU', 'Product name or SKU')}
+                        onChange={(event) => setStockSearchDraft(event.target.value)}
+                      />
+                    </label>
+                    <button type="submit" style={action} disabled={loading}>
+                      {tr('بحث', 'Search')}
+                    </button>
+                    {(stockSearch || stockSearchDraft) && (
+                      <button type="button" style={action} disabled={loading}
+                        onClick={() => { setStockSearchDraft(''); setStockSearch(''); }}>
+                        {tr('مسح', 'Clear')}
+                      </button>
+                    )}
+                  </form>
+                  <label className="seller-low-stock-filter">
+                    <input
+                      type="checkbox"
+                      checked={lowStockOnly}
+                      onChange={(event) => setLowStockOnly(event.target.checked)}
+                    />
+                    <span>{tr('المتاح 5 أو أقل', 'Available stock 5 or less')}</span>
+                  </label>
+                </>
               )}
             </div>
           )}
