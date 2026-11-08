@@ -1,4 +1,5 @@
 import { useTranslation } from 'react-i18next';
+import { Link } from 'react-router';
 import { routePaths } from '@/shared/lib';
 import { ButtonLink, EmptyState, ErrorState } from '@/shared/ui';
 import { useFirstProducts } from '../api/useProductList';
@@ -17,9 +18,14 @@ export function PopularProducts() {
 
   return (
     <section aria-labelledby="home-popular" className={styles.section}>
-      <h2 id="home-popular" className={styles.sectionTitle}>
-        {t('home.popularTitle')}
-      </h2>
+      <div className={styles.sectionHeader}>
+        <h2 id="home-popular" className={styles.sectionTitle}>
+          {t('home.popularTitle')}
+        </h2>
+        <Link to={`${routePaths.search}?sort=best_selling`} className={styles.seeAll}>
+          {t('home.seeAll')}
+        </Link>
+      </div>
       {products.isPending && <ProductGridSkeleton />}
       {products.isError && (
         <ErrorState
