@@ -1008,7 +1008,7 @@ export function SellerProductManagement({ products, memberships, onUpdated }: Pr
                   <small>{tr('لن يتم النشر المباشر؛ يلزم التحقق والموافقة من الإدارة.', 'Direct publishing is disabled; administrative review is required.')}</small>
                 </label>
               </div>
-            )
+            )}
             <div style={{ ...controls, marginTop: 12 }}>
               <button style={button} type="submit" disabled={busy}>
                 {tr('حفظ المسودة', 'Save draft')}
