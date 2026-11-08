@@ -688,8 +688,8 @@ export function SellerProductManagement({ products, memberships, onUpdated }: Pr
           </p>
           <p>
             {tr(
-              'فئة الضريبة في الاستيراد: قياسية (15%) فقط. للحالات الصفرية أو المعفاة أضف المنتج من النموذج الفردي مع ذكر السبب النظامي للمراجعة. الوصف والباركود اختياريان.',
-              'Bulk import accepts Standard VAT (15%) only. To use zero-rated or exempt, add the product individually with a documented legal basis for review. Descriptions and barcode are optional.',
+              'قائمة الضريبة في Excel وCSV: قياسية (15%)، صفرية (0%)، معفى من الضريبة. للحالات الصفرية والمعفاة املأ عمود السبب النظامي (O) بما لا يقل عن 15 حرفًا؛ ستُنشأ مسودات تتطلب مراجعة الإدارة. الوصف والباركود اختياريان.',
+              'Excel and CSV VAT options: Standard (15%), Zero-rated (0%), Exempt. For zero-rated or exempt products, complete column O with a legal justification of at least 15 characters. Imported drafts require administrative review.',
             )}
           </p>
           <div className="seller-import-fields" style={controls}>
