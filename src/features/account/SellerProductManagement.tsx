@@ -41,6 +41,7 @@ type Draft = {
   descriptionEn: string;
   price: string;
   vatClass: 'standard' | 'zero' | 'exempt';
+  vatJustification: string;
   sku: string;
   barcode: string;
 };
@@ -54,6 +55,7 @@ const empty = (sellerId: string): Draft => ({
   descriptionEn: '',
   price: '',
   vatClass: 'standard',
+  vatJustification: '',
   sku: '',
   barcode: '',
 });
@@ -161,6 +163,8 @@ export function SellerProductManagement({ products, memberships, onUpdated }: Pr
     if (draft.descriptionEn.length > 10000) next.descriptionEn = tr('الوصف بالإنجليزية يجب ألا يتجاوز 10000 حرف.', 'English description must not exceed 10,000 characters.');
     if (!['standard', 'zero', 'exempt'].includes(draft.vatClass))
       next.vatClass = tr('فئة الضريبة إجبارية. اختر فئة صحيحة.', 'VAT class is required. Select a valid class.');
+    if (draft.vatClass !== 'standard' && (draft.vatJustification.trim().length < 15 || draft.vatJustification.trim().length > 500))
+      next.vatJustification = tr('اذكر سببًا نظاميًا واضحًا (15–500 حرف). ستخضع الحالة لمراجعة الإدارة.', 'State the applicable legal reason (15–500 characters). Admin review is required.');
     if (!/^[0-9]+(?:\.[0-9]{1,2})?$/.test(draft.price) ||
         Number(draft.price) < 1 || Number(draft.price) > 10)
       next.price = tr('أدخل سعرًا من 1 إلى 10 ريالات (حتى منزلتين عشريتين).', 'Enter a price from SAR 1 to SAR 10 (up to 2 decimals).');
@@ -171,7 +175,7 @@ export function SellerProductManagement({ products, memberships, onUpdated }: Pr
     const mapping: Record<string, keyof Draft> = {
       sku: 'sku', barcode: 'barcode', seller_id: 'sellerId', category_id: 'categoryId',
       name_ar: 'nameAr', name_en: 'nameEn', description_ar: 'descriptionAr',
-      description_en: 'descriptionEn', price_halalas: 'price', vat_class: 'vatClass',
+      description_en: 'descriptionEn', price_halalas: 'price', vat_class: 'vatClass', vat_justification: 'vatJustification',
     };
     const mapped: Partial<Record<keyof Draft, string>> = {};
     for (const [key, messages] of Object.entries(cause.fieldErrors)) {
@@ -290,6 +294,7 @@ export function SellerProductManagement({ products, memberships, onUpdated }: Pr
         product.vat_class === 'zero' || product.vat_class === 'exempt'
           ? product.vat_class
           : 'standard',
+      vatJustification: product.vat_justification ?? '',
       sku: '',
       barcode: '',
     });
@@ -338,6 +343,7 @@ export function SellerProductManagement({ products, memberships, onUpdated }: Pr
       description_en: draft.descriptionEn.trim(),
       price_halalas: priceHalalas,
       vat_class: draft.vatClass,
+      vat_justification: draft.vatClass === 'standard' ? null : draft.vatJustification.trim(),
     };
 
     setBusy(true);
@@ -973,16 +979,36 @@ export function SellerProductManagement({ products, memberships, onUpdated }: Pr
                   onChange={(event) => {
                     const val = event.target.value;
                     if (val === 'standard' || val === 'zero' || val === 'exempt')
-                      setDraft((current) => ({ ...current, vatClass: val }));
+                      setDraft((current) => ({ ...current, vatClass: val, vatJustification: val === 'standard' ? '' : current.vatJustification }));
                   }}
                 >
-                  <option value="standard">{tr('قياسية', 'Standard')}</option>
-                  <option value="zero">{tr('صفرية', 'Zero-rated')}</option>
-                  <option value="exempt">{tr('معفاة', 'Exempt')}</option>
+                  <option value="standard">{tr('ضريبة قياسية (15%)', 'Standard VAT (15%)')}</option>
+                  <option value="zero">{tr('ضريبة صفرية (0%)', 'Zero-rated VAT (0%)')}</option>
+                  <option value="exempt">{tr('معفى من الضريبة', 'VAT exempt')}</option>
                 </select>
                 {fieldError('vatClass')}
+                <small>{tr('تُستخدم القياسية افتراضيًا. الصفرية والإعفاء للحالات المؤهلة نظاميًا فقط.', 'Standard VAT is the default. Zero-rated and exempt are only for legally qualifying supplies.')}</small>
               </label>
             </div>
+            {draft.vatClass !== 'standard' && (
+              <div style={{ ...controls, marginTop: 12 }}>
+                <label style={field}>
+                  {tr('السبب النظامي لتطبيق الضريبة *', 'Legal basis for VAT treatment *')}
+                  <textarea
+                    {...fieldProps('vatJustification')}
+                    required
+                    minLength={15}
+                    maxLength={500}
+                    rows={3}
+                    value={draft.vatJustification}
+                    onChange={(event) => set('vatJustification', event.target.value)}
+                    placeholder={tr('اذكر المادة أو الحالة النظامية التي تجعل المنتج مؤهلًا لهذه المعاملة، مع أي تفاصيل داعمة.', 'Describe the applicable legal provision or eligible transaction and supporting details.')}
+                  />
+                  {fieldError('vatJustification')}
+                  <small>{tr('لن يتم النشر المباشر؛ يلزم التحقق والموافقة من الإدارة.', 'Direct publishing is disabled; administrative review is required.')}</small>
+                </label>
+              </div>
+            )
             <div style={{ ...controls, marginTop: 12 }}>
               <button style={button} type="submit" disabled={busy}>
                 {tr('حفظ المسودة', 'Save draft')}
