@@ -89,6 +89,8 @@ export function SellerWorkspaceScreen() {
   const [orderFrom, setOrderFrom] = useState('');
   const [orderTo, setOrderTo] = useState('');
   const [productStatus, setProductStatus] = useState('all');
+  const [productSearchDraft, setProductSearchDraft] = useState('');
+  const [productSearch, setProductSearch] = useState('');
   const [lowStockOnly, setLowStockOnly] = useState(false);
   const [newStockBranch, setNewStockBranch] = useState('');
   const [newStockSku, setNewStockSku] = useState('');
@@ -162,6 +164,7 @@ export function SellerWorkspaceScreen() {
           const result = await sellerProducts({
             limit: 50,
             ...(productStatus !== 'all' ? { status: productStatus } : {}),
+            ...(productSearch ? { q: productSearch } : {}),
           });
           if (active) {
             setProducts(result.data);
@@ -223,6 +226,7 @@ export function SellerWorkspaceScreen() {
     orderFrom,
     orderTo,
     productStatus,
+    productSearch,
     lowStockOnly,
     revision,
   ]);
@@ -237,6 +241,7 @@ export function SellerWorkspaceScreen() {
         limit: 50,
         before_id: lastId,
         ...(productStatus !== 'all' ? { status: productStatus } : {}),
+        ...(productSearch ? { q: productSearch } : {}),
       });
       setProducts((current) => {
         const existing = new Set(current.map((product) => product.id));
@@ -791,9 +796,44 @@ export function SellerWorkspaceScreen() {
             </div>
           )}
           {section === 'products' && (
-            <div style={{ ...line, marginBottom: 12 }}>
-              <label>
-                {tr('الحالة', 'Status')}{' '}
+            <div style={{ ...line, marginBottom: 12, alignItems: 'flex-end' }}>
+              <form
+                role="search"
+                onSubmit={(event) => {
+                  event.preventDefault();
+                  setProductSearch(productSearchDraft.trim());
+                }}
+                style={{ ...line, flex: '1 1 320px', alignItems: 'flex-end' }}
+              >
+                <label style={{ display: 'grid', gap: 6, flex: '1 1 220px' }}>
+                  {tr('البحث عن منتج', 'Search products')}
+                  <input
+                    type="search"
+                    maxLength={100}
+                    value={productSearchDraft}
+                    placeholder={tr('SKU أو اسم المنتج أو رقم المتجر', 'SKU, product name or store number')}
+                    onChange={(event) => setProductSearchDraft(event.target.value)}
+                  />
+                </label>
+                <button type="submit" style={action} disabled={loading}>
+                  {tr('بحث', 'Search')}
+                </button>
+                {(productSearch || productSearchDraft) && (
+                  <button
+                    type="button"
+                    style={action}
+                    disabled={loading}
+                    onClick={() => {
+                      setProductSearchDraft('');
+                      setProductSearch('');
+                    }}
+                  >
+                    {tr('مسح', 'Clear')}
+                  </button>
+                )}
+              </form>
+              <label style={{ display: 'grid', gap: 6 }}>
+                {tr('الحالة', 'Status')}
                 <select
                   value={productStatus}
                   onChange={(event) => setProductStatus(event.target.value)}
