@@ -18,6 +18,14 @@ import {
   type SellerReviewApplication,
   type SellerReviewDocument,
   type PendingSellerProduct,
+  reviewCategories,
+  createManagedCategory,
+  updateManagedCategory,
+  deleteManagedCategory,
+  reviewCategoryRequests,
+  decideCategoryRequest,
+  type ManagedCategory,
+  type CategoryRequestReview,
 } from './sellerReviewApi';
 
 const panel: React.CSSProperties = {
@@ -48,10 +56,19 @@ export function SellerReviewScreen() {
     published: tr('منشور', 'Published'),
     rejected: tr('مرفوض', 'Rejected'),
   };
-  const [tab, setTab] = useState<'applications' | 'products' | 'branches'>('applications');
+  const [tab, setTab] = useState<'applications' | 'products' | 'branches' | 'categories'>('applications');
   const [applications, setApplications] = useState<SellerReviewApplication[]>([]);
   const [products, setProducts] = useState<PendingSellerProduct[]>([]);
   const [branches, setBranches] = useState<SellerBranchReview[]>([]);
+  const [categories, setCategories] = useState<ManagedCategory[]>([]);
+  const [categoryRequests, setCategoryRequests] = useState<CategoryRequestReview[]>([]);
+  const [categoryFormId, setCategoryFormId] = useState<number | null>(null);
+  const [categoryParent, setCategoryParent] = useState('');
+  const [categoryAr, setCategoryAr] = useState('');
+  const [categoryEn, setCategoryEn] = useState('');
+  const [categorySort, setCategorySort] = useState('0');
+  const [categoryReviewNotes, setCategoryReviewNotes] = useState<Record<number, string>>({});
+
   const [selected, setSelected] = useState<number | null>(null);
   const [documents, setDocuments] = useState<SellerReviewDocument[]>([]);
   const [reason, setReason] = useState('');
@@ -63,6 +80,7 @@ export function SellerReviewScreen() {
   const [revision, setRevision] = useState(0);
 
   useEffect(() => {
+    if (tab === 'categories') return;
     let active = true;
     setLoading(true);
     setError('');
@@ -94,6 +112,77 @@ export function SellerReviewScreen() {
     // Explicit refresh/tab change controls calls.
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [tab, revision]);
+
+  useEffect(() => {
+    if (tab !== 'categories') return;
+    let active = true;
+    setLoading(true);
+    setError('');
+    void Promise.all([reviewCategories(), reviewCategoryRequests()])
+      .then(([categoryResult, requestsResult]) => {
+        if (!active) return;
+        setCategories(categoryResult.data);
+        setCategoryRequests(requestsResult.data);
+      })
+      .catch((cause) => {
+        if (!active) return;
+        if (isApiError(cause) && [401, 403].includes(cause.status)) setUnauthorized(true);
+        else setError(tr('تعذر تحميل التصنيفات وطلباتها.', 'Could not load categories and requests.'));
+      })
+      .finally(() => { if (active) setLoading(false); });
+    return () => { active = false; };
+    // Explicit refresh/tab change controls requests.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [tab, revision]);
+
+  const saveCategory = async () => {
+    if (busy || !categoryAr.trim() || !categoryEn.trim()) return;
+    setBusy(true); setError(''); setNotice('');
+    try {
+      const input = {
+        parent_id: categoryParent ? Number(categoryParent) : null,
+        name_ar: categoryAr.trim(), name_en: categoryEn.trim(),
+        sort_order: Number(categorySort) || 0,
+      };
+      if (categoryFormId !== null) await updateManagedCategory(categoryFormId, input);
+      else await createManagedCategory(input);
+      setCategoryFormId(null); setCategoryParent(''); setCategoryAr(''); setCategoryEn(''); setCategorySort('0');
+      setNotice(tr('تم حفظ التصنيف.', 'Category saved.'));
+      setRevision((v) => v + 1);
+    } catch {
+      setError(tr('تعذر حفظ التصنيف. تحقق من الأسماء والتصنيف الرئيسي.', 'Could not save category. Check names and parent category.'));
+    } finally { setBusy(false); }
+  };
+
+  const categoryAction = async (id: number, action: 'delete' | 'disable' | 'enable') => {
+    if (busy || !window.confirm(tr('تأكيد تعديل حالة التصنيف؟', 'Confirm category change?'))) return;
+    setBusy(true); setError(''); setNotice('');
+    try {
+      if (action === 'delete') await deleteManagedCategory(id);
+      else await updateManagedCategory(id, { is_active: action === 'enable' });
+      setNotice(tr('تم تحديث التصنيف.', 'Category updated.'));
+      setRevision((v) => v + 1);
+    } catch {
+      setError(tr('تعذر حذف أو تعطيل التصنيف لأنه قد يحتوي منتجات أو تصنيفات فرعية.', 'Category may have products or children. Move them before removing or disabling it.'));
+    } finally { setBusy(false); }
+  };
+
+  const categoryRequestDecision = async (id: number, decision: 'approve' | 'reject') => {
+    if (busy || !window.confirm(tr('تأكيد قرار طلب التصنيف؟', 'Confirm category request decision?'))) return;
+    const note = categoryReviewNotes[id]?.trim();
+    if (decision === 'reject' && !note) {
+      setError(tr('اكتب سبب الرفض.', 'Enter a rejection reason.'));
+      return;
+    }
+    setBusy(true); setError(''); setNotice('');
+    try {
+      await decideCategoryRequest(id, decision, note);
+      setNotice(tr('تم تسجيل قرار طلب التصنيف.', 'Category request decision recorded.'));
+      setRevision((v) => v + 1);
+    } catch {
+      setError(tr('تعذر تنفيذ الطلب، ربما الاسم مكرر أو تمت مراجعته سابقًا.', 'Could not process request. The name may be duplicated or already reviewed.'));
+    } finally { setBusy(false); }
+  };
 
   const inspect = async (id: number) => {
     if (busy) return;
@@ -277,6 +366,9 @@ export function SellerReviewScreen() {
             >
               {tr('المنتجات', 'Products')}
             </button>
+            <button type="button" onClick={() => setTab('categories')} disabled={busy}>
+              {tr('إدارة التصنيفات', 'Manage categories')}
+            </button>
             <button
               type="button"
               onClick={() => setRevision((v) => v + 1)}
@@ -454,6 +546,108 @@ export function SellerReviewScreen() {
                 </article>
               ))}
             </>
+          )}
+          {!loading && tab === 'categories' && (
+            <section>
+              <article style={panel}>
+                <h3>{categoryFormId === null
+                  ? tr('إضافة تصنيف رئيسي أو فرعي', 'Add parent category or subcategory')
+                  : tr('تعديل التصنيف', 'Edit category')}</h3>
+                <div style={fields}>
+                  <label style={{ display: 'grid', gap: 4, flex: 1 }}>
+                    {tr('التصنيف الرئيسي', 'Parent category')}
+                    <select value={categoryParent} onChange={(event) => setCategoryParent(event.target.value)}>
+                      <option value="">{tr('تصنيف رئيسي', 'Top-level category')}</option>
+                      {categories.filter((item) => item.parent_id === null && item.id !== categoryFormId && item.is_active)
+                        .map((item) => <option key={item.id} value={item.id}>{ar ? item.name_ar : item.name_en}</option>)}
+                    </select>
+                  </label>
+                  <label style={{ display: 'grid', gap: 4, flex: 1 }}>
+                    {tr('الاسم بالعربية', 'Arabic name')}
+                    <input value={categoryAr} maxLength={180} onChange={(event) => setCategoryAr(event.target.value)}/>
+                  </label>
+                  <label style={{ display: 'grid', gap: 4, flex: 1 }}>
+                    {tr('الاسم بالإنجليزية', 'English name')}
+                    <input value={categoryEn} maxLength={180} onChange={(event) => setCategoryEn(event.target.value)}/>
+                  </label>
+                  <label style={{ display: 'grid', gap: 4, flex: 1 }}>
+                    {tr('الترتيب', 'Sort order')}
+                    <input type="number" min={0} max={10000} value={categorySort}
+                      onChange={(event) => setCategorySort(event.target.value)}/>
+                  </label>
+                </div>
+                <div style={{ ...fields, marginTop: 10 }}>
+                  <button type="button" disabled={busy || !categoryAr.trim() || !categoryEn.trim()}
+                    onClick={() => void saveCategory()}>
+                    {categoryFormId === null ? tr('إضافة التصنيف', 'Add category') : tr('حفظ التعديلات', 'Save changes')}
+                  </button>
+                  {categoryFormId !== null && <button type="button" onClick={() => {
+                    setCategoryFormId(null); setCategoryParent(''); setCategoryAr(''); setCategoryEn(''); setCategorySort('0');
+                  }}>{tr('إلغاء التعديل', 'Cancel edit')}</button>}
+                </div>
+              </article>
+              <article style={panel}>
+                <h3>{tr('التصنيفات الحالية', 'Current categories')}</h3>
+                <div style={{ overflowX: 'auto' }}>
+                  <table style={{ width: '100%', textAlign: ar ? 'right' : 'left' }}>
+                    <thead><tr><th>{tr('التصنيف', 'Category')}</th><th>{tr('النوع', 'Type')}</th>
+                      <th>{tr('الحالة', 'Status')}</th><th>{tr('الإجراءات', 'Actions')}</th></tr></thead>
+                    <tbody>
+                      {categories.map((item) => (
+                        <tr key={item.id}>
+                          <td>{ar ? item.name_ar : item.name_en}</td>
+                          <td>{item.parent_id === null ? tr('رئيسي', 'Parent') : tr('فرعي', 'Subcategory')}</td>
+                          <td>{item.is_active ? tr('نشط', 'Active') : tr('معطل', 'Inactive')}</td>
+                          <td>
+                            <div style={fields}>
+                              <button type="button" disabled={busy} onClick={() => {
+                                setCategoryFormId(item.id); setCategoryParent(String(item.parent_id ?? ''));
+                                setCategoryAr(item.name_ar); setCategoryEn(item.name_en);
+                                setCategorySort(String(item.sort_order));
+                              }}>{tr('تعديل', 'Edit')}</button>
+                              <button type="button" disabled={busy} onClick={() =>
+                                void categoryAction(item.id, item.is_active ? 'disable' : 'enable')}>
+                                {item.is_active ? tr('تعطيل', 'Disable') : tr('تفعيل', 'Enable')}
+                              </button>
+                              <button type="button" disabled={busy} onClick={() => void categoryAction(item.id, 'delete')}>
+                                {tr('حذف', 'Delete')}
+                              </button>
+                            </div>
+                          </td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                </div>
+              </article>
+              <article style={panel}>
+                <h3>{tr('طلبات التصنيفات من البائعين', 'Seller category requests')}</h3>
+                {categoryRequests.filter((item) => item.status === 'pending').length === 0
+                  && <p>{tr('لا توجد طلبات معلقة.', 'No pending requests.')}</p>}
+                {categoryRequests.filter((item) => item.status === 'pending').map((item) => (
+                  <div key={item.id} style={{ ...panel, marginTop: 8 }}>
+                    <strong>{ar ? item.name_ar : item.name_en}</strong>
+                    <p>{tr('المتجر', 'Store')} #{item.seller_id} · {item.parent_id === null
+                      ? tr('تصنيف رئيسي', 'Parent category') : tr('تصنيف فرعي', 'Subcategory')} ·
+                      {item.reason ?? ''}</p>
+                    <label style={{ display: 'grid', gap: 4 }}>
+                      {tr('ملاحظة / سبب الرفض', 'Review note / rejection reason')}
+                      <textarea rows={2} maxLength={1000} value={categoryReviewNotes[item.id] ?? ''}
+                        onChange={(event) => setCategoryReviewNotes((old) => ({ ...old, [item.id]: event.target.value }))}/>
+                    </label>
+                    <div style={{ ...fields, marginTop: 8 }}>
+                      <button type="button" disabled={busy} onClick={() => void categoryRequestDecision(item.id, 'approve')}>
+                        {tr('اعتماد وإضافة التصنيف', 'Approve & create category')}
+                      </button>
+                      <button type="button" disabled={busy || !(categoryReviewNotes[item.id]?.trim())}
+                        onClick={() => void categoryRequestDecision(item.id, 'reject')}>
+                        {tr('رفض الطلب', 'Reject')}
+                      </button>
+                    </div>
+                  </div>
+                ))}
+              </article>
+            </section>
           )}
         </>
       )}
