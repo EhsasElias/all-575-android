@@ -14,12 +14,15 @@ import {
   importSellerProductCsv,
   uploadSellerProductImage,
   sellerCategories,
+  sellerCategoryRequests,
+  requestSellerCategory,
   lookupSellerProductCode,
   sellerCatalogTemplate,
   sellerCatalogExcelTemplate,
   submitSellerProduct,
   updateSellerProduct,
   type SellerCategory,
+  type SellerCategoryRequest,
   type SellerMembership,
   type SellerProduct,
   type SellerProductInput,
@@ -94,6 +97,16 @@ export function SellerProductManagement({ products, memberships, onUpdated }: Pr
   );
   const sellerIds = [...new Set(allowed.map((membership) => membership.seller_id))];
   const [categories, setCategories] = useState<SellerCategory[]>([]);
+  const [categoryRequestVisible, setCategoryRequestVisible] = useState(false);
+  const [categoryRequestSeller, setCategoryRequestSeller] = useState(String(sellerIds[0] ?? ''));
+  const [categoryRequestParent, setCategoryRequestParent] = useState('');
+  const [categoryRequestAr, setCategoryRequestAr] = useState('');
+  const [categoryRequestEn, setCategoryRequestEn] = useState('');
+  const [categoryRequestReason, setCategoryRequestReason] = useState('');
+  const [categoryRequestList, setCategoryRequestList] = useState<SellerCategoryRequest[]>([]);
+  const [categoryRequestError, setCategoryRequestError] = useState('');
+  const [categoryRequestNotice, setCategoryRequestNotice] = useState('');
+
   const [selected, setSelected] = useState<number | null>(null);
   const [formVisible, setFormVisible] = useState(false);
   const [draft, setDraft] = useState<Draft>(() => empty(String(sellerIds[0] ?? '')));
@@ -211,6 +224,43 @@ export function SellerProductManagement({ products, memberships, onUpdated }: Pr
     // Loading categories does not depend on language.
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
+
+  const loadCategoryRequests = async (sellerId: number) => {
+    if (!sellerIds.includes(sellerId)) return;
+    try {
+      const response = await sellerCategoryRequests(sellerId);
+      setCategoryRequestList(response.data);
+    } catch {
+      setCategoryRequestError(tr('تعذر تحميل طلبات التصنيف.', 'Could not load category requests.'));
+    }
+  };
+
+  const submitCategoryRequest = async (event: FormEvent<HTMLFormElement>) => {
+    event.preventDefault();
+    const sellerId = Number(categoryRequestSeller || sellerIds[0]);
+    if (busy || !sellerIds.includes(sellerId)) return;
+    setBusy(true);
+    setCategoryRequestError('');
+    setCategoryRequestNotice('');
+    try {
+      await requestSellerCategory({
+        seller_id: sellerId,
+        parent_id: categoryRequestParent ? Number(categoryRequestParent) : null,
+        name_ar: categoryRequestAr.trim(),
+        name_en: categoryRequestEn.trim(),
+        ...(categoryRequestReason.trim() ? { reason: categoryRequestReason.trim() } : {}),
+      });
+      setCategoryRequestAr('');
+      setCategoryRequestEn('');
+      setCategoryRequestReason('');
+      setCategoryRequestNotice(tr('تم إرسال طلب التصنيف إلى الإدارة.', 'Category request sent for admin review.'));
+      await loadCategoryRequests(sellerId);
+    } catch (cause) {
+      setCategoryRequestError(explainApiError(cause, tr('تعذر إرسال طلب التصنيف.', 'Unable to submit category request.')));
+    } finally {
+      setBusy(false);
+    }
+  };
 
   const set = (fieldName: keyof Draft, value: string) => {
     setDraft((current) => ({ ...current, [fieldName]: value }));
@@ -656,6 +706,88 @@ export function SellerProductManagement({ products, memberships, onUpdated }: Pr
             </button>
           </div>
         </form>
+      )}
+      {sellerIds.length > 0 && (
+        <div style={{ ...card, marginBottom: 16 }}>
+          <button type="button" style={button}
+            aria-expanded={categoryRequestVisible}
+            onClick={() => {
+              const visible = !categoryRequestVisible;
+              setCategoryRequestVisible(visible);
+              if (visible) void loadCategoryRequests(Number(categoryRequestSeller || sellerIds[0]));
+            }}>
+            {categoryRequestVisible
+              ? tr('إغلاق طلب التصنيف', 'Close category request')
+              : tr('طلب تصنيف أو تصنيف فرعي جديد', 'Request a new category or subcategory')}
+          </button>
+          {categoryRequestVisible && (
+            <>
+              <p>{tr('إضافة التصنيفات وتعديلها من صلاحيات الإدارة فقط. يمكن للبائع طلب تصنيف جديد ومتابعة حالته هنا.',
+                'Only admin manages categories. Sellers can request a new category and track its approval here.')}</p>
+              <form onSubmit={(event) => void submitCategoryRequest(event)} style={{ display: 'grid', gap: 12 }}>
+                <div style={controls}>
+                  <label style={field}>
+                    {tr('المتجر', 'Store')}
+                    <select value={categoryRequestSeller} required
+                      onChange={(event) => {
+                        setCategoryRequestSeller(event.target.value);
+                        void loadCategoryRequests(Number(event.target.value));
+                      }}>
+                      {sellerIds.map((id) => {
+                        const entry = allowed.find((membership) => membership.seller_id === id);
+                        return <option key={id} value={id}>{entry ? (ar ? entry.name_ar : entry.name_en) : id}</option>;
+                      })}
+                    </select>
+                  </label>
+                  <label style={field}>
+                    {tr('التصنيف الرئيسي (اختياري للتصنيف الفرعي)', 'Parent category (optional for subcategory)')}
+                    <select value={categoryRequestParent} onChange={(event) => setCategoryRequestParent(event.target.value)}>
+                      <option value="">{tr('تصنيف رئيسي جديد', 'New parent category')}</option>
+                      {categories.map((category) => (
+                        <option key={category.id} value={category.id}>{ar ? category.name.ar : category.name.en}</option>
+                      ))}
+                    </select>
+                  </label>
+                </div>
+                <div style={controls}>
+                  <label style={field}>
+                    {tr('اسم التصنيف بالعربية *', 'Arabic category name *')}
+                    <input required maxLength={180} value={categoryRequestAr}
+                      onChange={(event) => setCategoryRequestAr(event.target.value)} />
+                  </label>
+                  <label style={field}>
+                    {tr('اسم التصنيف بالإنجليزية *', 'English category name *')}
+                    <input required maxLength={180} value={categoryRequestEn}
+                      onChange={(event) => setCategoryRequestEn(event.target.value)} />
+                  </label>
+                </div>
+                <label style={field}>
+                  {tr('سبب الطلب (اختياري)', 'Reason (optional)')}
+                  <textarea rows={2} maxLength={1000} value={categoryRequestReason}
+                    onChange={(event) => setCategoryRequestReason(event.target.value)} />
+                </label>
+                <div><button type="submit" style={button} disabled={busy || !categoryRequestAr.trim() || !categoryRequestEn.trim()}>
+                  {tr('إرسال الطلب للإدارة', 'Send request to admin')}
+                </button></div>
+              </form>
+              {categoryRequestError && <p role="alert" style={{ color: '#b42318' }}>{categoryRequestError}</p>}
+              {categoryRequestNotice && <p role="status">{categoryRequestNotice}</p>}
+              <h4>{tr('طلبات التصنيفات السابقة', 'Previous category requests')}</h4>
+              {categoryRequestList.length === 0 ? <p>{tr('لا توجد طلبات.', 'No requests yet.')}</p> : (
+                <ul>
+                  {categoryRequestList.map((item) => (
+                    <li key={item.id}>
+                      {ar ? item.name_ar : item.name_en} — {item.status === 'pending'
+                        ? tr('قيد المراجعة', 'Pending')
+                        : item.status === 'approved' ? tr('مقبول', 'Approved') : tr('مرفوض', 'Rejected')}
+                      {item.review_note ? ` — ${item.review_note}` : ''}
+                    </li>
+                  ))}
+                </ul>
+              )}
+            </>
+          )}
+        </div>
       )}
       <div style={{ ...controls, marginBottom: 12 }}>
         {sellerIds.length > 0 && (
