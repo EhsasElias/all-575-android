@@ -79,3 +79,32 @@ export const activateSellerBranch = (branchId: number) =>
     '/seller-review/branches/' + branchId + '/decision',
     { decision: 'activate' },
   );
+
+export type ManagedCategory = {
+  id: number; parent_id: number | null; name_ar: string; name_en: string;
+  is_active: boolean; sort_order: number;
+};
+export type CategoryRequestReview = {
+  id: number; seller_id: number; parent_id: number | null;
+  name_ar: string; name_en: string; reason: string | null;
+  status: 'pending' | 'approved' | 'rejected';
+  review_note: string | null; category_id: number | null;
+};
+export const reviewCategories = () =>
+  http.get<{ data: ManagedCategory[] }>('/seller-review/categories');
+export const createManagedCategory = (input: {
+  parent_id: number | null; name_ar: string; name_en: string; sort_order?: number;
+}) => http.post<{ data: ManagedCategory }>('/seller-review/categories', input);
+export const updateManagedCategory = (id: number, input: {
+  parent_id?: number | null; name_ar?: string; name_en?: string;
+  sort_order?: number; is_active?: boolean;
+}) => http.patch<{ data: ManagedCategory }>('/seller-review/categories/' + id, input);
+export const deleteManagedCategory = (id: number) =>
+  http.delete<{ message: string }>('/seller-review/categories/' + id);
+export const reviewCategoryRequests = () =>
+  http.get<{ data: CategoryRequestReview[] }>('/seller-review/category-requests');
+export const decideCategoryRequest = (id: number, decision: 'approve' | 'reject', reviewNote?: string) =>
+  http.post<{ data: { id: number; status: string; category_id: number | null } }>(
+    '/seller-review/category-requests/' + id + '/decision',
+    { decision, review_note: reviewNote ?? null },
+  );
