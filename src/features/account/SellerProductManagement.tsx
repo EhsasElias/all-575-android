@@ -115,7 +115,7 @@ export function SellerProductManagement({ products, memberships, onUpdated }: Pr
   const [scanNotice, setScanNotice] = useState('');
   const [fieldErrors, setFieldErrors] = useState<Partial<Record<keyof Draft, string>>>({});
   const [formError, setFormError] = useState('');
-  const [confirmation, setConfirmation] = useState<{ kind: 'save' | 'publish' | 'delete' | 'import'; productId?: number } | null>(null);
+  const [confirmation, setConfirmation] = useState<{ kind: 'save' | 'publish' | 'delete' | 'import' | 'importSubmit'; productId?: number } | null>(null);
 
   useEffect(() => {
     if (!coverFile) {
@@ -558,7 +558,7 @@ export function SellerProductManagement({ products, memberships, onUpdated }: Pr
     }
   };
 
-  const uploadCsv = async (dryRun = false) => {
+  const uploadCsv = async (dryRun = false, submitAfterImport = false) => {
     const sellerId = Number(importSeller || sellerIds[0]);
     if (busy || importFile === null || !sellerIds.includes(sellerId)) return;
     if (importFile.size > 20 * 1024 * 1024 || !/[.](csv|xlsx)$/i.test(importFile.name)) {
@@ -570,7 +570,7 @@ export function SellerProductManagement({ products, memberships, onUpdated }: Pr
     setImportIssues([]);
     setSuccess('');
     try {
-      const result = await importSellerProductCsv(sellerId, importFile, dryRun);
+      const result = await importSellerProductCsv(sellerId, importFile, dryRun, submitAfterImport);
       if (dryRun) {
         setCsvPreview({
           valid_rows: result.data.valid_rows ?? 0,
@@ -583,10 +583,19 @@ export function SellerProductManagement({ products, memberships, onUpdated }: Pr
       } else {
         setImportFile(null);
         setCsvPreview(null);
-        setSuccess(
-          tr('تم استيراد مسودات المنتجات: ', 'Imported product drafts: ') +
-            result.data.created_drafts,
-        );
+        if (submitAfterImport) {
+          const published = result.data.published ?? 0;
+          const pending = result.data.submitted_for_review ?? 0;
+          setSuccess(tr(
+            `تم الاستيراد: نُشر ${published} منتج، وأُرسل ${pending} منتج للمراجعة.`,
+            `Import completed: ${published} published, ${pending} submitted for review.`,
+          ));
+        } else {
+          setSuccess(
+            tr('تم استيراد مسودات المنتجات: ', 'Imported product drafts: ') +
+              result.data.created_drafts,
+          );
+        }
         onUpdated();
       }
     } catch (cause) {
@@ -754,6 +763,14 @@ export function SellerProductManagement({ products, memberships, onUpdated }: Pr
               onClick={() => setConfirmation({ kind: 'import' })}
             >
               {tr('استيراد المسودات', 'Import drafts')}
+            </button>
+            <button
+              type="button"
+              style={button}
+              disabled={busy || importFile === null}
+              onClick={() => setConfirmation({ kind: 'importSubmit' })}
+            >
+              {tr('استيراد ونشر / إرسال للمراجعة', 'Import & publish / submit')}
             </button>
           </div>
           {importIssues.length > 0 && (
@@ -1242,7 +1259,9 @@ export function SellerProductManagement({ products, memberships, onUpdated }: Pr
                   ? tr('تأكيد حذف المسودة', 'Confirm deleting draft')
                   : confirmation.kind === 'import'
                     ? tr('تأكيد استيراد المنتجات', 'Confirm product import')
-                    : tr('تأكيد نشر المنتج', 'Confirm publishing product')}
+                    : confirmation.kind === 'importSubmit'
+                      ? tr('تأكيد استيراد ونشر المنتجات', 'Confirm import and publish / submit')
+                      : tr('تأكيد نشر المنتج', 'Confirm publishing product')}
             </h3>
             <p id="seller-confirm-description">
               {confirmation.kind === 'save'
@@ -1254,23 +1273,31 @@ export function SellerProductManagement({ products, memberships, onUpdated }: Pr
                         `هل تريد استيراد المنتجات من الملف «${importFile?.name ?? ''}» كمسودات فقط؟ لن يتم نشرها تلقائيًا.`,
                         `Import products from “${importFile?.name ?? ''}” as drafts only? They will not be published automatically.`,
                       )
-                    : tr('هل تريد إكمال المنتج؟ في العرض التجريبي ينشر مباشرة، وإلا يُرسل للمراجعة.', 'Complete this product? Demo mode publishes it immediately; otherwise it is sent for review.')}
+                    : confirmation.kind === 'importSubmit'
+                      ? tr(
+                          `استيراد «${importFile?.name ?? ''}» وإرسال المنتجات للنشر؟ النشر المباشر متاح فقط للمنتجات القياسية في الحساب التجريبي المصرح له بعد التحقق من الصور؛ بقية المنتجات تُرسل لمراجعة الإدارة.`,
+                          `Import and submit “${importFile?.name ?? ''}”? Only qualifying standard-VAT products in an authorised demo account can publish immediately with a valid image; all others require admin review.`,
+                        )
+                      : tr('هل تريد إكمال المنتج؟ في العرض التجريبي ينشر مباشرة، وإلا يُرسل للمراجعة.', 'Complete this product? Demo mode publishes it immediately; otherwise it is sent for review.')}
             </p>
             <div className="seller-confirm-actions">
               <button type="button" onClick={() => setConfirmation(null)} disabled={busy}>{tr('إلغاء', 'Cancel')}</button>
               <button type="button" className="seller-confirm-primary" disabled={busy} autoFocus
                 onClick={() => {
                   if (confirmation.kind === 'save') void persist();
-                  else if (confirmation.kind === 'import') {
+                  else if (confirmation.kind === 'import' || confirmation.kind === 'importSubmit') {
+                    const submitAfterImport = confirmation.kind === 'importSubmit';
                     setConfirmation(null);
-                    void uploadCsv(false);
+                    void uploadCsv(false, submitAfterImport);
                   } else if (confirmation.kind === 'delete' && confirmation.productId !== undefined) void deleteDraft(confirmation.productId);
                   else if (confirmation.productId !== undefined) void publish(confirmation.productId);
                 }}>{confirmation.kind === 'delete'
                   ? tr('حذف المسودة', 'Delete draft')
                   : confirmation.kind === 'import'
                     ? tr('استيراد المسودات', 'Import drafts')
-                    : tr('تأكيد', 'Confirm')}</button>
+                    : confirmation.kind === 'importSubmit'
+                      ? tr('استيراد ونشر / إرسال', 'Import & publish / submit')
+                      : tr('تأكيد', 'Confirm')}</button>
             </div>
           </div>
         </div>
