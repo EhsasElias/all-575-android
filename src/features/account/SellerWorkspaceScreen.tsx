@@ -3,6 +3,7 @@ import { Link } from 'react-router';
 import { createPortal } from 'react-dom';
 import { useTranslation } from 'react-i18next';
 import { routePaths } from '@/shared/lib';
+import { isApiError } from '@/shared/api';
 import { Page } from './components/Page';
 import './sellerWorkspace.css';
 import { PageHeader } from './components/PageHeader';
@@ -464,9 +465,31 @@ export function SellerWorkspaceScreen() {
       setStockNotice(tr('تم إنشاء سجل مخزون للمنتج في الفرع.',
         'An inventory record was created for this product and branch.'));
       reload();
-    } catch {
-      setError(tr('تعذر إنشاء المخزون. تأكد أن SKU مسجل في منتجات المتجر ولم يُضف لهذا الفرع مسبقًا.',
-        'Could not initialize stock. Ensure the SKU belongs to your store and is not already assigned to this branch.'));
+    } catch (cause) {
+      const defaultMessage = tr(
+        'تعذر إنشاء المخزون. تأكد أن SKU مسجل في منتجات المتجر ولم يُضف لهذا الفرع مسبقًا.',
+        'Could not initialize stock. Ensure the SKU belongs to your store and is not already assigned to this branch.',
+      );
+      if (isApiError(cause)) {
+        const skuMessage = cause.fieldErrors.sku?.join(' ');
+        const quantityMessage = cause.fieldErrors.on_hand?.join(' ');
+        if (cause.status === 409) {
+          setError(tr('هذا المنتج لديه مخزون بالفعل في الفرع المحدد. استخدم «تعديل الكمية» بدل إضافته مجددًا.',
+            'This SKU already has stock in the selected branch. Use Adjust quantity instead.'));
+        } else if (cause.status === 422 && skuMessage) {
+          setError(tr('رمز SKU غير موجود ضمن منتجات هذا المتجر. تحقق من الرمز في تبويب المنتجات.',
+            'The SKU is not among this store’s products. Check the exact SKU in Products.') + ' ' + skuMessage);
+        } else if (cause.status === 422 && quantityMessage) {
+          setError(tr('الكمية غير صالحة.', 'Invalid stock quantity.') + ' ' + quantityMessage);
+        } else if (cause.status === 404 || cause.status === 403) {
+          setError(tr('الفرع غير متاح لهذا الحساب أو لا تملك صلاحية إدارة مخزونه.',
+            'The branch is not accessible to this account or you lack stock-management permission.'));
+        } else {
+          setError(defaultMessage);
+        }
+      } else {
+        setError(defaultMessage);
+      }
     } finally {
       setBusy(false);
     }
