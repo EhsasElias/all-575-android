@@ -139,6 +139,7 @@ export const sellerStock = (
   filters: {
     branch_id?: number;
     low_stock_below?: number;
+    q?: string;
     limit?: number;
     before_id?: number;
   } = {},
