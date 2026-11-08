@@ -126,7 +126,7 @@ export function SellerReviewScreen() {
       })
       .catch((cause) => {
         if (!active) return;
-        if (isApiError(cause) && [401, 403].includes(cause.status)) setUnauthorized(true);
+        if (isApiError(cause) && (cause.status === 401 || cause.status === 403)) setUnauthorized(true);
         else setError(tr('تعذر تحميل التصنيفات وطلباتها.', 'Could not load categories and requests.'));
       })
       .finally(() => { if (active) setLoading(false); });
