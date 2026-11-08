@@ -115,7 +115,7 @@ export function SellerProductManagement({ products, memberships, onUpdated }: Pr
   const [scanNotice, setScanNotice] = useState('');
   const [fieldErrors, setFieldErrors] = useState<Partial<Record<keyof Draft, string>>>({});
   const [formError, setFormError] = useState('');
-  const [confirmation, setConfirmation] = useState<{ kind: 'save' | 'publish' | 'delete'; productId?: number } | null>(null);
+  const [confirmation, setConfirmation] = useState<{ kind: 'save' | 'publish' | 'delete' | 'import'; productId?: number } | null>(null);
 
   useEffect(() => {
     if (!coverFile) {
@@ -565,11 +565,6 @@ export function SellerProductManagement({ products, memberships, onUpdated }: Pr
       setError(tr('اختر ملف CSV أو Excel لا يتجاوز 20 ميجابايت.', 'Choose a CSV or Excel file under 20 MB.'));
       return;
     }
-    if (
-      !dryRun &&
-      !window.confirm(tr('استيراد المنتجات كمسودات فقط؟', 'Import products as drafts only?'))
-    )
-      return;
     setBusy(true);
     setError('');
     setImportIssues([]);
@@ -756,7 +751,7 @@ export function SellerProductManagement({ products, memberships, onUpdated }: Pr
               type="button"
               style={button}
               disabled={busy || importFile === null}
-              onClick={() => void uploadCsv(false)}
+              onClick={() => setConfirmation({ kind: 'import' })}
             >
               {tr('استيراد المسودات', 'Import drafts')}
             </button>
@@ -1245,23 +1240,37 @@ export function SellerProductManagement({ products, memberships, onUpdated }: Pr
                 ? tr('تأكيد حفظ المنتج', 'Confirm saving product')
                 : confirmation.kind === 'delete'
                   ? tr('تأكيد حذف المسودة', 'Confirm deleting draft')
-                  : tr('تأكيد نشر المنتج', 'Confirm publishing product')}
+                  : confirmation.kind === 'import'
+                    ? tr('تأكيد استيراد المنتجات', 'Confirm product import')
+                    : tr('تأكيد نشر المنتج', 'Confirm publishing product')}
             </h3>
             <p id="seller-confirm-description">
               {confirmation.kind === 'save'
                 ? tr('هل تريد حفظ بيانات المنتج كمسودة؟ يمكنك إكمال الصورة والتفاصيل بعد الحفظ.', 'Save this product as a draft? You can add an image and more details afterwards.')
                 : confirmation.kind === 'delete'
                   ? tr('هل تريد حذف هذه المسودة نهائياً؟ لا يمكن التراجع عن هذا الإجراء.', 'Permanently delete this draft? This action cannot be undone.')
-                  : tr('هل تريد إكمال المنتج؟ في العرض التجريبي ينشر مباشرة، وإلا يُرسل للمراجعة.', 'Complete this product? Demo mode publishes it immediately; otherwise it is sent for review.')}
+                  : confirmation.kind === 'import'
+                    ? tr(
+                        `هل تريد استيراد المنتجات من الملف «${importFile?.name ?? ''}» كمسودات فقط؟ لن يتم نشرها تلقائيًا.`,
+                        `Import products from “${importFile?.name ?? ''}” as drafts only? They will not be published automatically.`,
+                      )
+                    : tr('هل تريد إكمال المنتج؟ في العرض التجريبي ينشر مباشرة، وإلا يُرسل للمراجعة.', 'Complete this product? Demo mode publishes it immediately; otherwise it is sent for review.')}
             </p>
             <div className="seller-confirm-actions">
               <button type="button" onClick={() => setConfirmation(null)} disabled={busy}>{tr('إلغاء', 'Cancel')}</button>
               <button type="button" className="seller-confirm-primary" disabled={busy} autoFocus
                 onClick={() => {
                   if (confirmation.kind === 'save') void persist();
-                  else if (confirmation.kind === 'delete' && confirmation.productId !== undefined) void deleteDraft(confirmation.productId);
+                  else if (confirmation.kind === 'import') {
+                    setConfirmation(null);
+                    void uploadCsv(false);
+                  } else if (confirmation.kind === 'delete' && confirmation.productId !== undefined) void deleteDraft(confirmation.productId);
                   else if (confirmation.productId !== undefined) void publish(confirmation.productId);
-                }}>{confirmation.kind === 'delete' ? tr('حذف المسودة', 'Delete draft') : tr('تأكيد', 'Confirm')}</button>
+                }}>{confirmation.kind === 'delete'
+                  ? tr('حذف المسودة', 'Delete draft')
+                  : confirmation.kind === 'import'
+                    ? tr('استيراد المسودات', 'Import drafts')
+                    : tr('تأكيد', 'Confirm')}</button>
             </div>
           </div>
         </div>
