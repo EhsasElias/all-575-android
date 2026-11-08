@@ -688,8 +688,8 @@ export function SellerProductManagement({ products, memberships, onUpdated }: Pr
           </p>
           <p>
             {tr(
-              'فئة الضريبة: قياسية أو صفرية أو معفاة، والوصف والباركود اختياريان. يجب تعبئة رمز SKU واسمَي المنتج والتصنيف والسعر. يدعم النظام القوالب القديمة أيضًا.',
-              'VAT class: Standard, Zero-rated or Exempt. Descriptions and barcode are optional; SKU, both product names, category and price are required. Older templates still work.',
+              'فئة الضريبة في الاستيراد: قياسية (15%) فقط. للحالات الصفرية أو المعفاة أضف المنتج من النموذج الفردي مع ذكر السبب النظامي للمراجعة. الوصف والباركود اختياريان.',
+              'Bulk import accepts Standard VAT (15%) only. To use zero-rated or exempt, add the product individually with a documented legal basis for review. Descriptions and barcode are optional.',
             )}
           </p>
           <div className="seller-import-fields" style={controls}>
