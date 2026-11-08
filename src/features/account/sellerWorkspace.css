@@ -2615,3 +2615,45 @@
   letter-spacing: .02em;
   white-space: nowrap;
 }
+
+
+/* Inventory filters: keep the checkbox beside its label in RTL and LTR. */
+.seller-workspace-shell .seller-filters:has(.seller-low-stock-filter) {
+  grid-template-columns: minmax(200px, 290px) max-content;
+  justify-content: start;
+  align-items: end;
+}
+.seller-workspace-shell .seller-filters label.seller-low-stock-filter {
+  display: inline-flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: flex-start;
+  align-self: end;
+  gap: 10px;
+  width: auto;
+  min-width: 0;
+  min-height: 46px;
+  white-space: nowrap;
+  cursor: pointer;
+}
+.seller-workspace-shell .seller-filters .seller-low-stock-filter input[type="checkbox"] {
+  width: 18px;
+  height: 18px;
+  flex: 0 0 18px;
+  margin: 0;
+  padding: 0;
+  cursor: pointer;
+}
+.seller-workspace-shell .seller-filters .seller-low-stock-filter span {
+  display: inline;
+  line-height: 1.4;
+}
+@media (max-width: 700px) {
+  .seller-workspace-shell .seller-filters:has(.seller-low-stock-filter) {
+    grid-template-columns: minmax(0, 1fr);
+  }
+  .seller-workspace-shell .seller-filters label.seller-low-stock-filter {
+    min-height: 32px;
+    justify-self: start;
+  }
+}
