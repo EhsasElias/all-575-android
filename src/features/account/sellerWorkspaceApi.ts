@@ -44,6 +44,7 @@ export type SellerProduct = {
   sku?: string | null;
   price_halalas: number;
   vat_class: string;
+  vat_justification?: string | null;
   status: string;
   created_at: string;
   rejection_reason?: string | null;
@@ -161,6 +162,7 @@ export type SellerProductInput = {
   description_en?: string;
   price_halalas: number;
   vat_class: 'standard' | 'zero' | 'exempt';
+  vat_justification?: string | null;
 };
 
 export type SellerCategory = {
