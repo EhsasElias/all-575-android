@@ -44,6 +44,8 @@ type Draft = {
   vatJustification: string;
   sku: string;
   barcode: string;
+  variantNameAr: string;
+  variantNameEn: string;
 };
 
 const empty = (sellerId: string): Draft => ({
@@ -58,6 +60,8 @@ const empty = (sellerId: string): Draft => ({
   vatJustification: '',
   sku: '',
   barcode: '',
+  variantNameAr: '',
+  variantNameEn: '',
 });
 
 const card: React.CSSProperties = {
@@ -150,6 +154,10 @@ export function SellerProductManagement({ products, memberships, onUpdated }: Pr
       next.sku = tr('رمز SKU يجب ألا يتجاوز 100 حرف.', 'SKU must be at most 100 characters.');
     if (draft.barcode.trim().length > 100)
       next.barcode = tr('الباركود يجب ألا يتجاوز 100 حرف.', 'Barcode must be at most 100 characters.');
+    if (draft.variantNameAr.trim().length > 180)
+      next.variantNameAr = tr('اسم وحدة البيع بالعربية يجب ألا يتجاوز 180 حرفًا.', 'Arabic selling-unit name must be at most 180 characters.');
+    if (draft.variantNameEn.trim().length > 180)
+      next.variantNameEn = tr('اسم وحدة البيع بالإنجليزية يجب ألا يتجاوز 180 حرفًا.', 'English selling-unit name must be at most 180 characters.');
     if (!sellerIds.includes(Number(draft.sellerId)))
       next.sellerId = tr('المتجر إجباري. اختر متجرًا مسموحًا.', 'Store is required. Select an authorized store.');
     if (!draft.categoryId || !/^[0-9]+$/.test(draft.categoryId) ||
@@ -297,6 +305,8 @@ export function SellerProductManagement({ products, memberships, onUpdated }: Pr
       vatJustification: product.vat_justification ?? '',
       sku: '',
       barcode: '',
+      variantNameAr: '',
+      variantNameEn: '',
     });
     setFormVisible(true);
     setFieldErrors({});
@@ -361,8 +371,10 @@ export function SellerProductManagement({ products, memberships, onUpdated }: Pr
           await addSellerProductVariant(productId, {
             sku: draft.sku.trim(),
             barcode: draft.barcode.trim() || null,
+            name_ar: draft.variantNameAr.trim() || undefined,
+            name_en: draft.variantNameEn.trim() || undefined,
           });
-          setDraft((current) => ({ ...current, sku: '', barcode: '' }));
+          setDraft((current) => ({ ...current, sku: '', barcode: '', variantNameAr: '', variantNameEn: '' }));
           setSuccess(
             tr(
               'تم حفظ المنتج ورمز SKU. يمكنك رفع الصورة وإرسال المنتج للمراجعة.',
@@ -401,8 +413,10 @@ export function SellerProductManagement({ products, memberships, onUpdated }: Pr
       await addSellerProductVariant(productId, {
         sku: draft.sku.trim(),
         barcode: draft.barcode.trim() || null,
+        name_ar: draft.variantNameAr.trim() || undefined,
+        name_en: draft.variantNameEn.trim() || undefined,
       });
-      setDraft((current) => ({ ...current, sku: '', barcode: '' }));
+      setDraft((current) => ({ ...current, sku: '', barcode: '', variantNameAr: '', variantNameEn: '' }));
       setSuccess(
         tr(
           'تمت إضافة وحدة البيع. يمكنك إرسال المنتج للمراجعة.',
@@ -867,6 +881,26 @@ export function SellerProductManagement({ products, memberships, onUpdated }: Pr
                   />
                 {fieldError('barcode')}
                 </label>
+                <label style={field}>
+                  {tr('اسم وحدة البيع بالعربية (اختياري)', 'Selling-unit name (Arabic, optional)')}
+                  <input
+                    maxLength={180}
+                    value={draft.variantNameAr}
+                    placeholder={tr('مثل: حبة، علبة، كرتون', 'e.g. حبة، علبة، كرتون')}
+                    onChange={(event) => set('variantNameAr', event.target.value)}
+                  />
+                  {fieldError('variantNameAr')}
+                </label>
+                <label style={field}>
+                  {tr('اسم وحدة البيع بالإنجليزية (اختياري)', 'Selling-unit name (English, optional)')}
+                  <input
+                    maxLength={180}
+                    value={draft.variantNameEn}
+                    placeholder="Piece, Box, Pack"
+                    onChange={(event) => set('variantNameEn', event.target.value)}
+                  />
+                  {fieldError('variantNameEn')}
+                </label>
               </div>
             )}
             <div style={controls}>
@@ -1093,6 +1127,26 @@ export function SellerProductManagement({ products, memberships, onUpdated }: Pr
                     value={draft.barcode}
                     onChange={(event) => set('barcode', event.target.value)}
                   />
+                </label>
+                <label style={field}>
+                  {tr('اسم وحدة البيع بالعربية (اختياري)', 'Selling-unit name (Arabic, optional)')}
+                  <input
+                    maxLength={180}
+                    value={draft.variantNameAr}
+                    placeholder={tr('مثل: حبة، علبة، كرتون', 'e.g. حبة، علبة، كرتون')}
+                    onChange={(event) => set('variantNameAr', event.target.value)}
+                  />
+                  {fieldError('variantNameAr')}
+                </label>
+                <label style={field}>
+                  {tr('اسم وحدة البيع بالإنجليزية (اختياري)', 'Selling-unit name (English, optional)')}
+                  <input
+                    maxLength={180}
+                    value={draft.variantNameEn}
+                    placeholder="Piece, Box, Pack"
+                    onChange={(event) => set('variantNameEn', event.target.value)}
+                  />
+                  {fieldError('variantNameEn')}
                 </label>
               </div>
               <div style={{ ...controls, marginTop: 12 }}>
