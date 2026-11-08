@@ -371,8 +371,8 @@ export function SellerProductManagement({ products, memberships, onUpdated }: Pr
           await addSellerProductVariant(productId, {
             sku: draft.sku.trim(),
             barcode: draft.barcode.trim() || null,
-            name_ar: draft.variantNameAr.trim() || undefined,
-            name_en: draft.variantNameEn.trim() || undefined,
+            ...(draft.variantNameAr.trim() ? { name_ar: draft.variantNameAr.trim() } : {}),
+            ...(draft.variantNameEn.trim() ? { name_en: draft.variantNameEn.trim() } : {}),
           });
           setDraft((current) => ({ ...current, sku: '', barcode: '', variantNameAr: '', variantNameEn: '' }));
           setSuccess(
@@ -413,8 +413,8 @@ export function SellerProductManagement({ products, memberships, onUpdated }: Pr
       await addSellerProductVariant(productId, {
         sku: draft.sku.trim(),
         barcode: draft.barcode.trim() || null,
-        name_ar: draft.variantNameAr.trim() || undefined,
-        name_en: draft.variantNameEn.trim() || undefined,
+        ...(draft.variantNameAr.trim() ? { name_ar: draft.variantNameAr.trim() } : {}),
+        ...(draft.variantNameEn.trim() ? { name_en: draft.variantNameEn.trim() } : {}),
       });
       setDraft((current) => ({ ...current, sku: '', barcode: '', variantNameAr: '', variantNameEn: '' }));
       setSuccess(
