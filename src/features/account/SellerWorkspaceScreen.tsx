@@ -756,13 +756,13 @@ export function SellerWorkspaceScreen() {
                 </>
               )}
               {section === 'inventory' && (
-                <label>
+                <label className="seller-low-stock-filter">
                   <input
                     type="checkbox"
                     checked={lowStockOnly}
                     onChange={(event) => setLowStockOnly(event.target.checked)}
-                  />{' '}
-                  {tr('المتاح 5 أو أقل', 'Available stock 5 or less')}
+                  />
+                  <span>{tr('المتاح 5 أو أقل', 'Available stock 5 or less')}</span>
                 </label>
               )}
             </div>
