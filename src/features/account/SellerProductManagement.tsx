@@ -587,8 +587,8 @@ export function SellerProductManagement({ products, memberships, onUpdated }: Pr
           const published = result.data.published ?? 0;
           const pending = result.data.submitted_for_review ?? 0;
           setSuccess(tr(
-            `تم الاستيراد: نُشر ${published} منتج، وأُرسل ${pending} منتج للمراجعة.`,
-            `Import completed: ${published} published, ${pending} submitted for review.`,
+            `اكتمل الاستيراد: نُشر ${published} منتج مباشرة${pending > 0 ? `، وأُرسل ${pending} منتج للمراجعة بسبب إعدادات النشر الحالية` : ''}.`,
+            `Import completed: ${published} published directly${pending > 0 ? `, ${pending} submitted for review under current publishing settings` : ''}.`,
           ));
         } else {
           setSuccess(
@@ -770,7 +770,7 @@ export function SellerProductManagement({ products, memberships, onUpdated }: Pr
               disabled={busy || importFile === null}
               onClick={() => setConfirmation({ kind: 'importSubmit' })}
             >
-              {tr('استيراد ونشر / إرسال للمراجعة', 'Import & publish / submit')}
+              {tr('استيراد ونشر مباشرة', 'Import & publish now')}
             </button>
           </div>
           {importIssues.length > 0 && (
@@ -1260,7 +1260,7 @@ export function SellerProductManagement({ products, memberships, onUpdated }: Pr
                   : confirmation.kind === 'import'
                     ? tr('تأكيد استيراد المنتجات', 'Confirm product import')
                     : confirmation.kind === 'importSubmit'
-                      ? tr('تأكيد استيراد ونشر المنتجات', 'Confirm import and publish / submit')
+                      ? tr('تأكيد الاستيراد والنشر المباشر', 'Confirm import and publish')
                       : tr('تأكيد نشر المنتج', 'Confirm publishing product')}
             </h3>
             <p id="seller-confirm-description">
@@ -1275,10 +1275,10 @@ export function SellerProductManagement({ products, memberships, onUpdated }: Pr
                       )
                     : confirmation.kind === 'importSubmit'
                       ? tr(
-                          `استيراد «${importFile?.name ?? ''}» وإرسال المنتجات للنشر؟ النشر المباشر متاح فقط للمنتجات القياسية في الحساب التجريبي المصرح له بعد التحقق من الصور؛ بقية المنتجات تُرسل لمراجعة الإدارة.`,
-                          `Import and submit “${importFile?.name ?? ''}”? Only qualifying standard-VAT products in an authorised demo account can publish immediately with a valid image; all others require admin review.`,
+                          `هل تريد استيراد «${importFile?.name ?? ''}» ونشر المنتجات مباشرة على الموقع؟ يجب أن تكون صور المنتجات صالحة، وتُراجع باقي البيانات تلقائيًا.`,
+                          `Import “${importFile?.name ?? ''}” and publish directly to the website? Each product needs a valid cover image and must pass validation.`,
                         )
-                      : tr('هل تريد إكمال المنتج؟ في العرض التجريبي ينشر مباشرة، وإلا يُرسل للمراجعة.', 'Complete this product? Demo mode publishes it immediately; otherwise it is sent for review.')}
+                      : tr('هل تريد نشر المنتج على الموقع؟ سيُنشر مباشرة عند استيفاء المتطلبات وإتاحة النشر المباشر، وإلا يُرسل للمراجعة.', 'Publish this product to the website? Eligible products publish immediately when direct publishing is enabled; otherwise they are sent for review.')}
             </p>
             <div className="seller-confirm-actions">
               <button type="button" onClick={() => setConfirmation(null)} disabled={busy}>{tr('إلغاء', 'Cancel')}</button>
@@ -1296,7 +1296,7 @@ export function SellerProductManagement({ products, memberships, onUpdated }: Pr
                   : confirmation.kind === 'import'
                     ? tr('استيراد المسودات', 'Import drafts')
                     : confirmation.kind === 'importSubmit'
-                      ? tr('استيراد ونشر / إرسال', 'Import & publish / submit')
+                      ? tr('استيراد ونشر مباشرة', 'Import & publish now')
                       : tr('تأكيد', 'Confirm')}</button>
             </div>
           </div>
@@ -1304,8 +1304,8 @@ export function SellerProductManagement({ products, memberships, onUpdated }: Pr
       )}
       <p>
         {tr(
-          'تُعرض المنتجات على دفعات. يمكن النشر المباشر للحساب التجريبي المصرّح له، وبقية الحسابات تتطلب مراجعة الإدارة.',
-          'Products are listed in batches. Authorized demo accounts can publish directly; other accounts require admin review.',
+          'تُعرض المنتجات على دفعات. النشر المباشر مفعّل مؤقتًا للمنتجات المستوفية للشروط، ويمكن إعادة تفعيل موافقة الإدارة لاحقًا.',
+          'Products are listed in batches. Direct publishing is temporarily enabled for validated products; admin approval can be re-enabled later.',
         )}
       </p>
     </section>
