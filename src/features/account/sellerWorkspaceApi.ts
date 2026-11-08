@@ -173,6 +173,25 @@ export type SellerCategory = {
 
 export const sellerCategories = () => http.get<{ data: SellerCategory[] }>('/categories');
 
+export type SellerCategoryRequest = {
+  id: number;
+  seller_id: number;
+  parent_id: number | null;
+  name_ar: string;
+  name_en: string;
+  reason: string | null;
+  status: 'pending' | 'approved' | 'rejected';
+  review_note: string | null;
+};
+export const sellerCategoryRequests = (sellerId: number) =>
+  seller.get<{ data: SellerCategoryRequest[] }>('/seller/category-requests', {
+    query: { seller_id: sellerId },
+  });
+export const requestSellerCategory = (input: {
+  seller_id: number; parent_id: number | null;
+  name_ar: string; name_en: string; reason?: string;
+}) => seller.post<{ data: { id: number; status: string } }>('/seller/category-requests', input);
+
 export type ScannedCatalogProduct = {
   id: number;
   category_id: number;
