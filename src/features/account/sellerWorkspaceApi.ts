@@ -238,12 +238,13 @@ export type SellerCsvPreview = {
   }>;
 };
 
-export const importSellerProductCsv = (sellerId: number, file: File, dryRun = false) => {
+export const importSellerProductCsv = (sellerId: number, file: File, dryRun = false, submitAfterImport = false) => {
   const form = new FormData();
   form.append('seller_id', String(sellerId));
   form.append('file', file);
   if (dryRun) form.append('dry_run', '1');
-  return seller.upload<{ data: { created_drafts: number } & Partial<SellerCsvPreview> }>(
+  if (submitAfterImport && !dryRun) form.append('submit_after_import', '1');
+  return seller.upload<{ data: { created_drafts: number; published?: number; submitted_for_review?: number } & Partial<SellerCsvPreview> }>(
     '/seller/products/import',
     form,
   );
