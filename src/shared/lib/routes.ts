@@ -26,6 +26,7 @@ export const routePaths = {
   sellerWorkspace: '/account/seller-workspace',
   sellerReview: '/account/seller-review',
   superAdminDashboard: '/account/super-admin',
+  platformAdminDashboard: '/account/admin',
   dashboard: '/account/dashboard',
   billing: '/account/billing',
   customerRequests: '/account/requests',
