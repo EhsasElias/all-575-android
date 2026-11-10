@@ -11,6 +11,7 @@ import { SessionsScreen } from './SessionsScreen';
 import { SellerApplicationScreen } from './SellerApplicationScreen';
 import { SellerWorkspaceScreen } from './SellerWorkspaceScreen';
 import { SellerReviewScreen } from './SellerReviewScreen';
+import { SuperAdminDashboardScreen } from './SuperAdminDashboardScreen';
 
 /** The account screen itself handles guests, and the legal texts are public. */
 export const accountRoutes: RouteObject[] = [
@@ -37,6 +38,11 @@ export const protectedAccountRoutes: RouteObject[] = [
   {
     path: routePaths.sellerWorkspace,
     element: <SellerWorkspaceScreen />,
+    handle: titled((t) => t('nav.account')),
+  },
+  {
+    path: routePaths.superAdminDashboard,
+    element: <SuperAdminDashboardScreen />,
     handle: titled((t) => t('nav.account')),
   },
   {
