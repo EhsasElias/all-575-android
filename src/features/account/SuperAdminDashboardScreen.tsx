@@ -106,6 +106,11 @@ export function SuperAdminDashboardScreen() {
             {metric(tr('طلبات انضمام البائعين', 'Pending seller applications'), number(data.pending_seller_applications))}
             {metric(tr('منتجات بانتظار المراجعة', 'Pending product reviews'), number(data.pending_product_reviews))}
           </div>
+          <p>
+            <Link to={routePaths.sellerReview}>
+              {tr('إدارة مراجعات البائعين والمنتجات والأقسام', 'Manage seller, product and category reviews')}
+            </Link>
+          </p>
           <PlatformAdminAssignments />
           <p style={{ opacity: 0.75, fontSize: 13 }}>
             {tr('آخر تحديث:', 'Last updated:')} {new Date(data.generated_at).toLocaleString(ar ? 'ar-SA' : 'en-US')}
