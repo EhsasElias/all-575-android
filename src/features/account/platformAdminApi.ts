@@ -38,3 +38,13 @@ export const addAdminAssignment = (data: {
 export const updateAdminAssignment = (id: number, data: {
   is_active?: boolean; can_view_orders?: boolean; can_view_inventory?: boolean;
 }) => http.patch<{ data: PlatformAdminAccess }>('/platform/super-admin/admins/' + id, data);
+
+export type PlatformAdminOrder = {
+  id: string; order_number: string; seller_id: number;
+  seller_name_ar: string; seller_name_en: string; branch_id: number;
+  status: string; placed_at: string | null;
+  ready_at: string | null; picked_up_at: string | null;
+};
+
+export const adminOrders = (filters: { limit?: number; status?: string; before_id?: string } = {}) =>
+  http.get<{ data: PlatformAdminOrder[] }>('/platform/admin/orders', { query: filters });
