@@ -17,6 +17,7 @@ import { SignOutSection } from './SignOutSection';
 import { AccountSecurity } from './AccountSecurity';
 import { SellerReviewEntry } from './SellerReviewEntry';
 import { memberships } from '../sellerWorkspaceApi';
+import { superAdminDashboard } from '../superAdminApi';
 import styles from './SignedInAccount.module.css';
 
 type SignedInAccountProps = {
@@ -25,6 +26,7 @@ type SignedInAccountProps = {
 
 export function SignedInAccount({ user }: SignedInAccountProps) {
   const { t } = useTranslation('account');
+  const [isSuperAdmin, setIsSuperAdmin] = useState(false);
   const [sellerState, setSellerState] = useState<'loading' | 'seller' | 'customer' | 'unavailable'>('loading');
 
   useEffect(() => {
@@ -45,6 +47,17 @@ export function SignedInAccount({ user }: SignedInAccountProps) {
     return () => { active = false; };
   }, [user.id]);
 
+  useEffect(() => {
+    let active = true;
+    setIsSuperAdmin(false);
+    void superAdminDashboard().then(() => {
+      if (active) setIsSuperAdmin(true);
+    }).catch(() => {
+      if (active) setIsSuperAdmin(false);
+    });
+    return () => { active = false; };
+  }, [user.id]);
+
   return (
     <Page>
       <PageHeader title={t('title')} />
@@ -62,6 +75,11 @@ export function SignedInAccount({ user }: SignedInAccountProps) {
           </ButtonLink>
         )}
       </div>
+      {isSuperAdmin && (
+        <ButtonLink to={routePaths.superAdminDashboard} variant="secondary">
+          {t('superAdminDashboard', { defaultValue: 'Super Admin Dashboard' })}
+        </ButtonLink>
+      )}
       <SellerReviewEntry />
       <CustomerNotifications />
       <Section title={t('preferences.title')}>
