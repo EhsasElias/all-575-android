@@ -6,6 +6,7 @@ import { routePaths } from '@/shared/lib';
 import { Page } from './components/Page';
 import { PageHeader } from './components/PageHeader';
 import { superAdminDashboard, type SuperAdminDashboard } from './superAdminApi';
+import { PlatformAdminAssignments } from './PlatformAdminAssignments';
 
 const card: React.CSSProperties = {
   padding: 18,
@@ -105,6 +106,7 @@ export function SuperAdminDashboardScreen() {
             {metric(tr('طلبات انضمام البائعين', 'Pending seller applications'), number(data.pending_seller_applications))}
             {metric(tr('منتجات بانتظار المراجعة', 'Pending product reviews'), number(data.pending_product_reviews))}
           </div>
+          <PlatformAdminAssignments />
           <p style={{ opacity: 0.75, fontSize: 13 }}>
             {tr('آخر تحديث:', 'Last updated:')} {new Date(data.generated_at).toLocaleString(ar ? 'ar-SA' : 'en-US')}
           </p>
