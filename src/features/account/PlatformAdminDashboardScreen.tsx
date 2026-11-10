@@ -5,7 +5,7 @@ import { isApiError } from '@/shared/api';
 import { routePaths } from '@/shared/lib';
 import { Page } from './components/Page';
 import { PageHeader } from './components/PageHeader';
-import { adminDashboard, type PlatformAdminDashboard } from './platformAdminApi';
+import { adminDashboard, adminOrders, type PlatformAdminDashboard, type PlatformAdminOrder } from './platformAdminApi';
 
 const panel: React.CSSProperties = {
   padding: 18, border: '1px solid var(--color-border, #d8e1db)',
@@ -21,6 +21,8 @@ export function PlatformAdminDashboardScreen() {
   const ar = i18n.language.startsWith('ar');
   const tr = (a: string, en: string) => ar ? a : en;
   const [data, setData] = useState<PlatformAdminDashboard | null>(null);
+  const [orders, setOrders] = useState<PlatformAdminOrder[]>([]);
+  const [statusFilter, setStatusFilter] = useState('all');
   const [loading, setLoading] = useState(true);
   const [denied, setDenied] = useState(false);
   const [error, setError] = useState('');
@@ -46,6 +48,23 @@ export function PlatformAdminDashboardScreen() {
     return () => { active = false; };
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [revision]);
+
+  useEffect(() => {
+    let active = true;
+    void adminOrders({ limit: 30, ...(statusFilter !== 'all' ? { status: statusFilter } : {}) })
+      .then(response => { if (active) setOrders(response.data); })
+      .catch(() => { if (active) setOrders([]); });
+    return () => { active = false; };
+  }, [revision, statusFilter]);
+
+  const statuses: Record<string, string> = {
+    awaiting_seller: tr('بانتظار البائع', 'Awaiting seller'),
+    preparing: tr('قيد التجهيز', 'Preparing'),
+    ready: tr('جاهز', 'Ready'),
+    on_the_way: tr('في الطريق', 'On the way'),
+    delivered: tr('تم التسليم', 'Delivered'),
+    cancelled: tr('ملغي', 'Cancelled'),
+  };
 
   const number = (value: number) => value.toLocaleString(ar ? 'ar-SA' : 'en-US');
   const metric = (label: string, value: number) => (
@@ -76,6 +95,34 @@ export function PlatformAdminDashboardScreen() {
             {metric(tr('جاهز للاستلام', 'Ready for pickup'), data.suborder_statuses.ready ?? 0)}
             {metric(tr('في الطريق', 'On the way'), data.suborder_statuses.on_the_way ?? 0)}
             {metric(tr('تم التسليم', 'Delivered'), data.suborder_statuses.delivered ?? 0)}
+          </div>
+          <h2>{tr('متابعة الطلبات', 'Order monitoring')}</h2>
+          <label style={{ display: 'block', marginBottom: 12 }}>
+            {tr('الحالة', 'Status')}{' '}
+            <select value={statusFilter} onChange={e => setStatusFilter(e.target.value)}>
+              <option value="all">{tr('الكل', 'All')}</option>
+              {Object.entries(statuses).map(([value, label]) => (
+                <option key={value} value={value}>{label}</option>
+              ))}
+            </select>
+          </label>
+          <div style={{ display: 'grid', gap: 8, marginBottom: 20 }}>
+            {orders.length === 0 && <p>{tr('لا توجد طلبات ضمن نطاق صلاحياتك.', 'No orders within your assigned scope.')}</p>}
+            {orders.map(order => (
+              <div key={order.id} style={panel}>
+                <strong>{order.order_number}</strong>
+                <p style={{ margin: '7px 0' }}>
+                  {ar ? order.seller_name_ar : order.seller_name_en} ·
+                  {' '}{tr('فرع', 'Branch')} #{order.branch_id}
+                </p>
+                <span>{statuses[order.status] ?? order.status}</span>
+                {order.placed_at && (
+                  <span style={{ marginInlineStart: 12, opacity: 0.7 }}>
+                    {new Date(order.placed_at).toLocaleString(ar ? 'ar-SA' : 'en-US')}
+                  </span>
+                )}
+              </div>
+            ))}
           </div>
           <h2>{tr('المخزون', 'Inventory')}</h2>
           <div style={layout}>
