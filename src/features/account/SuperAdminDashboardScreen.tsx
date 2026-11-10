@@ -84,7 +84,7 @@ export function SuperAdminDashboardScreen() {
         <>
           <h2>{tr('نظرة عامة', 'Overview')}</h2>
           <div style={grid}>
-            {metric(tr('العملاء والحسابات', 'Customer accounts'), number(data.customers))}
+            {metric(tr('إجمالي الحسابات', 'Total accounts'), number(data.customers))}
             {metric(tr('البائعون', 'Sellers'), number(data.sellers))}
             {metric(tr('البائعون المعتمدون', 'Approved sellers'), number(data.active_sellers))}
             {metric(tr('المنتجات', 'Products'), number(data.products))}
