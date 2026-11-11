@@ -1393,7 +1393,9 @@
     width: 100%;
     max-height: 90dvh;
     border-radius: 20px 20px 0 0;
-    padding: 20px 16px max(20px, env(safe-area-inset-bottom));
+    padding-block-start: 20px;
+    padding-inline: 16px;
+    padding-block-end: max(20px, env(safe-area-inset-bottom));
   }
   .seller-workspace-shell .seller-stock-card-footer .seller-stock-adjust { flex: 1 1 100%; }
 }
@@ -1407,13 +1409,11 @@
   position: relative;
   /* Center the full-width seller workspace inside a narrower account container.
      Logical inset + direction-aware translation works in both Arabic RTL and English LTR. */
-  left: auto;
-  right: auto;
   inset-inline-start: 50%;
-  transform: translateX(-50%);
+  translate: -50% 0;
 }
 .seller-workspace-shell[dir="rtl"] {
-  transform: translateX(50%);
+  translate: 50% 0;
 }
 .seller-workspace-shell > div {
   width: 100% !important;
@@ -2187,10 +2187,7 @@
 .seller-workspace-shell.seller-stock-portal-root {
   position: fixed !important;
   inset: 0 !important;
-  left: 0 !important;
-  right: 0 !important;
-  top: 0 !important;
-  bottom: 0 !important;
+  translate: none !important;
   width: 100% !important;
   max-width: none !important;
   height: 100dvh;
