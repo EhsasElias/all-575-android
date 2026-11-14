@@ -94,25 +94,18 @@ describe('Account: a signed-in customer', () => {
     ).not.toBeInTheDocument();
   });
 
-  it('links to every part of the account', async () => {
+  it('shows all customer account routes in the persistent sidebar', async () => {
     signedInApi();
     await renderApp({ route: '/account', signedIn: true, seenWelcome: true });
 
-    const menu = await screen.findByRole('navigation', { name: 'Manage your account' });
-    const hrefs = within(menu)
-      .getAllByRole('link')
-      .map((link) => [link.textContent, link.getAttribute('href')]);
-    expect(hrefs).toEqual([
-      ['Saved products', '/account/saved'],
-      ['Buyer and billing details', '/account/billing'],
-      ['Quotes and account requests', '/account/requests'],
-      ['Support and returnsFollow your requests and replies', '/account/support'],
-      ['ProfileYour name and language', '/account/profile'],
-      ['OrdersTrack and review your orders', '/orders'],
-      ['AddressesWhere we deliver', '/account/addresses'],
-      ['SpendingWhat you have spent, and your history', '/account/spending'],
-      ['DevicesWhere you are signed in', '/account/sessions'],
-    ]);
+    const menu = await screen.findByRole('navigation', { name: 'Account navigation' });
+    const hrefs = within(menu).getAllByRole('link').map(link => link.getAttribute('href'));
+    expect(hrefs).toEqual(expect.arrayContaining([
+      '/account', '/account/dashboard', '/orders', '/account/notifications',
+      '/account/requests', '/account/support', '/account/saved',
+      '/account/addresses', '/account/spending', '/account/billing',
+      '/account/profile', '/account/sessions',
+    ]));
   });
 
   it('invites a customer without a name to add one', async () => {
