@@ -240,6 +240,11 @@ export function SellerWorkspaceScreen() {
     revision,
   ]);
 
+  // Each Seller sidebar section is addressable by URL and clears stale order overlays.
+  useEffect(() => {
+    setPacking(null);
+  }, [section]);
+
   const loadMoreProducts = async () => {
     const lastId = products[products.length - 1]?.id;
     if (loading || loadingMoreProducts || !hasMoreProducts || !lastId) return;
