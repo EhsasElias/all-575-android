@@ -74,7 +74,10 @@ export function AccountSidebar({ onNavigate }: { onNavigate?: () => void }) {
   const active = (to: string) => {
     const [route, query] = to.split('?');
     const path = route.split('#')[0];
-    if (pathname !== path) return false;
+    const matchesSubpage = [routePaths.orders, routePaths.addresses, routePaths.customerCases].some(
+      parent => path === parent && pathname.startsWith(parent + '/')
+    );
+    if (pathname !== path && !matchesSubpage) return false;
     if (route.includes('#')) return hash === '#' + route.split('#')[1];
     if (!query) return hash === '';
     const [key, value] = query.split('=');
