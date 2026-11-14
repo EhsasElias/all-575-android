@@ -65,13 +65,13 @@ export function DashboardSidebar({ onNavigate }: { onNavigate?: () => void }) {
     workspace === 'seller' ? tr('البائع', 'Seller') : tr('العميل', 'Customer');
 
   const isActive = (to: string) => {
-    const [pathAndQuery, targetHash] = to.split('#');
+    const [pathAndQuery = '', targetHash] = to.split('#');
     const [path, query] = pathAndQuery.split('?');
     if (pathname !== path) return false;
     if (targetHash) return hash === '#' + targetHash;
     if (hash) return false;
     if (!query) return search === '';
-    const [key, value] = query.split('=');
+    const [key = '', value = ''] = query.split('=');
     const current = new URLSearchParams(search).get(key);
     return (current ?? (key === 'tab' ? 'applications' : 'overview')) === value;
   };
