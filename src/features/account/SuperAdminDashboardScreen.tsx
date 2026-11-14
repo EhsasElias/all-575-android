@@ -4,7 +4,7 @@ import { isApiError } from '@/shared/api';
 import { Page } from './components/Page';
 import { PlatformAdminAssignments } from './PlatformAdminAssignments';
 import {
-  exportSuperAdminMetric, superAdminDashboard, superAdminMetric, updateSuperAdminAccount,
+  exportSuperAdminMetric, superAdminDashboard, superAdminMetric, updateSuperAdminAccount, updateSuperAdminSeller,
   type SuperAdminDashboard, type SuperAdminMetricKey, type SuperAdminMetricPage, type SuperAdminReportFilters,
 } from './superAdminApi';
 import styles from './SuperAdminDashboardScreen.module.css';
@@ -44,6 +44,7 @@ export function SuperAdminDashboardScreen() {
   const detailSectionRef = useRef<HTMLDivElement | null>(null);
   const [accountEditor, setAccountEditor] = useState<{ id: number; name: string } | null>(null);
   const [accountBusy, setAccountBusy] = useState(false);
+  const [sellerEditor, setSellerEditor] = useState<{ id: number; name_ar: string; name_en: string } | null>(null);
   const [accountNotice, setAccountNotice] = useState('');
 
   useEffect(() => {
@@ -140,6 +141,24 @@ export function SuperAdminDashboardScreen() {
     } catch (cause: unknown) {
       setDetailsError(isApiError(cause) ? cause.message
         : tr('تعذر تحديث الحساب.', 'Could not update account.'));
+    } finally {
+      setAccountBusy(false);
+    }
+  };
+
+  const saveSeller = async (id: number, input: { name_ar?: string; name_en?: string; is_active?: boolean }) => {
+    if (accountBusy) return;
+    setAccountBusy(true);
+    setDetailsError('');
+    setAccountNotice('');
+    try {
+      await updateSuperAdminSeller(id, input);
+      setSellerEditor(null);
+      setAccountNotice(tr('تم تحديث البائع.', 'Seller updated.'));
+      setRevision(value => value + 1);
+    } catch (cause: unknown) {
+      setDetailsError(isApiError(cause) ? cause.message
+        : tr('تعذر تحديث البائع.', 'Could not update seller.'));
     } finally {
       setAccountBusy(false);
     }
@@ -289,12 +308,32 @@ export function SuperAdminDashboardScreen() {
                         </div>
                         <div className={styles.tableScroll + ' admin-family-table'}>
                           <table className={styles.dataTable}>
-                            <thead><tr>{details.columns.map(column => <th key={column} scope="col">{column.replaceAll('_', ' ')}</th>)}{selected === 'customers' && <th scope="col">{tr('الإجراءات', 'Actions')}</th>}</tr></thead>
+                            <thead><tr>{details.columns.map(column => <th key={column} scope="col">{column.replaceAll('_', ' ')}</th>)}{(selected === 'customers' || selected === 'sellers' || selected === 'active_sellers') && <th scope="col">{tr('الإجراءات', 'Actions')}</th>}</tr></thead>
                             <tbody>
                               {details.data.map((row, index) => <tr key={String(row.id ?? index)}>
                                 {details.columns.map(column => <td key={column}>{column === 'is_active'
                                   ? (Boolean(row[column]) ? tr('نشط', 'Active') : tr('معطل', 'Inactive'))
                                   : String(row[column] ?? '—')}</td>)}
+                                {(selected === 'sellers' || selected === 'active_sellers') && <td>
+                                  <div className={styles.inlineActions}>
+                                    <button type="button" disabled={accountBusy || typeof row.id !== 'number'}
+                                      onClick={() => setSellerEditor({
+                                        id: Number(row.id), name_ar: String(row.name_ar ?? ''),
+                                        name_en: String(row.name_en ?? ''),
+                                      })}>{tr('تعديل', 'Edit')}</button>
+                                    {['approved', 'suspended'].includes(String(row.status)) && (
+                                      <button type="button" disabled={accountBusy || typeof row.id !== 'number'}
+                                        onClick={() => {
+                                          const enable = row.status === 'suspended';
+                                          if (window.confirm(enable
+                                            ? tr('هل تريد إعادة تفعيل البائع؟', 'Reactivate this seller?')
+                                            : tr('هل تريد تعليق نشاط البائع؟', 'Suspend this seller?'))) {
+                                            void saveSeller(Number(row.id), { is_active: enable });
+                                          }
+                                        }}>{row.status === 'approved' ? tr('تعطيل', 'Deactivate') : tr('تفعيل', 'Activate')}</button>
+                                    )}
+                                  </div>
+                                </td>}
                                 {selected === 'customers' && <td>
                                   <div className={styles.inlineActions}>
                                     <button type="button" disabled={accountBusy || typeof row.id !== 'number'}
@@ -318,6 +357,28 @@ export function SuperAdminDashboardScreen() {
                             </tbody>
                           </table>
                         </div>
+                        {(selected === 'sellers' || selected === 'active_sellers') && sellerEditor && (
+                          <form className={styles.accountEditor} onSubmit={event => {
+                            event.preventDefault();
+                            if (sellerEditor.name_ar.trim() && sellerEditor.name_en.trim())
+                              void saveSeller(sellerEditor.id, {
+                                name_ar: sellerEditor.name_ar.trim(), name_en: sellerEditor.name_en.trim(),
+                              });
+                          }}>
+                            <label>{tr('الاسم بالعربية', 'Arabic name')}
+                              <input required maxLength={160} value={sellerEditor.name_ar}
+                                onChange={event => setSellerEditor(previous => previous
+                                  ? { ...previous, name_ar: event.target.value } : null)} />
+                            </label>
+                            <label>{tr('الاسم بالإنجليزية', 'English name')}
+                              <input required maxLength={160} value={sellerEditor.name_en}
+                                onChange={event => setSellerEditor(previous => previous
+                                  ? { ...previous, name_en: event.target.value } : null)} />
+                            </label>
+                            <button type="submit" disabled={accountBusy || !sellerEditor.name_ar.trim() || !sellerEditor.name_en.trim()}>{tr('حفظ', 'Save')}</button>
+                            <button type="button" disabled={accountBusy} onClick={() => setSellerEditor(null)}>{tr('إلغاء', 'Cancel')}</button>
+                          </form>
+                        )}
                         {selected === 'customers' && accountEditor && (
                           <form className={styles.accountEditor} onSubmit={event => {
                             event.preventDefault();
