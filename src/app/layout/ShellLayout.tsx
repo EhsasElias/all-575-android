@@ -14,7 +14,7 @@ export function ShellLayout() {
   const cartCount = useCartItemCount();
   const { status } = useSession();
   const { pathname } = useLocation();
-  const accountRoute = pathname === routePaths.account || pathname.startsWith('/account/') || pathname === routePaths.orders || pathname.startsWith('/orders/');
+  const accountRoute = status === 'signed-in' && (pathname === routePaths.account || pathname.startsWith('/account/') || pathname === routePaths.orders || pathname.startsWith('/orders/'));
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const wideAdmin = accountRoute;
 
