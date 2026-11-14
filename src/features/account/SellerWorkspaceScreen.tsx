@@ -591,7 +591,6 @@ export function SellerWorkspaceScreen() {
           'إدارة المنتجات والمخزون والطلبات حسب صلاحية الحساب.',
           'Manage products, stock and orders within your assigned permissions.',
         )}
-        back={<Link to={routePaths.account}>{tr('حسابي', 'My account')}</Link>}
       />
       {error && (
         <p role="alert" style={{ color: '#aa3434' }}>
