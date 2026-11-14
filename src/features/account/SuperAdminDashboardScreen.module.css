@@ -142,3 +142,22 @@
   .metricHint {font-size:.7rem}
   .fullWidthDetails .detailPanel {padding:12px}
 }
+
+/* Seller workspace identity: dashboard and reports share its mint-green surfaces. */
+.dashboard {max-inline-size:1240px}
+.heading {background:var(--color-surface-mint,#edf4eb);border-radius:16px}
+.toolbar {background:var(--color-surface-mint,#edf4eb)}
+.statGrid {grid-template-columns:repeat(auto-fit,minmax(165px,1fr))}
+.metricButton, .sidebar .metricButton {background:var(--color-surface-mint,#edf4eb);min-block-size:125px}
+.metricButton:hover {background:var(--color-surface-mint,#e2f2e6)}
+.metricButton[aria-pressed="true"] {background:var(--color-surface-mint,#e2f2e6)}
+.metricHint {border-block-start:0;padding-block-start:2px}
+.sidePanel {background:var(--color-surface-mint,#edf4eb)}
+.reportFilters {display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:12px;margin-block:15px 12px;padding:15px;border:1px solid var(--color-border,#d3ddd0);border-radius:14px;background:var(--color-surface-mint,#edf4eb)}
+.reportFilters label {display:grid;align-content:start;gap:6px;font-size:.84rem;font-weight:650;min-inline-size:0}
+.reportFilters :is(input,select) {box-sizing:border-box;min-inline-size:0;inline-size:100%;min-block-size:42px;padding:9px 11px;background:var(--color-surface,#fff);color:var(--color-text,#17211b);border:1px solid var(--color-border,#d3ddd0);border-radius:10px;font:inherit}
+.reportFilterActions {display:flex;align-items:end;gap:8px}
+.reportFilterActions button{min-block-size:42px;flex:1 1 0}
+.reportMeta {display:flex;justify-content:space-between;flex-wrap:wrap;gap:10px;color:var(--color-text-muted,#607166);font-size:.8rem;padding-block:4px 12px}
+.fullWidthDetails .dataTable th {background:var(--color-surface-mint,#edf4eb)}
+@media(max-width:560px){.reportFilters{grid-template-columns:1fr 1fr;gap:8px;padding:11px}.reportFilters label:first-child{grid-column:1/-1}.reportFilterActions{grid-column:1/-1}}
