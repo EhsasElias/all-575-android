@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { Link } from 'react-router';
 import { useTranslation } from 'react-i18next';
 import { routePaths } from '@/shared/lib';
@@ -7,6 +7,8 @@ import { Page } from './components/Page';
 import { PageHeader } from './components/PageHeader';
 import styles from './SellerReviewScreen.module.css';
 import {
+  reviewOverview,
+  type ReviewOverview,
   reviewSellerApplications,
   reviewSellerApplication,
   reviewSellerProducts,
@@ -59,6 +61,11 @@ export function SellerReviewScreen() {
     published: tr('منشور', 'Published'),
     rejected: tr('مرفوض', 'Rejected'),
   };
+  const [overview, setOverview] = useState<ReviewOverview | null>(null);
+  const [query, setQuery] = useState('');
+  const [applicationStatus, setApplicationStatus] = useState('submitted');
+  const [recordDate, setRecordDate] = useState('');
+  const [categoryStatus, setCategoryStatus] = useState('pending');
   const [tab, setTab] = useState<'applications' | 'products' | 'branches' | 'categories'>('applications');
   const [applications, setApplications] = useState<SellerReviewApplication[]>([]);
   const [products, setProducts] = useState<PendingSellerProduct[]>([]);
@@ -83,13 +90,23 @@ export function SellerReviewScreen() {
   const [revision, setRevision] = useState(0);
 
   useEffect(() => {
+    let active = true;
+    void reviewOverview().then(result => {
+      if (active) setOverview(result.data);
+    }).catch(() => {
+      if (active) setOverview(null);
+    });
+    return () => { active = false; };
+  }, [revision]);
+
+  useEffect(() => {
     if (tab === 'categories') return;
     let active = true;
     setLoading(true);
     setError('');
     void (
       tab === 'applications'
-        ? reviewSellerApplications()
+        ? reviewSellerApplications(applicationStatus)
         : tab === 'products'
           ? reviewSellerProducts()
           : reviewSellerBranches()
@@ -114,7 +131,7 @@ export function SellerReviewScreen() {
     };
     // Explicit refresh/tab change controls calls.
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [tab, revision]);
+  }, [tab, revision, applicationStatus]);
 
   useEffect(() => {
     if (tab !== 'categories') return;
@@ -137,6 +154,33 @@ export function SellerReviewScreen() {
     // Explicit refresh/tab change controls requests.
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [tab, revision]);
+
+  const matched = (value: unknown) => String(value ?? '').toLocaleLowerCase().includes(query.trim().toLocaleLowerCase());
+  const matchesDate = (date?: string | null) => !recordDate || Boolean(date?.startsWith(recordDate));
+  const shownApplications = useMemo(() => applications.filter(item =>
+    (matched(item.legal_name) || matched(item.commercial_registration) || matched(item.city) || matched(item.contact_name))
+    && matchesDate(item.submitted_at)
+  ), [applications, query, recordDate]);
+  const shownProducts = useMemo(() => products.filter(item =>
+    (matched(item.name_ar) || matched(item.name_en) || matched(item.seller_id) || matched(item.category_id))
+    && matchesDate(item.created_at)
+  ), [products, query, recordDate]);
+  const shownBranches = useMemo(() => branches.filter(item =>
+    (matched(item.name_ar) || matched(item.name_en) || matched(item.code) || matched(item.seller_id))
+    && matchesDate(item.created_at)
+  ), [branches, query, recordDate]);
+  const shownCategories = useMemo(() => categories.filter(item =>
+    matched(item.name_ar) || matched(item.name_en) || matched(item.id)
+  ), [categories, query]);
+  const shownRequests = useMemo(() => categoryRequests.filter(item =>
+    (categoryStatus === 'all' || item.status === categoryStatus)
+    && (matched(item.name_ar) || matched(item.name_en) || matched(item.seller_id))
+    && matchesDate(item.created_at)
+  ), [categoryRequests, query, recordDate, categoryStatus]);
+
+  const displayDate = (date?: string | null) => date
+    ? new Date(date).toLocaleDateString(ar ? 'ar-SA' : 'en-GB')
+    : '—';
 
   const saveCategory = async () => {
     if (busy || !categoryAr.trim() || !categoryEn.trim()) return;
@@ -337,10 +381,10 @@ export function SellerReviewScreen() {
       ) : (
         <>
           <div className={styles.summary}>
-            <div><span>{tr('طلبات البائعين', 'Seller applications')}</span><strong>{applications.length}</strong></div>
-            <div><span>{tr('الفروع', 'Branches')}</span><strong>{branches.length}</strong></div>
-            <div><span>{tr('المنتجات', 'Products')}</span><strong>{products.length}</strong></div>
-            <div><span>{tr('طلبات التصنيفات', 'Category requests')}</span><strong>{categoryRequests.filter(item => item.status === 'pending').length}</strong></div>
+            <div><span>{tr('طلبات البائعين', 'Seller applications')}</span><strong>{overview?.pending_applications ?? '—'}</strong></div>
+            <div><span>{tr('الفروع', 'Branches')}</span><strong>{overview?.pending_branches ?? '—'}</strong></div>
+            <div><span>{tr('المنتجات', 'Products')}</span><strong>{overview?.pending_products ?? '—'}</strong></div>
+            <div><span>{tr('طلبات التصنيفات', 'Category requests')}</span><strong>{overview?.pending_categories ?? '—'}</strong></div>
           </div>
           <nav
             className={styles.tabs}
@@ -388,6 +432,38 @@ export function SellerReviewScreen() {
               {tr('تحديث', 'Refresh')}
             </button>
           </nav>
+          <div className={styles.filters} role="search">
+            <label>{tr('بحث', 'Search')}
+              <input value={query} onChange={event => setQuery(event.target.value)}
+                placeholder={tr('اسم أو رقم أو سجل تجاري...', 'Name, ID, registration...')}/>
+            </label>
+            {tab === 'applications' && (
+              <label>{tr('حالة الطلب', 'Application status')}
+                <select value={applicationStatus} onChange={event => { setApplicationStatus(event.target.value); setSelected(null); }}>
+                  <option value="submitted">{tr('قيد المراجعة', 'Submitted')}</option>
+                  <option value="correction">{tr('تحتاج تصحيح', 'Needs correction')}</option>
+                  <option value="approved">{tr('معتمد', 'Approved')}</option>
+                  <option value="rejected">{tr('مرفوض', 'Rejected')}</option>
+                </select>
+              </label>
+            )}
+            {tab === 'categories' && (
+              <label>{tr('حالة طلب التصنيف', 'Category request status')}
+                <select value={categoryStatus} onChange={event => setCategoryStatus(event.target.value)}>
+                  <option value="pending">{tr('قيد المراجعة', 'Pending')}</option>
+                  <option value="approved">{tr('معتمد', 'Approved')}</option>
+                  <option value="rejected">{tr('مرفوض', 'Rejected')}</option>
+                  <option value="all">{tr('الكل', 'All')}</option>
+                </select>
+              </label>
+            )}
+            <label>{tr('تاريخ التقديم', 'Submitted date')}
+              <input type="date" value={recordDate} onChange={event => setRecordDate(event.target.value)}/>
+            </label>
+            <button type="button" onClick={() => { setQuery(''); setRecordDate(''); setApplicationStatus('submitted'); setCategoryStatus('pending'); }}>
+              {tr('مسح الفلاتر', 'Clear filters')}
+            </button>
+          </div>
           {error && (
             <p role="alert" style={{ color: '#a52e2e' }}>
               {error}
@@ -397,10 +473,10 @@ export function SellerReviewScreen() {
           {loading && <p role="status">{tr('جار التحميل…', 'Loading…')}</p>}
           {!loading && tab === 'applications' && (
             <>
-              {applications.length === 0 && (
+              {shownApplications.length === 0 && (
                 <p>{tr('لا توجد طلبات معلقة.', 'No submitted applications.')}</p>
               )}
-              {applications.map((item) => (
+              {shownApplications.map((item) => (
                 <article key={item.id} style={panel}>
                   <h3>{item.legal_name}</h3>
                   <p>
@@ -478,10 +554,10 @@ export function SellerReviewScreen() {
           )}
           {!loading && tab === 'branches' && (
             <>
-              {branches.length === 0 && (
+              {shownBranches.length === 0 && (
                 <p>{tr('لا توجد فروع قيد الاعتماد.', 'No branches awaiting activation.')}</p>
               )}
-              {branches.map((branch) => (
+              {shownBranches.map((branch) => (
                 <article key={branch.id} style={panel}>
                   <h3>{ar ? branch.name_ar : branch.name_en}</h3>
                   <p>
@@ -505,10 +581,10 @@ export function SellerReviewScreen() {
           )}
           {!loading && tab === 'products' && (
             <>
-              {products.length === 0 && (
+              {shownProducts.length === 0 && (
                 <p>{tr('لا توجد منتجات قيد المراجعة.', 'No pending products.')}</p>
               )}
-              {products.map((item) => (
+              {shownProducts.map((item) => (
                 <article key={item.id} style={panel}>
                   <h3>{ar ? item.name_ar : item.name_en}</h3>
                   <p>
@@ -604,7 +680,7 @@ export function SellerReviewScreen() {
                     <thead><tr><th>{tr('التصنيف', 'Category')}</th><th>{tr('النوع', 'Type')}</th>
                       <th>{tr('الحالة', 'Status')}</th><th>{tr('الإجراءات', 'Actions')}</th></tr></thead>
                     <tbody>
-                      {categories.map((item) => (
+                      {shownCategories.map((item) => (
                         <tr key={item.id}>
                           <td>{ar ? item.name_ar : item.name_en}</td>
                           <td>{item.parent_id === null ? tr('رئيسي', 'Parent') : tr('فرعي', 'Subcategory')}</td>
@@ -633,9 +709,9 @@ export function SellerReviewScreen() {
               </article>
               <article style={panel}>
                 <h3>{tr('طلبات التصنيفات من البائعين', 'Seller category requests')}</h3>
-                {categoryRequests.filter((item) => item.status === 'pending').length === 0
+                {shownRequests.length === 0
                   && <p>{tr('لا توجد طلبات معلقة.', 'No pending requests.')}</p>}
-                {categoryRequests.filter((item) => item.status === 'pending').map((item) => (
+                {shownRequests.map((item) => (
                   <div key={item.id} style={{ ...panel, marginTop: 8 }}>
                     <strong>{ar ? item.name_ar : item.name_en}</strong>
                     <p>{tr('المتجر', 'Store')} #{item.seller_id} · {item.parent_id === null
