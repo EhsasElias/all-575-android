@@ -29,19 +29,19 @@
 .tabs button[aria-pressed="true"]{background:#187a43;border-color:#187a43;color:#fff;}
 
 /* Seller-workspace family review page refinements. */
-.review{max-inline-size:1240px;padding-inline:0}
-.review>header{padding:clamp(18px,2.3vw,28px);margin-block:8px 22px;border:1px solid var(--color-border,#d3ddd0);border-radius:18px;background:var(--color-surface-mint,#eef4ec)}
-.review>header h1{font-size:clamp(1.65rem,2.8vw,2.35rem)}
-.review>header p{max-inline-size:65ch;line-height:1.65}
-.summary{gap:12px;margin-block:0 22px}
-.summary>div{border-radius:16px;padding:18px}
-.summary span{font-size:.88rem}
-.summary strong{font-size:clamp(1.5rem,2.3vw,1.85rem)}
-.review .tabs{margin-block:0 18px;align-items:stretch}
-.review .tabs button{white-space:normal;line-height:1.4;padding:10px 12px}
-.review .filters{margin-block:0 18px}
-.review .itemHeading h3{font-size:1.13rem}
-.review article p{font-size:.88rem}
-.review article button{min-block-size:41px;font-size:.85rem;border-radius:11px;padding:9px 15px}
-.review article .expandedDetails{border-radius:14px}
-@media(max-width:560px){.review>header{padding:16px}.summary{grid-template-columns:repeat(2,minmax(0,1fr))}.summary>div{padding:13px}.review .tabs button{padding:10px 8px}}
+.review{max-inline-size:1240px;padding-inline:0;}
+.review>header{padding:clamp(18px,2.3vw,28px);margin-block:8px 22px;border:1px solid var(--color-border,#d3ddd0);border-radius:18px;background:var(--color-surface-mint,#eef4ec);}
+.review>header h1{font-size:clamp(1.65rem,2.8vw,2.35rem);}
+.review>header p{max-inline-size:65ch;line-height:1.65;}
+.summary{gap:12px;margin-block:0 22px;}
+.summary>div{border-radius:16px;padding:18px;}
+.summary span{font-size:.88rem;}
+.summary strong{font-size:clamp(1.5rem,2.3vw,1.85rem);}
+.review .tabs{margin-block:0 18px;align-items:stretch;}
+.review .tabs button{white-space:normal;line-height:1.4;padding:10px 12px;}
+.review .filters{margin-block:0 18px;}
+.review .itemHeading h3{font-size:1.13rem;}
+.review article p{font-size:.88rem;}
+.review article button{min-block-size:41px;font-size:.85rem;border-radius:11px;padding:9px 15px;}
+.review article .expandedDetails{border-radius:14px;}
+@media(max-width:560px){.review>header{padding:16px;}.summary{grid-template-columns:repeat(2,minmax(0,1fr));}.summary>div{padding:13px;}.review .tabs button{padding:10px 8px;}}
