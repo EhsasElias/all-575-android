@@ -4,14 +4,7 @@ import {
   adminAssignments, addAdminAssignment, updateAdminAssignment,
   type PlatformAdminAccess,
 } from './platformAdminApi';
-
-const panel: React.CSSProperties = {
-  padding: 14, border: '1px solid var(--color-border, #d8e1db)',
-  borderRadius: 12, marginBottom: 12,
-};
-const wrap: React.CSSProperties = {
-  display: 'flex', alignItems: 'end', flexWrap: 'wrap', gap: 10,
-};
+import styles from './PlatformAdminAssignments.module.css';
 
 export function PlatformAdminAssignments() {
   const { i18n } = useTranslation();
@@ -66,46 +59,58 @@ export function PlatformAdminAssignments() {
   };
 
   return (
-    <section aria-labelledby="admin-access-heading">
-      <h2 id="admin-access-heading">{tr('حسابات الإدارة والصلاحيات', 'Admin Accounts & Permissions')}</h2>
-      <p>{tr('عيّن حساباً موجوداً ومفعلاً باستخدام بريده الإلكتروني ورقم المتجر.', 'Assign an existing verified account by email and seller ID.')}</p>
-      <form onSubmit={save} style={panel}>
-        <div style={wrap}>
-          <label>{tr('البريد الإلكتروني', 'Account email')}
-            <input type="email" required maxLength={255} value={email} onChange={e => setEmail(e.target.value)} />
-          </label>
-          <label>{tr('رقم المتجر', 'Seller ID')}
-            <input type="number" required min={1} value={sellerId} onChange={e => setSellerId(e.target.value)} />
-          </label>
-          <label><input type="checkbox" checked={orders} onChange={e => setOrders(e.target.checked)} />
-            {tr('عرض الطلبات', 'View orders')}</label>
-          <label><input type="checkbox" checked={stock} onChange={e => setStock(e.target.checked)} />
-            {tr('عرض المخزون', 'View inventory')}</label>
-          <button type="submit" disabled={busy || (!orders && !stock)}>{tr('إضافة أدمن', 'Assign Admin')}</button>
+    <section aria-labelledby="admin-access-heading" className={styles.section}>
+      <header className={styles.header}>
+        <div>
+          <h2 id="admin-access-heading">{tr('حسابات الإدارة والصلاحيات', 'Admin Accounts & Permissions')}</h2>
+          <p>{tr('إدارة صلاحيات حسابات الإدارة الموجودة والمفعلة.', 'Assign and manage access for existing verified accounts.')}</p>
         </div>
-      </form>
-      {error && <p role="alert">{error}</p>}
-      {notice && <p role="status">{notice}</p>}
-      {items.length === 0 && <p>{tr('لا توجد حسابات إدارية معينة بعد.', 'No Admin assignments yet.')}</p>}
-      {items.map(item => (
-        <div key={item.id} style={panel}>
-          <strong>{item.name || item.email || '#' + item.user_id}</strong>
-          <p style={{ margin: '8px 0', opacity: 0.8 }}>
-            {item.email} · {ar ? item.seller_name_ar : item.seller_name_en} (#{item.seller_id})
-          </p>
-          <div style={wrap}>
-            <label><input type="checkbox" disabled={busy} checked={item.can_view_orders}
-              onChange={e => void change(item.id, { can_view_orders: e.target.checked })} />
-              {tr('الطلبات', 'Orders')}</label>
-            <label><input type="checkbox" disabled={busy} checked={item.can_view_inventory}
-              onChange={e => void change(item.id, { can_view_inventory: e.target.checked })} />
-              {tr('المخزون', 'Inventory')}</label>
-            <button type="button" disabled={busy} onClick={() => void change(item.id, { is_active: !item.is_active })}>
-              {item.is_active ? tr('تعطيل', 'Deactivate') : tr('تفعيل', 'Activate')}
-            </button>
+        <button type="button" onClick={() => setRevision(x => x + 1)} disabled={busy} className={styles.refresh}>↻ {tr('تحديث', 'Refresh')}</button>
+      </header>
+      {error && <p role="alert" className={styles.error}>{error}</p>}
+      {notice && <p role="status" className={styles.success}>{notice}</p>}
+      <div className={styles.layout}>
+        <form onSubmit={save} className={styles.form}>
+          <label className={styles.field}>
+            <span>{tr('البريد الإلكتروني للحساب', 'Account email')} *</span>
+            <input type="email" required maxLength={255} placeholder={tr('أدخل بريد الإداري', 'Enter admin email')} value={email} onChange={e => setEmail(e.target.value)} />
+          </label>
+          <label className={styles.field}>
+            <span>{tr('رقم البائع', 'Seller ID')} *</span>
+            <input type="number" required min={1} step={1} placeholder={tr('رقم البائع الموجود', 'Existing seller ID')} value={sellerId} onChange={e => setSellerId(e.target.value)} />
+          </label>
+          <div className={styles.permissions} role="group" aria-label={tr('الصلاحيات', 'Permissions')}>
+            <label><input type="checkbox" checked={orders} onChange={e => setOrders(e.target.checked)} />{tr('عرض الطلبات', 'View orders')}</label>
+            <label><input type="checkbox" checked={stock} onChange={e => setStock(e.target.checked)} />{tr('عرض المخزون', 'View inventory')}</label>
           </div>
+          <button type="submit" className={styles.submit} disabled={busy || (!orders && !stock)}>{busy ? tr('جارٍ الحفظ...', 'Saving...') : tr('تعيين إداري', 'Assign Admin')}</button>
+        </form>
+        <div className={styles.list}>
+          <h3>{tr('الإسنادات الحالية', 'Existing Admin Assignments')} ({items.length})</h3>
+          {items.length === 0 && <p>{tr('لا توجد حسابات إدارية معينة بعد.', 'No Admin assignments yet.')}</p>}
+          {items.length > 0 && <div className={styles.tableScroll}>
+            <table>
+              <thead><tr>
+                <th scope="col">{tr('الحساب', 'Account')}</th>
+                <th scope="col">{tr('البائع', 'Seller')}</th>
+                <th scope="col">{tr('الصلاحيات', 'Permissions')}</th>
+                <th scope="col">{tr('الحالة', 'Status')}</th>
+                <th scope="col">{tr('الإجراءات', 'Actions')}</th>
+              </tr></thead>
+              <tbody>{items.map(item => <tr key={item.id}>
+                <td><strong>{item.name || item.email || '#' + item.user_id}</strong><div className={styles.muted}>{item.email}</div></td>
+                <td>{(ar ? item.seller_name_ar : item.seller_name_en) || '#' + item.seller_id} (#{item.seller_id})</td>
+                <td><div className={styles.permissions}>
+                  <label><input type="checkbox" disabled={busy} checked={item.can_view_orders} onChange={e => void change(item.id, { can_view_orders: e.target.checked })} />{tr('الطلبات', 'Orders')}</label>
+                  <label><input type="checkbox" disabled={busy} checked={item.can_view_inventory} onChange={e => void change(item.id, { can_view_inventory: e.target.checked })} />{tr('المخزون', 'Inventory')}</label>
+                </div></td>
+                <td><span className={item.is_active ? styles.active : styles.inactive}>{item.is_active ? tr('نشط', 'Active') : tr('موقوف', 'Inactive')}</span></td>
+                <td><button type="button" className={styles.action} disabled={busy} onClick={() => void change(item.id, { is_active: !item.is_active })}>{item.is_active ? tr('تعطيل', 'Deactivate') : tr('تفعيل', 'Activate')}</button></td>
+              </tr>)}</tbody>
+            </table>
+          </div>}
         </div>
-      ))}
+      </div>
     </section>
   );
 }
