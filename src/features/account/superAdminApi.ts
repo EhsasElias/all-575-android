@@ -49,3 +49,8 @@ export const superAdminMetric = (metric: SuperAdminMetricKey, page = 1, filters:
 export const exportSuperAdminMetric = (
   metric: SuperAdminMetricKey, format: 'csv' | 'xls', filters: SuperAdminReportFilters = {},
 ) => http.download('/platform/super-admin/metrics/' + metric + '/export/' + format, { query: filters });
+
+export const updateSuperAdminAccount = (id: number, input: { name?: string; is_active?: boolean }) =>
+  http.patch<{ data: { id: number; name: string | null; email: string; is_active: boolean } }>(
+    '/platform/super-admin/accounts/' + id, input,
+  );
