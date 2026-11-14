@@ -11,6 +11,7 @@ export type SuperAdminDashboard = {
   suborder_statuses: Record<string, number>;
   pending_seller_applications: number;
   pending_product_reviews: number;
+  pending_category_requests: number;
   sales: { paid_orders: number; paid_total_halalas: number; currency: string };
   generated_at: string;
 };
@@ -22,7 +23,7 @@ export type SuperAdminMetricKey =
   | 'customers' | 'sellers' | 'active_sellers' | 'products' | 'published_products'
   | 'orders' | 'paid_order_value' | 'paid_orders' | 'awaiting_payment'
   | 'confirmed_orders' | 'completed_orders' | 'ready_for_delivery'
-  | 'pending_seller_applications' | 'pending_product_reviews';
+  | 'pending_seller_applications' | 'pending_product_reviews' | 'pending_category_requests';
 
 export type SuperAdminMetricPage = {
   data: Record<string, string | number | boolean | null>[];
