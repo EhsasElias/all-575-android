@@ -93,6 +93,7 @@ export function SuperAdminDashboardScreen() {
     { key: 'ready_for_delivery', label: tr('جاهزة للتوصيل', 'Ready for delivery'), value: number(data.suborder_statuses.ready ?? 0), icon: '↗' },
     { key: 'pending_seller_applications', label: tr('طلبات البائعين المعلقة', 'Pending seller applications'), value: number(data.pending_seller_applications), icon: '!' },
     { key: 'pending_product_reviews', label: tr('المنتجات بانتظار المراجعة', 'Pending product reviews'), value: number(data.pending_product_reviews), icon: '!' },
+    { key: 'pending_category_requests', label: tr('طلبات التصنيفات المعلقة', 'Pending category requests'), value: number(data.pending_category_requests), icon: '!' },
   ] : [], [data, ar]);
   const selectedMetric = metrics.find(metric => metric.key === selected);
 
