@@ -176,3 +176,9 @@
   background: var(--color-surface-mint,#e2f2e6);
   border-color: #22795c;
 }
+
+
+/* Consistent refresh toolbar separation before platform statistics. */
+.dashboard .toolbar { margin-block-end: 22px; row-gap: 14px; }
+.dashboard .toolbar button { min-block-size: 42px; }
+@media (max-width: 560px) { .dashboard .toolbar button { width: 100%; } }
