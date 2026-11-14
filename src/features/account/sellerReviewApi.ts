@@ -1,5 +1,14 @@
 import { http } from '@/shared/api';
 
+export type ReviewOverview = {
+  pending_applications: number;
+  pending_branches: number;
+  pending_products: number;
+  pending_categories: number;
+  recent_decisions: { id: number; subject_type: string; subject_id: number; previous_status: string; new_status: string; reason: string | null; created_at: string }[];
+};
+export const reviewOverview = () => http.get<{ data: ReviewOverview }>('/seller-review/overview');
+
 export type SellerReviewApplication = {
   id: number;
   user_id: number;
@@ -11,6 +20,7 @@ export type SellerReviewApplication = {
   review_note?: string | null;
   submitted_at?: string | null;
   approved_seller_id?: number | null;
+  updated_at?: string | null;
 };
 export type SellerReviewDocument = {
   id: number;
@@ -28,6 +38,7 @@ export type PendingSellerProduct = {
   price_halalas: number;
   image_path?: string | null;
   status: string;
+  created_at?: string | null;
 };
 
 export const reviewSellerApplications = (status = 'submitted') =>
@@ -69,6 +80,7 @@ export type SellerBranchReview = {
   name_en: string;
   lat: number;
   lng: number;
+  created_at?: string | null;
 };
 
 export const reviewSellerBranches = () =>
@@ -89,6 +101,7 @@ export type CategoryRequestReview = {
   name_ar: string; name_en: string; reason: string | null;
   status: 'pending' | 'approved' | 'rejected';
   review_note: string | null; category_id: number | null;
+  created_at?: string | null;
 };
 export const reviewCategories = () =>
   http.get<{ data: ManagedCategory[] }>('/seller-review/categories');
