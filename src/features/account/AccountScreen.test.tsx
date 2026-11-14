@@ -108,6 +108,30 @@ describe('Account: a signed-in customer', () => {
     ]));
   });
 
+  it('keeps personal navigation separate from the customer dashboard sidebar', async () => {
+    signedInApi();
+    const { router } = await renderApp({ route: '/account', signedIn: true, seenWelcome: true });
+    expect(screen.getByRole('navigation', { name: 'Account navigation' })).toBeInTheDocument();
+    expect(screen.queryByRole('navigation', { name: 'Dashboard navigation' })).not.toBeInTheDocument();
+
+    await router.navigate('/account/dashboard');
+    const workspaceMenu = await screen.findByRole('navigation', { name: 'Dashboard navigation' });
+    expect(within(workspaceMenu).getByRole('link', { name: 'Customer overview' }))
+      .toHaveAttribute('href', '/account/dashboard');
+    expect(within(workspaceMenu).getByRole('link', { name: 'Back to my account' }))
+      .toHaveAttribute('href', '/account');
+    expect(screen.queryByRole('navigation', { name: 'Account navigation' })).not.toBeInTheDocument();
+  });
+
+  it('shows seller workspace navigation separately from personal account links', async () => {
+    signedInApi();
+    await renderApp({ route: '/account/seller-workspace?section=products', signedIn: true, seenWelcome: true });
+    const workspaceMenu = await screen.findByRole('navigation', { name: 'Dashboard navigation' });
+    expect(within(workspaceMenu).getByRole('link', { name: 'Products' }))
+      .toHaveAttribute('href', '/account/seller-workspace?section=products');
+    expect(within(workspaceMenu).queryByRole('link', { name: 'Profile' })).not.toBeInTheDocument();
+  });
+
   it('invites a customer without a name to add one', async () => {
     signedInApi(customerWithoutName);
     await renderApp({ route: '/account', signedIn: true, seenWelcome: true });
