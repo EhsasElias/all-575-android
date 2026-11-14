@@ -55,3 +55,26 @@ export type AdminOrderFilters = { limit?: number; status?: string; before_id?: s
 
 export const adminOrders = (filters: AdminOrderFilters = {}) =>
   http.get<{ data: PlatformAdminOrder[] }>('/platform/admin/orders', { query: filters });
+
+export type AdminInventoryRecord = {
+  id: number;
+  seller_id: number;
+  branch_id: number;
+  on_hand: number;
+  reserved: number;
+  sku: string;
+  name_ar: string;
+  name_en: string;
+};
+
+export type AdminInventoryFilters = {
+  limit?: number;
+  before_id?: number;
+  seller_id?: number;
+  branch_id?: number;
+  low_stock_only?: boolean;
+  q?: string;
+};
+
+export const adminInventory = (filters: AdminInventoryFilters = {}) =>
+  http.get<{ data: AdminInventoryRecord[] }>('/platform/admin/inventory', { query: filters });
