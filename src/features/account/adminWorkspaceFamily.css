@@ -30,8 +30,8 @@
   box-shadow: none;
   margin-block: 8px 22px;
 }
-.admin-workspace-family .admin-family-hero h1 {font-size:clamp(1.65rem,2.8vw,2.35rem);line-height:1.3}
-.admin-workspace-family .admin-family-hero p {max-inline-size:65ch;line-height:1.65;color:var(--aw-muted)}
+.admin-workspace-family .admin-family-hero h1 {font-size:clamp(1.65rem,2.8vw,2.35rem);line-height:1.3;}
+.admin-workspace-family .admin-family-hero p {max-inline-size:65ch;line-height:1.65;color:var(--aw-muted);}
 .admin-workspace-family .admin-family-panel,
 .admin-workspace-family .admin-family-card {
   border: 1px solid var(--aw-border);
@@ -44,8 +44,8 @@
   padding: 17px;
   transition: border-color .15s, box-shadow .15s;
 }
-.admin-workspace-family .admin-family-card:hover {border-color:var(--aw-accent)}
-.admin-workspace-family .admin-family-panel {padding:clamp(14px,2vw,22px)}
+.admin-workspace-family .admin-family-card:hover {border-color:var(--aw-accent);}
+.admin-workspace-family .admin-family-panel {padding:clamp(14px,2vw,22px);}
 .admin-workspace-family .admin-family-metrics {
   grid-template-columns: repeat(auto-fit,minmax(175px,1fr));
   gap: 12px;
@@ -65,8 +65,8 @@
   font-weight: 700;
   cursor: pointer;
 }
-.admin-workspace-family .admin-family-primary:hover:not(:disabled) {background:var(--aw-accent-hover)}
-.admin-workspace-family .admin-family-primary:disabled {opacity:.55;cursor:not-allowed}
+.admin-workspace-family .admin-family-primary:hover:not(:disabled) {background:var(--aw-accent-hover);}
+.admin-workspace-family .admin-family-primary:disabled {opacity:.55;cursor:not-allowed;}
 .admin-workspace-family .admin-family-secondary {
   min-block-size: 38px;
   border: 1px solid var(--aw-border);
@@ -79,10 +79,10 @@
   font-weight: 650;
   cursor: pointer;
 }
-.admin-workspace-family .admin-family-secondary:hover:not(:disabled) {border-color:var(--aw-accent);background:var(--aw-accent-light)}
-.admin-workspace-family .admin-family-secondary:disabled {opacity:.55;cursor:not-allowed}
-.admin-workspace-family .admin-family-table {max-inline-size:100%;overflow-x:auto;border-radius:12px}
-.admin-workspace-family .admin-family-table table {width:100%;border-collapse:collapse;font-size:.86rem}
+.admin-workspace-family .admin-family-secondary:hover:not(:disabled) {border-color:var(--aw-accent);background:var(--aw-accent-light);}
+.admin-workspace-family .admin-family-secondary:disabled {opacity:.55;cursor:not-allowed;}
+.admin-workspace-family .admin-family-table {max-inline-size:100%;overflow-x:auto;border-radius:12px;}
+.admin-workspace-family .admin-family-table table {width:100%;border-collapse:collapse;font-size:.86rem;}
 .admin-workspace-family .admin-family-table th {
   background: var(--aw-accent-light);
   font-weight: 750;
@@ -92,7 +92,7 @@
   padding: 12px 14px;
   border-block-end: 1px solid var(--aw-border);
 }
-.admin-workspace-family .admin-family-table tbody tr:hover {background:var(--aw-accent-light)}
+.admin-workspace-family .admin-family-table tbody tr:hover {background:var(--aw-accent-light);}
 .admin-workspace-family .admin-family-tabs {
   display: grid;
   grid-template-columns: repeat(4,minmax(0,1fr));
@@ -137,18 +137,18 @@
   min-block-size: 42px;
   max-inline-size: 100%;
 }
-.admin-workspace-family input[type="checkbox"] {accent-color:var(--aw-accent)}
-.admin-workspace-family :is(p,span,div) {overflow-wrap:break-word}
+.admin-workspace-family input[type="checkbox"] {accent-color:var(--aw-accent);}
+.admin-workspace-family :is(p,span,div) {overflow-wrap:break-word;}
 @media (max-width:780px) {
-  .admin-workspace-family .admin-family-metrics {grid-template-columns:repeat(2,minmax(0,1fr))}
+  .admin-workspace-family .admin-family-metrics {grid-template-columns:repeat(2,minmax(0,1fr));}
 }
 @media (max-width:560px) {
-  .admin-workspace-family .admin-family-tabs {grid-template-columns:repeat(2,minmax(0,1fr))}
-  .admin-workspace-family .admin-family-tabs .admin-family-tab-refresh {grid-column:1 / -1}
-  .admin-workspace-family .admin-family-card {padding:12px}
-  .admin-workspace-family .admin-family-hero {padding:16px}
-  .admin-workspace-family .admin-family-panel {padding:13px}
+  .admin-workspace-family .admin-family-tabs {grid-template-columns:repeat(2,minmax(0,1fr));}
+  .admin-workspace-family .admin-family-tabs .admin-family-tab-refresh {grid-column:1 / -1;}
+  .admin-workspace-family .admin-family-card {padding:12px;}
+  .admin-workspace-family .admin-family-hero {padding:16px;}
+  .admin-workspace-family .admin-family-panel {padding:13px;}
 }
 @media (prefers-reduced-motion:reduce) {
-  .admin-workspace-family * {transition-duration:.01ms!important}
+  .admin-workspace-family * {transition-duration:.01ms!important;}
 }
