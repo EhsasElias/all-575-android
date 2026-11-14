@@ -1,5 +1,7 @@
 import { useEffect, useMemo, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
+import { Link } from 'react-router';
+import { routePaths } from '@/shared/lib';
 import { isApiError } from '@/shared/api';
 import { Page } from './components/Page';
 import { PlatformAdminAssignments } from './PlatformAdminAssignments';
@@ -262,6 +264,16 @@ export function SuperAdminDashboardScreen() {
                         <p>{tr('سجلات فعلية من قاعدة البيانات، مع صفحات متعددة للتصفح.', 'Live database records with pagination.')}</p>
                       </div>
                       <div className={styles.inlineActions}>
+                        {selected === 'customers' && (
+                          <Link className="admin-family-secondary" to={routePaths.createAccount}>
+                            {tr('إضافة حساب عبر التسجيل', 'Add account via registration')}
+                          </Link>
+                        )}
+                        {(selected === 'sellers' || selected === 'active_sellers') && (
+                          <Link className="admin-family-secondary" to={routePaths.sellerReview + '?tab=applications'}>
+                            {tr('إضافة بائع عبر الطلبات', 'Add seller via applications')}
+                          </Link>
+                        )}
                         <button type="button" className="admin-family-secondary" disabled={exporting !== null} onClick={() => void downloadMetric(selected, 'xls')}>↓ Excel</button>
                         <button type="button" className="admin-family-secondary" disabled={exporting !== null} onClick={() => void downloadMetric(selected, 'csv')}>↓ CSV</button>
                         <button type="button" className="admin-family-secondary" aria-label={tr('إغلاق التفاصيل', 'Close details')} onClick={() => setSelected(null)}>✕</button>
