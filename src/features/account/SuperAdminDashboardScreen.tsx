@@ -4,7 +4,7 @@ import { isApiError } from '@/shared/api';
 import { Page } from './components/Page';
 import { PlatformAdminAssignments } from './PlatformAdminAssignments';
 import {
-  exportSuperAdminMetric, superAdminDashboard, superAdminMetric,
+  exportSuperAdminMetric, superAdminDashboard, superAdminMetric, updateSuperAdminAccount,
   type SuperAdminDashboard, type SuperAdminMetricKey, type SuperAdminMetricPage, type SuperAdminReportFilters,
 } from './superAdminApi';
 import styles from './SuperAdminDashboardScreen.module.css';
@@ -42,6 +42,9 @@ export function SuperAdminDashboardScreen() {
   const [draft, setDraft] = useState({ q: '', from: '', to: '', seller_id: '', status: '' });
   const [reportFilters, setReportFilters] = useState<SuperAdminReportFilters>({});
   const detailSectionRef = useRef<HTMLDivElement | null>(null);
+  const [accountEditor, setAccountEditor] = useState<{ id: number; name: string } | null>(null);
+  const [accountBusy, setAccountBusy] = useState(false);
+  const [accountNotice, setAccountNotice] = useState('');
 
   useEffect(() => {
     let active = true;
@@ -122,6 +125,24 @@ export function SuperAdminDashboardScreen() {
       setDetailsError(tr('تعذر تصدير الملف. حاول مرة أخرى.', 'Export failed. Please retry.'));
       setSelected(key);
     } finally { setExporting(null); }
+  };
+
+  const saveAccount = async (id: number, input: { name?: string; is_active?: boolean }) => {
+    if (accountBusy) return;
+    setAccountBusy(true);
+    setDetailsError('');
+    setAccountNotice('');
+    try {
+      await updateSuperAdminAccount(id, input);
+      setAccountEditor(null);
+      setAccountNotice(tr('تم تحديث الحساب.', 'Account updated.'));
+      setRevision(value => value + 1);
+    } catch (cause: unknown) {
+      setDetailsError(isApiError(cause) ? cause.message
+        : tr('تعذر تحديث الحساب.', 'Could not update account.'));
+    } finally {
+      setAccountBusy(false);
+    }
   };
 
   const metricCard = (metric: Metric) => (
@@ -227,6 +248,7 @@ export function SuperAdminDashboardScreen() {
                         <button type="button" className="admin-family-secondary" aria-label={tr('إغلاق التفاصيل', 'Close details')} onClick={() => setSelected(null)}>✕</button>
                       </div>
                     </div>
+                    {accountNotice && <p role="status">{accountNotice}</p>}
                     {detailsLoading && <p role="status">{tr('تحميل...', 'Loading...')}</p>}
                     {detailsError && <p role="alert">{detailsError}</p>}
                     {details && (
@@ -267,14 +289,49 @@ export function SuperAdminDashboardScreen() {
                         </div>
                         <div className={styles.tableScroll + ' admin-family-table'}>
                           <table className={styles.dataTable}>
-                            <thead><tr>{details.columns.map(column => <th key={column} scope="col">{column.replaceAll('_', ' ')}</th>)}</tr></thead>
+                            <thead><tr>{details.columns.map(column => <th key={column} scope="col">{column.replaceAll('_', ' ')}</th>)}{selected === 'customers' && <th scope="col">{tr('الإجراءات', 'Actions')}</th>}</tr></thead>
                             <tbody>
                               {details.data.map((row, index) => <tr key={String(row.id ?? index)}>
-                                {details.columns.map(column => <td key={column}>{String(row[column] ?? '—')}</td>)}
+                                {details.columns.map(column => <td key={column}>{column === 'is_active'
+                                  ? (Boolean(row[column]) ? tr('نشط', 'Active') : tr('معطل', 'Inactive'))
+                                  : String(row[column] ?? '—')}</td>)}
+                                {selected === 'customers' && <td>
+                                  <div className={styles.inlineActions}>
+                                    <button type="button" disabled={accountBusy || typeof row.id !== 'number'}
+                                      onClick={() => setAccountEditor({ id: Number(row.id), name: String(row.name ?? '') })}>
+                                      {tr('تعديل', 'Edit')}
+                                    </button>
+                                    <button type="button" disabled={accountBusy || typeof row.id !== 'number'}
+                                      onClick={() => {
+                                        const enable = !Boolean(row.is_active);
+                                        if (window.confirm(enable
+                                          ? tr('هل تريد تفعيل الحساب؟', 'Activate this account?')
+                                          : tr('هل تريد تعطيل الحساب وإلغاء جلساته؟', 'Deactivate this account and revoke its sessions?'))) {
+                                          void saveAccount(Number(row.id), { is_active: enable });
+                                        }
+                                      }}>
+                                      {Boolean(row.is_active) ? tr('تعطيل', 'Deactivate') : tr('تفعيل', 'Activate')}
+                                    </button>
+                                  </div>
+                                </td>}
                               </tr>)}
                             </tbody>
                           </table>
                         </div>
+                        {selected === 'customers' && accountEditor && (
+                          <form className={styles.accountEditor} onSubmit={event => {
+                            event.preventDefault();
+                            if (accountEditor.name.trim()) void saveAccount(accountEditor.id, { name: accountEditor.name.trim() });
+                          }}>
+                            <label>{tr('اسم الحساب', 'Account name')}
+                              <input required maxLength={150} value={accountEditor.name}
+                                onChange={event => setAccountEditor(previous => previous
+                                  ? { ...previous, name: event.target.value } : null)} />
+                            </label>
+                            <button type="submit" disabled={accountBusy || !accountEditor.name.trim()}>{tr('حفظ', 'Save')}</button>
+                            <button type="button" disabled={accountBusy} onClick={() => setAccountEditor(null)}>{tr('إلغاء', 'Cancel')}</button>
+                          </form>
+                        )}
                         {details.data.length === 0 && <p>{tr('لا توجد نتائج.', 'No records found.')}</p>}
                         <div className={styles.pagination}>
                           <button type="button" disabled={details.page <= 1} onClick={() => { setDetailsPage(p => p - 1); }}>{tr('السابق', 'Previous')}</button>
