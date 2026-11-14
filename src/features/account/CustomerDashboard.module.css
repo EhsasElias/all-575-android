@@ -386,3 +386,12 @@
   .dashboardWorkspace .actions a { flex: 1 1 auto; }
   .dashboardWorkspace .metric { min-block-size: 115px; padding: 12px; }
 }
+
+
+/* Keep dashboard refresh below the last section and away from adjacent content. */
+.dashboardWorkspace .sectionHeader:has(button) {
+  row-gap: 14px;
+  padding-block: 12px 18px;
+  margin-block: 16px 0;
+}
+.dashboardWorkspace .sectionHeader:has(button) button { min-block-size: 42px; border-radius: 11px; }
