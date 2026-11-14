@@ -127,7 +127,7 @@ export function PlatformAdminDashboardScreen() {
               {filteredOrders.length === 0 && <p className={styles.empty}>{tr('لا توجد طلبات مطابقة.', 'No matching orders.')}</p>}
               <p className={styles.hint}>{tr('يتم عرض آخر 30 طلباً. البحث داخل النتائج المعروضة.', 'Showing up to 30 recent orders. Search filters this list only.')}</p>
             </section>
-            <section id="order-monitoring" className={styles.panel}>
+            <section id="inventory-overview" className={styles.panel}>
               <h2>{tr('نظرة على المخزون', 'Inventory overview')}</h2>
               <div className={styles.metrics}>
                 {metric(tr('سجلات المخزون', 'Stock records'), data.stock_records)}
