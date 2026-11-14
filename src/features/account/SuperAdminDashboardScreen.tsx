@@ -5,7 +5,7 @@ import { Page } from './components/Page';
 import { PlatformAdminAssignments } from './PlatformAdminAssignments';
 import {
   exportSuperAdminMetric, superAdminDashboard, superAdminMetric,
-  type SuperAdminDashboard, type SuperAdminMetricKey, type SuperAdminMetricPage,
+  type SuperAdminDashboard, type SuperAdminMetricKey, type SuperAdminMetricPage, type SuperAdminReportFilters,
 } from './superAdminApi';
 import styles from './SuperAdminDashboardScreen.module.css';
 import './adminWorkspaceFamily.css';
@@ -39,7 +39,8 @@ export function SuperAdminDashboardScreen() {
   const [detailsLoading, setDetailsLoading] = useState(false);
   const [detailsError, setDetailsError] = useState('');
   const [exporting, setExporting] = useState<string | null>(null);
-  const [search, setSearch] = useState('');
+  const [draft, setDraft] = useState({ q: '', from: '', to: '', seller_id: '', status: '' });
+  const [reportFilters, setReportFilters] = useState<SuperAdminReportFilters>({});
   const detailSectionRef = useRef<HTMLDivElement | null>(null);
 
   useEffect(() => {
@@ -66,7 +67,7 @@ export function SuperAdminDashboardScreen() {
     setDetails(null);
     setDetailsError('');
     setDetailsLoading(true);
-    void superAdminMetric(selected, detailsPage)
+    void superAdminMetric(selected, detailsPage, reportFilters)
       .then(response => { if (active) setDetails(response); })
       .catch(() => {
         if (active) setDetailsError(tr('تعذر تحميل التفاصيل.', 'Unable to load details.'));
@@ -74,7 +75,7 @@ export function SuperAdminDashboardScreen() {
       .finally(() => { if (active) setDetailsLoading(false); });
     return () => { active = false; };
   // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [selected, detailsPage, revision]);
+  }, [selected, detailsPage, reportFilters, revision]);
 
   const number = (value: number) => value.toLocaleString(ar ? 'ar-SA' : 'en-US');
   const money = (value: number) => (value / 100).toLocaleString(ar ? 'ar-SA' : 'en-US', { style: 'currency', currency: 'SAR' });
@@ -98,7 +99,8 @@ export function SuperAdminDashboardScreen() {
   const selectedMetric = metrics.find(metric => metric.key === selected);
 
   const openDetails = (key: SuperAdminMetricKey) => {
-    setSearch('');
+    setDraft({ q: '', from: '', to: '', seller_id: '', status: '' });
+    setReportFilters({});
     setDetailsPage(1);
     setSelected(key);
   };
@@ -114,7 +116,7 @@ export function SuperAdminDashboardScreen() {
     setExporting(action);
     setDetailsError('');
     try {
-      const result = await exportSuperAdminMetric(key, format);
+      const result = await exportSuperAdminMetric(key, format, reportFilters);
       saveFile(result.blob, result.filename ?? ('all575-' + key + '.' + format));
     } catch {
       setDetailsError(tr('تعذر تصدير الملف. حاول مرة أخرى.', 'Export failed. Please retry.'));
@@ -144,8 +146,31 @@ export function SuperAdminDashboardScreen() {
     </button>
   );
 
-  const filteredRows = (details?.data ?? []).filter(row =>
-    Object.values(row).some(value => String(value ?? '').toLocaleLowerCase().includes(search.toLocaleLowerCase()))
+  const applyFilters = () => {
+    if (draft.from && draft.to && draft.from > draft.to) {
+      setDetailsError(tr('تاريخ البداية يجب أن يسبق النهاية.', 'Start date must precede end date.'));
+      return;
+    }
+    setDetailsError('');
+    setDetailsPage(1);
+    setReportFilters({
+      ...(draft.q.trim() ? { q: draft.q.trim() } : {}),
+      ...(draft.from ? { from: draft.from } : {}),
+      ...(draft.to ? { to: draft.to } : {}),
+      ...(draft.seller_id ? { seller_id: Number(draft.seller_id) } : {}),
+      ...(draft.status ? { status: draft.status } : {}),
+    });
+  };
+
+  const clearFilters = () => {
+    setDraft({ q: '', from: '', to: '', seller_id: '', status: '' });
+    setDetailsPage(1);
+    setReportFilters({});
+  };
+
+  const supportsSeller = selected !== 'customers';
+  const supportsSearch = (details?.columns ?? []).some(column =>
+    ['name', 'name_ar', 'name_en', 'email', 'number', 'status'].includes(column)
   );
 
   return (
@@ -206,25 +231,55 @@ export function SuperAdminDashboardScreen() {
                     {detailsError && <p role="alert">{detailsError}</p>}
                     {details && (
                       <>
-                        <div className={styles.detailTools}>
-                          <input aria-label={tr('بحث ضمن الصفحة', 'Search current page')} placeholder={tr('بحث ضمن السجلات المعروضة...', 'Search displayed records...')} value={search} onChange={e => setSearch(e.target.value)} />
-                          <span>{tr('إجمالي السجلات', 'Total records')}: {number(details.total)}</span>
+                        <form className={styles.reportFilters} onSubmit={event => { event.preventDefault(); applyFilters(); }}>
+                          {supportsSearch && <label>{tr('بحث', 'Search')}
+                            <input type="search" maxLength={100} value={draft.q}
+                              placeholder={tr('اسم أو بريد أو رقم...', 'Name, email, number...')}
+                              onChange={event => setDraft(prev => ({...prev, q: event.target.value}))}/>
+                          </label>}
+                          <label>{tr('من تاريخ', 'Date from')}
+                            <input type="date" max={draft.to || undefined} value={draft.from}
+                              onChange={event => setDraft(prev => ({...prev, from: event.target.value}))}/>
+                          </label>
+                          <label>{tr('إلى تاريخ', 'Date to')}
+                            <input type="date" min={draft.from || undefined} value={draft.to}
+                              onChange={event => setDraft(prev => ({...prev, to: event.target.value}))}/>
+                          </label>
+                          {supportsSeller && <label>{tr('رقم البائع', 'Seller ID')}
+                            <input type="number" min={1} step={1} value={draft.seller_id}
+                              onChange={event => setDraft(prev => ({...prev, seller_id: event.target.value}))}/>
+                          </label>}
+                          {details.columns.includes('status') && <label>{tr('الحالة', 'Status')}
+                            <select value={draft.status} onChange={event => setDraft(prev => ({...prev, status: event.target.value}))}>
+                              <option value="">{tr('جميع الحالات', 'All statuses')}</option>
+                              {Array.from(new Set(['draft','submitted','pending','pending_review','approved','rejected','published','confirmed','completed','cancelled','ready','pending_payment'])).map(status =>
+                                <option key={status} value={status}>{status.replaceAll('_',' ')}</option>)}
+                            </select>
+                          </label>}
+                          <div className={styles.reportFilterActions}>
+                            <button type="submit" className="admin-family-primary">{tr('تطبيق', 'Apply')}</button>
+                            <button type="button" className="admin-family-secondary" onClick={clearFilters}>{tr('مسح', 'Clear')}</button>
+                          </div>
+                        </form>
+                        <div className={styles.reportMeta}>
+                          <span>{tr('السجلات المطابقة', 'Matching records')}: {number(details.total)}</span>
+                          <span>{tr('التصدير يطابق الفلاتر', 'Excel/CSV uses the same filters')}</span>
                         </div>
                         <div className={styles.tableScroll + ' admin-family-table'}>
                           <table className={styles.dataTable}>
                             <thead><tr>{details.columns.map(column => <th key={column} scope="col">{column.replaceAll('_', ' ')}</th>)}</tr></thead>
                             <tbody>
-                              {filteredRows.map((row, index) => <tr key={String(row.id ?? index)}>
+                              {details.data.map((row, index) => <tr key={String(row.id ?? index)}>
                                 {details.columns.map(column => <td key={column}>{String(row[column] ?? '—')}</td>)}
                               </tr>)}
                             </tbody>
                           </table>
                         </div>
-                        {filteredRows.length === 0 && <p>{tr('لا توجد نتائج.', 'No records found.')}</p>}
+                        {details.data.length === 0 && <p>{tr('لا توجد نتائج.', 'No records found.')}</p>}
                         <div className={styles.pagination}>
-                          <button type="button" disabled={details.page <= 1} onClick={() => { setDetailsPage(p => p - 1); setSearch(''); }}>{tr('السابق', 'Previous')}</button>
+                          <button type="button" disabled={details.page <= 1} onClick={() => { setDetailsPage(p => p - 1); }}>{tr('السابق', 'Previous')}</button>
                           <span>{number(details.page)} / {number(Math.max(1, details.last_page))}</span>
-                          <button type="button" disabled={details.page >= details.last_page} onClick={() => { setDetailsPage(p => p + 1); setSearch(''); }}>{tr('التالي', 'Next')}</button>
+                          <button type="button" disabled={details.page >= details.last_page} onClick={() => { setDetailsPage(p => p + 1); }}>{tr('التالي', 'Next')}</button>
                         </div>
                       </>
                     )}
