@@ -393,7 +393,6 @@ export function SellerReviewScreen() {
           </div>
           <nav
             className={styles.tabs + ' admin-family-tabs'}
-            style={{ ...fields, marginBottom: 12 }}
             aria-label={tr('نوع المراجعة', 'Review type')}
           >
             <button aria-pressed={tab === 'applications'} className={tab === 'applications' ? styles.selectedTab : undefined}
@@ -571,7 +570,7 @@ export function SellerReviewScreen() {
                 <p>{tr('لا توجد فروع قيد الاعتماد.', 'No branches awaiting activation.')}</p>
               )}
               {shownBranches.map((branch) => (
-                <article key={branch.id} style={panel}>
+                <article key={branch.id} style={panel} className="admin-family-card">
                   <div className={styles.itemHeading}><h3>{ar ? branch.name_ar : branch.name_en}</h3><span className={styles.statusBadge} data-status="pending">{tr('بانتظار التفعيل', 'Awaiting activation')}</span></div>
                   <p>
                     {tr('المتجر', 'Store')} #{branch.seller_id} · {tr('رمز الفرع', 'Code')}:{' '}
@@ -599,7 +598,7 @@ export function SellerReviewScreen() {
                 <p>{tr('لا توجد منتجات قيد المراجعة.', 'No pending products.')}</p>
               )}
               {shownProducts.map((item) => (
-                <article key={item.id} style={panel}>
+                <article key={item.id} style={panel} className="admin-family-card">
                   <div className={styles.itemHeading}><h3>{ar ? item.name_ar : item.name_en}</h3><span className={styles.statusBadge} data-status="pending_review">{tr('بانتظار المراجعة', 'Pending review')}</span></div>
                   <p>
                     {tr('البائع', 'Seller')} #{item.seller_id} · {tr('السعر', 'Price')}:{' '}
@@ -651,7 +650,7 @@ export function SellerReviewScreen() {
           )}
           {!loading && tab === 'categories' && (
             <section>
-              <article style={panel}>
+              <article style={panel} className="admin-family-card">
                 <h3>{categoryFormId === null
                   ? tr('إضافة تصنيف رئيسي أو فرعي', 'Add parent category or subcategory')
                   : tr('تعديل التصنيف', 'Edit category')}</h3>
@@ -688,7 +687,7 @@ export function SellerReviewScreen() {
                   }}>{tr('إلغاء التعديل', 'Cancel edit')}</button>}
                 </div>
               </article>
-              <article style={panel}>
+              <article style={panel} className="admin-family-card">
                 <h3>{tr('التصنيفات الحالية', 'Current categories')}</h3>
                 <div style={{ overflowX: 'auto' }}>
                   <table style={{ width: '100%', textAlign: ar ? 'right' : 'left' }}>
@@ -722,7 +721,7 @@ export function SellerReviewScreen() {
                   </table>
                 </div>
               </article>
-              <article style={panel}>
+              <article style={panel} className="admin-family-card">
                 <h3>{tr('طلبات التصنيفات من البائعين', 'Seller category requests')}</h3>
                 {shownRequests.length === 0
                   && <p>{tr('لا توجد طلبات معلقة.', 'No pending requests.')}</p>}
