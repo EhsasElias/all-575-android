@@ -22,3 +22,8 @@
 .auditRow strong{font-size:13px}
 .auditRow span,.auditRow time{color:var(--color-text-muted,#64766e);font-size:12px}
 @media(max-width:550px){.filters{padding:11px;gap:8px}.filters label{flex-basis:100%}.auditRow{flex-wrap:wrap}.expandedDetails{padding:12px}}
+
+.statusBadge[data-status="approved"],.statusBadge[data-status="published"]{border-color:#a7d5b5;background:#eaf7ee;color:#116b3b}
+.statusBadge[data-status="rejected"]{border-color:#eac4c4;background:#fff0f0;color:#a33434}
+.statusBadge[data-status="correction"]{border-color:#dfd0b0;background:#fff7e3;color:#93601c}
+.tabs button[aria-pressed="true"]{background:#187a43;border-color:#187a43;color:#fff}
