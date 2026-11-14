@@ -1,6 +1,12 @@
+import { useEffect, useState } from 'react';
 import { Link, useLocation } from 'react-router';
 import { useTranslation } from 'react-i18next';
 import { routePaths } from '@/shared/lib';
+import { useSession } from '@/shared/session';
+import { memberships } from '@/features/account/sellerWorkspaceApi';
+import { superAdminDashboard } from '@/features/account/superAdminApi';
+import { adminDashboard } from '@/features/account/platformAdminApi';
+import { reviewOverview } from '@/features/account/sellerReviewApi';
 import styles from './AccountSidebar.module.css';
 
 type AccountLink = { path: string; ar: string; en: string };
@@ -24,6 +30,22 @@ export function AccountSidebar({ onNavigate }: { onNavigate?: () => void }) {
   const ar = i18n.language.startsWith('ar');
   const tr = (a: string, en: string) => ar ? a : en;
   const { pathname } = useLocation();
+  const { status, user } = useSession();
+  const [workspaces, setWorkspaces] = useState<string[]>([]);
+
+  useEffect(() => {
+    if (status !== 'signed-in' || !user) { setWorkspaces([]); return; }
+    let active = true;
+    void Promise.all([
+      memberships().then(r => r.data.some(m => m.is_active && m.seller_status === 'approved')).catch(() => false),
+      adminDashboard().then(() => true).catch(() => false),
+      superAdminDashboard().then(() => true).catch(() => false),
+      reviewOverview().then(() => true).catch(() => false),
+    ]).then(results => {
+      if (active) setWorkspaces(['seller', 'admin', 'super', 'reviewer'].filter((_, i) => results[i]));
+    });
+    return () => { active = false; };
+  }, [status, user?.id]);
   return (
     <nav className={styles.sidebar} aria-label={tr('قائمة الحساب', 'Account navigation')} dir={ar ? 'rtl' : 'ltr'}>
       <div className={styles.brand}>
@@ -47,6 +69,26 @@ export function AccountSidebar({ onNavigate }: { onNavigate?: () => void }) {
         <Link className={styles.link} to={routePaths.dashboard} onClick={onNavigate}>
           {tr('لوحة العميل', 'Customer dashboard')}
         </Link>
+        {workspaces.includes('seller') && (
+          <Link className={styles.link} to={routePaths.sellerWorkspace} onClick={onNavigate}>
+            {tr('لوحة البائع', 'Seller dashboard')}
+          </Link>
+        )}
+        {workspaces.includes('admin') && (
+          <Link className={styles.link} to={routePaths.platformAdminDashboard} onClick={onNavigate}>
+            {tr('لوحة الإدارة', 'Admin dashboard')}
+          </Link>
+        )}
+        {workspaces.includes('super') && (
+          <Link className={styles.link} to={routePaths.superAdminDashboard} onClick={onNavigate}>
+            {tr('لوحة السوبر أدمن', 'Super Admin dashboard')}
+          </Link>
+        )}
+        {workspaces.includes('reviewer') && !workspaces.includes('super') && (
+          <Link className={styles.link} to={routePaths.sellerReview} onClick={onNavigate}>
+            {tr('لوحة الموافقات', 'Approvals dashboard')}
+          </Link>
+        )}
         <Link className={styles.link} to={routePaths.sellerApplication} onClick={onNavigate}>
           {tr('الانضمام كبائع', 'Seller application')}
         </Link>
