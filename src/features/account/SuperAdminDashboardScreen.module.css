@@ -47,3 +47,23 @@
 .permissions{margin-top:22px;background:var(--color-surface,#fff);border:1px solid var(--color-border,#dbe7dd);border-radius:16px;padding:18px}
 @media(max-width:860px){.contentGrid{grid-template-columns:1fr}.sidebar{grid-template-columns:repeat(auto-fit,minmax(230px,1fr))}.platformTag{display:none}}
 @media(max-width:550px){.dashboard{padding:4px 0 24px}.heading{padding:14px;gap:10px}.headingIcon{width:40px;height:40px}.statGrid{grid-template-columns:repeat(2,minmax(0,1fr));gap:8px}.statCard{padding:11px 9px}.statMain{align-items:flex-start}.statIcon{width:28px;height:28px;font-size:16px}.statValue{font-size:17px}.statActions{gap:0}.statActions button{font-size:10px}.detailPanel{padding:12px}.permissions{padding:12px}}
+
+/* Seller-family layout: larger, legible cards and consistent action buttons. */
+.dashboard{padding-block:0 28px;padding-inline:0;max-inline-size:1240px}
+.contentGrid{grid-template-columns:minmax(0,1fr) minmax(240px,280px);gap:20px}
+.statGrid{grid-template-columns:repeat(auto-fit,minmax(175px,1fr))}
+.statCard{gap:12px;justify-content:space-between}
+.statMain{align-items:flex-start;min-block-size:70px}
+.statMain>div{min-inline-size:0}
+.statIcon{inline-size:40px;block-size:40px;flex-shrink:0;background:var(--color-surface-mint,#eef4ec);color:#22795c}
+.statLabel{font-size:.86rem;line-height:1.45;margin-block-end:6px}
+.statValue{font-size:clamp(1.3rem,1.9vw,1.7rem)}
+.statActions{justify-content:flex-start;gap:6px;padding-block-start:12px}
+.statActions button{font-size:.75rem;text-decoration:none;padding:7px 9px;min-block-size:35px;flex:1 1 auto;white-space:nowrap}
+.headingIcon{background:#22795c}
+.sidePanel>.statCard{margin-block-start:12px}
+.sidePanel>a{font-weight:650;background:var(--color-surface-mint,#eef4ec);color:var(--color-text,#17211b);border-radius:12px}
+.sidePanel h2{margin-block:0 14px}
+.detailTools input{font-size:.9rem}
+@media(max-width:920px){.contentGrid{grid-template-columns:1fr}.sidebar{grid-template-columns:repeat(auto-fit,minmax(250px,1fr))}}
+@media(max-width:560px){.statGrid{grid-template-columns:repeat(2,minmax(0,1fr))}.statActions{gap:5px}.statActions button{font-size:.72rem;flex:1 1 42%;white-space:normal}.statIcon{inline-size:32px;block-size:32px}.statLabel{font-size:.78rem}.statValue{font-size:1.25rem}}
