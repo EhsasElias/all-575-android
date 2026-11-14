@@ -1,8 +1,6 @@
 import { useEffect, useMemo, useRef, useState } from 'react';
-import { Link } from 'react-router';
 import { useTranslation } from 'react-i18next';
 import { isApiError } from '@/shared/api';
-import { routePaths } from '@/shared/lib';
 import { Page } from './components/Page';
 import { PlatformAdminAssignments } from './PlatformAdminAssignments';
 import {
@@ -156,7 +154,6 @@ export function SuperAdminDashboardScreen() {
         <div className={styles.heading + ' admin-family-hero'}>
           <div className={styles.headingIcon} aria-hidden="true">♛</div>
           <div>
-            <Link className={styles.back} to={routePaths.account}>{tr('العودة للحساب', 'Back to account')}</Link>
             <h1>{tr('لوحة السوبر أدمن', 'Super Admin Dashboard')}</h1>
             <p>{tr('إدارة الحسابات والطلبات والمنتجات والصلاحيات من مكان واحد.', 'Manage platform accounts, orders, products, reviews and permissions in one place.')}</p>
           </div>
