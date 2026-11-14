@@ -45,3 +45,38 @@
 .review article button{min-block-size:41px;font-size:.85rem;border-radius:11px;padding:9px 15px;}
 .review article .expandedDetails{border-radius:14px;}
 @media(max-width:560px){.review>header{padding:16px;}.summary{grid-template-columns:repeat(2,minmax(0,1fr));}.summary>div{padding:13px;}.review .tabs button{padding:10px 8px;}}
+
+/* Consistent header/refresh toolbar across every approval tab. */
+.reviewToolbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 12px;
+  margin-block: 12px 14px;
+}
+.reviewToolbar h2 { margin: 0; min-inline-size: 0; }
+.review .reviewToolbar button {
+  display: inline-flex;
+  justify-content: center;
+  align-items: center;
+  gap: 8px;
+  min-block-size: 42px;
+  padding: 10px 16px;
+  border: 1px solid #22795c;
+  border-radius: 11px;
+  background: #22795c;
+  color: #fff;
+  font: inherit;
+  font-size: .88rem;
+  font-weight: 700;
+  cursor: pointer;
+}
+.review .reviewToolbar button:hover:not(:disabled) { background: #1b674f; border-color: #1b674f; }
+.review .reviewToolbar button:focus-visible { outline: 3px solid #77d8af; outline-offset: 3px; }
+.review .reviewToolbar button:disabled { opacity: .55; cursor: not-allowed; }
+@media (max-width: 560px) {
+  .reviewToolbar { align-items: stretch; }
+  .reviewToolbar h2 { flex: 1 1 100%; }
+  .review .reviewToolbar button { width: 100%; }
+}
