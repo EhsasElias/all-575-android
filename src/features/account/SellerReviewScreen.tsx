@@ -1,7 +1,6 @@
 import { useEffect, useMemo, useState } from 'react';
-import { Link, useSearchParams } from 'react-router';
+import { useSearchParams } from 'react-router';
 import { useTranslation } from 'react-i18next';
-import { routePaths } from '@/shared/lib';
 import { isApiError } from '@/shared/api';
 import { Page } from './components/Page';
 import { PageHeader } from './components/PageHeader';
@@ -377,7 +376,6 @@ export function SellerReviewScreen() {
           'للمراجعين المخولين فقط. تُسجل جميع القرارات للمراجعة اللاحقة.',
           'For authorized reviewers only. Decisions are audited.',
         )}
-        back={<Link to={routePaths.account}>{tr('العودة للحساب', 'Back to account')}</Link>}
       />
       {unauthorized ? (
         <p role="alert">
