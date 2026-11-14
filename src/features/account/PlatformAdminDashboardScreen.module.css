@@ -22,3 +22,16 @@
 
 .inventoryCheck{display:flex!important;flex-direction:row!important;align-items:center!important;gap:9px!important;min-block-size:42px;white-space:normal}
 .inventoryCheck input[type="checkbox"]{inline-size:17px!important;block-size:17px!important;min-block-size:17px!important;flex:none;accent-color:#22795c}
+
+.dashboard .metrics .metric,
+.dashboard .panel,
+.dashboard .hero {
+  background: var(--color-surface-mint,#edf4eb);
+  border-color: var(--color-border,#d3ddd0);
+  box-shadow: none;
+}
+.dashboard .metrics .metricAction:hover,
+.dashboard .metrics .metricAction[aria-pressed="true"] {
+  border-color:#22795c;
+  background:var(--color-surface-mint,#e2f2e6);
+}
