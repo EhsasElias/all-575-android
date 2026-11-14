@@ -20,6 +20,7 @@ export function CustomerDashboardScreen() {
   const { user } = useSession();
   const query = useCustomerDashboard();
   return (
+    <div className={styles.dashboardWorkspace}>
     <Page>
       <PageHeader
         title={t('dashboard.title')}
@@ -78,5 +79,6 @@ export function CustomerDashboardScreen() {
         </>
       )}
     </Page>
+    </div>
   );
 }
