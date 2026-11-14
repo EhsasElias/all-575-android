@@ -67,3 +67,78 @@
 .detailTools input{font-size:.9rem}
 @media(max-width:920px){.contentGrid{grid-template-columns:1fr}.sidebar{grid-template-columns:repeat(auto-fit,minmax(250px,1fr))}}
 @media(max-width:560px){.statGrid{grid-template-columns:repeat(2,minmax(0,1fr))}.statActions{gap:5px}.statActions button{font-size:.72rem;flex:1 1 42%;white-space:normal}.statIcon{inline-size:32px;block-size:32px}.statLabel{font-size:.78rem}.statValue{font-size:1.25rem}}
+
+/* Seller-style metric tiles: the card itself opens the detail report. */
+.metricButton {
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  justify-content: space-between;
+  inline-size: 100%;
+  min-inline-size: 0;
+  min-block-size: 124px;
+  text-align: start;
+  font: inherit;
+  color: var(--color-text, #17211b);
+  background: var(--color-surface, #fff);
+  border: 1px solid var(--color-border, #d3ddd0);
+  border-radius: 16px;
+  padding: 15px;
+  cursor: pointer;
+}
+.metricButton:hover {
+  border-color: #22795c;
+  box-shadow: 0 3px 14px rgba(34,121,92,.1);
+}
+.metricButton:focus-visible {
+  outline: 3px solid #77d8af;
+  outline-offset: 2px;
+}
+.metricButton[aria-pressed="true"] {
+  border-color: #22795c;
+  background: var(--color-surface-mint, #eef4ec);
+  box-shadow: inset 0 0 0 1px #22795c;
+}
+.statCopy {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  min-inline-size: 0;
+  gap: 3px;
+}
+.metricHint {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 8px;
+  padding-block-start: 10px;
+  border-block-start: 1px solid var(--color-border, #d3ddd0);
+  font-size: .74rem;
+  font-weight: 650;
+  color: #22795c;
+}
+.fullWidthDetails {
+  inline-size: 100%;
+  min-inline-size: 0;
+}
+.fullWidthDetails:empty {display:none}
+.fullWidthDetails .detailPanel {
+  inline-size: 100%;
+  margin-block: 22px 0;
+  box-sizing: border-box;
+}
+.fullWidthDetails .tableScroll {
+  width: 100%;
+  max-width: 100%;
+  overflow-x: auto;
+}
+.fullWidthDetails .dataTable {
+  width: 100%;
+  min-width: max-content;
+  font-size: .86rem;
+}
+@media(max-width:560px){
+  .metricButton {min-block-size:118px;padding:12px}
+  .metricHint {font-size:.7rem}
+  .fullWidthDetails .detailPanel {padding:12px}
+}
