@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { isApiError } from '@/shared/api';
 import { Page } from './components/Page';
-import { adminDashboard, adminOrders, type PlatformAdminDashboard, type PlatformAdminOrder, type AdminOrderFilters } from './platformAdminApi';
+import { adminDashboard, adminOrders, adminInventory, type PlatformAdminDashboard, type PlatformAdminOrder, type AdminOrderFilters, type AdminInventoryFilters, type AdminInventoryRecord } from './platformAdminApi';
 import styles from './PlatformAdminDashboardScreen.module.css';
 import './adminWorkspaceFamily.css';
 
@@ -21,6 +21,13 @@ export function PlatformAdminDashboardScreen() {
   const [error, setError] = useState('');
   const [ordersError, setOrdersError] = useState('');
   const [revision, setRevision] = useState(0);
+  const [inventoryOpen, setInventoryOpen] = useState(false);
+  const [inventoryDraft, setInventoryDraft] = useState({ q: '', seller_id: '', branch_id: '', low_stock_only: false });
+  const [inventoryFilters, setInventoryFilters] = useState<AdminInventoryFilters>({});
+  const [inventoryRows, setInventoryRows] = useState<AdminInventoryRecord[]>([]);
+  const [inventoryCursor, setInventoryCursor] = useState<number | null>(null);
+  const [inventoryBusy, setInventoryBusy] = useState(false);
+  const [inventoryError, setInventoryError] = useState('');
 
   useEffect(() => {
     let active = true;
@@ -49,6 +56,50 @@ export function PlatformAdminDashboardScreen() {
     return () => { active = false; };
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [revision, filters]);
+
+  useEffect(() => {
+    if (!inventoryOpen) return;
+    let active = true;
+    setInventoryBusy(true);
+    setInventoryError('');
+    void adminInventory({ limit: 50, ...inventoryFilters })
+      .then(result => {
+        if (active) {
+          setInventoryRows(result.data);
+          setInventoryCursor(result.data.length === 50 ? result.data.at(-1)?.id ?? null : null);
+        }
+      }).catch(() => {
+        if (active) { setInventoryRows([]); setInventoryError(tr('تعذر تحميل المخزون أو لا توجد صلاحية.', 'Unable to load inventory or access denied.')); }
+      }).finally(() => { if (active) setInventoryBusy(false); });
+    return () => { active = false; };
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [inventoryOpen, inventoryFilters, revision]);
+
+  const openInventory = (low: boolean) => {
+    setInventoryDraft({ q: '', seller_id: '', branch_id: '', low_stock_only: low });
+    setInventoryFilters({ ...(low ? { low_stock_only: true } : {}) });
+    setInventoryOpen(true);
+    window.requestAnimationFrame(() => document.getElementById('inventory-detail')?.scrollIntoView({ behavior: 'smooth' }));
+  };
+  const applyInventory = () => {
+    setInventoryFilters({
+      ...(inventoryDraft.q.trim() ? { q: inventoryDraft.q.trim() } : {}),
+      ...(inventoryDraft.seller_id ? { seller_id: Number(inventoryDraft.seller_id) } : {}),
+      ...(inventoryDraft.branch_id ? { branch_id: Number(inventoryDraft.branch_id) } : {}),
+      ...(inventoryDraft.low_stock_only ? { low_stock_only: true } : {}),
+    });
+  };
+  const loadMoreInventory = async () => {
+    if (!inventoryCursor || inventoryBusy) return;
+    setInventoryBusy(true);
+    try {
+      const reply = await adminInventory({ limit: 50, ...inventoryFilters, before_id: inventoryCursor });
+      setInventoryRows(previous => [...previous, ...reply.data.filter(row => !previous.some(item => item.id === row.id))]);
+      setInventoryCursor(reply.data.length === 50 ? reply.data.at(-1)?.id ?? null : null);
+    } catch {
+      setInventoryError(tr('تعذر تحميل المزيد من المخزون.', 'Unable to load more inventory.'));
+    } finally { setInventoryBusy(false); }
+  };
 
   const statuses: Record<string, string> = {
     awaiting_seller: tr('بانتظار البائع', 'Awaiting seller'),
@@ -184,10 +235,71 @@ export function PlatformAdminDashboardScreen() {
             <section id="inventory-overview" className={styles.panel}>
               <h2>{tr('نظرة على المخزون', 'Inventory overview')}</h2>
               <div className={styles.metrics}>
-                {metric(tr('سجلات المخزون', 'Stock records'), data.stock_records)}
-                {metric(tr('المخزون المنخفض (5 أو أقل)', 'Low stock (5 or less)'), data.low_stock_records)}
+                <button type="button" className={styles.metric + ' ' + styles.metricAction + ' admin-family-card'} onClick={() => openInventory(false)}>
+                  <span>{tr('سجلات المخزون', 'Stock records')}</span><strong>{number(data.stock_records)}</strong>
+                  <small>{tr('عرض التفاصيل', 'View details')} ↗</small>
+                </button>
+                <button type="button" className={styles.metric + ' ' + styles.metricAction + ' admin-family-card'} onClick={() => openInventory(true)}>
+                  <span>{tr('المخزون المنخفض (5 أو أقل)', 'Low stock (5 or less)')}</span><strong>{number(data.low_stock_records)}</strong>
+                  <small>{tr('عرض التفاصيل', 'View details')} ↗</small>
+                </button>
               </div>
             </section>
+            {inventoryOpen && (
+              <section id="inventory-detail" className={styles.panel + ' admin-family-panel'}>
+                <div className={styles.panelHeading}>
+                  <div><h2>{tr('تفاصيل المخزون', 'Inventory details')}</h2><p>{tr('فقط منتجات المتاجر المخولة لك.', 'Only stock belonging to assigned sellers.')}</p></div>
+                  <button type="button" className="admin-family-secondary" onClick={() => setInventoryOpen(false)}>{tr('إغلاق', 'Close')} ✕</button>
+                </div>
+                <form className={styles.filters + ' admin-family-filters'} onSubmit={event => { event.preventDefault(); applyInventory(); }}>
+                  <label>{tr('المنتج أو SKU', 'Product or SKU')}
+                    <input type="search" maxLength={100} value={inventoryDraft.q}
+                      onChange={event => setInventoryDraft(prev => ({...prev, q:event.target.value}))}/>
+                  </label>
+                  <label>{tr('رقم البائع', 'Seller ID')}
+                    <input type="number" min={1} value={inventoryDraft.seller_id}
+                      onChange={event => setInventoryDraft(prev => ({...prev, seller_id:event.target.value}))}/>
+                  </label>
+                  <label>{tr('رقم الفرع', 'Branch ID')}
+                    <input type="number" min={1} value={inventoryDraft.branch_id}
+                      onChange={event => setInventoryDraft(prev => ({...prev, branch_id:event.target.value}))}/>
+                  </label>
+                  <label className={styles.inventoryCheck}>
+                    <input type="checkbox" checked={inventoryDraft.low_stock_only}
+                      onChange={event => setInventoryDraft(prev => ({...prev, low_stock_only:event.target.checked}))}/>
+                    {tr('المخزون المنخفض فقط', 'Low stock only')}
+                  </label>
+                  <div className={styles.filterActions}>
+                    <button type="submit" className="admin-family-primary">{tr('تطبيق', 'Apply')}</button>
+                    <button type="button" className="admin-family-secondary" onClick={() => {
+                      setInventoryDraft({ q: '', seller_id: '', branch_id: '', low_stock_only: false });
+                      setInventoryFilters({});
+                    }}>{tr('مسح', 'Clear')}</button>
+                  </div>
+                </form>
+                {inventoryBusy && <p role="status">{tr('جارٍ تحميل المخزون...', 'Loading inventory...')}</p>}
+                {inventoryError && <p role="alert">{inventoryError}</p>}
+                <div className={styles.tableScroll + ' admin-family-table'}>
+                  <table>
+                    <thead><tr>
+                      <th>{tr('المنتج', 'Product')}</th><th>SKU</th>
+                      <th>{tr('البائع', 'Seller')}</th><th>{tr('الفرع', 'Branch')}</th>
+                      <th>{tr('الفعلي', 'On hand')}</th><th>{tr('المحجوز', 'Reserved')}</th>
+                      <th>{tr('المتاح', 'Available')}</th>
+                    </tr></thead>
+                    <tbody>{inventoryRows.map(row => <tr key={row.id}>
+                      <td>{ar ? row.name_ar : row.name_en}</td><td>{row.sku}</td>
+                      <td>#{row.seller_id}</td><td>#{row.branch_id}</td>
+                      <td>{number(row.on_hand)}</td><td>{number(row.reserved)}</td>
+                      <td>{number(row.on_hand - row.reserved)}</td>
+                    </tr>)}</tbody>
+                  </table>
+                </div>
+                {!inventoryBusy && inventoryRows.length === 0 && !inventoryError && <p>{tr('لا توجد سجلات.', 'No records found.')}</p>}
+                {inventoryCursor && <button type="button" className="admin-family-secondary" disabled={inventoryBusy}
+                  onClick={() => void loadMoreInventory()}>{tr('تحميل المزيد', 'Load more')}</button>}
+              </section>
+            )}
             <p className={styles.updated}>{tr('آخر تحديث:', 'Updated:')} {new Date(data.generated_at).toLocaleString(ar ? 'ar-SA' : 'en-US')}</p>
           </>
         )}
