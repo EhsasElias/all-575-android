@@ -51,5 +51,7 @@ export type PlatformAdminOrder = {
   ready_at: string | null; picked_up_at: string | null;
 };
 
-export const adminOrders = (filters: { limit?: number; status?: string; before_id?: string } = {}) =>
+export type AdminOrderFilters = { limit?: number; status?: string; before_id?: string; from?: string; to?: string; seller_id?: number; branch_id?: number; q?: string };
+
+export const adminOrders = (filters: AdminOrderFilters = {}) =>
   http.get<{ data: PlatformAdminOrder[] }>('/platform/admin/orders', { query: filters });
