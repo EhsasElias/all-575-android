@@ -1,5 +1,6 @@
 import { Outlet, useLocation } from 'react-router';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { useTranslation } from 'react-i18next';
 import { AccountSidebar } from './AccountSidebar';
 import { routePaths } from '@/shared/lib';
@@ -16,7 +17,9 @@ export function ShellLayout() {
   const { i18n } = useTranslation();
   const ar = i18n.language.startsWith('ar');
   const { status } = useSession();
-  const { pathname } = useLocation();
+  const { pathname, search } = useLocation();
+  const { i18n } = useTranslation();
+  const ar = i18n.language.startsWith('ar');
   const accountRoute = status === 'signed-in' && (pathname === routePaths.account || pathname.startsWith('/account/') || pathname === routePaths.orders || pathname.startsWith('/orders/'));
   const [sidebarOpen, setSidebarOpen] = useState(false);
 
@@ -27,7 +30,7 @@ export function ShellLayout() {
       {accountRoute ? (
         <div className={styles.accountShell}>
           <button type="button" className={styles.sidebarToggle} aria-expanded={sidebarOpen}
-            aria-controls="account-navigation" onClick={() => setSidebarOpen(open => !open)}>
+            aria-controls="account-navigation" aria-label={ar ? 'قائمة الحساب' : 'Account menu'} onClick={() => setSidebarOpen(open => !open)}>
             {sidebarOpen ? '✕' : '☰'} {sidebarOpen ? (ar ? 'إغلاق قائمة الحساب' : 'Close account menu') : (ar ? 'قائمة الحساب' : 'Account menu')}
           </button>
           <div id="account-navigation" className={sidebarOpen ? styles.sidebarArea + ' ' + styles.sidebarOpen : styles.sidebarArea}>
