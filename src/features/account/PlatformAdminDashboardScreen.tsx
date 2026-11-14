@@ -6,6 +6,7 @@ import { routePaths } from '@/shared/lib';
 import { Page } from './components/Page';
 import { adminDashboard, adminOrders, type PlatformAdminDashboard, type PlatformAdminOrder } from './platformAdminApi';
 import styles from './PlatformAdminDashboardScreen.module.css';
+import './adminWorkspaceFamily.css';
 
 export function PlatformAdminDashboardScreen() {
   const { i18n } = useTranslation();
@@ -64,21 +65,21 @@ export function PlatformAdminDashboardScreen() {
   ), [orders, query]);
   const number = (value: number) => value.toLocaleString(ar ? 'ar-SA' : 'en-US');
   const metric = (label: string, value: number) => (
-    <div className={styles.metric} key={label}>
+    <div className={styles.metric + ' admin-family-card'} key={label}>
       <span>{label}</span><strong>{number(value)}</strong>
     </div>
   );
 
   return (
     <Page>
-      <div className={styles.dashboard} dir={ar ? 'rtl' : 'ltr'}>
-        <header className={styles.hero}>
+      <div className={styles.dashboard + ' admin-workspace-family'} dir={ar ? 'rtl' : 'ltr'}>
+        <header className={styles.hero + ' admin-family-hero'}>
           <div>
             <Link to={routePaths.account}>{tr('العودة للحساب', 'Back to account')}</Link>
             <h1>{tr('لوحة الإدارة', 'Admin Dashboard')}</h1>
             <p>{tr('إدارة طلبات المتاجر المسندة إليك ومتابعة مخزونها.', 'Monitor orders and stock across your assigned sellers.')}</p>
           </div>
-          <button type="button" className={styles.refresh} onClick={() => setRevision(x => x + 1)}>↻ {tr('تحديث', 'Refresh')}</button>
+          <button type="button" className={styles.refresh + ' admin-family-primary'} onClick={() => setRevision(x => x + 1)}>↻ {tr('تحديث', 'Refresh')}</button>
         </header>
         {loading && <p role="status">{tr('جار التحميل...', 'Loading...')}</p>}
         {!loading && denied && <p role="alert">{tr('لا توجد لديك صلاحية إدارة نشطة.', 'No active Admin access for this account.')}</p>}
@@ -86,7 +87,7 @@ export function PlatformAdminDashboardScreen() {
         {!loading && data && (
           <>
             <h2>{tr('نظرة عامة', 'Operations overview')}</h2>
-            <div className={styles.metrics}>
+            <div className={styles.metrics + ' admin-family-metrics'}>
               {metric(tr('المتاجر المسندة', 'Assigned sellers'), data.assigned_sellers)}
               {metric(tr('الطلبات', 'Seller orders'), data.suborders)}
               {metric(tr('بانتظار التجهيز', 'Awaiting preparation'), data.suborder_statuses.awaiting_seller ?? 0)}
@@ -95,10 +96,10 @@ export function PlatformAdminDashboardScreen() {
               {metric(tr('في الطريق', 'On the way'), data.suborder_statuses.on_the_way ?? 0)}
               {metric(tr('تم التسليم', 'Delivered'), data.suborder_statuses.delivered ?? 0)}
             </div>
-            <section className={styles.panel}>
+            <section className={styles.panel + ' admin-family-panel'}>
               <div className={styles.panelHeading}>
                 <div><h2>{tr('متابعة الطلبات', 'Order monitoring')}</h2><p>{tr('سجلات المتاجر ضمن صلاحياتك فقط.', 'Only orders within your assigned permissions.')}</p></div>
-                <div className={styles.filters}>
+                <div className={styles.filters + ' admin-family-filters'}>
                   <label>{tr('الحالة', 'Status')}
                     <select value={statusFilter} onChange={e => setStatusFilter(e.target.value)}>
                       <option value="all">{tr('الكل', 'All')}</option>
@@ -111,7 +112,7 @@ export function PlatformAdminDashboardScreen() {
                 </div>
               </div>
               {ordersError && <p role="alert">{ordersError}</p>}
-              <div className={styles.tableScroll}>
+              <div className={styles.tableScroll + ' admin-family-table'}>
                 <table>
                   <thead><tr><th>{tr('رقم الطلب', 'Order')}</th><th>{tr('البائع', 'Seller')}</th><th>{tr('الفرع', 'Branch')}</th><th>{tr('الحالة', 'Status')}</th><th>{tr('تاريخ الطلب', 'Date')}</th></tr></thead>
                   <tbody>{filteredOrders.map(order => <tr key={order.id}>
