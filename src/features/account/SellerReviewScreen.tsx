@@ -81,6 +81,7 @@ export function SellerReviewScreen() {
 
   const [selected, setSelected] = useState<number | null>(null);
   const [documents, setDocuments] = useState<SellerReviewDocument[]>([]);
+  const [selectedApplication, setSelectedApplication] = useState<SellerReviewApplication | null>(null);
   const [reason, setReason] = useState('');
   const [busy, setBusy] = useState(false);
   const [loading, setLoading] = useState(true);
@@ -236,6 +237,7 @@ export function SellerReviewScreen() {
     if (selected === id) {
       setSelected(null);
       setDocuments([]);
+      setSelectedApplication(null);
       return;
     }
     setBusy(true);
@@ -245,6 +247,7 @@ export function SellerReviewScreen() {
       const reply = await reviewSellerApplication(id);
       setSelected(id);
       setDocuments(reply.data.documents);
+      setSelectedApplication(reply.data.application);
     } catch {
       setError(tr('تعذر جلب تفاصيل طلب البائع.', 'Unable to load application details.'));
     } finally {
@@ -265,6 +268,7 @@ export function SellerReviewScreen() {
       await decideSellerApplication(applicationId, decision, reason);
       setSelected(null);
       setDocuments([]);
+      setSelectedApplication(null);
       setReason('');
       setRevision((v) => v + 1);
       setNotice(tr('تم تسجيل القرار بنجاح.', 'Review decision recorded.'));
@@ -471,6 +475,7 @@ export function SellerReviewScreen() {
           )}
           {notice && <p role="status">{notice}</p>}
           {loading && <p role="status">{tr('جار التحميل…', 'Loading…')}</p>}
+          {!loading && <p className={styles.resultCount}>{tr('النتائج المعروضة', 'Displayed results')}: {tab === 'applications' ? shownApplications.length : tab === 'branches' ? shownBranches.length : tab === 'products' ? shownProducts.length : shownRequests.length}</p>}
           {!loading && tab === 'applications' && (
             <>
               {shownApplications.length === 0 && (
@@ -478,21 +483,26 @@ export function SellerReviewScreen() {
               )}
               {shownApplications.map((item) => (
                 <article key={item.id} style={panel}>
-                  <h3>{item.legal_name}</h3>
+                  <div className={styles.itemHeading}><h3>{item.legal_name}</h3><span className={styles.statusBadge}>{statusLabels[item.status] ?? item.status}</span></div>
                   <p>
                     {tr('السجل', 'CR')}: {item.commercial_registration} · {tr('المدينة', 'City')}:{' '}
                     {item.city}
                   </p>
-                  <p>
-                    {tr('الحالة', 'Status')}: {statusLabels[item.status] ?? item.status}
-                  </p>
+                  <p>{tr('تاريخ التقديم', 'Submitted')}: {displayDate(item.submitted_at)} · {tr('رقم الطلب', 'Application')} #{item.id}</p>
                   <button type="button" disabled={busy} onClick={() => void inspect(item.id)}>
                     {selected === item.id
                       ? tr('إغلاق التفاصيل', 'Close details')
                       : tr('مراجعة المستندات', 'Review documents')}
                   </button>
                   {selected === item.id && (
-                    <div style={{ marginTop: 12 }}>
+                    <div className={styles.expandedDetails}>
+                      <h4>{tr('تفاصيل الطلب', 'Application details')}</h4>
+                      <dl className={styles.detailGrid}>
+                        <div><dt>{tr('الاسم القانوني', 'Legal name')}</dt><dd>{selectedApplication?.legal_name || '—'}</dd></div>
+                        <div><dt>{tr('المسؤول', 'Contact person')}</dt><dd>{selectedApplication?.contact_name || '—'}</dd></div>
+                        <div><dt>{tr('السجل التجاري', 'Commercial registration')}</dt><dd>{selectedApplication?.commercial_registration || '—'}</dd></div>
+                        <div><dt>{tr('المدينة', 'City')}</dt><dd>{selectedApplication?.city || '—'}</dd></div>
+                      </dl>
                       <h4>{tr('المستندات', 'Documents')}</h4>
                       {documents.length === 0 && (
                         <p>{tr('لم تُرفع مستندات.', 'No documents uploaded.')}</p>
@@ -523,7 +533,7 @@ export function SellerReviewScreen() {
                           onChange={(event) => setReason(event.target.value)}
                         />
                       </label>
-                      <div style={{ ...fields, marginTop: 10 }}>
+                      {item.status === 'submitted' && <div style={{ ...fields, marginTop: 10 }}>
                         <button
                           type="button"
                           disabled={busy}
@@ -545,7 +555,8 @@ export function SellerReviewScreen() {
                         >
                           {tr('رفض الطلب', 'Reject')}
                         </button>
-                      </div>
+                      </div>}
+                      {item.status !== 'submitted' && <p>{tr('تمت معالجة هذا الطلب؛ الإجراءات متاحة للطلبات المرسلة فقط.', 'This application has already been reviewed; decisions are available only for submitted requests.')}</p>}
                     </div>
                   )}
                 </article>
@@ -559,7 +570,7 @@ export function SellerReviewScreen() {
               )}
               {shownBranches.map((branch) => (
                 <article key={branch.id} style={panel}>
-                  <h3>{ar ? branch.name_ar : branch.name_en}</h3>
+                  <div className={styles.itemHeading}><h3>{ar ? branch.name_ar : branch.name_en}</h3><span className={styles.statusBadge}>{tr('بانتظار التفعيل', 'Awaiting activation')}</span></div>
                   <p>
                     {tr('المتجر', 'Store')} #{branch.seller_id} · {tr('رمز الفرع', 'Code')}:{' '}
                     {branch.code}
@@ -568,6 +579,7 @@ export function SellerReviewScreen() {
                     {tr('المنطقة', 'Zone')} #{branch.service_zone_id} ·{' '}
                     {tr('الموقع', 'Coordinates')}: {branch.lat}, {branch.lng}
                   </p>
+                  <p>{tr('تاريخ الإنشاء', 'Created')}: {displayDate(branch.created_at)}</p>
                   <button
                     type="button"
                     disabled={busy}
@@ -586,11 +598,12 @@ export function SellerReviewScreen() {
               )}
               {shownProducts.map((item) => (
                 <article key={item.id} style={panel}>
-                  <h3>{ar ? item.name_ar : item.name_en}</h3>
+                  <div className={styles.itemHeading}><h3>{ar ? item.name_ar : item.name_en}</h3><span className={styles.statusBadge}>{tr('بانتظار المراجعة', 'Pending review')}</span></div>
                   <p>
                     {tr('البائع', 'Seller')} #{item.seller_id} · {tr('السعر', 'Price')}:{' '}
                     {(item.price_halalas / 100).toFixed(2)} SAR
                   </p>
+                  <p>{tr('التصنيف', 'Category')} #{item.category_id} · {tr('تاريخ الإرسال', 'Submitted')}: {displayDate(item.created_at)}</p>
                   <p>
                     {item.image_path
                       ? tr('صورة الغلاف موجودة', 'Cover image attached')
@@ -713,16 +726,17 @@ export function SellerReviewScreen() {
                   && <p>{tr('لا توجد طلبات معلقة.', 'No pending requests.')}</p>}
                 {shownRequests.map((item) => (
                   <div key={item.id} style={{ ...panel, marginTop: 8 }}>
-                    <strong>{ar ? item.name_ar : item.name_en}</strong>
+                    <div className={styles.itemHeading}><strong>{ar ? item.name_ar : item.name_en}</strong><span className={styles.statusBadge}>{statusLabels[item.status] ?? item.status}</span></div>
                     <p>{tr('المتجر', 'Store')} #{item.seller_id} · {item.parent_id === null
                       ? tr('تصنيف رئيسي', 'Parent category') : tr('تصنيف فرعي', 'Subcategory')} ·
                       {item.reason ?? ''}</p>
+                    <p>{tr('تاريخ الطلب', 'Requested')}: {displayDate(item.created_at)}</p>
                     <label style={{ display: 'grid', gap: 4 }}>
                       {tr('ملاحظة / سبب الرفض', 'Review note / rejection reason')}
                       <textarea rows={2} maxLength={1000} value={categoryReviewNotes[item.id] ?? ''}
                         onChange={(event) => setCategoryReviewNotes((old) => ({ ...old, [item.id]: event.target.value }))}/>
                     </label>
-                    <div style={{ ...fields, marginTop: 8 }}>
+                    {item.status === 'pending' && <div style={{ ...fields, marginTop: 8 }}>
                       <button type="button" disabled={busy} onClick={() => void categoryRequestDecision(item.id, 'approve')}>
                         {tr('اعتماد وإضافة التصنيف', 'Approve & create category')}
                       </button>
@@ -730,10 +744,25 @@ export function SellerReviewScreen() {
                         onClick={() => void categoryRequestDecision(item.id, 'reject')}>
                         {tr('رفض الطلب', 'Reject')}
                       </button>
-                    </div>
+                    </div>}
                   </div>
                 ))}
               </article>
+            </section>
+          )}
+          {overview && overview.recent_decisions.length > 0 && (
+            <section className={styles.audit}>
+              <h2>{tr('آخر قرارات المراجعة', 'Recent review decisions')}</h2>
+              <div className={styles.auditItems}>
+                {overview.recent_decisions.map(entry => (
+                  <div key={entry.id} className={styles.auditRow}>
+                    <div><strong>{entry.subject_type} #{entry.subject_id}</strong>
+                      <span>{entry.previous_status} → {entry.new_status}</span>
+                    </div>
+                    <time>{displayDate(entry.created_at)}</time>
+                  </div>
+                ))}
+              </div>
             </section>
           )}
         </>
