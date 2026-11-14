@@ -12,7 +12,7 @@ export function ShellLayout() {
   const cartCount = useCartItemCount();
   const { status } = useSession();
   const { pathname } = useLocation();
-  const wideAdmin = pathname === routePaths.superAdminDashboard || pathname === routePaths.platformAdminDashboard;
+  const wideAdmin = pathname === routePaths.superAdminDashboard || pathname === routePaths.platformAdminDashboard || pathname === routePaths.sellerReview;
 
   return (
     <div className={styles.shell}>
