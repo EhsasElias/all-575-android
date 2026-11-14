@@ -182,3 +182,41 @@
 .dashboard .toolbar { margin-block-end: 22px; row-gap: 14px; }
 .dashboard .toolbar button { min-block-size: 42px; }
 @media (max-width: 560px) { .dashboard .toolbar button { width: 100%; } }
+
+
+/* Account-management controls in the Super Admin statistics detail table. */
+.accountEditor {
+  display: flex;
+  align-items: end;
+  flex-wrap: wrap;
+  gap: 10px;
+  padding: 16px;
+  margin-block: 16px;
+  background: var(--color-surface-mint, #edf4eb);
+  border: 1px solid var(--color-border, #d3ddd0);
+  border-radius: 12px;
+}
+.accountEditor label { display: grid; gap: 6px; flex: 1 1 230px; min-inline-size: 0; }
+.accountEditor input {
+  min-block-size: 42px;
+  padding: 9px 12px;
+  border: 1px solid var(--color-border, #d3ddd0);
+  border-radius: 10px;
+  background: var(--color-surface, #fff);
+  color: var(--color-text, #17211b);
+  font: inherit;
+}
+.accountEditor button {
+  min-block-size: 42px;
+  padding: 9px 16px;
+  border: 1px solid #22795c;
+  border-radius: 10px;
+  background: #22795c;
+  color: #fff;
+  font: inherit;
+  font-weight: 700;
+  cursor: pointer;
+}
+.accountEditor button[type='button'] { background: var(--color-surface, #fff); color: #22795c; }
+.accountEditor button:disabled { opacity: .5; cursor: not-allowed; }
+.fullWidthDetails .inlineActions button { white-space: nowrap; }
