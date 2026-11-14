@@ -1,8 +1,6 @@
 import { useEffect, useMemo, useState } from 'react';
-import { Link } from 'react-router';
 import { useTranslation } from 'react-i18next';
 import { isApiError } from '@/shared/api';
-import { routePaths } from '@/shared/lib';
 import { Page } from './components/Page';
 import { adminDashboard, adminOrders, type PlatformAdminDashboard, type PlatformAdminOrder } from './platformAdminApi';
 import styles from './PlatformAdminDashboardScreen.module.css';
@@ -75,7 +73,6 @@ export function PlatformAdminDashboardScreen() {
       <div className={styles.dashboard + ' admin-workspace-family'} dir={ar ? 'rtl' : 'ltr'}>
         <header className={styles.hero + ' admin-family-hero'}>
           <div>
-            <Link to={routePaths.account}>{tr('العودة للحساب', 'Back to account')}</Link>
             <h1>{tr('لوحة الإدارة', 'Admin Dashboard')}</h1>
             <p>{tr('إدارة طلبات المتاجر المسندة إليك ومتابعة مخزونها.', 'Monitor orders and stock across your assigned sellers.')}</p>
           </div>
@@ -96,7 +93,7 @@ export function PlatformAdminDashboardScreen() {
               {metric(tr('في الطريق', 'On the way'), data.suborder_statuses.on_the_way ?? 0)}
               {metric(tr('تم التسليم', 'Delivered'), data.suborder_statuses.delivered ?? 0)}
             </div>
-            <section className={styles.panel + ' admin-family-panel'}>
+            <section id="order-monitoring" className={styles.panel + ' admin-family-panel'}>
               <div className={styles.panelHeading}>
                 <div><h2>{tr('متابعة الطلبات', 'Order monitoring')}</h2><p>{tr('سجلات المتاجر ضمن صلاحياتك فقط.', 'Only orders within your assigned permissions.')}</p></div>
                 <div className={styles.filters + ' admin-family-filters'}>
