@@ -17,3 +17,25 @@ export type SuperAdminDashboard = {
 
 export const superAdminDashboard = () =>
   http.get<{ data: SuperAdminDashboard }>('/platform/super-admin/dashboard');
+
+export type SuperAdminMetricKey =
+  | 'customers' | 'sellers' | 'active_sellers' | 'products' | 'published_products'
+  | 'orders' | 'paid_order_value' | 'paid_orders' | 'awaiting_payment'
+  | 'confirmed_orders' | 'completed_orders' | 'ready_for_delivery'
+  | 'pending_seller_applications' | 'pending_product_reviews';
+
+export type SuperAdminMetricPage = {
+  data: Record<string, string | number | boolean | null>[];
+  columns: string[];
+  total: number;
+  page: number;
+  last_page: number;
+};
+
+export const superAdminMetric = (metric: SuperAdminMetricKey, page = 1) =>
+  http.get<SuperAdminMetricPage>('/platform/super-admin/metrics/' + metric, {
+    query: { page, per_page: 15 },
+  });
+
+export const exportSuperAdminMetric = (metric: SuperAdminMetricKey, format: 'csv' | 'xls') =>
+  http.download('/platform/super-admin/metrics/' + metric + '/export/' + format);
