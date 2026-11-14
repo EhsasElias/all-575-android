@@ -1,5 +1,6 @@
 import { Outlet, useLocation } from 'react-router';
 import { useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { AccountSidebar } from './AccountSidebar';
 import { routePaths } from '@/shared/lib';
 import { GuestCartMerger, useCartItemCount } from '@/features/cart';
@@ -12,11 +13,12 @@ import styles from './ShellLayout.module.css';
 
 export function ShellLayout() {
   const cartCount = useCartItemCount();
+  const { i18n } = useTranslation();
+  const ar = i18n.language.startsWith('ar');
   const { status } = useSession();
   const { pathname } = useLocation();
   const accountRoute = status === 'signed-in' && (pathname === routePaths.account || pathname.startsWith('/account/') || pathname === routePaths.orders || pathname.startsWith('/orders/'));
   const [sidebarOpen, setSidebarOpen] = useState(false);
-  const wideAdmin = accountRoute;
 
   return (
     <div className={styles.shell}>
@@ -26,7 +28,7 @@ export function ShellLayout() {
         <div className={styles.accountShell}>
           <button type="button" className={styles.sidebarToggle} aria-expanded={sidebarOpen}
             aria-controls="account-navigation" onClick={() => setSidebarOpen(open => !open)}>
-            {sidebarOpen ? '✕' : '☰'} {sidebarOpen ? 'Close account menu' : 'Account menu'}
+            {sidebarOpen ? '✕' : '☰'} {sidebarOpen ? (ar ? 'إغلاق قائمة الحساب' : 'Close account menu') : (ar ? 'قائمة الحساب' : 'Account menu')}
           </button>
           <div id="account-navigation" className={sidebarOpen ? styles.sidebarArea + ' ' + styles.sidebarOpen : styles.sidebarArea}>
             <AccountSidebar onNavigate={() => setSidebarOpen(false)} />
@@ -36,7 +38,7 @@ export function ShellLayout() {
           </main>
         </div>
       ) : (
-        <main id={MAIN_CONTENT_ID} tabIndex={-1} className={wideAdmin ? styles.main + ' ' + styles.mainWide : styles.main}>
+        <main id={MAIN_CONTENT_ID} tabIndex={-1} className={styles.main}>
           <Outlet />
         </main>
       )}
