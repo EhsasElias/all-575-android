@@ -25,3 +25,49 @@
 .mainWide {
   max-inline-size: min(100%, 1500px);
 }
+
+/* Persistent desktop account sidebar; mobile uses an accessible disclosure. */
+.accountShell {
+  display: grid;
+  grid-template-columns: 245px minmax(0, 1fr);
+  align-items: start;
+  gap: 22px;
+  width: min(100% - 32px, 1550px);
+  margin-inline: auto;
+  min-width: 0;
+  flex: 1;
+  padding-block-start: 20px;
+}
+.sidebarArea {
+  min-width: 0;
+  position: sticky;
+  top: 20px;
+  align-self: start;
+}
+.accountMain {
+  max-inline-size: none;
+  padding-inline: 0;
+  padding-block-start: 0;
+  min-inline-size: 0;
+}
+.sidebarToggle {display: none;}
+@media(max-width:850px) {
+  .accountShell {display: flex; flex-direction: column; gap: 10px; width: min(100% - 22px, 760px);}
+  .sidebarToggle {
+    display: block;
+    width: 100%;
+    min-height: 43px;
+    padding: 10px 14px;
+    text-align: start;
+    background: var(--color-surface-mint, #eef4ec);
+    color: var(--color-text, #17211b);
+    border: 1px solid var(--color-border, #d3ddd0);
+    border-radius: 12px;
+    font: inherit;
+    font-weight: 700;
+    cursor: pointer;
+  }
+  .sidebarArea {display: none; position: static; width: 100%;}
+  .sidebarArea.sidebarOpen {display: block;}
+  .accountMain {width: 100%; padding-inline: 0;}
+}
