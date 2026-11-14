@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 import { Link } from 'react-router';
 import { useTranslation } from 'react-i18next';
 import { isApiError } from '@/shared/api';
@@ -42,6 +42,7 @@ export function SuperAdminDashboardScreen() {
   const [detailsError, setDetailsError] = useState('');
   const [exporting, setExporting] = useState<string | null>(null);
   const [search, setSearch] = useState('');
+  const detailSectionRef = useRef<HTMLDivElement | null>(null);
 
   useEffect(() => {
     let active = true;
@@ -103,6 +104,12 @@ export function SuperAdminDashboardScreen() {
     setDetailsPage(1);
     setSelected(key);
   };
+
+  useEffect(() => {
+    if (selected && typeof detailSectionRef.current?.scrollIntoView === 'function') {
+      detailSectionRef.current.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }
+  }, [selected]);
 
   const downloadMetric = async (key: SuperAdminMetricKey, format: DownloadFormat) => {
     const action = key + format;
@@ -189,7 +196,7 @@ export function SuperAdminDashboardScreen() {
                 </section>
               </aside>
             </div>
-            <div className={styles.fullWidthDetails}>
+            <div ref={detailSectionRef} className={styles.fullWidthDetails}>
                 {selected && (
                   <section className={styles.detailPanel + ' admin-family-panel'} aria-label={selectedMetric?.label} aria-live="polite">
                     <div className={styles.sectionHeader}>
