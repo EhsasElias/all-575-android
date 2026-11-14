@@ -28,6 +28,11 @@ export type PlatformAdminDashboard = {
 export const adminDashboard = () =>
   http.get<{ data: PlatformAdminDashboard }>('/platform/admin/dashboard');
 
+export type AdminSellerChoice = { id: number; name_ar: string; name_en: string; status: string };
+
+export const adminSellerChoices = () =>
+  http.get<{ data: AdminSellerChoice[] }>('/platform/super-admin/sellers');
+
 export const adminAssignments = () =>
   http.get<{ data: PlatformAdminAccess[] }>('/platform/super-admin/admins');
 
