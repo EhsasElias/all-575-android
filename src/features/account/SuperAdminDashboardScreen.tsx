@@ -1,36 +1,46 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { Link } from 'react-router';
 import { useTranslation } from 'react-i18next';
 import { isApiError } from '@/shared/api';
 import { routePaths } from '@/shared/lib';
 import { Page } from './components/Page';
-import { PageHeader } from './components/PageHeader';
-import { superAdminDashboard, type SuperAdminDashboard } from './superAdminApi';
 import { PlatformAdminAssignments } from './PlatformAdminAssignments';
+import {
+  exportSuperAdminMetric, superAdminDashboard, superAdminMetric,
+  type SuperAdminDashboard, type SuperAdminMetricKey, type SuperAdminMetricPage,
+} from './superAdminApi';
+import styles from './SuperAdminDashboardScreen.module.css';
 
-const card: React.CSSProperties = {
-  padding: 18,
-  background: 'var(--color-surface, #16241e)',
-  border: '1px solid var(--color-border, #d8e1db)',
-  borderRadius: 14,
-  minWidth: 155,
-};
-const grid: React.CSSProperties = {
-  display: 'grid',
-  gridTemplateColumns: 'repeat(auto-fit, minmax(155px, 1fr))',
-  gap: 12,
-  marginBottom: 20,
-};
+type Metric = { key: SuperAdminMetricKey; label: string; value: string; icon: string };
+type DownloadFormat = 'csv' | 'xls';
+
+function saveFile(blob: Blob, filename: string) {
+  const url = URL.createObjectURL(blob);
+  const link = document.createElement('a');
+  link.href = url;
+  link.download = filename;
+  document.body.append(link);
+  link.click();
+  link.remove();
+  window.setTimeout(() => URL.revokeObjectURL(url), 1000);
+}
 
 export function SuperAdminDashboardScreen() {
   const { i18n } = useTranslation();
   const ar = i18n.language.startsWith('ar');
-  const tr = (arabic: string, english: string) => (ar ? arabic : english);
+  const tr = (arabic: string, english: string) => ar ? arabic : english;
   const [data, setData] = useState<SuperAdminDashboard | null>(null);
   const [loading, setLoading] = useState(true);
   const [unauthorized, setUnauthorized] = useState(false);
   const [error, setError] = useState('');
   const [revision, setRevision] = useState(0);
+  const [selected, setSelected] = useState<SuperAdminMetricKey | null>(null);
+  const [details, setDetails] = useState<SuperAdminMetricPage | null>(null);
+  const [detailsPage, setDetailsPage] = useState(1);
+  const [detailsLoading, setDetailsLoading] = useState(false);
+  const [detailsError, setDetailsError] = useState('');
+  const [exporting, setExporting] = useState<string | null>(null);
+  const [search, setSearch] = useState('');
 
   useEffect(() => {
     let active = true;
@@ -38,88 +48,191 @@ export function SuperAdminDashboardScreen() {
     setError('');
     setUnauthorized(false);
     void superAdminDashboard()
-      .then((response) => { if (active) setData(response.data); })
+      .then(response => { if (active) setData(response.data); })
       .catch((cause: unknown) => {
         if (!active) return;
         setData(null);
-        if (isApiError(cause) && (cause.status === 401 || cause.status === 403)) {
-          setUnauthorized(true);
-        } else {
-          setError(tr('تعذر تحميل لوحة التحكم. حاول مرة أخرى.', 'Unable to load dashboard. Please retry.'));
-        }
+        if (isApiError(cause) && (cause.status === 401 || cause.status === 403)) setUnauthorized(true);
+        else setError(tr('تعذر تحميل لوحة التحكم. حاول مرة أخرى.', 'Unable to load dashboard. Please retry.'));
       })
       .finally(() => { if (active) setLoading(false); });
     return () => { active = false; };
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [revision]);
 
+  useEffect(() => {
+    if (!selected) return;
+    let active = true;
+    setDetails(null);
+    setDetailsError('');
+    setDetailsLoading(true);
+    void superAdminMetric(selected, detailsPage)
+      .then(response => { if (active) setDetails(response); })
+      .catch(() => {
+        if (active) setDetailsError(tr('تعذر تحميل التفاصيل.', 'Unable to load details.'));
+      })
+      .finally(() => { if (active) setDetailsLoading(false); });
+    return () => { active = false; };
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [selected, detailsPage, revision]);
+
   const number = (value: number) => value.toLocaleString(ar ? 'ar-SA' : 'en-US');
-  const money = (value: number) => (value / 100).toLocaleString(ar ? 'ar-SA' : 'en-US', {
-    style: 'currency', currency: 'SAR',
-  });
-  const metric = (label: string, value: string) => (
-    <div style={card} key={label}>
-      <div style={{ fontSize: 13, opacity: 0.8, marginBottom: 10 }}>{label}</div>
-      <strong style={{ fontSize: 25 }}>{value}</strong>
-    </div>
+  const money = (value: number) => (value / 100).toLocaleString(ar ? 'ar-SA' : 'en-US', { style: 'currency', currency: 'SAR' });
+  const metrics = useMemo<Metric[]>(() => data ? [
+    { key: 'customers', label: tr('إجمالي الحسابات', 'Total accounts'), value: number(data.customers), icon: '♙' },
+    { key: 'sellers', label: tr('البائعون', 'Sellers'), value: number(data.sellers), icon: '▤' },
+    { key: 'active_sellers', label: tr('البائعون المعتمدون', 'Approved sellers'), value: number(data.active_sellers), icon: '✓' },
+    { key: 'products', label: tr('المنتجات', 'Products'), value: number(data.products), icon: '◇' },
+    { key: 'published_products', label: tr('المنتجات المنشورة', 'Published products'), value: number(data.published_products), icon: '▧' },
+    { key: 'orders', label: tr('الطلبات', 'Orders'), value: number(data.orders), icon: '▣' },
+    { key: 'paid_order_value', label: tr('قيمة الطلبات المدفوعة', 'Paid order value'), value: money(data.sales.paid_total_halalas), icon: '﷼' },
+    { key: 'paid_orders', label: tr('الطلبات المدفوعة', 'Paid orders'), value: number(data.sales.paid_orders), icon: '✓' },
+    { key: 'awaiting_payment', label: tr('بانتظار الدفع', 'Awaiting payment'), value: number(data.order_statuses.pending_payment ?? 0), icon: '◷' },
+    { key: 'confirmed_orders', label: tr('الطلبات المؤكدة', 'Confirmed orders'), value: number(data.order_statuses.confirmed ?? 0), icon: '✓' },
+    { key: 'completed_orders', label: tr('الطلبات المكتملة', 'Completed orders'), value: number(data.order_statuses.completed ?? 0), icon: '✓' },
+    { key: 'ready_for_delivery', label: tr('جاهزة للتوصيل', 'Ready for delivery'), value: number(data.suborder_statuses.ready ?? 0), icon: '↗' },
+    { key: 'pending_seller_applications', label: tr('طلبات البائعين المعلقة', 'Pending seller applications'), value: number(data.pending_seller_applications), icon: '!' },
+    { key: 'pending_product_reviews', label: tr('المنتجات بانتظار المراجعة', 'Pending product reviews'), value: number(data.pending_product_reviews), icon: '!' },
+  ] : [], [data, ar]);
+  const selectedMetric = metrics.find(metric => metric.key === selected);
+
+  const openDetails = (key: SuperAdminMetricKey) => {
+    setSearch('');
+    setDetailsPage(1);
+    setSelected(key);
+  };
+
+  const downloadMetric = async (key: SuperAdminMetricKey, format: DownloadFormat) => {
+    const action = key + format;
+    setExporting(action);
+    setDetailsError('');
+    try {
+      const result = await exportSuperAdminMetric(key, format);
+      saveFile(result.blob, result.filename ?? ('all575-' + key + '.' + format));
+    } catch {
+      setDetailsError(tr('تعذر تصدير الملف. حاول مرة أخرى.', 'Export failed. Please retry.'));
+      setSelected(key);
+    } finally { setExporting(null); }
+  };
+
+  const metricCard = (metric: Metric) => (
+    <article key={metric.key} className={styles.statCard + (selected === metric.key ? ' ' + styles.activeCard : '')}>
+      <div className={styles.statMain}>
+        <span aria-hidden="true" className={styles.statIcon}>{metric.icon}</span>
+        <div>
+          <div className={styles.statLabel}>{metric.label}</div>
+          <strong className={styles.statValue}>{metric.value}</strong>
+        </div>
+      </div>
+      <div className={styles.statActions}>
+        <button type="button" onClick={() => openDetails(metric.key)}>
+          {tr('التفاصيل', 'Details')}
+        </button>
+        <button type="button" disabled={exporting !== null} onClick={() => void downloadMetric(metric.key, 'xls')}>
+          {tr('إكسل', 'Excel')}
+        </button>
+        <button type="button" disabled={exporting !== null} onClick={() => void downloadMetric(metric.key, 'csv')}>
+          CSV
+        </button>
+      </div>
+    </article>
+  );
+
+  const filteredRows = (details?.data ?? []).filter(row =>
+    Object.values(row).some(value => String(value ?? '').toLocaleLowerCase().includes(search.toLocaleLowerCase()))
   );
 
   return (
     <Page>
-      <PageHeader
-        title={tr('لوحة السوبر أدمن', 'Super Admin Dashboard')}
-        lead={tr('نظرة شاملة على أداء المنصة والحسابات والطلبات.', 'Platform-wide overview of accounts, orders and activity.')}
-        back={<Link to={routePaths.account}>{tr('العودة لحسابي', 'Back to account')}</Link>}
-      />
-      {loading && <p role="status">{tr('جارٍ تحميل البيانات...', 'Loading dashboard...')}</p>}
-      {!loading && unauthorized && (
-        <p role="alert">{tr('ليس لديك صلاحية السوبر أدمن. يرجى التواصل مع المسؤول.', 'Super Admin access is not enabled for this account.')}</p>
-      )}
-      {!loading && error && <p role="alert">{error}</p>}
-      {!loading && error && (
-        <button type="button" onClick={() => setRevision((current) => current + 1)}>
-          {tr('إعادة المحاولة', 'Retry')}
-        </button>
-      )}
-      {!loading && data && (
-        <>
-          <h2>{tr('نظرة عامة', 'Overview')}</h2>
-          <div style={grid}>
-            {metric(tr('إجمالي الحسابات', 'Total accounts'), number(data.customers))}
-            {metric(tr('البائعون', 'Sellers'), number(data.sellers))}
-            {metric(tr('البائعون المعتمدون', 'Approved sellers'), number(data.active_sellers))}
-            {metric(tr('المنتجات', 'Products'), number(data.products))}
-            {metric(tr('المنتجات المنشورة', 'Published products'), number(data.published_products))}
-            {metric(tr('الطلبات', 'Orders'), number(data.orders))}
+      <div className={styles.dashboard} dir={ar ? 'rtl' : 'ltr'}>
+        <div className={styles.heading}>
+          <div className={styles.headingIcon} aria-hidden="true">♛</div>
+          <div>
+            <Link className={styles.back} to={routePaths.account}>{tr('العودة للحساب', 'Back to account')}</Link>
+            <h1>{tr('لوحة السوبر أدمن', 'Super Admin Dashboard')}</h1>
+            <p>{tr('إدارة الحسابات والطلبات والمنتجات والصلاحيات من مكان واحد.', 'Manage platform accounts, orders, products, reviews and permissions in one place.')}</p>
           </div>
-          <h2>{tr('المبيعات والطلبات', 'Sales & Orders')}</h2>
-          <div style={grid}>
-            {metric(tr('قيمة الطلبات المدفوعة', 'Paid order value'), money(data.sales.paid_total_halalas))}
-            {metric(tr('عدد الطلبات المدفوعة', 'Paid orders'), number(data.sales.paid_orders))}
-            {metric(tr('طلبات قيد الدفع', 'Awaiting payment'), number(data.order_statuses.pending_payment ?? 0))}
-            {metric(tr('طلبات مؤكدة', 'Confirmed orders'), number(data.order_statuses.confirmed ?? 0))}
-            {metric(tr('طلبات مكتملة', 'Completed orders'), number(data.order_statuses.completed ?? 0))}
-            {metric(tr('طلبات جاهزة للتوصيل', 'Ready for delivery'), number(data.suborder_statuses.ready ?? 0))}
-          </div>
-          <h2>{tr('تحتاج إلى متابعة', 'Needs Attention')}</h2>
-          <div style={grid}>
-            {metric(tr('طلبات انضمام البائعين', 'Pending seller applications'), number(data.pending_seller_applications))}
-            {metric(tr('منتجات بانتظار المراجعة', 'Pending product reviews'), number(data.pending_product_reviews))}
-          </div>
-          <p>
-            <Link to={routePaths.sellerReview}>
-              {tr('إدارة مراجعات البائعين والمنتجات والأقسام', 'Manage seller, product and category reviews')}
-            </Link>
-          </p>
-          <PlatformAdminAssignments />
-          <p style={{ opacity: 0.75, fontSize: 13 }}>
-            {tr('آخر تحديث:', 'Last updated:')} {new Date(data.generated_at).toLocaleString(ar ? 'ar-SA' : 'en-US')}
-          </p>
-          <button type="button" onClick={() => setRevision((current) => current + 1)}>
-            {tr('تحديث البيانات', 'Refresh data')}
+          <span className={styles.platformTag}>{tr('منصة ALL 5.75', 'ALL 5.75 Platform')}</span>
+        </div>
+        <div className={styles.toolbar}>
+          <span>{tr('نظرة شاملة على المنصة', 'Platform overview')}</span>
+          <button type="button" className={styles.primary} onClick={() => setRevision(value => value + 1)}>
+            ↻ {tr('تحديث البيانات', 'Refresh data')}
           </button>
-        </>
-      )}
+        </div>
+        {loading && <p role="status">{tr('جارٍ تحميل البيانات...', 'Loading dashboard...')}</p>}
+        {!loading && unauthorized && <p role="alert">{tr('لا تتوفر صلاحية السوبر أدمن لهذا الحساب.', 'Super Admin access is not enabled for this account.')}</p>}
+        {!loading && error && <p role="alert">{error} <button type="button" onClick={() => setRevision(x => x + 1)}>{tr('إعادة المحاولة', 'Retry')}</button></p>}
+        {!loading && data && (
+          <>
+            <div className={styles.contentGrid}>
+              <main className={styles.main}>
+                <h2>{tr('مؤشرات المنصة', 'Platform statistics')}</h2>
+                <div className={styles.statGrid}>{metrics.slice(0, 5).map(metricCard)}</div>
+                <h2>{tr('المبيعات والطلبات', 'Sales & Orders')}</h2>
+                <div className={styles.statGrid}>{metrics.slice(5, 12).map(metricCard)}</div>
+                {selected && (
+                  <section className={styles.detailPanel} aria-label={selectedMetric?.label}>
+                    <div className={styles.sectionHeader}>
+                      <div>
+                        <h2>{selectedMetric?.label} — {tr('التفاصيل', 'Details')}</h2>
+                        <p>{tr('سجلات فعلية من قاعدة البيانات، مع صفحات متعددة للتصفح.', 'Live database records with pagination.')}</p>
+                      </div>
+                      <div className={styles.inlineActions}>
+                        <button type="button" disabled={exporting !== null} onClick={() => void downloadMetric(selected, 'xls')}>↓ Excel</button>
+                        <button type="button" disabled={exporting !== null} onClick={() => void downloadMetric(selected, 'csv')}>↓ CSV</button>
+                        <button type="button" aria-label={tr('إغلاق التفاصيل', 'Close details')} onClick={() => setSelected(null)}>✕</button>
+                      </div>
+                    </div>
+                    {detailsLoading && <p role="status">{tr('تحميل...', 'Loading...')}</p>}
+                    {detailsError && <p role="alert">{detailsError}</p>}
+                    {details && (
+                      <>
+                        <div className={styles.detailTools}>
+                          <input aria-label={tr('بحث ضمن الصفحة', 'Search current page')} placeholder={tr('بحث ضمن السجلات المعروضة...', 'Search displayed records...')} value={search} onChange={e => setSearch(e.target.value)} />
+                          <span>{tr('إجمالي السجلات', 'Total records')}: {number(details.total)}</span>
+                        </div>
+                        <div className={styles.tableScroll}>
+                          <table className={styles.dataTable}>
+                            <thead><tr>{details.columns.map(column => <th key={column} scope="col">{column.replaceAll('_', ' ')}</th>)}</tr></thead>
+                            <tbody>
+                              {filteredRows.map((row, index) => <tr key={String(row.id ?? index)}>
+                                {details.columns.map(column => <td key={column}>{String(row[column] ?? '—')}</td>)}
+                              </tr>)}
+                            </tbody>
+                          </table>
+                        </div>
+                        {filteredRows.length === 0 && <p>{tr('لا توجد نتائج.', 'No records found.')}</p>}
+                        <div className={styles.pagination}>
+                          <button type="button" disabled={details.page <= 1} onClick={() => { setDetailsPage(p => p - 1); setSearch(''); }}>{tr('السابق', 'Previous')}</button>
+                          <span>{number(details.page)} / {number(Math.max(1, details.last_page))}</span>
+                          <button type="button" disabled={details.page >= details.last_page} onClick={() => { setDetailsPage(p => p + 1); setSearch(''); }}>{tr('التالي', 'Next')}</button>
+                        </div>
+                      </>
+                    )}
+                  </section>
+                )}
+              </main>
+              <aside className={styles.sidebar}>
+                <section className={styles.sidePanel}>
+                  <h2>{tr('إجراءات سريعة', 'Quick Actions')}</h2>
+                  <Link to={routePaths.sellerReview}>{tr('مراجعة البائعين والمنتجات والأقسام', 'Manage seller, product & category reviews')} ↗</Link>
+                  <Link to={routePaths.platformAdminDashboard}>{tr('لوحة الإدارة', 'Admin dashboard')} ↗</Link>
+                </section>
+                <section className={styles.sidePanel}>
+                  <h2>{tr('تحتاج إلى متابعة', 'Needs Attention')}</h2>
+                  {metrics.slice(12).map(metricCard)}
+                </section>
+                <section className={styles.sidePanel}>
+                  <h2>{tr('آخر تحديث', 'Last updated')}</h2>
+                  <p>{new Date(data.generated_at).toLocaleString(ar ? 'ar-SA' : 'en-US')}</p>
+                </section>
+              </aside>
+            </div>
+            <div className={styles.permissions}><PlatformAdminAssignments /></div>
+          </>
+        )}
+      </div>
     </Page>
   );
 }
