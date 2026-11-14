@@ -87,7 +87,7 @@ export function PlatformAdminAssignments() {
           {sellerChoices.length > 0 && (
             <label className={styles.field}>
               <span>{tr('اختر البائع', 'Select seller')} *</span>
-              <select value={sellerId} onChange={e => setSellerId(e.target.value)}>
+              <select className={styles.sellerSelect} aria-label={tr('اختر البائع', 'Select seller')} required value={sellerId} onChange={e => setSellerId(e.target.value)}>
                 <option value="">{tr('اختر المتجر...', 'Choose a seller...')}</option>
                 {sellerChoices.map(seller => (
                   <option key={seller.id} value={seller.id}>{ar ? seller.name_ar : seller.name_en} (#{seller.id})</option>
