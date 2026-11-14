@@ -2654,3 +2654,31 @@
     justify-self: start;
   }
 }
+
+
+/* Uniform separation between dashboard refresh controls and content. */
+.seller-workspace-shell .seller-sidebar-content-toolbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 12px;
+  margin-block-end: 20px;
+}
+.seller-workspace-shell .seller-sidebar-content-toolbar > button {
+  min-block-size: 42px;
+  padding: 10px 16px;
+  background: #22795c;
+  color: #fff;
+  border: 1px solid #22795c;
+  border-radius: 11px;
+  font: inherit;
+  font-weight: 700;
+  cursor: pointer;
+}
+.seller-workspace-shell .seller-sidebar-content-toolbar > button:hover:not(:disabled) { background: #1b674f; }
+.seller-workspace-shell .seller-sidebar-content-toolbar > button:focus-visible { outline: 3px solid #77d8af; outline-offset: 3px; }
+.seller-workspace-shell .seller-sidebar-content-toolbar > button:disabled { opacity: .55; cursor: not-allowed; }
+@media (max-width: 560px) {
+  .seller-workspace-shell .seller-sidebar-content-toolbar > button { width: 100%; }
+}
