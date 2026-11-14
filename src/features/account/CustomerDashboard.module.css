@@ -248,3 +248,64 @@
     inline-size: 100%;
   }
 }
+
+/* Visual family shared with Seller, Admin and Super Admin workspaces. */
+.dashboardWorkspace {
+  inline-size: 100%;
+  max-inline-size: 1240px;
+  min-inline-size: 0;
+  margin-inline: auto;
+  color: var(--color-text, #17211b);
+}
+.dashboardWorkspace h1 {font-size: clamp(1.65rem, 2.8vw, 2.35rem)}
+.dashboardWorkspace h2 {font-size: clamp(1.08rem, 1.8vw, 1.35rem)}
+.dashboardWorkspace .actions {
+  border: 1px solid var(--color-border,#d3ddd0);
+  background: var(--color-surface-mint,#edf4eb);
+  padding: 14px;
+  border-radius: 16px;
+}
+.dashboardWorkspace .metrics {
+  grid-template-columns: repeat(auto-fit, minmax(165px,1fr));
+  gap: 12px;
+}
+.dashboardWorkspace .metric, .dashboardWorkspace .balance, .dashboardWorkspace .step,
+.dashboardWorkspace .accountLink {
+  border: 1px solid var(--color-border,#d3ddd0);
+  border-radius: 15px;
+  background: var(--color-surface-mint,#edf4eb);
+  box-shadow: none;
+  transition: border-color .15s;
+}
+.dashboardWorkspace .metric:hover, .dashboardWorkspace .balance:hover, .dashboardWorkspace .accountLink:hover {
+  border-color: #22795c;
+}
+.dashboardWorkspace .metric {
+  min-block-size: 125px;
+  align-content: space-between;
+}
+.dashboardWorkspace .metric strong {font-size: clamp(1.45rem, 2.5vw, 1.95rem)}
+.dashboardWorkspace .balance {align-items:center;border-radius:15px}
+.dashboardWorkspace .filterForm {
+  background: var(--color-surface-mint,#edf4eb);
+  border-radius: 16px;
+  box-shadow: none;
+}
+.dashboardWorkspace .filterField :is(input,select) {
+  background: var(--color-surface,#fff);
+  border-radius: 11px;
+  min-block-size: 43px;
+}
+.dashboardWorkspace .filterSubmit {background:#22795c;border-color:#22795c;border-radius:11px}
+.dashboardWorkspace .filterReset,.dashboardWorkspace .filterMore {border-radius:11px}
+.dashboardWorkspace .section {min-inline-size:0}
+.dashboardWorkspace .orders {grid-template-columns:repeat(auto-fit,minmax(min(100%,280px),1fr))}
+@media(max-width:560px) {
+  .dashboardWorkspace .metrics {grid-template-columns:repeat(2,minmax(0,1fr))}
+  .dashboardWorkspace .actions {padding:11px}
+  .dashboardWorkspace .metric {min-block-size:114px;padding:12px}
+}
+@media(prefers-reduced-motion:reduce) {
+  .dashboardWorkspace .metric, .dashboardWorkspace .balance,
+  .dashboardWorkspace .accountLink {transition:none}
+}
