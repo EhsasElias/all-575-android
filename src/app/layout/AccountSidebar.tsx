@@ -50,7 +50,7 @@ export function AccountSidebar({ onNavigate }: { onNavigate?: () => void }) {
   const ar = i18n.language.startsWith('ar');
   const t = (arText: string, enText: string) => ar ? arText : enText;
   const { status, user } = useSession();
-  const { pathname, search } = useLocation();
+  const { pathname, search, hash } = useLocation();
   const [roles, setRoles] = useState<Role[]>([]);
 
   useEffect(() => {
@@ -75,7 +75,8 @@ export function AccountSidebar({ onNavigate }: { onNavigate?: () => void }) {
     const [route, query] = to.split('?');
     const path = route.split('#')[0];
     if (pathname !== path) return false;
-    if (!query) return true;
+    if (route.includes('#')) return hash === '#' + route.split('#')[1];
+    if (!query) return hash === '';
     const [key, value] = query.split('=');
     const selected = new URLSearchParams(search).get(key);
     return (selected ?? (key === 'tab' ? 'applications' : 'overview')) === value;
