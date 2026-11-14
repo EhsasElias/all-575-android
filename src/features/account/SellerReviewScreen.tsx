@@ -395,7 +395,7 @@ export function SellerReviewScreen() {
           <div className={styles.reviewToolbar}>
             <h2>{tr(tab === 'applications' ? 'طلبات البائعين' : tab === 'branches' ? 'الفروع الجديدة' : tab === 'products' ? 'مراجعة المنتجات' : 'إدارة التصنيفات',
               tab === 'applications' ? 'Seller applications' : tab === 'branches' ? 'New branches' : tab === 'products' ? 'Product approvals' : 'Manage categories')}</h2>
-            <button type="button" disabled={busy || loading} onClick={() => setRevision(value => value + 1)}>{tr('تحديث', 'Refresh')}</button>
+            <button type="button" className="admin-family-primary" disabled={busy || loading} onClick={() => setRevision(value => value + 1)}>↻ {tr('تحديث', 'Refresh')}</button>
           </div>
           <div className={styles.filters + ' admin-family-filters'} role="search">
             <label>{tr('بحث', 'Search')}
