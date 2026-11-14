@@ -181,11 +181,6 @@ export function SuperAdminDashboardScreen() {
                 <div className={styles.statGrid + ' admin-family-metrics'}>{metrics.slice(5, 12).map(metricCard)}</div>
               </main>
               <aside className={styles.sidebar}>
-                <section className={styles.sidePanel + ' admin-family-panel'}>
-                  <h2>{tr('إجراءات سريعة', 'Quick Actions')}</h2>
-                  <Link to={routePaths.sellerReview}>{tr('مراجعة البائعين والمنتجات والأقسام', 'Manage seller, product & category reviews')} ↗</Link>
-                  <a href="#admin-accounts">{tr('إدارة حسابات الأدمن والصلاحيات', 'Manage Admin assignments')} ↗</a>
-                </section>
                 <section className={styles.sidePanel}>
                   <h2>{tr('تحتاج إلى متابعة', 'Needs Attention')}</h2>
                   {metrics.slice(12).map(metricCard)}
