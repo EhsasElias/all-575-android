@@ -1,8 +1,8 @@
-import { useEffect, useMemo, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { isApiError } from '@/shared/api';
 import { Page } from './components/Page';
-import { adminDashboard, adminOrders, type PlatformAdminDashboard, type PlatformAdminOrder } from './platformAdminApi';
+import { adminDashboard, adminOrders, type PlatformAdminDashboard, type PlatformAdminOrder, type AdminOrderFilters } from './platformAdminApi';
 import styles from './PlatformAdminDashboardScreen.module.css';
 import './adminWorkspaceFamily.css';
 
@@ -12,8 +12,10 @@ export function PlatformAdminDashboardScreen() {
   const tr = (a: string, en: string) => ar ? a : en;
   const [data, setData] = useState<PlatformAdminDashboard | null>(null);
   const [orders, setOrders] = useState<PlatformAdminOrder[]>([]);
-  const [statusFilter, setStatusFilter] = useState('all');
-  const [query, setQuery] = useState('');
+  const [draft, setDraft] = useState({ status: '', q: '', from: '', to: '', seller_id: '', branch_id: '' });
+  const [filters, setFilters] = useState<AdminOrderFilters>({});
+  const [nextCursor, setNextCursor] = useState<string | null>(null);
+  const [loadingMore, setLoadingMore] = useState(false);
   const [loading, setLoading] = useState(true);
   const [denied, setDenied] = useState(false);
   const [error, setError] = useState('');
@@ -41,12 +43,12 @@ export function PlatformAdminDashboardScreen() {
   useEffect(() => {
     let active = true;
     setOrdersError('');
-    void adminOrders({ limit: 30, ...(statusFilter !== 'all' ? { status: statusFilter } : {}) })
-      .then(response => { if (active) setOrders(response.data); })
+    void adminOrders({ limit: 50, ...filters })
+      .then(response => { if (active) { setOrders(response.data); setNextCursor(response.data.length === 50 ? response.data.at(-1)?.id ?? null : null); } })
       .catch(() => { if (active) { setOrders([]); setOrdersError(tr('تعذر تحميل قائمة الطلبات.', 'Unable to load order list.')); } });
     return () => { active = false; };
   // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [revision, statusFilter]);
+  }, [revision, filters]);
 
   const statuses: Record<string, string> = {
     awaiting_seller: tr('بانتظار البائع', 'Awaiting seller'),
@@ -57,12 +59,50 @@ export function PlatformAdminDashboardScreen() {
     cancelled: tr('ملغي', 'Cancelled'),
   };
 
-  const filteredOrders = useMemo(() => orders.filter(item =>
-    [item.order_number, item.seller_name_ar, item.seller_name_en, String(item.branch_id)]
-      .some(value => value.toLowerCase().includes(query.trim().toLowerCase()))
-  ), [orders, query]);
+  const applyFilters = () => {
+    if (draft.from && draft.to && draft.from > draft.to) {
+      setOrdersError(tr('تاريخ البداية يجب أن يسبق النهاية.', 'Start date must precede end date.'));
+      return;
+    }
+    setOrdersError('');
+    setFilters({
+      ...(draft.status ? { status: draft.status } : {}),
+      ...(draft.q.trim() ? { q: draft.q.trim() } : {}),
+      ...(draft.from ? { from: draft.from } : {}),
+      ...(draft.to ? { to: draft.to } : {}),
+      ...(draft.seller_id ? { seller_id: Number(draft.seller_id) } : {}),
+      ...(draft.branch_id ? { branch_id: Number(draft.branch_id) } : {}),
+    });
+  };
+  const clearFilters = () => {
+    setDraft({ status: '', q: '', from: '', to: '', seller_id: '', branch_id: '' });
+    setFilters({});
+  };
+  const loadMore = async () => {
+    if (!nextCursor || loadingMore) return;
+    setLoadingMore(true);
+    try {
+      const reply = await adminOrders({ limit: 50, ...filters, before_id: nextCursor });
+      setOrders(previous => [...previous, ...reply.data.filter(row => !previous.some(item => item.id === row.id))]);
+      setNextCursor(reply.data.length === 50 ? reply.data.at(-1)?.id ?? null : null);
+    } catch {
+      setOrdersError(tr('تعذر تحميل المزيد من الطلبات.', 'Unable to load more orders.'));
+    } finally {
+      setLoadingMore(false);
+    }
+  };
   const number = (value: number) => value.toLocaleString(ar ? 'ar-SA' : 'en-US');
-  const metric = (label: string, value: number) => (
+  const metric = (label: string, value: number, status?: string) => status ? (
+    <button type="button" className={styles.metric + ' ' + styles.metricAction + ' admin-family-card'}
+      key={label} aria-pressed={filters.status === status} onClick={() => {
+        setDraft(previous => ({ ...previous, status }));
+        setFilters(previous => ({ ...previous, status }));
+        document.getElementById('order-monitoring')?.scrollIntoView({ behavior: 'smooth' });
+      }}>
+      <span>{label}</span><strong>{number(value)}</strong>
+      <small>{tr('عرض التفاصيل', 'View details')} ↗</small>
+    </button>
+  ) : (
     <div className={styles.metric + ' admin-family-card'} key={label}>
       <span>{label}</span><strong>{number(value)}</strong>
     </div>
@@ -87,32 +127,49 @@ export function PlatformAdminDashboardScreen() {
             <div className={styles.metrics + ' admin-family-metrics'}>
               {metric(tr('المتاجر المسندة', 'Assigned sellers'), data.assigned_sellers)}
               {metric(tr('الطلبات', 'Seller orders'), data.suborders)}
-              {metric(tr('بانتظار التجهيز', 'Awaiting preparation'), data.suborder_statuses.awaiting_seller ?? 0)}
-              {metric(tr('قيد التجهيز', 'Preparing'), data.suborder_statuses.preparing ?? 0)}
-              {metric(tr('جاهز للاستلام', 'Ready for pickup'), data.suborder_statuses.ready ?? 0)}
-              {metric(tr('في الطريق', 'On the way'), data.suborder_statuses.on_the_way ?? 0)}
-              {metric(tr('تم التسليم', 'Delivered'), data.suborder_statuses.delivered ?? 0)}
+              {metric(tr('بانتظار التجهيز', 'Awaiting preparation'), data.suborder_statuses.awaiting_seller ?? 0, 'awaiting_seller')}
+              {metric(tr('قيد التجهيز', 'Preparing'), data.suborder_statuses.preparing ?? 0, 'preparing')}
+              {metric(tr('جاهز للاستلام', 'Ready for pickup'), data.suborder_statuses.ready ?? 0, 'ready')}
+              {metric(tr('في الطريق', 'On the way'), data.suborder_statuses.on_the_way ?? 0, 'on_the_way')}
+              {metric(tr('تم التسليم', 'Delivered'), data.suborder_statuses.delivered ?? 0, 'delivered')}
             </div>
             <section id="order-monitoring" className={styles.panel + ' admin-family-panel'}>
               <div className={styles.panelHeading}>
                 <div><h2>{tr('متابعة الطلبات', 'Order monitoring')}</h2><p>{tr('سجلات المتاجر ضمن صلاحياتك فقط.', 'Only orders within your assigned permissions.')}</p></div>
-                <div className={styles.filters + ' admin-family-filters'}>
-                  <label>{tr('الحالة', 'Status')}
-                    <select value={statusFilter} onChange={e => setStatusFilter(e.target.value)}>
-                      <option value="all">{tr('الكل', 'All')}</option>
-                      {Object.entries(statuses).map(([value, label]) => <option key={value} value={value}>{label}</option>)}
-                    </select>
-                  </label>
-                  <label>{tr('بحث في النتائج', 'Search shown orders')}
-                    <input value={query} placeholder={tr('رقم الطلب أو البائع...', 'Order number or seller...')} onChange={e => setQuery(e.target.value)}/>
-                  </label>
-                </div>
               </div>
+              <form className={styles.filters + ' admin-family-filters'} onSubmit={event => { event.preventDefault(); applyFilters(); }}>
+                <label>{tr('الحالة', 'Status')}
+                  <select value={draft.status} onChange={event => setDraft(prev => ({...prev, status:event.target.value}))}>
+                    <option value="">{tr('الكل', 'All')}</option>
+                    {Object.entries(statuses).map(([value,label]) => <option key={value} value={value}>{label}</option>)}
+                  </select>
+                </label>
+                <label>{tr('بحث عن طلب أو بائع', 'Order or seller')}
+                  <input value={draft.q} maxLength={100} onChange={event => setDraft(prev => ({...prev, q:event.target.value}))} />
+                </label>
+                <label>{tr('رقم البائع', 'Seller ID')}
+                  <input type="number" min={1} value={draft.seller_id} onChange={event => setDraft(prev => ({...prev, seller_id:event.target.value}))} />
+                </label>
+                <label>{tr('رقم الفرع', 'Branch ID')}
+                  <input type="number" min={1} value={draft.branch_id} onChange={event => setDraft(prev => ({...prev, branch_id:event.target.value}))} />
+                </label>
+                <label>{tr('من تاريخ', 'Date from')}
+                  <input type="date" value={draft.from} max={draft.to || undefined} onChange={event => setDraft(prev => ({...prev, from:event.target.value}))} />
+                </label>
+                <label>{tr('إلى تاريخ', 'Date to')}
+                  <input type="date" value={draft.to} min={draft.from || undefined} onChange={event => setDraft(prev => ({...prev, to:event.target.value}))} />
+                </label>
+                <div className={styles.filterActions}>
+                  <button type="submit" className="admin-family-primary">{tr('تطبيق', 'Apply')}</button>
+                  <button type="button" className="admin-family-secondary" onClick={clearFilters}>{tr('مسح', 'Clear')}</button>
+                </div>
+              </form>
+</div>
               {ordersError && <p role="alert">{ordersError}</p>}
               <div className={styles.tableScroll + ' admin-family-table'}>
                 <table>
                   <thead><tr><th>{tr('رقم الطلب', 'Order')}</th><th>{tr('البائع', 'Seller')}</th><th>{tr('الفرع', 'Branch')}</th><th>{tr('الحالة', 'Status')}</th><th>{tr('تاريخ الطلب', 'Date')}</th></tr></thead>
-                  <tbody>{filteredOrders.map(order => <tr key={order.id}>
+                  <tbody>{orders.map(order => <tr key={order.id}>
                     <td><strong>{order.order_number}</strong></td>
                     <td>{ar ? order.seller_name_ar : order.seller_name_en}</td>
                     <td>#{order.branch_id}</td>
@@ -121,8 +178,9 @@ export function PlatformAdminDashboardScreen() {
                   </tr>)}</tbody>
                 </table>
               </div>
-              {filteredOrders.length === 0 && <p className={styles.empty}>{tr('لا توجد طلبات مطابقة.', 'No matching orders.')}</p>}
-              <p className={styles.hint}>{tr('يتم عرض آخر 30 طلباً. البحث داخل النتائج المعروضة.', 'Showing up to 30 recent orders. Search filters this list only.')}</p>
+              {orders.length === 0 && <p className={styles.empty}>{tr('لا توجد طلبات مطابقة.', 'No matching orders.')}</p>}
+              {nextCursor && <button type="button" className="admin-family-secondary" disabled={loadingMore} onClick={() => void loadMore()}>{tr('تحميل المزيد', 'Load more')}</button>}
+              <p className={styles.hint}>{tr('يتم تطبيق الفلاتر على سجلات الطلبات المسموح بها من الخادم.', 'Filters are applied by the server within your assigned orders.')}</p>
             </section>
             <section id="inventory-overview" className={styles.panel}>
               <h2>{tr('نظرة على المخزون', 'Inventory overview')}</h2>
