@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { NavLink, useLocation } from 'react-router';
+import { Link, useLocation } from 'react-router';
 import { useTranslation } from 'react-i18next';
 import { routePaths } from '@/shared/lib';
 import { useSession } from '@/shared/session';
@@ -86,11 +86,11 @@ export function AccountSidebar({ onNavigate }: { onNavigate?: () => void }) {
       <h2>{heading}</h2>
       {entries.map(item => {
         const to = item.to.startsWith('?') ? base + item.to : item.to;
-        return <NavLink key={to} to={to} onClick={onNavigate}
+        return <Link key={to} to={to} onClick={onNavigate}
           aria-current={active(to) ? 'page' : undefined}
           className={active(to) ? styles.selected : styles.link}>
           <span>{ar ? item.ar : item.en}</span>
-        </NavLink>;
+        </Link>;
       })}
     </div>
   );
