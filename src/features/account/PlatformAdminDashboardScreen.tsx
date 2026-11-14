@@ -143,20 +143,17 @@ export function PlatformAdminDashboardScreen() {
     }
   };
   const number = (value: number) => value.toLocaleString(ar ? 'ar-SA' : 'en-US');
-  const metric = (label: string, value: number, status?: string) => status ? (
+  const metric = (label: string, value: number, status?: string) => (
     <button type="button" className={styles.metric + ' ' + styles.metricAction + ' admin-family-card'}
-      key={label} aria-pressed={filters.status === status} onClick={() => {
-        setDraft(previous => ({ ...previous, status }));
-        setFilters(previous => ({ ...previous, status }));
+      key={label} aria-pressed={filters.status === (status ?? '')} onClick={() => {
+        const nextStatus = status ?? '';
+        setDraft(previous => ({ ...previous, status: nextStatus }));
+        setFilters(previous => ({ ...previous, status: nextStatus }));
         document.getElementById('order-monitoring')?.scrollIntoView({ behavior: 'smooth' });
       }}>
       <span>{label}</span><strong>{number(value)}</strong>
       <small>{tr('عرض التفاصيل', 'View details')} ↗</small>
     </button>
-  ) : (
-    <div className={styles.metric + ' admin-family-card'} key={label}>
-      <span>{label}</span><strong>{number(value)}</strong>
-    </div>
   );
 
   return (
@@ -176,7 +173,7 @@ export function PlatformAdminDashboardScreen() {
           <>
             <h2>{tr('نظرة عامة', 'Operations overview')}</h2>
             <div className={styles.metrics + ' admin-family-metrics'}>
-              {metric(tr('المتاجر المسندة', 'Assigned sellers'), data.assigned_sellers)}
+              <div className={styles.metric + ' admin-family-card'}><span>{tr('المتاجر المسندة', 'Assigned sellers')}</span><strong>{number(data.assigned_sellers)}</strong></div>
               {metric(tr('الطلبات', 'Seller orders'), data.suborders)}
               {metric(tr('بانتظار التجهيز', 'Awaiting preparation'), data.suborder_statuses.awaiting_seller ?? 0, 'awaiting_seller')}
               {metric(tr('قيد التجهيز', 'Preparing'), data.suborder_statuses.preparing ?? 0, 'preparing')}
