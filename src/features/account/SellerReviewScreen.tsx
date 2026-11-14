@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useState } from 'react';
-import { Link } from 'react-router';
+import { Link, useSearchParams } from 'react-router';
 import { useTranslation } from 'react-i18next';
 import { routePaths } from '@/shared/lib';
 import { isApiError } from '@/shared/api';
@@ -67,7 +67,10 @@ export function SellerReviewScreen() {
   const [applicationStatus, setApplicationStatus] = useState('submitted');
   const [recordDate, setRecordDate] = useState('');
   const [categoryStatus, setCategoryStatus] = useState('pending');
-  const [tab, setTab] = useState<'applications' | 'products' | 'branches' | 'categories'>('applications');
+  const [searchParams] = useSearchParams();
+  const currentTab = searchParams.get('tab');
+  const tab = (['applications','products','branches','categories'].includes(currentTab ?? '')
+    ? currentTab : 'applications') as 'applications' | 'products' | 'branches' | 'categories';
   const [applications, setApplications] = useState<SellerReviewApplication[]>([]);
   const [products, setProducts] = useState<PendingSellerProduct[]>([]);
   const [branches, setBranches] = useState<SellerBranchReview[]>([]);
@@ -391,52 +394,11 @@ export function SellerReviewScreen() {
             <div><span>{tr('المنتجات', 'Products')}</span><strong>{overview?.pending_products ?? '—'}</strong></div>
             <div><span>{tr('طلبات التصنيفات', 'Category requests')}</span><strong>{overview?.pending_categories ?? '—'}</strong></div>
           </div>
-          <nav
-            className={styles.tabs + ' admin-family-tabs'}
-            aria-label={tr('نوع المراجعة', 'Review type')}
-          >
-            <button aria-pressed={tab === 'applications'} className={tab === 'applications' ? styles.selectedTab : undefined}
-              type="button"
-              onClick={() => {
-                setTab('applications');
-                setSelected(null);
-              }}
-              disabled={busy}
-            >
-              {tr('طلبات البائعين', 'Seller applications')}
-            </button>
-            <button aria-pressed={tab === 'branches'} className={tab === 'branches' ? styles.selectedTab : undefined}
-              type="button"
-              onClick={() => {
-                setTab('branches');
-                setSelected(null);
-              }}
-              disabled={busy}
-            >
-              {tr('الفروع الجديدة', 'New branches')}
-            </button>
-            <button aria-pressed={tab === 'products'} className={tab === 'products' ? styles.selectedTab : undefined}
-              type="button"
-              onClick={() => {
-                setTab('products');
-                setSelected(null);
-              }}
-              disabled={busy}
-            >
-              {tr('المنتجات', 'Products')}
-            </button>
-            <button aria-pressed={tab === 'categories'} className={tab === 'categories' ? styles.selectedTab : undefined} type="button" onClick={() => setTab('categories')} disabled={busy}>
-              {tr('إدارة التصنيفات', 'Manage categories')}
-            </button>
-            <button
-              type="button"
-              className="admin-family-tab-refresh"
-              onClick={() => setRevision((v) => v + 1)}
-              disabled={busy || loading}
-            >
-              {tr('تحديث', 'Refresh')}
-            </button>
-          </nav>
+          <div className={styles.reviewToolbar}>
+            <h2>{tr(tab === 'applications' ? 'طلبات البائعين' : tab === 'branches' ? 'الفروع الجديدة' : tab === 'products' ? 'مراجعة المنتجات' : 'إدارة التصنيفات',
+              tab === 'applications' ? 'Seller applications' : tab === 'branches' ? 'New branches' : tab === 'products' ? 'Product approvals' : 'Manage categories')}</h2>
+            <button type="button" disabled={busy || loading} onClick={() => setRevision(value => value + 1)}>{tr('تحديث', 'Refresh')}</button>
+          </div>
           <div className={styles.filters + ' admin-family-filters'} role="search">
             <label>{tr('بحث', 'Search')}
               <input value={query} onChange={event => setQuery(event.target.value)}
