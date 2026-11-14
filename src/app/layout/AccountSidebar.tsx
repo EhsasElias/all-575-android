@@ -72,7 +72,8 @@ export function AccountSidebar({ onNavigate }: { onNavigate?: () => void }) {
 
   const has = (role: Role) => roles.includes(role);
   const active = (to: string) => {
-    const [path, query] = to.split('?');
+    const [route, query] = to.split('?');
+    const path = route.split('#')[0];
     if (pathname !== path) return false;
     if (!query) return true;
     const [key, value] = query.split('=');
@@ -100,18 +101,18 @@ export function AccountSidebar({ onNavigate }: { onNavigate?: () => void }) {
         <strong>ALL 5.75</strong>
         <span>{t('مساحة الحساب', 'Account workspace')}</span>
       </div>
-      {has('super') && group(t('السوبر أدمن', 'Super Admin'), [
+      {(has('super') || pathname === routePaths.superAdminDashboard) && group(t('السوبر أدمن', 'Super Admin'), [
         {to: routePaths.superAdminDashboard, ar: 'لوحة التحكم والإحصائيات', en: 'Dashboard & statistics'},
         {to: routePaths.superAdminDashboard + '#admin-accounts', ar: 'حسابات الإدارة والصلاحيات', en: 'Admin accounts & permissions'},
         {to: routePaths.sellerReview, ar: 'الموافقات والمراجعات', en: 'Approvals & reviews'},
       ])}
-      {has('admin') && group(t('الإدارة', 'Admin'), [
+      {(has('admin') || pathname === routePaths.platformAdminDashboard) && group(t('الإدارة', 'Admin'), [
         {to: routePaths.platformAdminDashboard, ar: 'لوحة العمليات', en: 'Operations overview'},
         {to: routePaths.platformAdminDashboard + '#order-monitoring', ar: 'مراقبة الطلبات', en: 'Order monitoring'},
         {to: routePaths.platformAdminDashboard + '#inventory-overview', ar: 'نظرة على المخزون', en: 'Inventory overview'},
       ])}
-      {has('reviewer') && group(t('الموافقات', 'Approvals'), reviewSections, routePaths.sellerReview)}
-      {has('seller') && group(t('مساحة البائع', 'Seller workspace'), sellerSections, routePaths.sellerWorkspace)}
+      {(has('reviewer') || pathname === routePaths.sellerReview) && group(t('الموافقات', 'Approvals'), reviewSections, routePaths.sellerReview)}
+      {(has('seller') || pathname === routePaths.sellerWorkspace) && group(t('مساحة البائع', 'Seller workspace'), sellerSections, routePaths.sellerWorkspace)}
       {group(t('حساب العميل', 'Customer account'), customerItems)}
       {has('seller') || has('admin') || has('super') || has('reviewer') ? null :
         group(t('التجارة', 'Selling'), [{ to: routePaths.sellerApplication, ar:'طلب الانضمام كبائع', en:'Apply as a seller' }])}
