@@ -17,3 +17,39 @@
 .action,.refresh{border-radius:11px;min-block-size:40px}
 @media(max-width:900px){.layout{grid-template-columns:1fr}}
 @media(max-width:560px){.form,.list{padding:13px}}
+
+/* Match the Seller workspace input fields; override the browser's compact native select. */
+.form .field .sellerSelect {
+  display: block;
+  inline-size: 100%;
+  min-inline-size: 0;
+  block-size: 46px;
+  min-block-size: 46px;
+  max-inline-size: 100%;
+  box-sizing: border-box;
+  padding-block: 10px;
+  padding-inline: 14px 40px;
+  border: 1px solid var(--color-border, #d3ddd0);
+  border-radius: 11px;
+  background-color: var(--color-surface, #fff);
+  color: var(--color-text, #17211b);
+  font: inherit;
+  font-size: .91rem;
+  line-height: 1.4;
+  appearance: auto;
+  cursor: pointer;
+}
+.form .field .sellerSelect:hover {
+  border-color: #22795c;
+}
+.form .field .sellerSelect:focus-visible {
+  outline: 3px solid #77d8af;
+  outline-offset: 2px;
+}
+.form .field .sellerSelect:invalid {
+  color: var(--color-text-muted, #607165);
+}
+.form .field .sellerSelect option {
+  color: var(--color-text, #17211b);
+  background: var(--color-surface, #fff);
+}
