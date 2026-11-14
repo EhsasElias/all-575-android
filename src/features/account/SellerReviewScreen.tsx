@@ -6,6 +6,7 @@ import { isApiError } from '@/shared/api';
 import { Page } from './components/Page';
 import { PageHeader } from './components/PageHeader';
 import styles from './SellerReviewScreen.module.css';
+import './adminWorkspaceFamily.css';
 import {
   reviewOverview,
   type ReviewOverview,
@@ -366,7 +367,7 @@ export function SellerReviewScreen() {
 
   return (
     <Page>
-      <div className={styles.review} dir={ar ? 'rtl' : 'ltr'}>
+      <div className={styles.review + ' admin-workspace-family'} dir={ar ? 'rtl' : 'ltr'}>
       <PageHeader
         title={tr('مراجعة البائعين والمنتجات', 'Seller & product approvals')}
         lead={tr(
@@ -384,14 +385,14 @@ export function SellerReviewScreen() {
         </p>
       ) : (
         <>
-          <div className={styles.summary}>
+          <div className={styles.summary + ' admin-family-metrics'}>
             <div><span>{tr('طلبات البائعين', 'Seller applications')}</span><strong>{overview?.pending_applications ?? '—'}</strong></div>
             <div><span>{tr('الفروع', 'Branches')}</span><strong>{overview?.pending_branches ?? '—'}</strong></div>
             <div><span>{tr('المنتجات', 'Products')}</span><strong>{overview?.pending_products ?? '—'}</strong></div>
             <div><span>{tr('طلبات التصنيفات', 'Category requests')}</span><strong>{overview?.pending_categories ?? '—'}</strong></div>
           </div>
           <nav
-            className={styles.tabs}
+            className={styles.tabs + ' admin-family-tabs'}
             style={{ ...fields, marginBottom: 12 }}
             aria-label={tr('نوع المراجعة', 'Review type')}
           >
@@ -430,13 +431,14 @@ export function SellerReviewScreen() {
             </button>
             <button
               type="button"
+              className="admin-family-tab-refresh"
               onClick={() => setRevision((v) => v + 1)}
               disabled={busy || loading}
             >
               {tr('تحديث', 'Refresh')}
             </button>
           </nav>
-          <div className={styles.filters} role="search">
+          <div className={styles.filters + ' admin-family-filters'} role="search">
             <label>{tr('بحث', 'Search')}
               <input value={query} onChange={event => setQuery(event.target.value)}
                 placeholder={tr('اسم أو رقم أو سجل تجاري...', 'Name, ID, registration...')}/>
@@ -482,7 +484,7 @@ export function SellerReviewScreen() {
                 <p>{tr('لا توجد طلبات معلقة.', 'No submitted applications.')}</p>
               )}
               {shownApplications.map((item) => (
-                <article key={item.id} style={panel}>
+                <article key={item.id} style={panel} className="admin-family-card">
                   <div className={styles.itemHeading}><h3>{item.legal_name}</h3><span className={styles.statusBadge} data-status={item.status}>{statusLabels[item.status] ?? item.status}</span></div>
                   <p>
                     {tr('السجل', 'CR')}: {item.commercial_registration} · {tr('المدينة', 'City')}:{' '}
