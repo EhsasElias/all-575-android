@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useState } from 'react';
-import { Link } from 'react-router';
+import { Link, useSearchParams } from 'react-router';
 import { createPortal } from 'react-dom';
 import { useTranslation } from 'react-i18next';
 import { routePaths } from '@/shared/lib';
@@ -69,7 +69,12 @@ export function SellerWorkspaceScreen() {
   const tr = (arabic: string, english: string) => (ar ? arabic : english);
   const [eligible, setEligible] = useState(false);
   const [sellerMemberships, setSellerMemberships] = useState<SellerMembership[]>([]);
-  const [section, setSection] = useState<Section>('overview');
+  const [searchParams] = useSearchParams();
+  const requestedSection = searchParams.get('section');
+  const section: Section = (
+    ['overview','store','products','inventory','orders','returns','finance','staff'].includes(requestedSection ?? '')
+      ? requestedSection : 'overview'
+  ) as Section;
   const [dashboard, setDashboard] = useState<SellerDashboard | null>(null);
   const [insightMetric, setInsightMetric] = useState<SellerInsightMetric | null>(null);
   const [branches, setBranches] = useState<SellerBranch[]>([]);
@@ -703,29 +708,12 @@ export function SellerWorkspaceScreen() {
       )}
       {eligible && (
         <div className="seller-content">
-          <nav
-            className="seller-tabs"
-            aria-label={tr('أقسام البائع', 'Seller sections')}
-            style={{ ...line, margin: '14px 0' }}
-          >
-            {sections.map((tab) => (
-              <button
-                key={tab.id}
-                type="button"
-                style={{ ...action, fontWeight: section === tab.id ? 700 : 400 }}
-                aria-current={section === tab.id ? 'page' : undefined}
-                onClick={() => {
-                  setPacking(null);
-                  setSection(tab.id);
-                }}
-              >
-                {tr(tab.ar, tab.en)}
-              </button>
-            ))}
-            <button className="seller-refresh" type="button" style={action} disabled={loading || busy} onClick={reload}>
-              {tr('تحديث', 'Refresh')}
+          <div className="seller-sidebar-content-toolbar">
+            <strong>{tr(sections.find(item => item.id === section)?.ar ?? 'الرئيسية', sections.find(item => item.id === section)?.en ?? 'Overview')}</strong>
+            <button type="button" disabled={loading || busy} onClick={reload}>
+              {tr('تحديث البيانات', 'Refresh data')}
             </button>
-          </nav>
+          </div>
           {(section === 'orders' || section === 'inventory') && (
             <div className="seller-filters" style={{ marginBottom: 16 }}>
               <label>
