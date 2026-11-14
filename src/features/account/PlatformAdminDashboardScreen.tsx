@@ -164,7 +164,6 @@ export function PlatformAdminDashboardScreen() {
                   <button type="button" className="admin-family-secondary" onClick={clearFilters}>{tr('مسح', 'Clear')}</button>
                 </div>
               </form>
-</div>
               {ordersError && <p role="alert">{ordersError}</p>}
               <div className={styles.tableScroll + ' admin-family-table'}>
                 <table>
