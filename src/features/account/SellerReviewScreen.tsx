@@ -5,6 +5,7 @@ import { routePaths } from '@/shared/lib';
 import { isApiError } from '@/shared/api';
 import { Page } from './components/Page';
 import { PageHeader } from './components/PageHeader';
+import styles from './SellerReviewScreen.module.css';
 import {
   reviewSellerApplications,
   reviewSellerApplication,
@@ -29,10 +30,12 @@ import {
 } from './sellerReviewApi';
 
 const panel: React.CSSProperties = {
-  padding: 14,
-  border: '1px solid #d8e1db',
-  borderRadius: 12,
-  marginBottom: 12,
+  padding: 18,
+  background: 'var(--color-surface, #fff)',
+  border: '1px solid var(--color-border, #d8e1db)',
+  borderRadius: 14,
+  boxShadow: '0 2px 10px rgba(10, 60, 31, 0.04)',
+  marginBottom: 14,
 };
 const fields: React.CSSProperties = {
   display: 'flex',
@@ -315,6 +318,7 @@ export function SellerReviewScreen() {
 
   return (
     <Page>
+      <div className={styles.review} dir={ar ? 'rtl' : 'ltr'}>
       <PageHeader
         title={tr('مراجعة البائعين والمنتجات', 'Seller & product approvals')}
         lead={tr(
@@ -332,11 +336,18 @@ export function SellerReviewScreen() {
         </p>
       ) : (
         <>
+          <div className={styles.summary}>
+            <div><span>{tr('طلبات البائعين', 'Seller applications')}</span><strong>{applications.length}</strong></div>
+            <div><span>{tr('الفروع', 'Branches')}</span><strong>{branches.length}</strong></div>
+            <div><span>{tr('المنتجات', 'Products')}</span><strong>{products.length}</strong></div>
+            <div><span>{tr('طلبات التصنيفات', 'Category requests')}</span><strong>{categoryRequests.filter(item => item.status === 'pending').length}</strong></div>
+          </div>
           <nav
+            className={styles.tabs}
             style={{ ...fields, marginBottom: 12 }}
             aria-label={tr('نوع المراجعة', 'Review type')}
           >
-            <button
+            <button className={tab === 'applications' ? styles.selectedTab : undefined}
               type="button"
               onClick={() => {
                 setTab('applications');
@@ -346,7 +357,7 @@ export function SellerReviewScreen() {
             >
               {tr('طلبات البائعين', 'Seller applications')}
             </button>
-            <button
+            <button className={tab === 'branches' ? styles.selectedTab : undefined}
               type="button"
               onClick={() => {
                 setTab('branches');
@@ -356,7 +367,7 @@ export function SellerReviewScreen() {
             >
               {tr('الفروع الجديدة', 'New branches')}
             </button>
-            <button
+            <button className={tab === 'products' ? styles.selectedTab : undefined}
               type="button"
               onClick={() => {
                 setTab('products');
@@ -366,7 +377,7 @@ export function SellerReviewScreen() {
             >
               {tr('المنتجات', 'Products')}
             </button>
-            <button type="button" onClick={() => setTab('categories')} disabled={busy}>
+            <button className={tab === 'categories' ? styles.selectedTab : undefined} type="button" onClick={() => setTab('categories')} disabled={busy}>
               {tr('إدارة التصنيفات', 'Manage categories')}
             </button>
             <button
@@ -651,6 +662,7 @@ export function SellerReviewScreen() {
           )}
         </>
       )}
+      </div>
     </Page>
   );
 }
