@@ -20,3 +20,8 @@
 .main:focus {
   outline: none;
 }
+
+/* Administrative dashboards need a wider canvas; regular customer pages stay narrow. */
+.mainWide {
+  max-inline-size: min(100%, 1500px);
+}
