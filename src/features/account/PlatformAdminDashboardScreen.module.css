@@ -35,3 +35,9 @@
   border-color:#22795c;
   background:var(--color-surface-mint,#e2f2e6);
 }
+
+
+/* Space the admin refresh header consistently above its statistic cards. */
+.dashboard .hero { margin-block-end: 22px; row-gap: 14px; }
+.dashboard .refresh { min-block-size: 42px; }
+@media (max-width: 560px) { .dashboard .refresh { width: 100%; } }
