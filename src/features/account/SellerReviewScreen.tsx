@@ -395,7 +395,7 @@ export function SellerReviewScreen() {
             style={{ ...fields, marginBottom: 12 }}
             aria-label={tr('نوع المراجعة', 'Review type')}
           >
-            <button className={tab === 'applications' ? styles.selectedTab : undefined}
+            <button aria-pressed={tab === 'applications'} className={tab === 'applications' ? styles.selectedTab : undefined}
               type="button"
               onClick={() => {
                 setTab('applications');
@@ -405,7 +405,7 @@ export function SellerReviewScreen() {
             >
               {tr('طلبات البائعين', 'Seller applications')}
             </button>
-            <button className={tab === 'branches' ? styles.selectedTab : undefined}
+            <button aria-pressed={tab === 'branches'} className={tab === 'branches' ? styles.selectedTab : undefined}
               type="button"
               onClick={() => {
                 setTab('branches');
@@ -415,7 +415,7 @@ export function SellerReviewScreen() {
             >
               {tr('الفروع الجديدة', 'New branches')}
             </button>
-            <button className={tab === 'products' ? styles.selectedTab : undefined}
+            <button aria-pressed={tab === 'products'} className={tab === 'products' ? styles.selectedTab : undefined}
               type="button"
               onClick={() => {
                 setTab('products');
@@ -425,7 +425,7 @@ export function SellerReviewScreen() {
             >
               {tr('المنتجات', 'Products')}
             </button>
-            <button className={tab === 'categories' ? styles.selectedTab : undefined} type="button" onClick={() => setTab('categories')} disabled={busy}>
+            <button aria-pressed={tab === 'categories'} className={tab === 'categories' ? styles.selectedTab : undefined} type="button" onClick={() => setTab('categories')} disabled={busy}>
               {tr('إدارة التصنيفات', 'Manage categories')}
             </button>
             <button
@@ -483,7 +483,7 @@ export function SellerReviewScreen() {
               )}
               {shownApplications.map((item) => (
                 <article key={item.id} style={panel}>
-                  <div className={styles.itemHeading}><h3>{item.legal_name}</h3><span className={styles.statusBadge}>{statusLabels[item.status] ?? item.status}</span></div>
+                  <div className={styles.itemHeading}><h3>{item.legal_name}</h3><span className={styles.statusBadge} data-status={item.status}>{statusLabels[item.status] ?? item.status}</span></div>
                   <p>
                     {tr('السجل', 'CR')}: {item.commercial_registration} · {tr('المدينة', 'City')}:{' '}
                     {item.city}
@@ -570,7 +570,7 @@ export function SellerReviewScreen() {
               )}
               {shownBranches.map((branch) => (
                 <article key={branch.id} style={panel}>
-                  <div className={styles.itemHeading}><h3>{ar ? branch.name_ar : branch.name_en}</h3><span className={styles.statusBadge}>{tr('بانتظار التفعيل', 'Awaiting activation')}</span></div>
+                  <div className={styles.itemHeading}><h3>{ar ? branch.name_ar : branch.name_en}</h3><span className={styles.statusBadge} data-status="pending">{tr('بانتظار التفعيل', 'Awaiting activation')}</span></div>
                   <p>
                     {tr('المتجر', 'Store')} #{branch.seller_id} · {tr('رمز الفرع', 'Code')}:{' '}
                     {branch.code}
@@ -598,7 +598,7 @@ export function SellerReviewScreen() {
               )}
               {shownProducts.map((item) => (
                 <article key={item.id} style={panel}>
-                  <div className={styles.itemHeading}><h3>{ar ? item.name_ar : item.name_en}</h3><span className={styles.statusBadge}>{tr('بانتظار المراجعة', 'Pending review')}</span></div>
+                  <div className={styles.itemHeading}><h3>{ar ? item.name_ar : item.name_en}</h3><span className={styles.statusBadge} data-status="pending_review">{tr('بانتظار المراجعة', 'Pending review')}</span></div>
                   <p>
                     {tr('البائع', 'Seller')} #{item.seller_id} · {tr('السعر', 'Price')}:{' '}
                     {(item.price_halalas / 100).toFixed(2)} SAR
@@ -726,7 +726,7 @@ export function SellerReviewScreen() {
                   && <p>{tr('لا توجد طلبات معلقة.', 'No pending requests.')}</p>}
                 {shownRequests.map((item) => (
                   <div key={item.id} style={{ ...panel, marginTop: 8 }}>
-                    <div className={styles.itemHeading}><strong>{ar ? item.name_ar : item.name_en}</strong><span className={styles.statusBadge}>{statusLabels[item.status] ?? item.status}</span></div>
+                    <div className={styles.itemHeading}><strong>{ar ? item.name_ar : item.name_en}</strong><span className={styles.statusBadge} data-status={item.status}>{statusLabels[item.status] ?? item.status}</span></div>
                     <p>{tr('المتجر', 'Store')} #{item.seller_id} · {item.parent_id === null
                       ? tr('تصنيف رئيسي', 'Parent category') : tr('تصنيف فرعي', 'Subcategory')} ·
                       {item.reason ?? ''}</p>
