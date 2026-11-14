@@ -33,10 +33,19 @@ export type SuperAdminMetricPage = {
   last_page: number;
 };
 
-export const superAdminMetric = (metric: SuperAdminMetricKey, page = 1) =>
+export type SuperAdminReportFilters = {
+  q?: string;
+  from?: string;
+  to?: string;
+  seller_id?: number;
+  status?: string;
+};
+
+export const superAdminMetric = (metric: SuperAdminMetricKey, page = 1, filters: SuperAdminReportFilters = {}) =>
   http.get<SuperAdminMetricPage>('/platform/super-admin/metrics/' + metric, {
-    query: { page, per_page: 15 },
+    query: { page, per_page: 15, ...filters },
   });
 
-export const exportSuperAdminMetric = (metric: SuperAdminMetricKey, format: 'csv' | 'xls') =>
-  http.download('/platform/super-admin/metrics/' + metric + '/export/' + format);
+export const exportSuperAdminMetric = (
+  metric: SuperAdminMetricKey, format: 'csv' | 'xls', filters: SuperAdminReportFilters = {},
+) => http.download('/platform/super-admin/metrics/' + metric + '/export/' + format, { query: filters });
