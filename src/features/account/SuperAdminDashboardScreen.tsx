@@ -118,26 +118,25 @@ export function SuperAdminDashboardScreen() {
   };
 
   const metricCard = (metric: Metric) => (
-    <article key={metric.key} className={styles.statCard + ' admin-family-card' + (selected === metric.key ? ' ' + styles.activeCard : '')}>
-      <div className={styles.statMain}>
+    <button
+      key={metric.key}
+      type="button"
+      className={styles.statCard + ' admin-family-card ' + styles.metricButton + (selected === metric.key ? ' ' + styles.activeCard : '')}
+      aria-pressed={selected === metric.key}
+      aria-label={tr('عرض تفاصيل', 'View details for') + ' ' + metric.label}
+      onClick={() => openDetails(metric.key)}
+    >
+      <span className={styles.statMain}>
         <span aria-hidden="true" className={styles.statIcon}>{metric.icon}</span>
-        <div>
-          <div className={styles.statLabel}>{metric.label}</div>
+        <span className={styles.statCopy}>
+          <span className={styles.statLabel}>{metric.label}</span>
           <strong className={styles.statValue}>{metric.value}</strong>
-        </div>
-      </div>
-      <div className={styles.statActions}>
-        <button type="button" className="admin-family-secondary" onClick={() => openDetails(metric.key)}>
-          {tr('عرض التفاصيل', 'View details')}
-        </button>
-        <button type="button" className="admin-family-secondary" disabled={exporting !== null} onClick={() => void downloadMetric(metric.key, 'xls')}>
-          {tr('إكسل', 'Excel')}
-        </button>
-        <button type="button" className="admin-family-secondary" disabled={exporting !== null} onClick={() => void downloadMetric(metric.key, 'csv')}>
-          CSV
-        </button>
-      </div>
-    </article>
+        </span>
+      </span>
+      <span className={styles.metricHint} aria-hidden="true">
+        {tr('اضغط لعرض التفاصيل', 'Click to view details')} <span>↗</span>
+      </span>
+    </button>
   );
 
   const filteredRows = (details?.data ?? []).filter(row =>
@@ -172,18 +171,36 @@ export function SuperAdminDashboardScreen() {
                 <h2>{tr('مؤشرات المنصة', 'Platform statistics')}</h2>
                 <div className={styles.statGrid + ' admin-family-metrics'}>{metrics.slice(0, 5).map(metricCard)}</div>
                 <h2>{tr('المبيعات والطلبات', 'Sales & Orders')}</h2>
-                <div className={styles.statGrid}>{metrics.slice(5, 12).map(metricCard)}</div>
+                <div className={styles.statGrid + ' admin-family-metrics'}>{metrics.slice(5, 12).map(metricCard)}</div>
+              </main>
+              <aside className={styles.sidebar}>
+                <section className={styles.sidePanel + ' admin-family-panel'}>
+                  <h2>{tr('إجراءات سريعة', 'Quick Actions')}</h2>
+                  <Link to={routePaths.sellerReview}>{tr('مراجعة البائعين والمنتجات والأقسام', 'Manage seller, product & category reviews')} ↗</Link>
+                  <a href="#admin-accounts">{tr('إدارة حسابات الأدمن والصلاحيات', 'Manage Admin assignments')} ↗</a>
+                </section>
+                <section className={styles.sidePanel}>
+                  <h2>{tr('تحتاج إلى متابعة', 'Needs Attention')}</h2>
+                  {metrics.slice(12).map(metricCard)}
+                </section>
+                <section className={styles.sidePanel}>
+                  <h2>{tr('آخر تحديث', 'Last updated')}</h2>
+                  <p>{new Date(data.generated_at).toLocaleString(ar ? 'ar-SA' : 'en-US')}</p>
+                </section>
+              </aside>
+            </div>
+            <div className={styles.fullWidthDetails}>
                 {selected && (
-                  <section className={styles.detailPanel + ' admin-family-panel'} aria-label={selectedMetric?.label}>
+                  <section className={styles.detailPanel + ' admin-family-panel'} aria-label={selectedMetric?.label} aria-live="polite">
                     <div className={styles.sectionHeader}>
                       <div>
                         <h2>{selectedMetric?.label} — {tr('التفاصيل', 'Details')}</h2>
                         <p>{tr('سجلات فعلية من قاعدة البيانات، مع صفحات متعددة للتصفح.', 'Live database records with pagination.')}</p>
                       </div>
                       <div className={styles.inlineActions}>
-                        <button type="button" disabled={exporting !== null} onClick={() => void downloadMetric(selected, 'xls')}>↓ Excel</button>
-                        <button type="button" disabled={exporting !== null} onClick={() => void downloadMetric(selected, 'csv')}>↓ CSV</button>
-                        <button type="button" aria-label={tr('إغلاق التفاصيل', 'Close details')} onClick={() => setSelected(null)}>✕</button>
+                        <button type="button" className="admin-family-secondary" disabled={exporting !== null} onClick={() => void downloadMetric(selected, 'xls')}>↓ Excel</button>
+                        <button type="button" className="admin-family-secondary" disabled={exporting !== null} onClick={() => void downloadMetric(selected, 'csv')}>↓ CSV</button>
+                        <button type="button" className="admin-family-secondary" aria-label={tr('إغلاق التفاصيل', 'Close details')} onClick={() => setSelected(null)}>✕</button>
                       </div>
                     </div>
                     {detailsLoading && <p role="status">{tr('تحميل...', 'Loading...')}</p>}
@@ -214,22 +231,7 @@ export function SuperAdminDashboardScreen() {
                     )}
                   </section>
                 )}
-              </main>
-              <aside className={styles.sidebar}>
-                <section className={styles.sidePanel + ' admin-family-panel'}>
-                  <h2>{tr('إجراءات سريعة', 'Quick Actions')}</h2>
-                  <Link to={routePaths.sellerReview}>{tr('مراجعة البائعين والمنتجات والأقسام', 'Manage seller, product & category reviews')} ↗</Link>
-                  <a href="#admin-accounts">{tr('إدارة حسابات الأدمن والصلاحيات', 'Manage Admin assignments')} ↗</a>
-                </section>
-                <section className={styles.sidePanel}>
-                  <h2>{tr('تحتاج إلى متابعة', 'Needs Attention')}</h2>
-                  {metrics.slice(12).map(metricCard)}
-                </section>
-                <section className={styles.sidePanel}>
-                  <h2>{tr('آخر تحديث', 'Last updated')}</h2>
-                  <p>{new Date(data.generated_at).toLocaleString(ar ? 'ar-SA' : 'en-US')}</p>
-                </section>
-              </aside>
+
             </div>
             <div id="admin-accounts" className={styles.permissions + ' admin-family-panel'}><PlatformAdminAssignments /></div>
           </>
