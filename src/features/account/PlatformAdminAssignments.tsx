@@ -1,8 +1,8 @@
 import { useEffect, useState, type FormEvent } from 'react';
 import { useTranslation } from 'react-i18next';
 import {
-  adminAssignments, addAdminAssignment, updateAdminAssignment,
-  type PlatformAdminAccess,
+  adminAssignments, adminSellerChoices, addAdminAssignment, updateAdminAssignment,
+  type PlatformAdminAccess, type AdminSellerChoice,
 } from './platformAdminApi';
 import styles from './PlatformAdminAssignments.module.css';
 
@@ -11,6 +11,7 @@ export function PlatformAdminAssignments() {
   const ar = i18n.language.startsWith('ar');
   const tr = (a: string, en: string) => ar ? a : en;
   const [items, setItems] = useState<PlatformAdminAccess[]>([]);
+  const [sellerChoices, setSellerChoices] = useState<AdminSellerChoice[]>([]);
   const [email, setEmail] = useState('');
   const [sellerId, setSellerId] = useState('');
   const [orders, setOrders] = useState(true);
@@ -27,6 +28,14 @@ export function PlatformAdminAssignments() {
     }).catch(() => { if (active) setError(tr('تعذر تحميل صلاحيات الإدارة.', 'Unable to load Admin permissions.')); });
     return () => { active = false; };
   // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [revision]);
+
+  useEffect(() => {
+    let active = true;
+    void adminSellerChoices().then(response => {
+      if (active) setSellerChoices(response.data);
+    }).catch(() => { if (active) setSellerChoices([]); });
+    return () => { active = false; };
   }, [revision]);
 
   const save = async (event: FormEvent<HTMLFormElement>) => {
@@ -75,6 +84,17 @@ export function PlatformAdminAssignments() {
             <span>{tr('البريد الإلكتروني للحساب', 'Account email')} *</span>
             <input type="email" required maxLength={255} placeholder={tr('أدخل بريد الإداري', 'Enter admin email')} value={email} onChange={e => setEmail(e.target.value)} />
           </label>
+          {sellerChoices.length > 0 && (
+            <label className={styles.field}>
+              <span>{tr('اختر البائع', 'Select seller')} *</span>
+              <select value={sellerId} onChange={e => setSellerId(e.target.value)}>
+                <option value="">{tr('اختر المتجر...', 'Choose a seller...')}</option>
+                {sellerChoices.map(seller => (
+                  <option key={seller.id} value={seller.id}>{ar ? seller.name_ar : seller.name_en} (#{seller.id})</option>
+                ))}
+              </select>
+            </label>
+          )}
           <label className={styles.field}>
             <span>{tr('رقم البائع', 'Seller ID')} *</span>
             <input type="number" required min={1} step={1} placeholder={tr('رقم البائع الموجود', 'Existing seller ID')} value={sellerId} onChange={e => setSellerId(e.target.value)} />
