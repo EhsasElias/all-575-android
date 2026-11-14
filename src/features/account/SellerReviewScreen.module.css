@@ -80,3 +80,7 @@
   .reviewToolbar h2 { flex: 1 1 100%; }
   .review .reviewToolbar button { width: 100%; }
 }
+
+
+/* Match the seller workspace 20px space below the refresh toolbar. */
+.review .reviewToolbar { margin-block-end: 20px; }
