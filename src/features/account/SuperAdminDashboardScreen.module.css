@@ -161,3 +161,18 @@
 .reportMeta {display:flex;justify-content:space-between;flex-wrap:wrap;gap:10px;color:var(--color-text-muted,#607166);font-size:.8rem;padding-block:4px 12px}
 .fullWidthDetails .dataTable th {background:var(--color-surface-mint,#edf4eb)}
 @media(max-width:560px){.reportFilters{grid-template-columns:1fr 1fr;gap:8px;padding:11px}.reportFilters label:first-child{grid-column:1/-1}.reportFilterActions{grid-column:1/-1}}
+
+/* Specificity ensures the Seller mint surface wins over shared white card defaults. */
+.dashboard .statGrid .metricButton,
+.dashboard .sidebar .metricButton {
+  background: var(--color-surface-mint, #edf4eb);
+  box-shadow: none;
+  border-color: var(--color-border,#d3ddd0);
+}
+.dashboard .statGrid .metricButton:hover,
+.dashboard .sidebar .metricButton:hover,
+.dashboard .statGrid .metricButton[aria-pressed="true"],
+.dashboard .sidebar .metricButton[aria-pressed="true"] {
+  background: var(--color-surface-mint,#e2f2e6);
+  border-color: #22795c;
+}
