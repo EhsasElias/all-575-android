@@ -10,6 +10,7 @@ import {
   type SuperAdminDashboard, type SuperAdminMetricKey, type SuperAdminMetricPage,
 } from './superAdminApi';
 import styles from './SuperAdminDashboardScreen.module.css';
+import './adminWorkspaceFamily.css';
 
 type Metric = { key: SuperAdminMetricKey; label: string; value: string; icon: string };
 type DownloadFormat = 'csv' | 'xls';
@@ -117,7 +118,7 @@ export function SuperAdminDashboardScreen() {
   };
 
   const metricCard = (metric: Metric) => (
-    <article key={metric.key} className={styles.statCard + (selected === metric.key ? ' ' + styles.activeCard : '')}>
+    <article key={metric.key} className={styles.statCard + ' admin-family-card' + (selected === metric.key ? ' ' + styles.activeCard : '')}>
       <div className={styles.statMain}>
         <span aria-hidden="true" className={styles.statIcon}>{metric.icon}</span>
         <div>
@@ -126,13 +127,13 @@ export function SuperAdminDashboardScreen() {
         </div>
       </div>
       <div className={styles.statActions}>
-        <button type="button" onClick={() => openDetails(metric.key)}>
-          {tr('التفاصيل', 'Details')}
+        <button type="button" className="admin-family-secondary" onClick={() => openDetails(metric.key)}>
+          {tr('عرض التفاصيل', 'View details')}
         </button>
-        <button type="button" disabled={exporting !== null} onClick={() => void downloadMetric(metric.key, 'xls')}>
+        <button type="button" className="admin-family-secondary" disabled={exporting !== null} onClick={() => void downloadMetric(metric.key, 'xls')}>
           {tr('إكسل', 'Excel')}
         </button>
-        <button type="button" disabled={exporting !== null} onClick={() => void downloadMetric(metric.key, 'csv')}>
+        <button type="button" className="admin-family-secondary" disabled={exporting !== null} onClick={() => void downloadMetric(metric.key, 'csv')}>
           CSV
         </button>
       </div>
@@ -145,8 +146,8 @@ export function SuperAdminDashboardScreen() {
 
   return (
     <Page>
-      <div className={styles.dashboard} dir={ar ? 'rtl' : 'ltr'}>
-        <div className={styles.heading}>
+      <div className={styles.dashboard + ' admin-workspace-family'} dir={ar ? 'rtl' : 'ltr'}>
+        <div className={styles.heading + ' admin-family-hero'}>
           <div className={styles.headingIcon} aria-hidden="true">♛</div>
           <div>
             <Link className={styles.back} to={routePaths.account}>{tr('العودة للحساب', 'Back to account')}</Link>
@@ -155,9 +156,9 @@ export function SuperAdminDashboardScreen() {
           </div>
           <span className={styles.platformTag}>{tr('منصة ALL 5.75', 'ALL 5.75 Platform')}</span>
         </div>
-        <div className={styles.toolbar}>
+        <div className={styles.toolbar + ' admin-family-panel'}>
           <span>{tr('نظرة شاملة على المنصة', 'Platform overview')}</span>
-          <button type="button" className={styles.primary} onClick={() => setRevision(value => value + 1)}>
+          <button type="button" className={styles.primary + ' admin-family-primary'} onClick={() => setRevision(value => value + 1)}>
             ↻ {tr('تحديث البيانات', 'Refresh data')}
           </button>
         </div>
@@ -169,11 +170,11 @@ export function SuperAdminDashboardScreen() {
             <div className={styles.contentGrid}>
               <main className={styles.main}>
                 <h2>{tr('مؤشرات المنصة', 'Platform statistics')}</h2>
-                <div className={styles.statGrid}>{metrics.slice(0, 5).map(metricCard)}</div>
+                <div className={styles.statGrid + ' admin-family-metrics'}>{metrics.slice(0, 5).map(metricCard)}</div>
                 <h2>{tr('المبيعات والطلبات', 'Sales & Orders')}</h2>
                 <div className={styles.statGrid}>{metrics.slice(5, 12).map(metricCard)}</div>
                 {selected && (
-                  <section className={styles.detailPanel} aria-label={selectedMetric?.label}>
+                  <section className={styles.detailPanel + ' admin-family-panel'} aria-label={selectedMetric?.label}>
                     <div className={styles.sectionHeader}>
                       <div>
                         <h2>{selectedMetric?.label} — {tr('التفاصيل', 'Details')}</h2>
@@ -193,7 +194,7 @@ export function SuperAdminDashboardScreen() {
                           <input aria-label={tr('بحث ضمن الصفحة', 'Search current page')} placeholder={tr('بحث ضمن السجلات المعروضة...', 'Search displayed records...')} value={search} onChange={e => setSearch(e.target.value)} />
                           <span>{tr('إجمالي السجلات', 'Total records')}: {number(details.total)}</span>
                         </div>
-                        <div className={styles.tableScroll}>
+                        <div className={styles.tableScroll + ' admin-family-table'}>
                           <table className={styles.dataTable}>
                             <thead><tr>{details.columns.map(column => <th key={column} scope="col">{column.replaceAll('_', ' ')}</th>)}</tr></thead>
                             <tbody>
@@ -215,10 +216,10 @@ export function SuperAdminDashboardScreen() {
                 )}
               </main>
               <aside className={styles.sidebar}>
-                <section className={styles.sidePanel}>
+                <section className={styles.sidePanel + ' admin-family-panel'}>
                   <h2>{tr('إجراءات سريعة', 'Quick Actions')}</h2>
                   <Link to={routePaths.sellerReview}>{tr('مراجعة البائعين والمنتجات والأقسام', 'Manage seller, product & category reviews')} ↗</Link>
-                  <Link to={routePaths.platformAdminDashboard}>{tr('لوحة الإدارة', 'Admin dashboard')} ↗</Link>
+                  <a href="#admin-accounts">{tr('إدارة حسابات الأدمن والصلاحيات', 'Manage Admin assignments')} ↗</a>
                 </section>
                 <section className={styles.sidePanel}>
                   <h2>{tr('تحتاج إلى متابعة', 'Needs Attention')}</h2>
@@ -230,7 +231,7 @@ export function SuperAdminDashboardScreen() {
                 </section>
               </aside>
             </div>
-            <div className={styles.permissions}><PlatformAdminAssignments /></div>
+            <div id="admin-accounts" className={styles.permissions + ' admin-family-panel'}><PlatformAdminAssignments /></div>
           </>
         )}
       </div>
