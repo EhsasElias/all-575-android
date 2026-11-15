@@ -65,6 +65,31 @@ describe('download', () => {
     );
   });
 
+  it('accepts a native XLSX signature and preserves its filename', async () => {
+    const { http, fetchFn } = setup('t');
+    fetchFn.mockResolvedValue(new Response(new Uint8Array([0x50, 0x4b, 0x03, 0x04, 0x01]), {
+      headers: {
+        'Content-Type': 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+        'Content-Disposition': 'attachment; filename="all575-customers.xlsx"',
+      },
+    }));
+    const file = await http.download('/platform/super-admin/metrics/customers/export/xlsx');
+    expect(file.filename).toBe('all575-customers.xlsx');
+    expect(fetchFn.mock.calls.at(-1)?.[1]?.cache).toBe('no-store');
+  });
+
+  it('rejects Excel 2003 XML or HTML masquerading as an XLSX', async () => {
+    const { http, fetchFn } = setup('t');
+    fetchFn.mockResolvedValue(new Response('<Workbook><Worksheet /></Workbook>', {
+      headers: {
+        'Content-Type': 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+        'Content-Disposition': 'attachment; filename="all575-customers.xlsx"',
+      },
+    }));
+    await expect(http.download('/platform/super-admin/metrics/customers/export/xlsx'))
+      .rejects.toThrow('invalid Excel file');
+  });
+
   it('has no file name when the server sends none', async () => {
     const { http, fetchFn } = setup();
     fetchFn.mockResolvedValue(new Response('x'));
