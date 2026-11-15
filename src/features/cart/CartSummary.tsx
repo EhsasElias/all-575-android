@@ -7,7 +7,7 @@ const BASIS_POINTS_PER_PERCENT = 100;
 
 type CartSummaryProps = {
   items: number;
-  /** Halalas, VAT included. Only the lines that can be bought. */
+  /** Net halalas before VAT. Only the lines that can be bought. */
   subtotal: number;
   isGuest: boolean;
 };
