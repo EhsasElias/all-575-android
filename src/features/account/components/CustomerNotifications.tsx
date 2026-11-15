@@ -1,5 +1,6 @@
 import { useCallback, useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
+import { Link } from 'react-router';
 import {
   getNotifications,
   markAllNotificationsRead,
@@ -18,6 +19,7 @@ const labels = {
     failure: 'تعذر تحميل الإشعارات. حاولي التحديث.',
     loading: 'جارٍ تحميل الإشعارات',
     unread: 'غير مقروء',
+    open: 'عرض التفاصيل',
   },
   en: {
     title: 'Notifications',
@@ -28,6 +30,7 @@ const labels = {
     failure: 'Could not load notifications. Try refreshing.',
     loading: 'Loading notifications',
     unread: 'Unread',
+    open: 'View details',
   },
   fr: {
     title: 'Notifications',
@@ -38,6 +41,7 @@ const labels = {
     failure: 'Impossible de charger les notifications. Réessayez.',
     loading: 'Chargement des notifications',
     unread: 'Non lu',
+    open: 'Voir les détails',
   },
 } as const;
 
@@ -65,6 +69,17 @@ export function CustomerNotifications() {
 
   useEffect(() => {
     void load();
+    const refresh = () => {
+      if (document.visibilityState === 'visible') void load();
+    };
+    const interval = window.setInterval(refresh, 30_000);
+    window.addEventListener('focus', refresh);
+    document.addEventListener('visibilitychange', refresh);
+    return () => {
+      window.clearInterval(interval);
+      window.removeEventListener('focus', refresh);
+      document.removeEventListener('visibilitychange', refresh);
+    };
   }, [load]);
 
   const markRead = async (id: number) => {
@@ -73,6 +88,7 @@ export function CustomerNotifications() {
     try {
       await markNotificationRead(id);
       await load();
+      window.dispatchEvent(new Event('all575-notifications-changed'));
     } catch {
       setError(true);
     } finally {
@@ -86,6 +102,7 @@ export function CustomerNotifications() {
     try {
       await markAllNotificationsRead();
       await load();
+      window.dispatchEvent(new Event('all575-notifications-changed'));
     } catch {
       setError(true);
     } finally {
@@ -152,6 +169,11 @@ export function CustomerNotifications() {
                       language === 'ar' ? 'ar-SA' : language === 'fr' ? 'fr-FR' : 'en-GB',
                     )}
                   </time>
+                  {notice.target_path?.startsWith('/') && !notice.target_path.startsWith('//') && (
+                    <Link to={notice.target_path} className={styles.markRead}>
+                      {t.open}
+                    </Link>
+                  )}
                   {!notice.read_at && (
                     <button
                       type="button"
