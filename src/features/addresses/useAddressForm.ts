@@ -64,6 +64,7 @@ export function useAddressForm(address: Address | null) {
       setExistingId(result.id);
       setProblems({});
       void queryClient.invalidateQueries({ queryKey: addressKeys.all });
+      void queryClient.invalidateQueries({ queryKey: ['catalog', 'address-zone'] });
     },
     onError: (error) => {
       if (isApiError(error) && error.kind === 'validation') {
