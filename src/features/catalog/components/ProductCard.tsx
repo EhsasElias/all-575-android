@@ -53,7 +53,7 @@ export function ProductCard({
         </p>
         <p className={styles.seller}>{pickText(product.seller.name, language)}</p>
         <RatingSummary average={product.rating.average} count={product.rating.count} compact />
-        <p className={styles.price}>{formatMoney(product.price.gross, language)}</p>
+        <p className={styles.price}>{formatMoney(product.price.net, language)}</p>
         {showAvailability && <AvailabilityBadge availability={product.availability} />}
       </div>
     </article>
