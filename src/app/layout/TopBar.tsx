@@ -12,7 +12,7 @@ export function TopBar() {
   const { t } = useTranslation();
   const { t: tNavigation } = useTranslation('navigation');
   const [open, setOpen] = useState(false);
-  const { status } = useSession();
+  const { status, user } = useSession();
   const [unreadCount, setUnreadCount] = useState(0);
   const { i18n } = useTranslation();
   const notificationLabel = i18n.language.startsWith('ar') ? 'الإشعارات' : 'Notifications';
@@ -45,7 +45,7 @@ export function TopBar() {
       window.removeEventListener('focus', refresh);
       window.removeEventListener('all575-notifications-changed', refresh);
     };
-  }, [status]);
+  }, [status, user?.id]);
   const close = useCallback(() => {
     setOpen(false);
   }, []);
