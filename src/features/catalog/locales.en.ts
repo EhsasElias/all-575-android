@@ -20,7 +20,7 @@ export const en = {
     available: 'Available in my delivery area',
     needArea: 'Choose a delivery area to filter by availability.',
     clear: 'Clear filters',
-    samePrice: 'Unit prices from 1 to 5.75 SAR, VAT included.',
+    samePrice: 'Unit prices from 1 to 5.75 SAR, before VAT.',
     failed: 'Some filter choices could not load.',
   },
   saved: {
@@ -66,7 +66,7 @@ export const en = {
   },
   home: {
     heading: 'What do you need today?',
-    priceLine: 'Prices from {{minimum}} to {{price}}, VAT included',
+    priceLine: 'Prices from {{minimum}} to {{price}}, before VAT',
     categoriesTitle: 'Categories',
     seeAll: 'See all',
     popularTitle: 'Popular',
@@ -126,7 +126,7 @@ export const en = {
     browse: 'Browse categories',
     soldBy: 'Sold by',
     category: 'Category',
-    vatIncluded: 'VAT included',
+    vatIncluded: 'before VAT',
     vatNone: 'No VAT on this item',
     optionsLegend: 'Choose an option',
     aboutTitle: 'About this product',
