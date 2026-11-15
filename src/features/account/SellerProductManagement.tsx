@@ -187,8 +187,8 @@ export function SellerProductManagement({ products, memberships, onUpdated }: Pr
     if (draft.vatClass !== 'standard' && (draft.vatJustification.trim().length < 15 || draft.vatJustification.trim().length > 500))
       next.vatJustification = tr('اذكر سببًا نظاميًا واضحًا (15–500 حرف). ستخضع الحالة لمراجعة الإدارة.', 'State the applicable legal reason (15–500 characters). Admin review is required.');
     if (!/^[0-9]+(?:\.[0-9]{1,2})?$/.test(draft.price) ||
-        Number(draft.price) < 1 || Number(draft.price) > 10)
-      next.price = tr('أدخل سعرًا من 1 إلى 10 ريالات (حتى منزلتين عشريتين).', 'Enter a price from SAR 1 to SAR 10 (up to 2 decimals).');
+        Number(draft.price) < 1 || Number(draft.price) > 5.75)
+      next.price = tr('أدخل سعرًا قبل الضريبة من 1 إلى 5.75 ريال (حتى منزلتين عشريتين).', 'Enter a price before VAT from SAR 1 to SAR 5.75 (up to 2 decimals).');
     return next;
   };
   const displayApiFieldErrors = (cause: unknown): boolean => {
