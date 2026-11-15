@@ -23,7 +23,7 @@ export const fr: Translations<typeof en> = {
     available: 'Disponible dans ma zone',
     needArea: 'Choisissez une zone pour filtrer la disponibilité.',
     clear: 'Effacer les filtres',
-    samePrice: 'Prix unitaires de 1 à 5,75 SAR, TVA comprise.',
+    samePrice: 'Prix unitaires de 1 à 5,75 SAR, hors TVA.',
     failed: 'Certains filtres n’ont pas pu être chargés.',
   },
   saved: {
@@ -72,7 +72,7 @@ export const fr: Translations<typeof en> = {
   },
   home: {
     heading: "De quoi avez-vous besoin aujourd'hui ?",
-    priceLine: 'Prix de {{minimum}} à {{price}}, TVA comprise',
+    priceLine: 'Prix de {{minimum}} à {{price}}, hors TVA',
     categoriesTitle: 'Catégories',
     seeAll: 'Tout voir',
     popularTitle: 'Populaires',
@@ -134,7 +134,7 @@ export const fr: Translations<typeof en> = {
     browse: 'Parcourir les catégories',
     soldBy: 'Vendu par',
     category: 'Catégorie',
-    vatIncluded: 'TVA comprise',
+    vatIncluded: 'hors TVA',
     vatNone: 'Pas de TVA sur cet article',
     optionsLegend: 'Choisissez une option',
     aboutTitle: 'À propos de ce produit',
