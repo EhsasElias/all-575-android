@@ -23,7 +23,7 @@ export const ar: Translations<typeof en> = {
     available: 'متوفر في منطقة التوصيل',
     needArea: 'اختر منطقة التوصيل للتصفية حسب التوفر.',
     clear: 'مسح الفلاتر',
-    samePrice: 'أسعار المنتجات من 1 إلى 5.75 ريال، شاملة الضريبة.',
+    samePrice: 'أسعار المنتجات من 1 إلى 5.75 ريال، قبل الضريبة.',
     failed: 'تعذر تحميل بعض خيارات التصفية.',
   },
   saved: {
@@ -67,7 +67,7 @@ export const ar: Translations<typeof en> = {
   },
   home: {
     heading: 'ماذا تحتاج اليوم؟',
-    priceLine: 'أسعار من {{minimum}} إلى {{price}} شاملة الضريبة',
+    priceLine: 'أسعار من {{minimum}} إلى {{price}} قبل الضريبة',
     categoriesTitle: 'الفئات',
     seeAll: 'عرض الكل',
     popularTitle: 'الأكثر طلبًا',
@@ -127,7 +127,7 @@ export const ar: Translations<typeof en> = {
     browse: 'تصفّح الفئات',
     soldBy: 'البائع',
     category: 'الفئة',
-    vatIncluded: 'شامل الضريبة',
+    vatIncluded: 'تضاف الضريبة عند الدفع',
     vatNone: 'بدون ضريبة على هذا المنتج',
     optionsLegend: 'اختر الخيار',
     aboutTitle: 'عن المنتج',
