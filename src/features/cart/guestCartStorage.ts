@@ -1,7 +1,8 @@
 import { MAX_CART_LINES, MAX_QUANTITY_PER_LINE } from './cartRules';
 import type { GuestLine, LocalizedText } from './cartTypes';
 
-const STORAGE_VERSION = 1;
+const STORAGE_VERSION = 2;
+const LEGACY_VAT_INCLUDED_VERSION = 1;
 const MAX_TEXT_LENGTH = 300;
 const MAX_URL_LENGTH = 2048;
 
@@ -70,7 +71,7 @@ export function parseGuestCart(stored: string | null): readonly GuestLine[] {
   } catch {
     return NO_LINES;
   }
-  if (!isRecord(parsed) || parsed.version !== STORAGE_VERSION || !Array.isArray(parsed.lines)) {
+  if (!isRecord(parsed) || (parsed.version !== STORAGE_VERSION && parsed.version !== LEGACY_VAT_INCLUDED_VERSION) || !Array.isArray(parsed.lines)) {
     return NO_LINES;
   }
 
@@ -81,6 +82,9 @@ export function parseGuestCart(stored: string | null): readonly GuestLine[] {
     const line = parseLine(candidate);
     if (line === null || seen.has(line.variantId)) continue;
     seen.add(line.variantId);
+    // Preserve older carts, but discard the old VAT-inclusive price snapshot.
+    // The current store's net-price fallback will reprice the items safely.
+    if (parsed.version === LEGACY_VAT_INCLUDED_VERSION) delete line.unitPrice;
     lines.push(line);
     if (lines.length === MAX_CART_LINES) break;
   }
