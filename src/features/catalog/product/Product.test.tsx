@@ -199,7 +199,7 @@ describe('Languages', () => {
     await userEvent.click(screen.getByText('عن المنتج'));
     expect(screen.getByText('منتج تجريبي لعرض المتجر.')).toBeVisible();
     expect(screen.getByText(/^5\.00\s+ر\.س$/)).toBeVisible();
-    expect(screen.getByText('شامل الضريبة')).toBeVisible();
+    expect(screen.getByText('تضاف الضريبة عند الدفع')).toBeVisible();
     expect(screen.getByRole('group', { name: 'اختر الخيار' })).toBeVisible();
     expect(screen.getByRole('radio', { name: /وسط/ })).toBeChecked();
     expect(screen.queryByText('Biscuits')).not.toBeInTheDocument();
