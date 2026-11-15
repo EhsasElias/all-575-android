@@ -233,7 +233,7 @@ describe('Delivery area of a signed-in customer', () => {
     const api = signedIn();
     await renderApp({ route: '/home', seenWelcome: true, signedIn: true });
 
-    expect(await screen.findByRole('button', { name: /Deliver to\\s*Riyadh, Al Olaya/ })).toBeVisible();
+    expect(await screen.findByRole('button', { name: /Deliver to\s*Riyadh, Al Olaya/ })).toBeVisible();
     await waitFor(() => {
       expect(queriesOf(api, 'GET /products').at(-1)?.get('zone_id')).toBe('1');
     });
@@ -266,7 +266,7 @@ describe('Delivery area of a signed-in customer', () => {
     });
     await renderApp({ route: '/home', seenWelcome: true, signedIn: true });
 
-    expect(await screen.findByRole('button', { name: /Deliver to\\s*Riyadh, Al Olaya/ })).toBeVisible();
+    expect(await screen.findByRole('button', { name: /Deliver to\s*Riyadh, Al Olaya/ })).toBeVisible();
     await waitFor(() => {
       expect(queriesOf(api, 'GET /products').at(-1)?.get('zone_id')).toBe('1');
     });
