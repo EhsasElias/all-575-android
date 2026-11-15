@@ -37,11 +37,13 @@ export function TopBar() {
     const interval = window.setInterval(refresh, 60_000);
     document.addEventListener('visibilitychange', refresh);
     window.addEventListener('focus', refresh);
+    window.addEventListener('all575-notifications-changed', refresh);
     return () => {
       active = false;
       window.clearInterval(interval);
       document.removeEventListener('visibilitychange', refresh);
       window.removeEventListener('focus', refresh);
+      window.removeEventListener('all575-notifications-changed', refresh);
     };
   }, [status]);
   const close = useCallback(() => {
