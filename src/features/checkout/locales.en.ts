@@ -42,8 +42,8 @@ export const en = {
     deliveryPending: 'Shown once your cart is fixed',
     free: 'Free',
     freeOver: 'Free delivery on orders of {{amount}} or more',
-    vat: 'VAT included',
-    vatIncludedShort: 'VAT included',
+    vat: 'VAT (15% where applicable)',
+    vatIncludedShort: 'Total includes added VAT',
     total: 'Total',
   },
   promo: {
