@@ -248,6 +248,7 @@ describe('Delivery area of a signed-in customer', () => {
       'GET /addresses': {
         body: { data: [{ ...defaultAddress, serviceable: false, service_zone_id: null }] },
       },
+      'GET /zones/resolve': nowhere,
     });
     await renderApp({ route: '/home', seenWelcome: true, signedIn: true });
 
@@ -257,11 +258,26 @@ describe('Delivery area of a signed-in customer', () => {
     });
   });
 
+  it('uses live resolved coverage when the address has an outdated zone id', async () => {
+    const api = signedIn({
+      'GET /addresses': {
+        body: { data: [{ ...defaultAddress, service_zone_id: 99 }] },
+      },
+    });
+    await renderApp({ route: '/home', seenWelcome: true, signedIn: true });
+
+    expect(await screen.findByRole('button', { name: /Deliver to\\s*Riyadh, Al Olaya/ })).toBeVisible();
+    await waitFor(() => {
+      expect(queriesOf(api, 'GET /products').at(-1)?.get('zone_id')).toBe('1');
+    });
+  });
+
   it('does not use an address we cannot deliver to', async () => {
     signedIn({
       'GET /addresses': {
         body: { data: [{ ...defaultAddress, serviceable: false, service_zone_id: null }] },
       },
+      'GET /zones/resolve': nowhere,
     });
     await renderApp({ route: '/home', seenWelcome: true, signedIn: true });
 
