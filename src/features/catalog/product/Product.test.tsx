@@ -33,8 +33,8 @@ describe('Product page', () => {
       '/sellers/home-store',
     );
     expect(screen.getByRole('link', { name: 'Food' })).toHaveAttribute('href', '/categories/food');
-    expect(screen.getByText(/^5\.75\s+SAR$/)).toBeVisible();
-    expect(screen.getByText('VAT included')).toBeVisible();
+    expect(screen.getByText(/^5\.00\s+SAR$/)).toBeVisible();
+    expect(screen.getByText('before VAT')).toBeVisible();
     await userEvent.click(screen.getByText('About this product'));
     expect(screen.getByText('Demo product for previewing the store.')).toBeVisible();
     expect(screen.getByRole('img', { name: 'Biscuits' })).toHaveAttribute(
@@ -62,7 +62,7 @@ describe('Product page', () => {
     await renderProduct();
 
     expect(await screen.findByText('No VAT on this item')).toBeVisible();
-    expect(screen.queryByText('VAT included')).not.toBeInTheDocument();
+    expect(screen.queryByText('before VAT')).not.toBeInTheDocument();
   });
 
   it('asks for the product and its reviews at once, for the chosen area', async () => {
@@ -198,7 +198,7 @@ describe('Languages', () => {
     expect(document.documentElement).toHaveAttribute('dir', 'rtl');
     await userEvent.click(screen.getByText('عن المنتج'));
     expect(screen.getByText('منتج تجريبي لعرض المتجر.')).toBeVisible();
-    expect(screen.getByText(/^5\.75\s+ر\.س$/)).toBeVisible();
+    expect(screen.getByText(/^5\.00\s+ر\.س$/)).toBeVisible();
     expect(screen.getByText('شامل الضريبة')).toBeVisible();
     expect(screen.getByRole('group', { name: 'اختر الخيار' })).toBeVisible();
     expect(screen.getByRole('radio', { name: /وسط/ })).toBeChecked();
