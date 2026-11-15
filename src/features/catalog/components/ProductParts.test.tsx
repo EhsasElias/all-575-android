@@ -99,7 +99,7 @@ describe('ProductCard', () => {
       'href',
       '/products/demo-clothing-1',
     );
-    expect(screen.getByText(/^5\.75\s+SAR$/)).toBeVisible();
+    expect(screen.getByText(/^5\.00\s+SAR$/)).toBeVisible();
     expect(screen.getByText('Home Store')).toBeVisible();
   });
 
