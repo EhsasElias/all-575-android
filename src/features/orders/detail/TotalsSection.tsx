@@ -10,6 +10,9 @@ export function TotalsSection({ order }: { order: OrderDetail }) {
   const { t } = useTranslation('orders');
   const { language } = useLanguage();
   const { amounts } = order;
+  // Do not relabel existing VAT-inclusive orders when displaying historical invoices.
+  const vatAdded = amounts.vat_included > 0 &&
+    amounts.total === amounts.subtotal - amounts.discount + amounts.delivery_fee + amounts.vat_included;
 
   return (
     <Section title={t('totals.title')}>
@@ -31,12 +34,12 @@ export function TotalsSection({ order }: { order: OrderDetail }) {
             ? t('totals.free')
             : formatMoney(amounts.delivery_fee, language)}
         </Fact>
+        <Fact label={t('totals.vat')}>{formatMoney(amounts.vat_included, language)}</Fact>
         <Fact label={t('totals.total')} strong>
           {formatMoney(amounts.total, language)}
         </Fact>
-        <Fact label={t('totals.vat')}>{formatMoney(amounts.vat_included, language)}</Fact>
       </Facts>
-      <p className={styles.note}>{t('totals.vatIncluded')}</p>
+      <p className={styles.note}>{t(vatAdded ? 'totals.vatAdded' : 'totals.vatIncluded')}</p>
     </Section>
   );
 }
