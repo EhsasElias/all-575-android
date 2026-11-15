@@ -10,6 +10,11 @@ describe('reading the stored guest cart', () => {
     expect(parseGuestCart(null)).toEqual([]);
   });
 
+  it('preserves legacy guest items but discards old VAT-inclusive price snapshots', () => {
+    const legacy = stored([{ ...guestLine(BISCUITS, 1), unitPrice: 575 }], 1);
+    expect(parseGuestCart(legacy)).toEqual([guestLine(BISCUITS, 1)]);
+  });
+
   it('gives back exactly what was written', () => {
     const lines = [guestLine(BISCUITS, 2), guestLine(NOTEBOOK, 20)];
 
@@ -24,7 +29,7 @@ describe('reading the stored guest cart', () => {
     ['a number', '42'],
     ['an object without lines', '{"version":1}'],
     ['lines that are not a list', stored({ variantId: 1 })],
-    ['a version this app does not know', stored([guestLine(BISCUITS, 1)], 2)],
+    ['a version this app does not know', stored([guestLine(BISCUITS, 1)], 3)],
     ['no version', JSON.stringify({ lines: [guestLine(BISCUITS, 1)] })],
   ])('treats %s as an empty cart without throwing', (_name, text) => {
     expect(parseGuestCart(text)).toEqual([]);
