@@ -36,7 +36,7 @@ function clear(): Promise<CartChange> {
 export function useGuestCart(): Cart {
   const lines = useSyncExternalStore(guestCartStore.subscribe, guestCartStore.getSnapshot);
   const storeInfo = useStoreInfo();
-  const unitPrice = storeInfo.data?.price.gross;
+  const unitPrice = storeInfo.data?.price.net;
 
   return useMemo<Cart>(() => {
     // An empty cart needs no price, so it never waits for the store call.
