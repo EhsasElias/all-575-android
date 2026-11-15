@@ -1135,7 +1135,7 @@ export function SellerProductManagement({ products, memberships, onUpdated }: Pr
             </div>
             <div style={controls}>
               <label style={field}>
-                {tr('السعر (ر.س) *', 'Price (SAR) *')}
+                {tr('السعر قبل الضريبة (ر.س) *', 'Price before VAT (SAR) *')}
                 <input
                   type="number"
                   required
