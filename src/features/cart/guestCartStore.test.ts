@@ -14,7 +14,7 @@ describe('the guest cart store', () => {
     guestCartStore.write([guestLine(BISCUITS, 2)]);
 
     const stored: unknown = JSON.parse(getPreference('guestCart') ?? 'null');
-    expect(stored).toEqual({ version: 1, lines: [guestLine(BISCUITS, 2)] });
+    expect(stored).toEqual({ version: 2, lines: [guestLine(BISCUITS, 2)] });
   });
 
   it('tells subscribers when the lines change, and stops after they unsubscribe', () => {
