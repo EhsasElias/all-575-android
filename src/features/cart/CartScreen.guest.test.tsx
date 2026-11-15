@@ -44,7 +44,7 @@ describe('the cart screen as a guest', () => {
 
     expect(summary).toHaveTextContent('Items3');
     expect(summary).toHaveTextContent(`Subtotal${money(1725)}`);
-    expect(await within(summary).findByText('Prices include 15% VAT')).toBeInTheDocument();
+    expect(await within(summary).findByText('15% VAT is added at checkout')).toBeInTheDocument();
     expect(
       within(summary).getByText('The delivery fee and any promo code are worked out at checkout.'),
     ).toBeInTheDocument();
