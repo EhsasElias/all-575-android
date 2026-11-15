@@ -47,8 +47,8 @@ export const fr: Translations<typeof en> = {
     deliveryPending: 'Affichée une fois votre panier corrigé',
     free: 'Gratuite',
     freeOver: 'Livraison gratuite pour les commandes de {{amount}} ou plus',
-    vat: 'TVA comprise',
-    vatIncludedShort: 'TVA comprise',
+    vat: 'TVA ajoutée',
+    vatIncludedShort: 'Total avec TVA ajoutée',
     total: 'Total',
   },
   promo: {
