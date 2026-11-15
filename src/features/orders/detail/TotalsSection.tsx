@@ -5,7 +5,7 @@ import { Section } from '../components/Section';
 import type { OrderDetail } from '../types';
 import styles from './TotalsSection.module.css';
 
-/** The amounts exactly as the server charged them. Every price already includes VAT. */
+/** The amounts exactly as the server charged them: net components plus the recorded VAT. */
 export function TotalsSection({ order }: { order: OrderDetail }) {
   const { t } = useTranslation('orders');
   const { language } = useLanguage();
