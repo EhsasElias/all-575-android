@@ -28,6 +28,29 @@ function quotesWithPromo(otherwise: Reply) {
   };
 }
 
+describe('Checkout: VAT added to net prices', () => {
+  it('shows SAR 5.00 goods plus SAR 0.75 VAT and charges SAR 5.75', async () => {
+    const item = quote().lines[0];
+    const beforeVat = quote({
+      lines: [{ ...item, quantity: 1, unit_price: 500, line_price: 500, line_total: 500 }],
+      subtotal: 500,
+      delivery_fee: 0,
+      vat_included: 75,
+      total: 575,
+    });
+
+    await renderCheckout({
+      routes: { 'POST /quotes': { status: 201, body: { data: beforeVat } } },
+    });
+
+    const summary = await screen.findByRole('region', { name: 'Order summary' });
+    expect(within(summary).getByText('VAT (15% where applicable)')).toBeVisible();
+    expect(within(summary).getByText(/^0\\.75\\s+SAR$/)).toBeVisible();
+    expect(within(summary).getByText(/^5\\.75\\s+SAR$/)).toBeVisible();
+    expect(await screen.findByRole('button', { name: /^Pay 5\\.75/ })).toBeInTheDocument();
+  });
+});
+
 describe('Checkout: promo code', () => {
   it('prices the order with a valid code, shows the discount, and goes back when it is removed', async () => {
     const user = userEvent.setup();
