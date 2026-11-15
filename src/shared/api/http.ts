@@ -195,8 +195,10 @@ export function createHttpClient(config: HttpClientConfig): HttpClient {
 
     if (!response.ok) await rejectWith(response, await blob.text(), token);
     const filename = readFilename(response.headers.get('Content-Disposition'));
-    const expectsXlsx = /(?:\\.xlsx(?:\\?|$)|\\/export\\/xlsx(?:\\?|$))/i.test(path)
-      || /\\.xlsx$/i.test(filename ?? '');
+    const exportPath = path.split('?')[0] ?? path;
+    const expectsXlsx = exportPath.endsWith('.xlsx')
+      || exportPath.endsWith('/export/xlsx')
+      || (filename?.toLowerCase().endsWith('.xlsx') ?? false);
     if (expectsXlsx) {
       // XLSX is a ZIP/OOXML file, never HTML, XML 2003, or CSV with an Excel extension.
       const signature = new Uint8Array(await blob.slice(0, 4).arrayBuffer());
