@@ -832,8 +832,8 @@ export function SellerProductManagement({ products, memberships, onUpdated }: Pr
           </p>
           <p>
             {tr(
-              'أعمدة القالب تطابق حقول «منتج جديد». اختر المتجر عند الاستيراد، واكتب اسم التصنيف أو رقمه والسعر بالريال (مثال: 5.75). يمكن ترك خانة المتجر فارغة في الملف.',
-              'The columns match Add Product. Choose the store at import time; enter a category name or number and price in SAR (e.g. 5.75). The Store cell can be blank.',
+              'أعمدة القالب تطابق حقول «منتج جديد». اختر المتجر عند الاستيراد، واكتب اسم التصنيف أو رقمه والسعر قبل الضريبة بالريال (مثال: 5.00؛ تُضاف الضريبة عند الدفع). يمكن ترك خانة المتجر فارغة في الملف.',
+              'The columns match Add Product. Choose the store at import time; enter a category name or number and the net price in SAR (e.g. 5.00; VAT is added at checkout). The Store cell can be blank.',
             )}
           </p>
           <p>
