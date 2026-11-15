@@ -13,7 +13,7 @@ import styles from './SuperAdminDashboardScreen.module.css';
 import './adminWorkspaceFamily.css';
 
 type Metric = { key: SuperAdminMetricKey; label: string; value: string; icon: string };
-type DownloadFormat = 'csv' | 'xls';
+type DownloadFormat = 'csv' | 'xlsx';
 
 function saveFile(blob: Blob, filename: string) {
   const url = URL.createObjectURL(blob);
@@ -274,7 +274,7 @@ export function SuperAdminDashboardScreen() {
                             {tr('إضافة بائع عبر الطلبات', 'Add seller via applications')}
                           </Link>
                         )}
-                        <button type="button" className="admin-family-secondary" disabled={exporting !== null} onClick={() => void downloadMetric(selected, 'xls')}>↓ Excel</button>
+                        <button type="button" className="admin-family-secondary" disabled={exporting !== null} onClick={() => void downloadMetric(selected, 'xlsx')}>↓ Excel</button>
                         <button type="button" className="admin-family-secondary" disabled={exporting !== null} onClick={() => void downloadMetric(selected, 'csv')}>↓ CSV</button>
                         <button type="button" className="admin-family-secondary" aria-label={tr('إغلاق التفاصيل', 'Close details')} onClick={() => setSelected(null)}>✕</button>
                       </div>
