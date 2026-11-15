@@ -23,7 +23,7 @@ export function ProductBuyBox({ product }: { product: ProductDetail }) {
   return (
     <div className={styles.box}>
       <p className={styles.priceRow}>
-        <span className={styles.price}>{formatMoney(price.gross, language)}</span>
+        <span className={styles.price}>{formatMoney(price.net, language)}</span>
         <span className={styles.vat}>
           {price.vat > 0 ? t('product.vatIncluded') : t('product.vatNone')}
         </span>
