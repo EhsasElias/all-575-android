@@ -39,7 +39,7 @@ export const paymentsEn = {
     delivery: 'Delivery',
     free: 'Free',
     total: 'Total',
-    vat: 'VAT included',
+    vat: 'VAT',
     vatIncluded: 'VAT is included in the recorded amounts.',
     vatAdded: 'VAT is added to the net prices above.'
   },
@@ -84,7 +84,7 @@ export const paymentsAr: Translations<typeof paymentsEn> = {
     delivery: 'التوصيل',
     free: 'مجاني',
     total: 'الإجمالي',
-    vat: 'ضريبة القيمة المضافة المضمّنة',
+    vat: 'ضريبة القيمة المضافة',
     vatIncluded: 'الضريبة مضمنة في المبالغ المسجلة لهذا الطلب.',
     vatAdded: 'أُضيفت الضريبة إلى الأسعار قبل الضريبة.'
   },
@@ -130,7 +130,7 @@ export const paymentsFr: Translations<typeof paymentsEn> = {
     delivery: 'Livraison',
     free: 'Gratuite',
     total: 'Total',
-    vat: 'TVA incluse',
+    vat: 'TVA',
     vatIncluded: 'La TVA est comprise dans les montants enregistrés.',
     vatAdded: 'La TVA est ajoutée aux montants hors taxe.'
   },
