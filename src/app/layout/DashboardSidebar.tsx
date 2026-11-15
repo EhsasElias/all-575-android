@@ -84,6 +84,11 @@ export function DashboardSidebar({ onNavigate }: { onNavigate?: () => void }) {
       </div>
       <div className={styles.group}>
         <h2>{tr('أقسام لوحة التحكم', 'Dashboard sections')}</h2>
+        <Link to={routePaths.notifications} onClick={onNavigate}
+          aria-current={pathname === routePaths.notifications ? 'page' : undefined}
+          className={pathname === routePaths.notifications ? styles.selected : styles.link}>
+          {tr('الإشعارات', 'Notifications')}
+        </Link>
         {sections.map(item => (
           <Link key={item.to} to={item.to} onClick={onNavigate}
             aria-current={isActive(item.to) ? 'page' : undefined}
