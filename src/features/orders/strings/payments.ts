@@ -40,7 +40,8 @@ export const paymentsEn = {
     free: 'Free',
     total: 'Total',
     vat: 'VAT included',
-    vatIncluded: 'All prices include VAT.',
+    vatIncluded: 'VAT is included in the recorded amounts.',
+    vatAdded: 'VAT is added to the net prices above.'
   },
 };
 
@@ -84,7 +85,8 @@ export const paymentsAr: Translations<typeof paymentsEn> = {
     free: 'مجاني',
     total: 'الإجمالي',
     vat: 'ضريبة القيمة المضافة المضمّنة',
-    vatIncluded: 'جميع الأسعار شاملة ضريبة القيمة المضافة.',
+    vatIncluded: 'الضريبة مضمنة في المبالغ المسجلة لهذا الطلب.',
+    vatAdded: 'أُضيفت الضريبة إلى الأسعار قبل الضريبة.'
   },
 };
 
@@ -129,6 +131,7 @@ export const paymentsFr: Translations<typeof paymentsEn> = {
     free: 'Gratuite',
     total: 'Total',
     vat: 'TVA incluse',
-    vatIncluded: 'Tous les prix incluent la TVA.',
+    vatIncluded: 'La TVA est comprise dans les montants enregistrés.',
+    vatAdded: 'La TVA est ajoutée aux montants hors taxe.'
   },
 };
