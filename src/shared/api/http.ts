@@ -187,14 +187,25 @@ export function createHttpClient(config: HttpClientConfig): HttpClient {
     const { response, body: blob } = await sendWithTimeout(
       fetchFn,
       buildRequestUrl(config.baseUrl, path, options.query),
-      { method: 'GET', headers },
+      { method: 'GET', headers, cache: 'no-store' },
       options.timeoutMs ?? defaultTimeoutMs,
       options.signal,
       (res) => res.blob(),
     );
 
     if (!response.ok) await rejectWith(response, await blob.text(), token);
-    return { blob, filename: readFilename(response.headers.get('Content-Disposition')) };
+    const filename = readFilename(response.headers.get('Content-Disposition'));
+    const expectsXlsx = /(?:\\.xlsx(?:\\?|$)|\\/export\\/xlsx(?:\\?|$))/i.test(path)
+      || /\\.xlsx$/i.test(filename ?? '');
+    if (expectsXlsx) {
+      // XLSX is a ZIP/OOXML file, never HTML, XML 2003, or CSV with an Excel extension.
+      const signature = new Uint8Array(await blob.slice(0, 4).arrayBuffer());
+      if (signature.length < 4 || signature[0] !== 0x50 || signature[1] !== 0x4b
+        || signature[2] !== 0x03 || signature[3] !== 0x04) {
+        throw new Error('The server returned an invalid Excel file. Update the API and try again.');
+      }
+    }
+    return { blob, filename };
   }
 
   async function upload<T>(path: string, body: FormData, options: RequestOptions): Promise<T> {
