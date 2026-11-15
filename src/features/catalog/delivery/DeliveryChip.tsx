@@ -16,7 +16,7 @@ type DeliveryChipProps = {
 export function DeliveryChip({ className }: DeliveryChipProps) {
   const { t } = useTranslation('catalog');
   const { language } = useLanguage();
-  const { zone } = useDeliveryZone();
+  const { zone, displayName } = useDeliveryZone();
   const [open, setOpen] = useState(false);
 
   return (
@@ -33,7 +33,7 @@ export function DeliveryChip({ className }: DeliveryChipProps) {
         {zone ? (
           <>
             <span className={styles.label}>{t('delivery.chipLabel')}</span>
-            <span className={styles.zone}>{pickText(zone.name, language)}</span>
+            <span className={styles.zone}>{displayName ?? pickText(zone.name, language)}</span>
           </>
         ) : (
           <span className={styles.zone}>{t('delivery.chipChoose')}</span>
