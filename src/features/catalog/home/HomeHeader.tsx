@@ -29,7 +29,7 @@ export function HomeHeader() {
               <p className={styles.price}>
                 {t('home.priceLine', {
                   minimum: formatMoney(100, language),
-                  price: formatMoney(store.data.price.gross, language),
+                  price: formatMoney(store.data.price.net, language),
                 })}
               </p>
             ) : (
