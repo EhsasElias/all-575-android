@@ -25,10 +25,12 @@ async function loadAddressZone(signal: AbortSignal): Promise<{ zone: DeliveryZon
   try {
     const addresses = await fetchAddresses(signal);
     const address = addresses.find((candidate) => candidate.is_default);
-    if (!address?.serviceable || address.service_zone_id === null) return null;
+    if (!address) return null;
 
     const resolution = await resolveZone({ lat: address.lat, lng: address.lng }, signal);
-    if (resolution.zone?.id !== address.service_zone_id) return null;
+    // The stored zone id can be stale when coverage is edited or zones overlap.
+    // The resolver's live result for these coordinates is authoritative.
+    if (!resolution.serviceable || !resolution.zone) return null;
 
     const zone = { id: resolution.zone.id, name: resolution.zone.name };
     // Signed-in addresses override device choices; never persist a customer's address zone as a guest choice.
