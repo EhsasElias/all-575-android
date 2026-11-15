@@ -44,7 +44,7 @@ export const ar: Translations<typeof en> = {
     deliveryPending: 'يظهر بعد تعديل السلة',
     free: 'مجاني',
     freeOver: 'التوصيل مجاني للطلبات من {{amount}} فأكثر',
-    vat: 'ضريبة القيمة المضافة المضافة',
+    vat: 'ضريبة القيمة المضافة (تُضاف)',
     vatIncludedShort: 'الإجمالي يشمل الضريبة المضافة',
     total: 'الإجمالي',
   },
