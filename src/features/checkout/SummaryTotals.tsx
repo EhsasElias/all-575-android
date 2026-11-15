@@ -7,7 +7,7 @@ import styles from './SummaryTotals.module.css';
 
 type SummaryTotalsProps = { quote: Quote; zone: DeliveryZone | null };
 
-/** The itemized price: goods, discount, delivery, the VAT already inside the total, and the total itself. */
+/** Itemized net goods, discount, net delivery, added VAT, then the amount payable. */
 export function SummaryTotals({ quote, zone }: SummaryTotalsProps) {
   const { t } = useTranslation('checkout');
   const { language } = useLanguage();
