@@ -21,7 +21,10 @@ export function useAddressBook() {
     queryFn: ({ signal }) => listAddresses(signal),
   });
 
-  const refresh = () => queryClient.invalidateQueries({ queryKey: addressKeys.all });
+  const refresh = async () => {
+    await queryClient.invalidateQueries({ queryKey: addressKeys.all });
+    await queryClient.invalidateQueries({ queryKey: ['catalog', 'address-zone'] });
+  };
   const failed = () => {
     showToast({ message: t('list.toast.failed'), variant: 'error' });
   };
