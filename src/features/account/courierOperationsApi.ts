@@ -7,7 +7,7 @@ export type CourierChoice = {
 export type CourierJob = {
   id: number; suborder_id: string; status: string; expires_at: string | null;
   accepted_at: string | null; picked_up_at: string | null; parcel_count: number | null;
-  order_number: string; branch_id: number; suborder_status: string;
+  order_number: string; branch_id: number; pickup_lat: number | null; pickup_lng: number | null; suborder_status: string;
 };
 export type DeliveryIncident = {
   id: number; suborder_id: string; type: string; status: string;
@@ -40,3 +40,11 @@ export const courierRespond = (id: number, decision: 'accept' | 'decline') =>
   http.post<{data: {status: string}}>('/courier/jobs/' + id + '/respond', {decision});
 export const courierPickup = (id: number, pickup_code: string, parcel_count: number) =>
   http.post<{data: {status: string}}>('/courier/jobs/' + id + '/pickup', {pickup_code, parcel_count});
+
+export type CourierAssignmentEvent = {action: string; reason: string | null; actor_user_id: number | null; courier_profile_id: number | null; created_at: string};
+export const adminCourierHistory = (suborderId: string) =>
+  http.get<{data: CourierAssignmentEvent[]}>('/platform/admin/orders/' + suborderId + '/courier-history');
+export const adminRegisterCourier = (data: {user_id: number; service_zone_id: number; vehicle_type: string}) =>
+  http.post<{data: {id:number; approval_status:string}}>('/platform/admin/couriers', data);
+export const superAdminApproveCourier = (id: number, approved: boolean) =>
+  http.patch<{data: {approval_status:string}}>('/platform/super-admin/couriers/' + id + '/approval', {approved});
