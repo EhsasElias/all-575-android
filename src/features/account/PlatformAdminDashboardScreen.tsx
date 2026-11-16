@@ -4,6 +4,7 @@ import { isApiError } from '@/shared/api';
 import { Page } from './components/Page';
 import { adminDashboard, adminOrders, adminInventory, type PlatformAdminDashboard, type PlatformAdminOrder, type AdminOrderFilters, type AdminInventoryFilters, type AdminInventoryRecord } from './platformAdminApi';
 import styles from './PlatformAdminDashboardScreen.module.css';
+import { AdminCourierOperations } from './AdminCourierOperations';
 import './adminWorkspaceFamily.css';
 
 export function PlatformAdminDashboardScreen() {
@@ -297,6 +298,7 @@ export function PlatformAdminDashboardScreen() {
                   onClick={() => void loadMoreInventory()}>{tr('تحميل المزيد', 'Load more')}</button>}
               </section>
             )}
+            <AdminCourierOperations orders={orders} onUpdated={() => setRevision(x => x + 1)} ar={ar} />
             <p className={styles.updated}>{tr('آخر تحديث:', 'Updated:')} {new Date(data.generated_at).toLocaleString(ar ? 'ar-SA' : 'en-US')}</p>
           </>
         )}
