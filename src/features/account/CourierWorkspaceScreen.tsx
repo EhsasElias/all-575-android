@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 import { Page } from './components/Page';
 import { isApiError } from '@/shared/api';
-import { courierAvailability, courierJobs, courierPickup, courierRespond, type CourierJob } from './courierOperationsApi';
+import { courierAvailability, courierJobs, courierPickup, courierRespond, courierProfile, type CourierJob } from './courierOperationsApi';
 import './adminWorkspaceFamily.css';
 
 export function CourierWorkspaceScreen() {
@@ -17,6 +17,7 @@ export function CourierWorkspaceScreen() {
   const [online, setOnline] = useState(false);
   useEffect(() => {
     let active = true;
+    void courierProfile().then(r => {if (active) setOnline(r.data.is_online);}).catch(() => {});
     void courierJobs().then(r => {if (active) setJobs(r.data);})
       .catch(cause => {
         if (active) setError(isApiError(cause) && cause.status === 403
