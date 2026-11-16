@@ -7,6 +7,7 @@ import { memberships } from '@/features/account/sellerWorkspaceApi';
 import { superAdminDashboard } from '@/features/account/superAdminApi';
 import { adminDashboard } from '@/features/account/platformAdminApi';
 import { reviewOverview } from '@/features/account/sellerReviewApi';
+import { courierProfile } from '@/features/account/courierOperationsApi';
 import styles from './AccountSidebar.module.css';
 
 type AccountLink = { path: string; ar: string; en: string };
@@ -41,8 +42,9 @@ export function AccountSidebar({ onNavigate }: { onNavigate?: () => void }) {
       adminDashboard().then(() => true).catch(() => false),
       superAdminDashboard().then(() => true).catch(() => false),
       reviewOverview().then(() => true).catch(() => false),
+      courierProfile().then(() => true).catch(() => false),
     ]).then(results => {
-      if (active) setWorkspaces(['seller', 'admin', 'super', 'reviewer'].filter((_, i) => results[i]));
+      if (active) setWorkspaces(['seller', 'admin', 'super', 'reviewer', 'courier'].filter((_, i) => results[i]));
     });
     return () => { active = false; };
   }, [status, user?.id]);
@@ -72,6 +74,11 @@ export function AccountSidebar({ onNavigate }: { onNavigate?: () => void }) {
         {workspaces.includes('seller') && (
           <Link className={styles.link} to={routePaths.sellerWorkspace} onClick={onNavigate}>
             {tr('لوحة البائع', 'Seller dashboard')}
+          </Link>
+        )}
+        {workspaces.includes('courier') && (
+          <Link className={styles.link} to={routePaths.courierWorkspace} onClick={onNavigate}>
+            {tr('مساحة مندوب التوصيل', 'Courier workspace')}
           </Link>
         )}
         {workspaces.includes('admin') && (
