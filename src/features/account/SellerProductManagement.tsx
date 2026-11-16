@@ -122,6 +122,7 @@ export function SellerProductManagement({ products, memberships, onUpdated }: Pr
   const [importIssues, setImportIssues] = useState<string[]>([]);
   const [error, setError] = useState('');
   const [success, setSuccess] = useState('');
+  const [importSuccessMessage, setImportSuccessMessage] = useState<string | null>(null);
   const [quickSku, setQuickSku] = useState('');
   const [scannerOpen, setScannerOpen] = useState(false);
   const [scannedText, setScannedText] = useState('');
@@ -633,19 +634,23 @@ export function SellerProductManagement({ products, memberships, onUpdated }: Pr
       } else {
         setImportFile(null);
         setCsvPreview(null);
+        let message: string;
         if (submitAfterImport) {
           const published = result.data.published ?? 0;
           const pending = result.data.submitted_for_review ?? 0;
-          setSuccess(tr(
-            `اكتمل الاستيراد: نُشر ${published} منتج مباشرة${pending > 0 ? `، وأُرسل ${pending} منتج للمراجعة بسبب إعدادات النشر الحالية` : ''}.`,
-            `Import completed: ${published} published directly${pending > 0 ? `, ${pending} submitted for review under current publishing settings` : ''}.`,
-          ));
+          message = tr(
+            `اكتمل استيراد المنتجات بنجاح: تم نشر ${published} منتج${pending > 0 ? `، وإرسال ${pending} منتج للمراجعة` : ''}.`,
+            `Products imported successfully: ${published} published${pending > 0 ? `, ${pending} submitted for review` : ''}.`,
+          );
         } else {
-          setSuccess(
-            tr('تم استيراد مسودات المنتجات: ', 'Imported product drafts: ') +
-              result.data.created_drafts,
+          const created = result.data.created_drafts ?? 0;
+          message = tr(
+            `تم استيراد ${created} منتج بنجاح كمسودات.`,
+            `Successfully imported ${created} products as drafts.`,
           );
         }
+        setSuccess(message);
+        setImportSuccessMessage(message);
         onUpdated();
       }
     } catch (cause) {
@@ -1379,6 +1384,24 @@ export function SellerProductManagement({ products, memberships, onUpdated }: Pr
           )}
         </article>
       ))}
+      {importSuccessMessage && (
+        <div className="seller-confirm-overlay" role="presentation">
+          <div className="seller-confirm-dialog" role="alertdialog" aria-modal="true"
+               aria-labelledby="seller-import-success-title" aria-describedby="seller-import-success-description"
+               onKeyDown={(event) => { if (event.key === 'Escape') setImportSuccessMessage(null); }}>
+            <div aria-hidden="true" style={{ color: '#188451', fontSize: 48, textAlign: 'center', lineHeight: 1.2 }}>✓</div>
+            <h3 id="seller-import-success-title" style={{ textAlign: 'center' }}>
+              {tr('تم استيراد المنتجات بنجاح', 'Products imported successfully')}
+            </h3>
+            <p id="seller-import-success-description" style={{ textAlign: 'center' }}>{importSuccessMessage}</p>
+            <div className="seller-confirm-actions">
+              <button type="button" className="seller-confirm-primary" autoFocus onClick={() => setImportSuccessMessage(null)}>
+                {tr('حسنًا', 'OK')}
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
       {confirmation && (
         <div className="seller-confirm-overlay" role="presentation" onMouseDown={(event) => {
           if (event.target === event.currentTarget && !busy) setConfirmation(null);
