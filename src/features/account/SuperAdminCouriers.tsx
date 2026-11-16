@@ -14,7 +14,7 @@ export function SuperAdminCouriers({ar}: {ar: boolean}) {
     return () => {active = false;};
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [revision]);
-  return <section className="admin-family-panel" style={{marginBlock:18,padding:16}}>
+  return <section id="courier-approvals" className="admin-family-panel" style={{marginBlock:18,padding:16}}>
     <h2>{tr('اعتماد مندوبي التوصيل', 'Courier approvals')}</h2>
     <p>{tr('تتم الموافقة من المدير العام فقط. المندوب غير المعتمد لا يستقبل مهام.', 'Only Super Admin may approve couriers. Pending couriers cannot receive jobs.')}</p>
     {error && <p role="alert">{error}</p>}
