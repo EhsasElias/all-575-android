@@ -188,7 +188,7 @@ export function SellerProductManagement({ products, memberships, onUpdated }: Pr
       next.vatJustification = tr('اذكر سببًا نظاميًا واضحًا (15–500 حرف). ستخضع الحالة لمراجعة الإدارة.', 'State the applicable legal reason (15–500 characters). Admin review is required.');
     if (!/^[0-9]+(?:\.[0-9]{1,2})?$/.test(draft.price) ||
         Number(draft.price) < 1 || Number(draft.price) > 5.75)
-      next.price = tr('أدخل سعرًا قبل الضريبة من 1 إلى 5.75 ريال (حتى منزلتين عشريتين).', 'Enter a price before VAT from SAR 1 to SAR 5.75 (up to 2 decimals).');
+      next.price = tr('أدخل سعرًا من 1 إلى 5.75 ريال (حتى منزلتين عشريتين).', 'Enter a price from SAR 1 to SAR 5.75 (up to 2 decimals).');
     return next;
   };
   const displayApiFieldErrors = (cause: unknown): boolean => {
@@ -659,7 +659,9 @@ export function SellerProductManagement({ products, memberships, onUpdated }: Pr
         setError('');
       } else {
         setImportIssues([]);
-        setError(uploadErrorMessage(cause, ar ? 'ar' : 'en', 'csv'));
+        setError(isApiError(cause) && cause.status !== null && cause.status >= 500
+          ? tr('تعذر استيراد الملف بسبب خطأ بالخادم. تحقق من الأسعار (1 إلى 5.75 ريال) ثم أعد المحاولة، أو أبلغ الدعم إذا استمر الخطأ.', 'Server error during import. Check that prices are within SAR 1–5.75 and retry, or contact support if it continues.')
+          : uploadErrorMessage(cause, ar ? 'ar' : 'en', 'csv'));
       }
     } finally {
       setBusy(false);
