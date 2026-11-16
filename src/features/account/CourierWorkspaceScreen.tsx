@@ -1,11 +1,13 @@
 import { useEffect, useState } from 'react';
 import { Page } from './components/Page';
+import { useTranslation } from 'react-i18next';
 import { isApiError } from '@/shared/api';
 import { courierAvailability, courierJobs, courierPickup, courierRespond, courierProfile, type CourierJob } from './courierOperationsApi';
 import './adminWorkspaceFamily.css';
 
 export function CourierWorkspaceScreen() {
-  const ar = (document.documentElement.lang || 'ar').startsWith('ar');
+  const { i18n } = useTranslation();
+  const ar = i18n.language.startsWith('ar');
   const tr = (a: string, en: string) => ar ? a : en;
   const [jobs, setJobs] = useState<CourierJob[]>([]);
   const [error, setError] = useState('');
