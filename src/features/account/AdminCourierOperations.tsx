@@ -1,8 +1,8 @@
 import { useEffect, useState } from 'react';
 import { isApiError } from '@/shared/api';
 import { adminAssignCourier, adminCouriers, adminCreateIncident, adminDailyCourierStatus,
-  adminIncidents, adminPickupCode, adminUpdateIncident,
-  type CourierChoice, type DeliveryIncident, type DailyCourierStatus } from './courierOperationsApi';
+  adminIncidents, adminPickupCode, adminUpdateIncident, adminRegisterCourier, adminCourierHistory,
+  type CourierChoice, type DeliveryIncident, type DailyCourierStatus, type CourierAssignmentEvent } from './courierOperationsApi';
 
 type Props = { orders: {id: string; order_number: string; status: string; branch_id: number}[]; onUpdated: () => void; ar: boolean };
 
@@ -21,6 +21,10 @@ export function AdminCourierOperations({orders, onUpdated, ar}: Props) {
   const [message, setMessage] = useState('');
   const [code, setCode] = useState('');
   const [busy, setBusy] = useState(false);
+  const [newCourierUser, setNewCourierUser] = useState('');
+  const [newCourierZone, setNewCourierZone] = useState('');
+  const [newCourierVehicle, setNewCourierVehicle] = useState('motorcycle');
+  const [history, setHistory] = useState<CourierAssignmentEvent[]>([]);
   const [refresh, setRefresh] = useState(0);
 
   useEffect(() => {
@@ -80,6 +84,44 @@ export function AdminCourierOperations({orders, onUpdated, ar}: Props) {
       }}>{tr('رمز الاستلام بعد موافقة المندوب', 'Pickup code after acceptance')}</button>
     </div>
     {code && <p role="status">{tr('رمز تسليم الطرد إلى المندوب:', 'Seller handover code:')} <strong>{code}</strong> {tr('(سري، لمدة 30 دقيقة)', '(Confidential, valid for 30 minutes)')}</p>}
+    <div style={{marginBlock:12}}>
+      <button type="button" disabled={!selected || busy} onClick={() => {
+        setIssue('');
+        void adminCourierHistory(selected).then(r => setHistory(r.data)).catch(cause => setIssue(errorText(cause)));
+      }}>{tr('عرض سجل الإسناد', 'View assignment history')}</button>
+      {history.length > 0 && <div className="admin-family-table" style={{overflowX:'auto'}}>
+        <table><thead><tr><th>{tr('الإجراء', 'Action')}</th><th>{tr('المندوب', 'Courier')}</th>
+          <th>{tr('السبب', 'Reason')}</th><th>{tr('التاريخ', 'Date')}</th></tr></thead><tbody>
+          {history.map((item, i) => <tr key={i}><td>{item.action}</td>
+            <td>#{item.courier_profile_id ?? '-'}</td><td>{item.reason ?? '-'}</td><td>{item.created_at}</td></tr>)}
+        </tbody></table>
+      </div>}
+    </div>
+    <hr />
+    <h3>{tr('تسجيل مندوب جديد للمراجعة', 'Register courier for approval')}</h3>
+    <p>{tr('يجب أن يكون للمندوب حساب نشط وموثق، ويعتمد الطلب من المدير العام.', 'Courier must have a verified, active account and requires Super Admin approval.')}</p>
+    <form style={{display:'flex',flexWrap:'wrap',gap:10,alignItems:'end'}} onSubmit={e => {
+      e.preventDefault();
+      if (!newCourierUser || !newCourierZone) return;
+      void act(() => adminRegisterCourier({user_id:Number(newCourierUser),service_zone_id:Number(newCourierZone),vehicle_type:newCourierVehicle}),
+        tr('تم إرسال حساب المندوب للاعتماد.', 'Courier submitted for approval.'));
+    }}>
+      <label>{tr('رقم حساب المستخدم', 'User ID')}
+        <input required type="number" min={1} value={newCourierUser} onChange={e => setNewCourierUser(e.target.value)}/>
+      </label>
+      <label>{tr('رقم منطقة الخدمة', 'Service zone ID')}
+        <input required type="number" min={1} value={newCourierZone} onChange={e => setNewCourierZone(e.target.value)}/>
+      </label>
+      <label>{tr('وسيلة التوصيل', 'Vehicle type')}
+        <select value={newCourierVehicle} onChange={e => setNewCourierVehicle(e.target.value)}>
+          <option value="motorcycle">{tr('دراجة نارية', 'Motorcycle')}</option>
+          <option value="car">{tr('سيارة', 'Car')}</option>
+          <option value="van">{tr('فان', 'Van')}</option>
+          <option value="bicycle">{tr('دراجة', 'Bicycle')}</option>
+        </select>
+      </label>
+      <button className="admin-family-primary" disabled={busy} type="submit">{tr('إرسال للاعتماد', 'Submit for approval')}</button>
+    </form>
     <hr />
     <h3>{tr('بلاغ جديد', 'New incident')}</h3>
     <form style={{display:'flex', flexWrap:'wrap', gap:10, alignItems:'end'}} onSubmit={e => {
