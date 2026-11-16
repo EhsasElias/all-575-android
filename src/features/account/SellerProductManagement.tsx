@@ -658,10 +658,10 @@ export function SellerProductManagement({ products, memberships, onUpdated }: Pr
         setImportIssues(validation);
         setError('');
       } else {
-        setImportIssues([]);
-        setError(isApiError(cause) && cause.status !== null && cause.status >= 500
+        setImportIssues([isApiError(cause) && cause.status !== null && cause.status >= 500
           ? tr('تعذر استيراد الملف بسبب خطأ بالخادم. تحقق من الأسعار (1 إلى 5.75 ريال) ثم أعد المحاولة، أو أبلغ الدعم إذا استمر الخطأ.', 'Server error during import. Check that prices are within SAR 1–5.75 and retry, or contact support if it continues.')
-          : uploadErrorMessage(cause, ar ? 'ar' : 'en', 'csv'));
+          : uploadErrorMessage(cause, ar ? 'ar' : 'en', 'csv')]);
+        setError('');
       }
     } finally {
       setBusy(false);
