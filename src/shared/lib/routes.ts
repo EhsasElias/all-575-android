@@ -24,6 +24,7 @@ export const routePaths = {
   notifications: '/account/notifications',
   sellerApplication: '/account/seller-application',
   sellerWorkspace: '/account/seller-workspace',
+  courierWorkspace: '/account/courier',
   sellerReview: '/account/seller-review',
   superAdminDashboard: '/account/super-admin',
   platformAdminDashboard: '/account/admin',
