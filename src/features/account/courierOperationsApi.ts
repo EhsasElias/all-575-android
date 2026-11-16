@@ -48,3 +48,5 @@ export const adminRegisterCourier = (data: {user_id: number; service_zone_id: nu
   http.post<{data: {id:number; approval_status:string}}>('/platform/admin/couriers', data);
 export const superAdminApproveCourier = (id: number, approved: boolean) =>
   http.patch<{data: {approval_status:string}}>('/platform/super-admin/couriers/' + id + '/approval', {approved});
+
+export const courierProfile = () => http.get<{data: {id: number; is_online: boolean; approval_status: string; vehicle_type: string; service_zone_id: number}}>('/courier/profile');
