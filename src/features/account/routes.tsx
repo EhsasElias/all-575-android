@@ -13,6 +13,7 @@ import { SellerWorkspaceScreen } from './SellerWorkspaceScreen';
 import { SellerReviewScreen } from './SellerReviewScreen';
 import { SuperAdminDashboardScreen } from './SuperAdminDashboardScreen';
 import { PlatformAdminDashboardScreen } from './PlatformAdminDashboardScreen';
+import { CourierWorkspaceScreen } from './CourierWorkspaceScreen';
 
 /** The account screen itself handles guests, and the legal texts are public. */
 export const accountRoutes: RouteObject[] = [
@@ -31,6 +32,7 @@ export const accountRoutes: RouteObject[] = [
 
 /** Routes that need a signed-in customer: the router wraps them in RequireAuth. */
 export const protectedAccountRoutes: RouteObject[] = [
+  { path: '/account/courier', element: <CourierWorkspaceScreen />, handle: titled((t) => t('nav.account')) },
   {
     path: routePaths.notifications,
     element: <CustomerNotifications />,
