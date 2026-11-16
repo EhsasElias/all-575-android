@@ -15,6 +15,7 @@ import styles from './ShellLayout.module.css';
 const workspacePages: readonly string[] = [
   routePaths.dashboard,
   routePaths.sellerWorkspace,
+  routePaths.courierWorkspace,
   routePaths.sellerReview,
   routePaths.superAdminDashboard,
   routePaths.platformAdminDashboard,
