@@ -5,6 +5,7 @@ import { routePaths } from '@/shared/lib';
 import { isApiError } from '@/shared/api';
 import { Page } from './components/Page';
 import { PlatformAdminAssignments } from './PlatformAdminAssignments';
+import { SuperAdminCouriers } from './SuperAdminCouriers';
 import {
   exportSuperAdminMetric, superAdminDashboard, superAdminMetric, updateSuperAdminAccount, updateSuperAdminSeller,
   type SuperAdminDashboard, type SuperAdminMetricKey, type SuperAdminMetricPage, type SuperAdminReportFilters,
@@ -418,6 +419,7 @@ export function SuperAdminDashboardScreen() {
 
             </div>
             <div id="admin-accounts" className={styles.permissions + ' admin-family-panel'}><PlatformAdminAssignments /></div>
+            <SuperAdminCouriers ar={ar} />
           </>
         )}
       </div>
