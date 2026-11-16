@@ -26,6 +26,7 @@ const review: SectionLink[] = [
 const superAdmin: SectionLink[] = [
   { to: routePaths.superAdminDashboard, ar: 'الإحصائيات', en: 'Dashboard & statistics' },
   { to: routePaths.superAdminDashboard + '#admin-accounts', ar: 'إدارة الحسابات والصلاحيات', en: 'Admin permissions' },
+  { to: routePaths.superAdminDashboard + '#courier-approvals', ar: 'اعتماد المندوبين', en: 'Courier approvals' },
   ...review,
 ];
 
@@ -33,8 +34,12 @@ const admin: SectionLink[] = [
   { to: routePaths.platformAdminDashboard, ar: 'نظرة عامة', en: 'Operations overview' },
   { to: routePaths.platformAdminDashboard + '#order-monitoring', ar: 'مراقبة الطلبات', en: 'Order monitoring' },
   { to: routePaths.platformAdminDashboard + '#inventory-overview', ar: 'المخزون', en: 'Inventory overview' },
+  { to: routePaths.platformAdminDashboard + '#courier-operations', ar: 'التوصيل والبلاغات', en: 'Dispatch & incidents' },
 ];
 
+const courier: SectionLink[] = [
+  { to: routePaths.courierWorkspace, ar: 'مهام التوصيل', en: 'Courier jobs' },
+];
 const customer: SectionLink[] = [
   { to: routePaths.dashboard, ar: 'ملخص العميل', en: 'Customer overview' },
   { to: routePaths.orders, ar: 'طلباتي', en: 'Orders' },
@@ -53,16 +58,19 @@ export function DashboardSidebar({ onNavigate }: { onNavigate?: () => void }) {
     pathname === routePaths.superAdminDashboard ? 'super' :
     pathname === routePaths.platformAdminDashboard ? 'admin' :
     pathname === routePaths.sellerReview ? 'review' :
-    pathname === routePaths.sellerWorkspace ? 'seller' : 'customer';
+    pathname === routePaths.sellerWorkspace ? 'seller' :
+    pathname === routePaths.courierWorkspace ? 'courier' : 'customer';
 
   const sections = workspace === 'super' ? superAdmin :
     workspace === 'admin' ? admin :
     workspace === 'review' ? review :
-    workspace === 'seller' ? seller : customer;
+    workspace === 'seller' ? seller :
+    workspace === 'courier' ? courier : customer;
   const title = workspace === 'super' ? tr('السوبر أدمن', 'Super Admin') :
     workspace === 'admin' ? tr('الإدارة', 'Admin') :
     workspace === 'review' ? tr('الموافقات', 'Approvals') :
-    workspace === 'seller' ? tr('البائع', 'Seller') : tr('العميل', 'Customer');
+    workspace === 'seller' ? tr('البائع', 'Seller') :
+    workspace === 'courier' ? tr('المندوب', 'Courier') : tr('العميل', 'Customer');
 
   const isActive = (to: string) => {
     const [pathAndQuery = '', targetHash] = to.split('#');
