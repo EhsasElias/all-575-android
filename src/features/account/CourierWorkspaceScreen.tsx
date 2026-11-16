@@ -51,6 +51,10 @@ export function CourierWorkspaceScreen() {
     {jobs.map(job => <section className="admin-family-panel" key={job.id} style={{padding:14, marginBlock:12}}>
       <h2>{tr('الطلب', 'Order')} {job.order_number}</h2>
       <p>{tr('الفرع', 'Branch')} #{job.branch_id} · {tr('الحالة', 'Status')}: {job.status}</p>
+      {job.pickup_lat !== null && job.pickup_lng !== null && <p>
+        <a href={'https://www.google.com/maps/dir/?api=1&destination=' + encodeURIComponent(String(job.pickup_lat) + ',' + String(job.pickup_lng))}
+          target="_blank" rel="noopener noreferrer">{tr('فتح الملاحة إلى نقطة الاستلام', 'Navigate to seller pickup')}</a>
+      </p>}
       {job.status === 'offered' && <div style={{display:'flex',gap:12}}>
         <button disabled={busy || !!(job.expires_at && new Date(job.expires_at).getTime() <= Date.now())}
           onClick={() => void act(() => courierRespond(job.id, 'accept'), tr('تم قبول المهمة.', 'Job accepted.'))}>
