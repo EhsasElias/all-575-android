@@ -32,7 +32,7 @@ export const accountRoutes: RouteObject[] = [
 
 /** Routes that need a signed-in customer: the router wraps them in RequireAuth. */
 export const protectedAccountRoutes: RouteObject[] = [
-  { path: '/account/courier', element: <CourierWorkspaceScreen />, handle: titled((t) => t('nav.account')) },
+  { path: routePaths.courierWorkspace, element: <CourierWorkspaceScreen />, handle: titled((t) => t('nav.account')) },
   {
     path: routePaths.notifications,
     element: <CustomerNotifications />,
