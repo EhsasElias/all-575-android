@@ -73,3 +73,40 @@
   flex-shrink: 0;
   margin-block-start: 2px;
 }
+
+/* Password visibility is an accessible, non-submit control inside the input. */
+.inputContainer,
+.inputWithToggle {
+  position: relative;
+  min-inline-size: 0;
+  inline-size: 100%;
+}
+.inputWithToggle {
+  direction: ltr;
+}
+.inputWithToggle .input {
+  box-sizing: border-box;
+  padding-inline-end: 56px;
+}
+.visibilityButton {
+  position: absolute;
+  inset-inline-end: 5px;
+  inset-block-start: 50%;
+  transform: translateY(-50%);
+  display: grid;
+  place-items: center;
+  inline-size: 44px;
+  block-size: 44px;
+  padding: 0;
+  background: transparent;
+  border: 0;
+  border-radius: var(--radius-sm);
+  color: var(--color-text-muted);
+  cursor: pointer;
+}
+.visibilityButton:hover { color: var(--color-text); }
+.visibilityButton:focus-visible {
+  outline: 2px solid var(--color-focus);
+  outline-offset: 1px;
+}
+.visibilityButton:disabled { opacity: .5; cursor: not-allowed; }
