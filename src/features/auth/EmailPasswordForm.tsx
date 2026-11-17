@@ -67,6 +67,7 @@ export function EmailPasswordForm({
         <TextField
           name="password"
           type="password"
+          showPasswordToggle
           label={t('emailPassword.password')}
           autoComplete={
             createAccount && !verificationRequested ? 'new-password' : 'current-password'
