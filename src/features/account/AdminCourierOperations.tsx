@@ -127,9 +127,10 @@ export function AdminCourierOperations({orders, onUpdated, ar}: Props) {
     <form style={{display:'flex', flexWrap:'wrap', gap:10, alignItems:'end'}} onSubmit={e => {
       e.preventDefault();
       if (!issueOrder || description.trim().length < 10) return;
-      void act(() => adminCreateIncident({suborder_id:issueOrder, type:issueType, description:description.trim()}),
-        tr('تم تسجيل البلاغ.', 'Incident created.'));
-      setDescription('');
+      void act(async () => {
+        await adminCreateIncident({suborder_id:issueOrder, type:issueType, description:description.trim()});
+        setDescription('');
+      }, tr('تم تسجيل البلاغ.', 'Incident created.'));
     }}>
       <label>{tr('الطلب', 'Order')}
         <select value={issueOrder} onChange={e => setIssueOrder(e.target.value)} required>
