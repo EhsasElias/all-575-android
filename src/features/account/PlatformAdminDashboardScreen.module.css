@@ -41,3 +41,14 @@
 .dashboard .hero { margin-block-end: 22px; row-gap: 14px; }
 .dashboard .refresh { min-block-size: 42px; }
 @media (max-width: 560px) { .dashboard .refresh { width: 100%; } }
+
+/* Preserve filter usability and table scroll at 320-400px phone widths. */
+@media (max-width: 420px) {
+  .dashboard { min-inline-size: 0; }
+  .dashboard .metrics { grid-template-columns: minmax(0,1fr); }
+  .dashboard .filters { grid-template-columns: minmax(0,1fr); }
+  .dashboard .filterActions { grid-column: 1; flex-wrap: wrap; }
+  .dashboard .panel, .dashboard .hero { padding: 12px; }
+  .dashboard .tableScroll { inline-size: 100%; overflow-x: auto; -webkit-overflow-scrolling: touch; }
+  .dashboard .tableScroll table { min-inline-size: 520px; }
+}
