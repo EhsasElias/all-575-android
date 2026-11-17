@@ -4,7 +4,7 @@ import { adminAssignCourier, adminCouriers, adminCreateIncident, adminDailyCouri
   adminIncidents, adminPickupCode, adminUpdateIncident, adminRegisterCourier, adminCourierHistory,
   type CourierChoice, type DeliveryIncident, type DailyCourierStatus, type CourierAssignmentEvent } from './courierOperationsApi';
 
-type Props = { orders: {id: string; order_number: string; status: string; branch_id: number}[]; onUpdated: () => void; ar: boolean };
+type Props = { orders: {id: string; order_number: string; status: string; branch_id: number; dispatch_eligible: boolean}[]; onUpdated: () => void; ar: boolean };
 
 export function AdminCourierOperations({orders, onUpdated, ar}: Props) {
   const tr = (a: string, b: string) => ar ? a : b;
@@ -61,7 +61,7 @@ export function AdminCourierOperations({orders, onUpdated, ar}: Props) {
       <label>{tr('الطلب الجاهز', 'Ready order')}
         <select value={selected} onChange={e => {setSelected(e.target.value); setCode('');}}>
           <option value="">{tr('اختر الطلب', 'Select order')}</option>
-          {orders.filter(x => x.status === 'ready').map(x => <option value={x.id} key={x.id}>{x.order_number} · #{x.branch_id}</option>)}
+          {orders.filter(x => x.dispatch_eligible).map(x => <option value={x.id} key={x.id}>{x.order_number} · #{x.branch_id}</option>)}
         </select>
       </label>
       <label>{tr('المندوب', 'Courier')}
