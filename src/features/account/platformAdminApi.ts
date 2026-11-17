@@ -48,7 +48,7 @@ export type PlatformAdminOrder = {
   id: string; order_number: string; seller_id: number;
   seller_name_ar: string; seller_name_en: string; branch_id: number;
   status: string; placed_at: string | null;
-  ready_at: string | null; picked_up_at: string | null;
+  ready_at: string | null; picked_up_at: string | null; dispatch_eligible: boolean;
 };
 
 export type AdminOrderFilters = { limit?: number; status?: string; before_id?: string; from?: string; to?: string; seller_id?: number; branch_id?: number; q?: string };
