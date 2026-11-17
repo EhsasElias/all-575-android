@@ -152,3 +152,36 @@
 @media (prefers-reduced-motion:reduce) {
   .admin-workspace-family * {transition-duration:.01ms!important;}
 }
+
+/* Shared small-screen safety for Admin, Super Admin, review and courier workspaces. */
+.admin-workspace-family,
+.admin-workspace-family :is(section,article,form) { min-inline-size: 0; box-sizing: border-box; }
+.admin-workspace-family .admin-family-table {
+  inline-size: 100%;
+  max-inline-size: 100%;
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+}
+.admin-workspace-family .admin-family-table table { min-inline-size: 560px; }
+.admin-workspace-family :is(input:not([type="checkbox"]):not([type="radio"]),select,textarea) {
+  box-sizing: border-box;
+  min-inline-size: 0;
+}
+.admin-workspace-family :is(button,a) { overflow-wrap: anywhere; }
+@media (max-width: 600px) {
+  .admin-workspace-family .admin-family-metrics {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 8px;
+  }
+  .admin-workspace-family .admin-family-filters,
+  .admin-workspace-family .admin-family-hero {
+    padding: 12px;
+  }
+  .admin-workspace-family .admin-family-tabs { grid-template-columns: repeat(2,minmax(0,1fr)); }
+  .admin-workspace-family .admin-family-tabs button { min-inline-size: 0; white-space: normal; }
+  .admin-workspace-family .admin-family-table :is(th,td) { padding: 10px 12px; }
+}
+@media (max-width: 390px) {
+  .admin-workspace-family .admin-family-metrics { grid-template-columns: minmax(0, 1fr); }
+  .admin-workspace-family .admin-family-tabs { grid-template-columns: minmax(0, 1fr); }
+}
