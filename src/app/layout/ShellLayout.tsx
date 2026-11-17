@@ -35,6 +35,14 @@ export function ShellLayout() {
   const [sidebarOpen, setSidebarOpen] = useState(false);
 
   useEffect(() => { setSidebarOpen(false); }, [pathname, search, hash]);
+  useEffect(() => {
+    if (!sidebarOpen) return;
+    const closeOnEscape = (event: KeyboardEvent) => {
+      if (event.key === 'Escape') setSidebarOpen(false);
+    };
+    window.addEventListener('keydown', closeOnEscape);
+    return () => window.removeEventListener('keydown', closeOnEscape);
+  }, [sidebarOpen]);
 
   return (
     <div className={styles.shell}>
@@ -44,13 +52,16 @@ export function ShellLayout() {
         <div className={styles.accountShell}>
           <button type="button" className={styles.sidebarToggle}
             aria-expanded={sidebarOpen} aria-controls="account-navigation"
-            aria-label={dashboardRoute ? (ar ? 'قائمة لوحة التحكم' : 'Dashboard menu') : (ar ? 'قائمة الحساب' : 'Account menu')}
+            aria-label={dashboardRoute ? (ar ? 'فتح قائمة لوحة التحكم' : 'Open dashboard menu') : (ar ? 'فتح قائمة الحساب' : 'Open account menu')}
             onClick={() => setSidebarOpen(open => !open)}>
-            {sidebarOpen ? '✕' : '☰'}{' '}
-            {dashboardRoute
-              ? (ar ? 'قائمة لوحة التحكم' : 'Dashboard menu')
-              : (ar ? 'قائمة الحساب' : 'Account menu')}
+            <span aria-hidden="true">{sidebarOpen ? '✕' : '☰'}</span>
+            <span>{dashboardRoute
+              ? (ar ? 'أقسام لوحة التحكم' : 'Dashboard sections')
+              : (ar ? 'قائمة الحساب' : 'Account navigation')}</span>
           </button>
+          {sidebarOpen && <button type="button" className={styles.sidebarBackdrop}
+            aria-label={ar ? 'إغلاق القائمة' : 'Close navigation'}
+            onClick={() => setSidebarOpen(false)} />}
           <div id="account-navigation"
             className={sidebarOpen ? styles.sidebarArea + ' ' + styles.sidebarOpen : styles.sidebarArea}>
             {dashboardRoute
