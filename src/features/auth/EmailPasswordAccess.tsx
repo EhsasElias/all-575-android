@@ -2,7 +2,7 @@ import { useState, type SubmitEvent } from 'react';
 import { useTranslation } from 'react-i18next';
 import { errorCode, http, isApiError, type Data, type Schemas } from '@/shared/api';
 import { useSession } from '@/shared/session';
-import { Button, useToast } from '@/shared/ui';
+import { Button, TextField, useToast } from '@/shared/ui';
 import { SignInSteps } from './SignInSteps';
 import { recallFlow } from './signInMemory';
 import { currentDeviceName } from './deviceName';
@@ -279,20 +279,19 @@ export function EmailPasswordAccess({ createAccount }: Props) {
             />
           </label>
           {stage === 'reset' && (
-            <label>
-              {tr(
+            <TextField
+              type="password"
+              showPasswordToggle
+              label={tr(
                 'كلمة المرور الجديدة (12 حرفًا على الأقل)',
                 'New password (at least 12 characters)',
               )}
-              <input
-                type="password"
-                minLength={12}
-                required
-                autoComplete="new-password"
-                value={password}
-                onChange={(event) => setPassword(event.target.value)}
-              />
-            </label>
+              minLength={12}
+              required
+              autoComplete="new-password"
+              value={password}
+              onChange={(event) => setPassword(event.target.value)}
+            />
           )}
           <Button type="submit" size="lg" fullWidth loading={pending}>
             {stage === 'reset'
