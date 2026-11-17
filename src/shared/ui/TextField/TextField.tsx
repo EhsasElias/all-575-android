@@ -1,4 +1,5 @@
 import { useId, useState, type ComponentProps } from 'react';
+import { useTranslation } from 'react-i18next';
 import { cx } from '@/shared/lib';
 import { Icon } from '../Icon/Icon';
 import styles from './TextField.module.css';
@@ -14,6 +15,7 @@ type TextFieldProps = Omit<ComponentProps<'input'>, 'id'> & {
 export function TextField({
   label, hint, error, id, className, showPasswordToggle = false, type, ...rest
 }: TextFieldProps) {
+  const { i18n } = useTranslation();
   const generatedId = useId();
   const inputId = id ?? generatedId;
   const hintId = `${inputId}-hint`;
@@ -21,7 +23,7 @@ export function TextField({
   const describedBy = [hint ? hintId : null, error ? errorId : null].filter(Boolean).join(' ');
   const [passwordVisible, setPasswordVisible] = useState(false);
   const hasToggle = showPasswordToggle && type === 'password';
-  const language = typeof document !== 'undefined' && document.documentElement.lang.startsWith('ar') ? 'ar' : 'en';
+  const language = i18n.language.startsWith('ar') ? 'ar' : 'en';
   const revealLabel = language === 'ar' ? 'إظهار كلمة المرور' : 'Show password';
   const concealLabel = language === 'ar' ? 'إخفاء كلمة المرور' : 'Hide password';
 
