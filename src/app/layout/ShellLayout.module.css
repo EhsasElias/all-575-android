@@ -2,6 +2,8 @@
   display: flex;
   flex: 1;
   flex-direction: column;
+  min-inline-size: 0;
+  inline-size: 100%;
 }
 
 .main {
@@ -10,38 +12,33 @@
   flex-direction: column;
   min-inline-size: 0;
   inline-size: 100%;
+  box-sizing: border-box;
   max-inline-size: min(100%, var(--size-content-max));
   margin-inline: auto;
   padding-block: var(--space-4) calc(var(--size-tabbar) + var(--safe-bottom) + var(--space-4));
   padding-inline: max(var(--space-4), var(--safe-inline-start))
     max(var(--space-4), var(--safe-inline-end));
 }
+.main:focus { outline: none; }
+.mainWide { max-inline-size: min(100%, 1500px); }
 
-.main:focus {
-  outline: none;
-}
-
-/* Administrative dashboards need a wider canvas; regular customer pages stay narrow. */
-.mainWide {
-  max-inline-size: min(100%, 1500px);
-}
-
-/* Persistent desktop account sidebar; mobile uses an accessible disclosure. */
+/* Dedicated dashboard sidebar, independent from the storefront navigation. */
 .accountShell {
   display: grid;
-  grid-template-columns: 245px minmax(0, 1fr);
+  grid-template-columns: minmax(0, 245px) minmax(0, 1fr);
   align-items: start;
-  gap: 22px;
-  width: min(100% - 32px, 1550px);
+  gap: clamp(12px, 2vw, 22px);
+  inline-size: min(calc(100% - 32px), 1550px);
   margin-inline: auto;
-  min-width: 0;
+  min-inline-size: 0;
   flex: 1;
   padding-block-start: 20px;
+  box-sizing: border-box;
 }
 .sidebarArea {
   min-width: 0;
   position: sticky;
-  top: 20px;
+  top: calc(var(--size-topbar) + var(--safe-top) + 12px);
   align-self: start;
 }
 .accountMain {
@@ -49,25 +46,79 @@
   padding-inline: 0;
   padding-block-start: 0;
   min-inline-size: 0;
+  width: 100%;
+  overflow-wrap: anywhere;
 }
-.sidebarToggle {display: none;}
-@media(max-width:850px) {
-  .accountShell {display: flex; flex-direction: column; gap: 10px; width: min(100% - 22px, 760px);}
+.sidebarToggle,
+.sidebarBackdrop { display: none; }
+
+@media (max-width: 1050px) {
+  .accountShell { grid-template-columns: minmax(0, 210px) minmax(0, 1fr); }
+}
+@media (max-width: 850px) {
+  .accountShell {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    inline-size: calc(100% - 24px);
+    max-inline-size: 760px;
+    padding-block-start: 12px;
+  }
   .sidebarToggle {
-    display: block;
+    position: sticky;
+    top: calc(var(--size-topbar) + var(--safe-top) + 6px);
+    z-index: calc(var(--z-sticky) + 1);
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    flex: none;
+    box-sizing: border-box;
     width: 100%;
-    min-height: 43px;
-    padding: 10px 14px;
+    min-height: 48px;
+    padding: 11px 15px;
     text-align: start;
     background: var(--color-surface-mint, #eef4ec);
     color: var(--color-text, #17211b);
     border: 1px solid var(--color-border, #d3ddd0);
     border-radius: 12px;
     font: inherit;
+    font-size: .9rem;
     font-weight: 700;
     cursor: pointer;
   }
-  .sidebarArea {display: none; position: static; width: 100%;}
-  .sidebarArea.sidebarOpen {display: block;}
-  .accountMain {width: 100%; padding-inline: 0;}
+  .sidebarToggle[aria-expanded="true"] { border-color: #22795c; }
+  .sidebarToggle:focus-visible { outline: 3px solid #77d8af; outline-offset: 2px; }
+  .sidebarToggle span:first-child { font-size: 1.3rem; line-height: 1; }
+  .sidebarBackdrop {
+    display: block;
+    position: fixed;
+    inset: 0;
+    z-index: calc(var(--z-sticky) + 2);
+    border: none;
+    background: rgba(12, 24, 17, .48);
+    cursor: pointer;
+  }
+  .sidebarArea {
+    display: none;
+    position: fixed;
+    z-index: calc(var(--z-sticky) + 3);
+    inset-block-start: calc(var(--size-topbar) + var(--safe-top) + 8px);
+    inset-block-end: calc(var(--size-tabbar) + var(--safe-bottom) + 8px);
+    inset-inline-start: max(12px, var(--safe-inline-start));
+    inline-size: min(330px, calc(100vw - 24px));
+    max-inline-size: calc(100vw - 24px);
+    max-block-size: 100%;
+    min-inline-size: 0;
+    overflow-y: auto;
+    overscroll-behavior: contain;
+    border-radius: 16px;
+    box-shadow: 0 18px 46px rgba(0,0,0,.18);
+    background: var(--color-surface, #fff);
+  }
+  .sidebarArea.sidebarOpen { display: block; }
+  .accountMain { width: 100%; padding-inline: 0; }
+}
+@media (max-width: 450px) {
+  .accountShell { inline-size: calc(100% - 16px); }
+  .sidebarToggle { top: calc(var(--size-topbar) + var(--safe-top)); }
 }
