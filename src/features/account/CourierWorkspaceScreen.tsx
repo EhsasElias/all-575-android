@@ -38,9 +38,25 @@ export function CourierWorkspaceScreen() {
     setBusy(true); setError(''); setNotice('');
     try {await fn(); setNotice(msg); setRevision(x => x + 1);}
     catch (cause) {
-      setError(isApiError(cause) && cause.status === 422
-        ? Object.values(cause.fieldErrors).flat().join(' ') || cause.message
-        : tr('تعذر تنفيذ الإجراء. تأكد من صلاحية المهمة والرمز.', 'Action failed. Check job status and code.'));
+      if (isApiError(cause)) {
+        if (cause.status === 422) {
+          setError(Object.values(cause.fieldErrors).flat().join(' ') || tr(
+            'الرمز غير صحيح أو البيانات غير صالحة، تحقق وأعد المحاولة.',
+            'Incorrect code or invalid details. Check and retry.'));
+        } else if (cause.status === 429) {
+          setError(tr('تم إيقاف المحاولات بعد تكرار الأخطاء. تواصل مع الدعم.',
+            'Too many incorrect attempts. Contact support.'));
+        } else if (cause.status === 409) {
+          setError(tr('انتهت صلاحية الرمز أو تغيرت حالة المهمة. حدّث الصفحة.',
+            'Code expired or job state changed. Refresh your jobs.'));
+        } else if (cause.status === 403 || cause.status === 404) {
+          setError(tr('هذه المهمة غير متاحة لحسابك.', 'This job is not available to your account.'));
+        } else {
+          setError(tr('تعذر تنفيذ الإجراء، تحقق من الاتصال.', 'Action failed. Check your connection.'));
+        }
+      } else {
+        setError(tr('تعذر الاتصال بالخادم.', 'Unable to reach the server.'));
+      }
     } finally {setBusy(false);}
   };
   return <Page><main className="admin-workspace-family" dir={ar ? 'rtl' : 'ltr'} style={{padding:16}}>
