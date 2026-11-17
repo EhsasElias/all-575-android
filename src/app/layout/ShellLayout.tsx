@@ -47,7 +47,7 @@ export function ShellLayout() {
   return (
     <div className={styles.shell}>
       <TestBuildBanner />
-      <TopBar onAccountMenu={accountRoute ? () => setSidebarOpen(true) : undefined} />
+      <TopBar {...(accountRoute ? { onAccountMenu: () => setSidebarOpen(true) } : {})} />
       {accountRoute ? (
         <div className={styles.accountShell}>
           <button type="button" className={styles.sidebarToggle}
