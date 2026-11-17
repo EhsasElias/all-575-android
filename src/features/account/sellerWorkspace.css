@@ -2682,3 +2682,39 @@
 @media (max-width: 560px) {
   .seller-workspace-shell .seller-sidebar-content-toolbar > button { width: 100%; }
 }
+
+/* Dashboard on mobile: avoid subtracting gutters twice inside account layout. */
+@media (max-width: 850px) {
+  .seller-workspace-shell,
+  .seller-workspace-shell > div,
+  .seller-workspace-shell .seller-content {
+    box-sizing: border-box;
+    min-inline-size: 0;
+    max-inline-size: 100%;
+  }
+  .seller-workspace-shell > div {
+    width: 100% !important;
+    margin-inline: auto;
+  }
+  .seller-workspace-shell .seller-content :is(article, section, form) {
+    min-inline-size: 0;
+    max-inline-size: 100%;
+  }
+  .seller-workspace-shell .seller-content :is(input, select, textarea) {
+    box-sizing: border-box;
+  }
+  .seller-workspace-shell .seller-content :is(div):has(> table),
+  .seller-workspace-shell .seller-finance-table-wrap {
+    inline-size: 100%;
+    max-inline-size: 100%;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+  }
+}
+@media (max-width: 390px) {
+  .seller-workspace-shell .seller-filters { padding: 12px; }
+  .seller-workspace-shell .seller-tabs { gap: 5px; padding: 6px; }
+  .seller-workspace-shell .seller-content > section,
+  .seller-workspace-shell .seller-content > div > section,
+  .seller-workspace-shell .seller-content article { padding: 12px; }
+}
