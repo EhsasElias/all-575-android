@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react';
 import { Page } from './components/Page';
 import { useTranslation } from 'react-i18next';
 import { isApiError } from '@/shared/api';
-import { courierAvailability, courierJobs, courierPickup, courierRespond, courierProfile, type CourierJob } from './courierOperationsApi';
+import { courierAvailability, courierJobs, courierPickup, courierRespond, courierProfile, courierDeliver, courierFailedDelivery, courierHistory, type CourierJob } from './courierOperationsApi';
 import './adminWorkspaceFamily.css';
 
 export function CourierWorkspaceScreen() {
@@ -17,6 +17,10 @@ export function CourierWorkspaceScreen() {
   const [parcels, setParcels] = useState<Record<number, string>>({});
   const [revision, setRevision] = useState(0);
   const [online, setOnline] = useState(false);
+  const [deliveryCodes, setDeliveryCodes] = useState<Record<number, string>>({});
+  const [failureReasons, setFailureReasons] = useState<Record<number, string>>({});
+  const [history, setHistory] = useState<CourierJob[]>([]);
+  const [showHistory, setShowHistory] = useState(false);
   useEffect(() => {
     let active = true;
     void courierProfile().then(r => {if (active) setOnline(r.data.is_online);}).catch(() => {});
@@ -48,6 +52,14 @@ export function CourierWorkspaceScreen() {
       {online ? tr('التحويل إلى غير متصل', 'Go offline') : tr('التحويل إلى متصل', 'Go online')}
     </button>
     <button type="button" disabled={busy} onClick={() => setRevision(x => x + 1)}>{tr('تحديث المهام', 'Refresh jobs')}</button>
+    <button type="button" disabled={busy} onClick={() => {
+      setShowHistory(v => !v);
+      void courierHistory().then(r => setHistory(r.data)).catch(() => setError(tr('تعذر تحميل السجل.', 'Unable to load history.')));
+    }}>{tr('سجل المهام المكتملة والملغاة', 'Completed and declined job history')}</button>
+    {showHistory && <section aria-label={tr('السجل', 'History')}>
+      <p>{tr('الأرباح: غير مفعلة حاليًا؛ لا توجد مبالغ افتراضية.', 'Earnings: not configured; no assumed payout.')}</p>
+      {history.map(h => <p key={h.id}>{h.order_number} — {h.status}</p>)}
+    </section>}
     {error && <p role="alert" style={{color:'#b42318'}}>{error}</p>}
     {notice && <p role="status">{notice}</p>}
     {jobs.length === 0 && <p>{tr('لا توجد مهام حالياً.', 'No assigned jobs.')}</p>}
@@ -80,6 +92,32 @@ export function CourierWorkspaceScreen() {
           onClick={() => void act(() => courierPickup(job.id, code[job.id] ?? '',Number(parcels[job.id] ?? '1')),
             tr('تم تسجيل الاستلام وتحويل الطلب إلى في الطريق.', 'Pickup verified; order is on the way.'))}>
           {tr('تأكيد الاستلام', 'Confirm pickup')}
+        </button>
+      </div>}
+      {job.status === 'picked_up' && <div style={{display:'grid',gap:10,marginBlock:12}}>
+        <label>{tr('رمز التسليم من العميل', 'Customer delivery code')}
+          <input type="text" inputMode="numeric" maxLength={6} value={deliveryCodes[job.id] ?? ''}
+            onChange={e => setDeliveryCodes(prev => ({...prev, [job.id]:e.target.value}))}/>
+        </label>
+        <button type="button" disabled={busy || !/^[0-9]{6}$/.test(deliveryCodes[job.id] ?? '')}
+          onClick={() => void act(() => courierDeliver(job.id, deliveryCodes[job.id] ?? ''),
+            tr('تم التحقق من التسليم وتحديث حالة الطلب.', 'Delivery verified; order status updated.'))}>
+          {tr('تأكيد التسليم برمز العميل', 'Confirm delivery with customer code')}
+        </button>
+        <label>{tr('تعذر التسليم', 'Failed delivery')}
+          <select value={failureReasons[job.id] ?? ''} onChange={e => setFailureReasons(prev => ({...prev,[job.id]:e.target.value}))}>
+            <option value="">{tr('اختر السبب', 'Choose a reason')}</option>
+            <option value="customer_absent">{tr('العميل غير موجود', 'Customer absent')}</option>
+            <option value="address_issue">{tr('مشكلة في العنوان', 'Address issue')}</option>
+            <option value="customer_refused">{tr('رفض الاستلام', 'Customer refused')}</option>
+            <option value="return_required">{tr('يتطلب إرجاع', 'Return required')}</option>
+            <option value="other">{tr('سبب آخر', 'Other')}</option>
+          </select>
+        </label>
+        <button type="button" disabled={busy || !failureReasons[job.id]} onClick={() =>
+          void act(() => courierFailedDelivery(job.id, failureReasons[job.id] ?? ''),
+            tr('تم تسجيل المحاولة وإبلاغ الإدارة، ولم يتم اعتبار الطلب مُسلّمًا.', 'Attempt recorded for Admin review; order remains undelivered.'))}>
+          {tr('تسجيل تعذر التسليم', 'Record failed delivery')}
         </button>
       </div>}
     </section>)}
