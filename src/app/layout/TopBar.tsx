@@ -8,7 +8,7 @@ import { IconButton, Logo } from '@/shared/ui';
 import { AppMenu } from './AppMenu';
 import styles from './TopBar.module.css';
 
-export function TopBar() {
+export function TopBar({ onAccountMenu }: { onAccountMenu?: () => void }) {
   const { t } = useTranslation();
   const { t: tNavigation } = useTranslation('navigation');
   const [open, setOpen] = useState(false);
@@ -54,11 +54,15 @@ export function TopBar() {
     <>
       <header className={styles.topBar}>
         <IconButton
-          label={tNavigation('open')}
+          label={onAccountMenu ? (i18n.language.startsWith('ar') ? 'فتح قائمة الحساب أو لوحة التحكم' : 'Open account or dashboard navigation') : tNavigation('open')}
           aria-haspopup="dialog"
           aria-expanded={open}
           onClick={() => {
-            setOpen(true);
+            if (onAccountMenu && window.matchMedia('(max-width: 850px)').matches) {
+              onAccountMenu();
+            } else {
+              setOpen(true);
+            }
           }}
         >
           <span className={styles.menuIcon} aria-hidden="true">
