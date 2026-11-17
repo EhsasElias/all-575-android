@@ -56,3 +56,19 @@
 @media (prefers-reduced-motion: reduce) {
   .link,.selected {transition: none;}
 }
+
+/* Mobile dashboard drawer fills its own scroll container, including short screens. */
+@media (max-width: 850px) {
+  .sidebar {
+    block-size: 100%;
+    max-block-size: none;
+    min-block-size: 0;
+    overflow-y: auto;
+    border-radius: 16px;
+    -webkit-overflow-scrolling: touch;
+    overscroll-behavior: contain;
+  }
+  .brand { padding: 13px 12px; margin-block-end: 8px; }
+  .group { padding-block: 8px; }
+  .link, .selected { min-block-size: 46px; overflow-wrap: anywhere; }
+}
