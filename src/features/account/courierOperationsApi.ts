@@ -23,7 +23,7 @@ export const adminCouriers = () =>
 export const adminAssignCourier = (suborderId: string, data: {courier_profile_id: number; reason?: string}) =>
   http.post<{data: {assignment_id: number; status: string}}>('/platform/admin/orders/' + suborderId + '/assign-courier', data);
 export const adminPickupCode = (suborderId: string) =>
-  http.get<{data: {pickup_code: string}}>('/platform/admin/orders/' + suborderId + '/pickup-code');
+  http.post<{data: {pickup_code: string}}>('/platform/admin/orders/' + suborderId + '/pickup-code');
 export const adminDailyCourierStatus = () =>
   http.get<{data: DailyCourierStatus}>('/platform/admin/daily-status');
 export const adminIncidents = () =>
