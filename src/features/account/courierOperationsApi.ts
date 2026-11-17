@@ -50,3 +50,8 @@ export const superAdminApproveCourier = (id: number, approved: boolean) =>
   http.patch<{data: {approval_status:string}}>('/platform/super-admin/couriers/' + id + '/approval', {approved});
 
 export const courierProfile = () => http.get<{data: {id: number; is_online: boolean; approval_status: string; vehicle_type: string; service_zone_id: number}}>('/courier/profile');
+
+export const courierDeliver = (id: number, delivery_code: string) =>
+  http.post<{data: {status: string}}>('/courier/jobs/' + id + '/deliver', {delivery_code});
+export const courierDeliveryFailed = (id: number, reason: string, details: string) =>
+  http.post<{data: {incident_id: number; status: string}}>('/courier/jobs/' + id + '/delivery-failed', {reason, details});
