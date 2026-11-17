@@ -27,6 +27,8 @@ export type IconName =
   | 'star-filled'
   | 'check'
   | 'lock'
+  | 'eye'
+  | 'eye-off'
   | 'phone'
   | 'mail'
   | 'tag'
