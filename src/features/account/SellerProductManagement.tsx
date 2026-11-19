@@ -1,4 +1,4 @@
-import { lazy, Suspense, useEffect, useState, type FormEvent } from 'react';
+import { lazy, Suspense, useEffect, useRef, useState, type FormEvent } from 'react';
 import { parseProductCode } from './productCode';
 import { sellerProductsFrench } from './sellerProductsFrench';
 const ProductCameraScanner = lazy(() =>
@@ -120,6 +120,7 @@ export function SellerProductManagement({ products, memberships, onUpdated }: Pr
   const [coverUrl, setCoverUrl] = useState('');
   const [imageCardOpen, setImageCardOpen] = useState(true);
   const [importFile, setImportFile] = useState<File | null>(null);
+  const importInput = useRef<HTMLInputElement>(null);
   const [importSeller, setImportSeller] = useState('');
   const [csvPreview, setCsvPreview] = useState<SellerCsvPreview | null>(null);
   const [importIssues, setImportIssues] = useState<string[]>([]);
@@ -758,25 +759,30 @@ export function SellerProductManagement({ products, memberships, onUpdated }: Pr
           preview: result.data.preview ?? [],
         });
         setSuccess(
-          tr('تم فحص الملف دون إضافة منتجات.', 'CSV validated without importing products.'),
+          tr('تم فحص الملف دون إضافة منتجات.', 'File validated without importing products.'),
         );
       } else {
         setImportFile(null);
+        if (importInput.current) importInput.current.value = '';
         setCsvPreview(null);
         let message: string;
         if (submitAfterImport) {
           const published = result.data.published ?? 0;
           const pending = result.data.submitted_for_review ?? 0;
-          message = tr(
-            `اكتمل استيراد المنتجات بنجاح: تم نشر ${published} منتج${pending > 0 ? `، وإرسال ${pending} منتج للمراجعة` : ''}.`,
-            `Products imported successfully: ${published} published${pending > 0 ? `, ${pending} submitted for review` : ''}.`,
-          );
+          message = fr
+            ? `Importation réussie : ${published} produit(s) publié(s)${pending > 0 ? `, ${pending} transmis pour examen` : ''}.`
+            : tr(
+                `اكتمل استيراد المنتجات بنجاح: تم نشر ${published} منتج${pending > 0 ? `، وإرسال ${pending} منتج للمراجعة` : ''}.`,
+                `Products imported successfully: ${published} published${pending > 0 ? `, ${pending} submitted for review` : ''}.`,
+              );
         } else {
           const created = result.data.created_drafts ?? 0;
-          message = tr(
-            `تم استيراد ${created} منتج بنجاح كمسودات.`,
-            `Successfully imported ${created} products as drafts.`,
-          );
+          message = fr
+            ? `${created} produit(s) importé(s) en brouillon.`
+            : tr(
+                `تم استيراد ${created} منتج بنجاح كمسودات.`,
+                `Successfully imported ${created} products as drafts.`,
+              );
         }
         setSuccess(message);
         setImportSuccessMessage(message);
@@ -1077,6 +1083,7 @@ export function SellerProductManagement({ products, memberships, onUpdated }: Pr
             <label className="seller-upload" style={field}>
               <span>{tr('ملف Excel أو CSV *', 'Excel or CSV file *')}</span>
               <input
+                ref={importInput}
                 type="file"
                 accept=".csv,.xlsx,text/csv,application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
                 onChange={(event) => {

@@ -118,6 +118,13 @@ export function SellerWorkspaceScreen() {
   const [stockNotice, setStockNotice] = useState('');
   const [stockEditor, setStockEditor] = useState<SellerStock | null>(null);
   const [stockEditQuantity, setStockEditQuantity] = useState('');
+  const editedStockQuantity = Number(stockEditQuantity);
+  const stockQuantityValid =
+    stockEditor !== null &&
+    /^\d+$/.test(stockEditQuantity.trim()) &&
+    Number.isSafeInteger(editedStockQuantity) &&
+    editedStockQuantity >= stockEditor.reserved &&
+    editedStockQuantity <= 100000000;
   const [stockEditError, setStockEditError] = useState('');
   const [loading, setLoading] = useState(true);
   const [busy, setBusy] = useState(false);
@@ -606,13 +613,7 @@ export function SellerWorkspaceScreen() {
   const saveStockQuantity = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     if (busy || stockEditor === null) return;
-    const quantity = Number(stockEditQuantity);
-    if (
-      !/^\d+$/.test(stockEditQuantity.trim()) ||
-      !Number.isSafeInteger(quantity) ||
-      quantity < stockEditor.reserved ||
-      quantity > 100000000
-    ) {
+    if (!stockQuantityValid) {
       setStockEditError(
         tr(
           'أدخل كمية صحيحة لا تقل عن المحجوز ولا تتجاوز 100,000,000.',
@@ -625,7 +626,7 @@ export function SellerWorkspaceScreen() {
     setStockEditError('');
     setError('');
     try {
-      await adjustSellerStock(stockEditor.id, quantity);
+      await adjustSellerStock(stockEditor.id, editedStockQuantity);
       setStockEditor(null);
       setStockNotice(tr('تم تحديث كمية المخزون بنجاح.', 'Stock quantity updated successfully.'));
       reload();
@@ -772,28 +773,25 @@ export function SellerWorkspaceScreen() {
                     )}
                   </p>
                   {/* Preview is informational only; the server validates the actual update. */}
-                  {stockEditQuantity.trim() !== '' &&
-                    Number.isSafeInteger(Number(stockEditQuantity)) &&
-                    Number(stockEditQuantity) >= stockEditor.reserved &&
-                    Number(stockEditQuantity) <= 100000000 && (
-                      <div className="seller-stock-preview" role="status">
-                        <span>{tr('المتاح بعد التعديل', 'Available after update')}</span>
-                        <strong>
-                          {(Number(stockEditQuantity) - stockEditor.reserved).toLocaleString()}
-                        </strong>
-                        <small>
-                          {Number(stockEditQuantity) === stockEditor.on_hand
-                            ? tr('لا يوجد تغيير في الكمية', 'No change to quantity')
-                            : Number(stockEditQuantity) > stockEditor.on_hand
-                              ? tr('زيادة', 'Increase') +
-                                ': +' +
-                                (Number(stockEditQuantity) - stockEditor.on_hand).toLocaleString()
-                              : tr('نقصان', 'Decrease') +
-                                ': -' +
-                                (stockEditor.on_hand - Number(stockEditQuantity)).toLocaleString()}
-                        </small>
-                      </div>
-                    )}
+                  {stockQuantityValid && (
+                    <div className="seller-stock-preview" role="status">
+                      <span>{tr('المتاح بعد التعديل', 'Available after update')}</span>
+                      <strong>
+                        {(editedStockQuantity - stockEditor.reserved).toLocaleString()}
+                      </strong>
+                      <small>
+                        {editedStockQuantity === stockEditor.on_hand
+                          ? tr('لا يوجد تغيير في الكمية', 'No change to quantity')
+                          : editedStockQuantity > stockEditor.on_hand
+                            ? tr('زيادة', 'Increase') +
+                              ': +' +
+                              (editedStockQuantity - stockEditor.on_hand).toLocaleString()
+                            : tr('نقصان', 'Decrease') +
+                              ': -' +
+                              (stockEditor.on_hand - editedStockQuantity).toLocaleString()}
+                      </small>
+                    </div>
+                  )}
                   {stockEditError && (
                     <p role="alert" className="seller-stock-edit-error">
                       {stockEditError}
@@ -814,9 +812,7 @@ export function SellerWorkspaceScreen() {
                       type="submit"
                       className="seller-stock-save"
                       disabled={
-                        busy ||
-                        !stockEditQuantity.trim() ||
-                        Number(stockEditQuantity) === stockEditor.on_hand
+                        busy || !stockQuantityValid || editedStockQuantity === stockEditor.on_hand
                       }
                     >
                       {busy ? tr('جار الحفظ…', 'Saving…') : tr('حفظ الكمية', 'Save quantity')}

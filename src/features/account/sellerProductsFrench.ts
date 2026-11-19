@@ -23,7 +23,7 @@ export const sellerProductsFrench: Record<string, string> = {
   'Choose an image or enter a valid HTTPS URL.':
     'Choisissez une image ou saisissez une URL HTTPS valide.',
   'Product cover image saved.': 'Image principale du produit enregistrée.',
-  'CSV validated without importing products.': 'Fichier CSV validé sans importer de produits.',
+  'File validated without importing products.': 'Fichier validé sans importer de produits.',
   'Add product by SKU': 'Ajouter un produit par SKU',
   'New SKU *': 'Nouveau SKU *',
   'Continue adding product': 'Continuer l’ajout du produit',
