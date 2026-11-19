@@ -1,4 +1,6 @@
 import { useEffect, useState } from 'react';
+import { useTranslation } from 'react-i18next';
+import { courierAdminFrench } from './courierAdminFrench';
 import {
   adminCouriers,
   superAdminApproveCourier,
@@ -6,7 +8,10 @@ import {
 } from './courierOperationsApi';
 
 export function SuperAdminCouriers({ ar }: { ar: boolean }) {
-  const tr = (a: string, en: string) => (ar ? a : en);
+  const { i18n } = useTranslation();
+  const fr = i18n.language.startsWith('fr');
+  const tr = (a: string, en: keyof typeof courierAdminFrench) =>
+    ar ? a : fr ? courierAdminFrench[en] : en;
   const [items, setItems] = useState<CourierChoice[]>([]);
   const [error, setError] = useState('');
   const [busy, setBusy] = useState(false);
