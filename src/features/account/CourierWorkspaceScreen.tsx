@@ -32,9 +32,7 @@ export function CourierWorkspaceScreen() {
       })
       .catch(() => {
         if (active) {
-          setError(
-            tr('تعذر تحميل حالة توفر المندوب.', 'Unable to check courier availability.'),
-          );
+          setError(tr('تعذر تحميل حالة توفر المندوب.', 'Unable to check courier availability.'));
         }
       });
     void courierJobs()
