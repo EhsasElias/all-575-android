@@ -58,6 +58,8 @@ for (const channel of ['phone', 'email']) {
     });
     await openApp(page, '/create-account?next=%2Faccount');
     await expect(page.getByRole('heading', { name: 'Create account', exact: true })).toBeVisible();
+    // Email/password is primary now; the legacy OTP path remains available.
+    await page.getByRole('button', { name: 'Use one-time code (OTP)' }).click();
     if (channel === 'email') await page.getByRole('button', { name: 'Use email instead' }).click();
     const destination = channel === 'phone' ? '0512345678' : 'sara@example.com';
     await page
