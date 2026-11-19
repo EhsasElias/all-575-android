@@ -585,7 +585,7 @@ export function SellerProductManagement({ products, memberships, onUpdated }: Pr
     const details = Object.entries(cause.fieldErrors).flatMap(([field, messages]) =>
       messages.map((message) => field + ': ' + message),
     );
-    const prefix = cause.status === null ? '' : 'HTTP ' + cause.status + ' — ';
+    const prefix = cause.status === null ? '' : `HTTP ${cause.status} — `;
     const message = cause.message?.trim() || fallback;
     const specific = details.filter(
       (item) => !message.includes(item.split(': ').slice(1).join(': ')),

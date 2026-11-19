@@ -82,7 +82,7 @@ export function TopBar({ onAccountMenu }: { onAccountMenu?: () => void }) {
             <Link
               to={routePaths.notifications}
               className={styles.notificationButton}
-              aria-label={notificationLabel + (unreadCount > 0 ? ' (' + unreadCount + ')' : '')}
+              aria-label={notificationLabel + (unreadCount > 0 ? ` (${unreadCount})` : '')}
               title={notificationLabel}
             >
               <svg

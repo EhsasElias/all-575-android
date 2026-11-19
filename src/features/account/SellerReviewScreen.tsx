@@ -443,7 +443,7 @@ export function SellerReviewScreen() {
       const url = URL.createObjectURL(result.blob);
       const link = document.createElement('a');
       link.href = url;
-      link.download = result.filename ?? 'review-document-' + file.id;
+      link.download = result.filename ?? `review-document-${file.id}`;
       document.body.appendChild(link);
       link.click();
       link.remove();

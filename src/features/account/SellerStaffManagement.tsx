@@ -290,7 +290,7 @@ export function SellerStaffManagement({ memberships }: Props) {
                         : ((ar
                             ? branches.find((b) => b.id === member.branch_id)?.name_ar
                             : branches.find((b) => b.id === member.branch_id)?.name_en) ??
-                          '#' + member.branch_id)}
+                          `#${member.branch_id}`)}
                     </td>
                     <td>
                       <span

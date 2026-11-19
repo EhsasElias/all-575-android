@@ -180,7 +180,7 @@ export function SlotPicker({
             ))}
             {datesInMonth(month).map((key, index) =>
               key === null ? (
-                <span key={'blank-' + index} aria-hidden="true" />
+                <span key={`blank-${index}`} aria-hidden="true" />
               ) : (
                 <button
                   key={key}
