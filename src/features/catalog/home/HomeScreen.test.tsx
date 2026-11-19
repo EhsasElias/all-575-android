@@ -19,7 +19,7 @@ describe('Home', () => {
       screen.getByRole('heading', { level: 1, name: 'What do you need today?' }),
     ).toBeVisible();
     expect(
-      await screen.findByText(/Prices from 1\.00\s+SAR to 5\.75\s+SAR, VAT included/),
+      await screen.findByText(/Prices from 1\.00\s+SAR to 5\.00\s+SAR, before VAT/),
     ).toBeVisible();
 
     const categories = screen.getByRole('region', { name: 'Categories' });
@@ -163,7 +163,7 @@ describe('Home', () => {
     expect(document.documentElement).toHaveAttribute('dir', 'rtl');
     expect(screen.getByRole('heading', { level: 1, name: 'ماذا تحتاج اليوم؟' })).toBeVisible();
     expect(
-      await screen.findByText(/أسعار من 1\.00\s+ر\.س إلى 5\.75\s+ر\.س شاملة الضريبة/),
+      await screen.findByText(/أسعار من 1\.00\s+ر\.س إلى 5\.00\s+ر\.س قبل الضريبة/),
     ).toBeVisible();
     expect(await screen.findByRole('link', { name: 'بسكويت' })).toBeVisible();
     expect(screen.getByRole('link', { name: 'أطعمة' })).toBeVisible();
@@ -199,7 +199,7 @@ describe('Home in French', () => {
     expect(
       screen.getByRole('heading', { level: 1, name: /^De quoi avez-vous besoin aujourd'hui\s\?$/ }),
     ).toBeVisible();
-    expect(await screen.findByText(/Prix de 1,00\s+SAR à 5,75\s+SAR, TVA comprise/)).toBeVisible();
+    expect(await screen.findByText(/Prix de 1,00\s+SAR à 5,00\s+SAR, hors TVA/)).toBeVisible();
 
     const categories = screen.getByRole('region', { name: 'Catégories' });
     expect(await within(categories).findByRole('link', { name: 'Food' })).toBeVisible();
