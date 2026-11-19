@@ -1,5 +1,6 @@
 import { lazy, Suspense, useEffect, useState, type FormEvent } from 'react';
 import { parseProductCode } from './productCode';
+import { sellerProductsFrench } from './sellerProductsFrench';
 const ProductCameraScanner = lazy(() =>
   import('./ProductCameraScanner').then((m) => ({ default: m.ProductCameraScanner })),
 );
@@ -82,7 +83,9 @@ const editable = (product: SellerProduct) =>
 export function SellerProductManagement({ products, memberships, onUpdated }: Props) {
   const { i18n } = useTranslation();
   const ar = i18n.language.startsWith('ar');
-  const tr = (arabic: string, english: string) => (ar ? arabic : english);
+  const fr = i18n.language.startsWith('fr');
+  const tr = (arabic: string, english: string) =>
+    ar ? arabic : fr ? (sellerProductsFrench[english] ?? english) : english;
   const productStatusLabels: Record<string, string> = {
     draft: tr('مسودة', 'Draft'),
     pending_review: tr('بانتظار المراجعة', 'Pending review'),
@@ -722,7 +725,7 @@ export function SellerProductManagement({ products, memberships, onUpdated }: Pr
       setSuccess(tr('تم حفظ صورة المنتج.', 'Product cover image saved.'));
       onUpdated();
     } catch (cause) {
-      setError(explainApiError(cause, uploadErrorMessage(cause, ar ? 'ar' : 'en', 'image')));
+      setError(explainApiError(cause, uploadErrorMessage(cause, ar ? 'ar' : fr ? 'fr' : 'en', 'image')));
     } finally {
       setBusy(false);
     }
@@ -795,7 +798,7 @@ export function SellerProductManagement({ products, memberships, onUpdated }: Pr
                 'تعذر استيراد الملف بسبب خطأ بالخادم. تحقق من الأسعار (1 إلى 100 ريال) ثم أعد المحاولة، أو أبلغ الدعم إذا استمر الخطأ.',
                 'Server error during import. Check that prices are within SAR 1–100 and retry, or contact support if it continues.',
               )
-            : uploadErrorMessage(cause, ar ? 'ar' : 'en', 'csv'),
+            : uploadErrorMessage(cause, ar ? 'ar' : fr ? 'fr' : 'en', 'csv'),
         ]);
         setError('');
       }
