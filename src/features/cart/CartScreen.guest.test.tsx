@@ -28,8 +28,8 @@ describe('the cart screen as a guest', () => {
     expect(
       within(items[0] ?? document.body).getByRole('link', { name: 'Biscuits' }),
     ).toHaveAttribute('href', '/products/demo-food-1');
-    expect(items[0]).toHaveTextContent(money(1150));
-    expect(items[0]).toHaveTextContent(`${money(575)} each`);
+    expect(items[0]).toHaveTextContent(money(1000));
+    expect(items[0]).toHaveTextContent(`${money(500)} each`);
     expect(items[1]).toHaveTextContent('Notebook');
     expect(items[1]).toHaveTextContent('Blue');
     expect(api.requests()).not.toContain('GET /cart');
@@ -43,7 +43,7 @@ describe('the cart screen as a guest', () => {
     const summary = await screen.findByRole('region', { name: 'Order summary' });
 
     expect(summary).toHaveTextContent('Items3');
-    expect(summary).toHaveTextContent(`Subtotal${money(1725)}`);
+    expect(summary).toHaveTextContent(`Subtotal${money(1500)}`);
     expect(await within(summary).findByText('15% VAT is added at checkout')).toBeInTheDocument();
     expect(
       within(summary).getByText('The delivery fee and any promo code are worked out at checkout.'),
@@ -79,7 +79,7 @@ describe('the cart screen as a guest', () => {
     expect(within(group).getByText('3')).toBeVisible();
     expect(guestCartStore.getSnapshot().map((line) => line.quantity)).toEqual([3, 1]);
     expect(cartLink(4)).toBeInTheDocument();
-    expect(screen.getByRole('region', { name: 'Order summary' })).toHaveTextContent(money(2300));
+    expect(screen.getByRole('region', { name: 'Order summary' })).toHaveTextContent(money(2000));
 
     await user.click(screen.getByRole('button', { name: 'Decrease quantity of Biscuits' }));
     expect(cartLink(3)).toBeInTheDocument();
@@ -193,6 +193,6 @@ describe('the cart screen when the saved guest cart is damaged', () => {
     await user.click(await screen.findByRole('button', { name: 'Increase quantity of Biscuits' }));
 
     const stored: unknown = JSON.parse(getPreference('guestCart') ?? 'null');
-    expect(stored).toMatchObject({ version: 1, lines: [{ variantId: 1, quantity: 2 }] });
+    expect(stored).toMatchObject({ version: 2, lines: [{ variantId: 1, quantity: 2 }] });
   });
 });
