@@ -25,6 +25,7 @@ export function ShellLayout() {
   const cartCount = useCartItemCount();
   const { i18n } = useTranslation();
   const ar = i18n.language.startsWith('ar');
+  const fr = i18n.language.startsWith('fr');
   const { status } = useSession();
   const { pathname, search, hash } = useLocation();
   const dashboardRoute = status === 'signed-in' && workspacePages.includes(pathname);
@@ -80,10 +81,14 @@ export function ShellLayout() {
               dashboardRoute
                 ? ar
                   ? 'فتح قائمة لوحة التحكم'
-                  : 'Open dashboard menu'
+                  : fr
+                    ? 'Ouvrir le menu du tableau de bord'
+                    : 'Open dashboard menu'
                 : ar
                   ? 'فتح قائمة الحساب'
-                  : 'Open account menu'
+                  : fr
+                    ? 'Ouvrir le menu du compte'
+                    : 'Open account menu'
             }
             onClick={() => {
               setDrawer({ route: locationKey, open: !sidebarOpen });
@@ -94,17 +99,21 @@ export function ShellLayout() {
               {dashboardRoute
                 ? ar
                   ? 'أقسام لوحة التحكم'
-                  : 'Dashboard sections'
+                  : fr
+                    ? 'Sections du tableau de bord'
+                    : 'Dashboard sections'
                 : ar
                   ? 'قائمة الحساب'
-                  : 'Account navigation'}
+                  : fr
+                    ? 'Navigation du compte'
+                    : 'Account navigation'}
             </span>
           </button>
           {sidebarOpen && (
             <button
               type="button"
               className={styles.sidebarBackdrop}
-              aria-label={ar ? 'إغلاق القائمة' : 'Close navigation'}
+              aria-label={ar ? 'إغلاق القائمة' : fr ? 'Fermer la navigation' : 'Close navigation'}
               onClick={() => {
                 closeSidebar();
               }}
