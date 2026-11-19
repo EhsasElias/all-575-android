@@ -32,14 +32,15 @@ for (const width of [320, 360, 393]) {
         path,
       );
       await page.locator('main').waitFor({ state: 'visible' });
-      const metrics = await page.evaluate(() => ({
-        scrollWidth: document.documentElement.scrollWidth,
-        viewport: window.innerWidth,
-      }));
+      // E2E TypeScript is compiled in Node mode (without DOM types).
+      // Evaluate the two browser expressions directly and assert both are numbers.
+      const scrollWidth: number = await page.evaluate('document.documentElement.scrollWidth');
+      const viewportWidth: number = await page.evaluate('window.innerWidth');
+      expect(Number.isFinite(scrollWidth) && Number.isFinite(viewportWidth)).toBe(true);
       expect(
-        metrics.scrollWidth,
+        scrollWidth,
         `Horizontal document overflow on ${path} at ${width}px`,
-      ).toBeLessThanOrEqual(metrics.viewport + 1);
+      ).toBeLessThanOrEqual(viewportWidth + 1);
     }
   });
 }
