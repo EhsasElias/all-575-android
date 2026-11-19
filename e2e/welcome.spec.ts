@@ -10,9 +10,8 @@ test.describe('welcome screen', () => {
     await page.getByRole('main').getByRole('button', { name: 'Tap the logo to shop now' }).click();
 
     await expect(page).toHaveURL(/\/welcome$/);
-    await expect(page.getByRole('heading', { level: 1 })).toHaveText(
-      'Welcome, our partner in success',
-    );
+    // The welcome greeting is on the logo screen; the slider deliberately has no heading.
+    await expect(page.getByText('Up to 5.75 SAR')).toBeVisible();
     await expect(page.getByText('نرحب بكم')).toHaveCount(0);
     await expect(page.getByRole('navigation', { name: 'Main navigation' })).toHaveCount(0);
   });
@@ -55,20 +54,20 @@ test.describe('welcome screen', () => {
 
     await page.getByRole('radio', { name: /AR/ }).check({ force: true });
 
-    await expect(page.getByRole('heading', { level: 1 })).toHaveText('نرحب بكم شريك النجاح');
+    await expect(page.getByRole('link', { name: 'تخطي', exact: true })).toBeVisible();
     await expect(page.locator('html')).toHaveAttribute('dir', 'rtl');
     await page.reload();
     await expect(page).toHaveURL(/\/welcome$/);
-    await expect(page.getByRole('heading', { level: 1 })).toHaveText('نرحب بكم شريك النجاح');
+    await expect(page.getByRole('link', { name: 'تخطي', exact: true })).toBeVisible();
   });
 
   test('first launch shows logo and slider, but a browser reload stays on the current page', async ({
     page,
   }) => {
     await page.goto('/home');
-    await expect(page).toHaveURL(/\/welcome\/logo\?next=/);
+    await expect(page).toHaveURL(/\/welcome\/logo$/);
     await page.getByRole('main').getByRole('button', { name: 'Tap the logo to shop now' }).click();
-    await expect(page).toHaveURL(/\/welcome\?next=/);
+    await expect(page).toHaveURL(/\/welcome$/);
     await page.getByRole('link', { name: 'Skip', exact: true }).click();
     await expect(page).toHaveURL(/\/home$/);
     await page.getByRole('link', { name: 'Categories', exact: true }).click();
