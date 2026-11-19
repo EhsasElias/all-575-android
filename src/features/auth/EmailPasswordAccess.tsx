@@ -8,6 +8,7 @@ import { recallFlow } from './signInMemory';
 import { currentDeviceName } from './deviceName';
 import { EmailPasswordForm } from './EmailPasswordForm';
 import { useConsentVersions } from './useConsentVersions';
+import { emailAccessFrench } from './emailAccessFrench';
 import styles from './StepLayout.module.css';
 
 type LoginReply = {
@@ -27,7 +28,9 @@ type Props = { createAccount: boolean };
 export function EmailPasswordAccess({ createAccount }: Props) {
   const { t, i18n } = useTranslation('auth');
   const ar = i18n.language.startsWith('ar');
-  const tr = (arabic: string, english: string) => (ar ? arabic : english);
+  const fr = i18n.language.startsWith('fr');
+  const tr = (arabic: string, english: keyof typeof emailAccessFrench) =>
+    ar ? arabic : fr ? emailAccessFrench[english] : english;
   const session = useSession();
   const { showToast } = useToast();
   const legal = useConsentVersions(null);
