@@ -2,13 +2,16 @@ import { useEffect, useState, type FormEvent } from 'react';
 import { useTranslation } from 'react-i18next';
 import { isApiError } from '@/shared/api';
 import { respondSellerReturn, sellerReturns, type SellerReturnCase } from './sellerWorkspaceApi';
+import { sellerReturnsFrench } from './sellerReturnsFrench';
 
 type ReturnFilter = 'all' | 'submitted' | 'in_review' | 'resolved' | 'rejected';
 
 export function SellerReturnManagement() {
   const { i18n } = useTranslation();
   const ar = i18n.language.startsWith('ar');
-  const tr = (arabic: string, english: string) => (ar ? arabic : english);
+  const fr = i18n.language.startsWith('fr');
+  const tr = (arabic: string, english: keyof typeof sellerReturnsFrench) =>
+    ar ? arabic : fr ? sellerReturnsFrench[english] : english;
   const [filter, setFilter] = useState<ReturnFilter>('all');
   const [cases, setCases] = useState<SellerReturnCase[]>([]);
   const [hasMore, setHasMore] = useState(false);
