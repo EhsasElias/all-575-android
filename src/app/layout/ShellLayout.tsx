@@ -49,13 +49,13 @@ export function ShellLayout() {
   useEffect(() => {
     if (!sidebarOpen) return;
     const closeOnEscape = (event: KeyboardEvent) => {
-      if (event.key === 'Escape') closeSidebar();
+      if (event.key === 'Escape') setDrawer({ route: locationKey, open: false });
     };
     window.addEventListener('keydown', closeOnEscape);
     return () => {
       window.removeEventListener('keydown', closeOnEscape);
     };
-  }, [sidebarOpen]);
+  }, [sidebarOpen, locationKey]);
 
   return (
     <div className={styles.shell}>
