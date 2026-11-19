@@ -11,12 +11,15 @@ import {
   type CourierJob,
 } from './courierOperationsApi';
 import { isExpiredCourierOffer } from './courierOfferTime';
+import { courierFrench } from './courierFrench';
 import './adminWorkspaceFamily.css';
 
 export function CourierWorkspaceScreen() {
   const { i18n } = useTranslation();
   const ar = i18n.language.startsWith('ar');
-  const tr = (a: string, en: string) => (ar ? a : en);
+  const fr = i18n.language.startsWith('fr');
+  const tr = (a: string, en: keyof typeof courierFrench) =>
+    ar ? a : fr ? courierFrench[en] : en;
   const [jobs, setJobs] = useState<CourierJob[]>([]);
   const [error, setError] = useState('');
   const [notice, setNotice] = useState('');
