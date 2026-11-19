@@ -10,6 +10,7 @@ import {
   type SellerDailyTrend,
   type SellerBranch,
 } from './sellerWorkspaceApi';
+import { sellerInsightFrench, frenchInsightColumns, frenchInsightStatuses } from './sellerInsightFrench';
 
 type Props = {
   metric: SellerInsightMetric;
@@ -81,7 +82,8 @@ function saveDownload(blob: Blob, filename: string) {
 export function SellerInsightPanel({ metric, branches, onClose }: Props) {
   const { i18n } = useTranslation();
   const ar = i18n.language.startsWith('ar');
-  const tr = (a: string, b: string) => (ar ? a : b);
+  const fr = i18n.language.startsWith('fr');
+  const tr = (a: string, b: string) => (ar ? a : fr ? (sellerInsightFrench[b] ?? b) : b);
   const [from, setFrom] = useState(() => dateAt(29));
   const [to, setTo] = useState(() => dateAt(0));
   const [branch, setBranch] = useState('');
@@ -100,7 +102,7 @@ export function SellerInsightPanel({ metric, branches, onClose }: Props) {
   useEffect(() => {
     if (!from || !to || from > to) {
       setDetails(null);
-      setError(ar ? 'تحقق من الفترة الزمنية.' : 'Choose a valid date range.');
+      setError(tr('تحقق من الفترة الزمنية.', 'Choose a valid date range.'));
       return;
     }
     let active = true;
@@ -114,9 +116,10 @@ export function SellerInsightPanel({ metric, branches, onClose }: Props) {
       .catch(() => {
         if (active)
           setError(
-            ar
-              ? 'تعذر تحميل التفاصيل. تأكد من الاتصال والصلاحيات.'
-              : 'Could not load details. Check connectivity and permissions.',
+            tr(
+              'تعذر تحميل التفاصيل. تأكد من الاتصال والصلاحيات.',
+              'Could not load details. Check connectivity and permissions.',
+            ),
           );
       })
       .finally(() => {
@@ -337,7 +340,7 @@ export function SellerInsightPanel({ metric, branches, onClose }: Props) {
                   <tr>
                     {details.columns.map((column, i) => (
                       <th key={i} scope="col">
-                        {ar ? (arabicColumns[column] ?? column) : column}
+                        {ar ? (arabicColumns[column] ?? column) : fr ? (frenchInsightColumns[column] ?? column) : column}
                       </th>
                     ))}
                   </tr>
@@ -348,7 +351,7 @@ export function SellerInsightPanel({ metric, branches, onClose }: Props) {
                       {row.map((cell, i) => (
                         <td key={i}>
                           <bdi dir="auto">
-                            {ar && typeof cell === 'string' ? (arabicStatuses[cell] ?? cell) : cell}
+                            {typeof cell === 'string' && ar ? (arabicStatuses[cell] ?? cell) : typeof cell === 'string' && fr ? (frenchInsightStatuses[cell] ?? cell) : cell}
                           </bdi>
                         </td>
                       ))}
