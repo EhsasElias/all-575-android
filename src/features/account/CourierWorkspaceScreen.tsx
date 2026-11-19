@@ -162,9 +162,7 @@ export function CourierWorkspaceScreen() {
             {job.status === 'offered' && (
               <div style={{ display: 'flex', gap: 12 }}>
                 <button
-                  disabled={
-                    busy || isExpiredCourierOffer(job.expires_at, clockMs)
-                  }
+                  disabled={busy || isExpiredCourierOffer(job.expires_at, clockMs)}
                   onClick={() =>
                     void act(
                       () => courierRespond(job.id, 'accept'),
