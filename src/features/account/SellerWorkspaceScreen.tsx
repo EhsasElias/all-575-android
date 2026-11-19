@@ -8,6 +8,7 @@ import { Page } from './components/Page';
 import './sellerWorkspace.css';
 import { PageHeader } from './components/PageHeader';
 import { SellerProductManagement } from './SellerProductManagement';
+import { sellerWorkspaceFrench } from './sellerWorkspaceFrench';
 import { SellerFinanceOverview } from './SellerFinanceOverview';
 import { SellerStaffManagement } from './SellerStaffManagement';
 import { SellerReturnManagement } from './SellerReturnManagement';
@@ -66,7 +67,9 @@ const action: React.CSSProperties = { padding: '9px 13px', borderRadius: 9, curs
 export function SellerWorkspaceScreen() {
   const { i18n } = useTranslation();
   const ar = i18n.language.startsWith('ar');
-  const tr = (arabic: string, english: string) => (ar ? arabic : english);
+  const fr = i18n.language.startsWith('fr');
+  const tr = (arabic: string, english: string) =>
+    ar ? arabic : fr ? (sellerWorkspaceFrench[english] ?? english) : english;
   const [eligible, setEligible] = useState(false);
   const [sellerMemberships, setSellerMemberships] = useState<SellerMembership[]>([]);
   const [searchParams] = useSearchParams();
