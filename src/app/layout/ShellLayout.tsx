@@ -35,15 +35,21 @@ export function ShellLayout() {
       pathname.startsWith('/account/') ||
       pathname === routePaths.orders ||
       pathname.startsWith('/orders/'));
-  const [sidebarOpen, setSidebarOpen] = useState(false);
-
-  useEffect(() => {
-    setSidebarOpen(false);
-  }, [pathname, search, hash]);
+  // A drawer belongs to the route on which it was opened. Navigation closes it
+  // by derivation, avoiding a synchronous state change in a render effect.
+  const locationKey = pathname + search + hash;
+  const [drawer, setDrawer] = useState<{ route: string; open: boolean }>({
+    route: '',
+    open: false,
+  });
+  const sidebarOpen = drawer.open && drawer.route === locationKey;
+  const closeSidebar = () => {
+    setDrawer({ route: locationKey, open: false });
+  };
   useEffect(() => {
     if (!sidebarOpen) return;
     const closeOnEscape = (event: KeyboardEvent) => {
-      if (event.key === 'Escape') setSidebarOpen(false);
+      if (event.key === 'Escape') closeSidebar();
     };
     window.addEventListener('keydown', closeOnEscape);
     return () => {
@@ -58,7 +64,7 @@ export function ShellLayout() {
         {...(accountRoute
           ? {
               onAccountMenu: () => {
-                setSidebarOpen(true);
+                setDrawer({ route: locationKey, open: true });
               },
             }
           : {})}
@@ -80,7 +86,7 @@ export function ShellLayout() {
                   : 'Open account menu'
             }
             onClick={() => {
-              setSidebarOpen((open) => !open);
+              setDrawer({ route: locationKey, open: !sidebarOpen });
             }}
           >
             <span aria-hidden="true">{sidebarOpen ? '✕' : '☰'}</span>
@@ -100,7 +106,7 @@ export function ShellLayout() {
               className={styles.sidebarBackdrop}
               aria-label={ar ? 'إغلاق القائمة' : 'Close navigation'}
               onClick={() => {
-                setSidebarOpen(false);
+                closeSidebar();
               }}
             />
           )}
@@ -115,13 +121,13 @@ export function ShellLayout() {
             {dashboardRoute ? (
               <DashboardSidebar
                 onNavigate={() => {
-                  setSidebarOpen(false);
+                  closeSidebar();
                 }}
               />
             ) : (
               <AccountSidebar
                 onNavigate={() => {
-                  setSidebarOpen(false);
+                  closeSidebar();
                 }}
               />
             )}
