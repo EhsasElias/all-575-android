@@ -63,7 +63,10 @@ export const adminCreateIncident = (data: {
   description: string;
 }) => http.post<{ data: { id: number } }>('/platform/admin/incidents', data);
 export const adminUpdateIncident = (id: number, data: { status: string; resolution?: string }) =>
-  http.patch<{ data: { id: number; status: string } }>('/platform/admin/incidents/' + String(id), data);
+  http.patch<{ data: { id: number; status: string } }>(
+    '/platform/admin/incidents/' + String(id),
+    data,
+  );
 export const courierJobs = () => http.get<{ data: CourierJob[] }>('/courier/jobs');
 export const courierAvailability = (is_online: boolean) =>
   http.patch<{ data: { is_online: boolean } }>('/courier/availability', { is_online });

@@ -347,7 +347,10 @@ export function SuperAdminDashboardScreen() {
 
   return (
     <Page>
-      <div className={(styles.dashboard ?? '') + ' admin-workspace-family'} dir={ar ? 'rtl' : 'ltr'}>
+      <div
+        className={(styles.dashboard ?? '') + ' admin-workspace-family'}
+        dir={ar ? 'rtl' : 'ltr'}
+      >
         <div className={(styles.heading ?? '') + ' admin-family-hero'}>
           <div className={styles.headingIcon} aria-hidden="true">
             ♛

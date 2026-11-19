@@ -107,7 +107,9 @@ export function ShellLayout() {
           <div
             id="account-navigation"
             className={
-              sidebarOpen ? (styles.sidebarArea ?? '') + ' ' + (styles.sidebarOpen ?? '') : styles.sidebarArea
+              sidebarOpen
+                ? (styles.sidebarArea ?? '') + ' ' + (styles.sidebarOpen ?? '')
+                : styles.sidebarArea
             }
           >
             {dashboardRoute ? (
@@ -127,7 +129,9 @@ export function ShellLayout() {
           <main
             id={MAIN_CONTENT_ID}
             tabIndex={-1}
-            className={(styles.main ?? '') + ' ' + (styles.mainWide ?? '') + ' ' + (styles.accountMain ?? '')}
+            className={
+              (styles.main ?? '') + ' ' + (styles.mainWide ?? '') + ' ' + (styles.accountMain ?? '')
+            }
           >
             <Outlet />
           </main>

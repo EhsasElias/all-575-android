@@ -77,7 +77,9 @@ export const decideSellerProduct = (id: number, decision: 'publish' | 'reject', 
     { decision, reason: reason.trim() || null },
   );
 export const downloadReviewDocument = (applicationId: number, documentId: number) =>
-  http.download('/seller-review/applications/' + String(applicationId) + '/documents/' + String(documentId));
+  http.download(
+    '/seller-review/applications/' + String(applicationId) + '/documents/' + String(documentId),
+  );
 
 export type SellerBranchReview = {
   id: number;

@@ -232,7 +232,10 @@ export function PlatformAdminDashboardScreen() {
 
   return (
     <Page>
-      <div className={(styles.dashboard ?? '') + ' admin-workspace-family'} dir={ar ? 'rtl' : 'ltr'}>
+      <div
+        className={(styles.dashboard ?? '') + ' admin-workspace-family'}
+        dir={ar ? 'rtl' : 'ltr'}
+      >
         <header className={(styles.hero ?? '') + ' admin-family-hero'}>
           <div>
             <h1>{tr('لوحة الإدارة', 'Admin Dashboard')}</h1>
@@ -453,7 +456,9 @@ export function PlatformAdminDashboardScreen() {
               <div className={styles.metrics}>
                 <button
                   type="button"
-                  className={(styles.metric ?? '') + ' ' + (styles.metricAction ?? '') + ' admin-family-card'}
+                  className={
+                    (styles.metric ?? '') + ' ' + (styles.metricAction ?? '') + ' admin-family-card'
+                  }
                   onClick={() => {
                     openInventory(false);
                   }}
@@ -464,7 +469,9 @@ export function PlatformAdminDashboardScreen() {
                 </button>
                 <button
                   type="button"
-                  className={(styles.metric ?? '') + ' ' + (styles.metricAction ?? '') + ' admin-family-card'}
+                  className={
+                    (styles.metric ?? '') + ' ' + (styles.metricAction ?? '') + ' admin-family-card'
+                  }
                   onClick={() => {
                     openInventory(true);
                   }}
@@ -476,7 +483,10 @@ export function PlatformAdminDashboardScreen() {
               </div>
             </section>
             {inventoryOpen && (
-              <section id="inventory-detail" className={(styles.panel ?? '') + ' admin-family-panel'}>
+              <section
+                id="inventory-detail"
+                className={(styles.panel ?? '') + ' admin-family-panel'}
+              >
                 <div className={styles.panelHeading}>
                   <div>
                     <h2>{tr('تفاصيل المخزون', 'Inventory details')}</h2>
