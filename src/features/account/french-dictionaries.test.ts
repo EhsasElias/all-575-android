@@ -28,7 +28,10 @@ function translatedEnglishLabels(file: string): string[] {
       node.arguments.length >= 2
     ) {
       const english = node.arguments[1];
-      if (english !== undefined && (ts.isStringLiteral(english) || ts.isNoSubstitutionTemplateLiteral(english))) {
+      if (
+        english !== undefined &&
+        (ts.isStringLiteral(english) || ts.isNoSubstitutionTemplateLiteral(english))
+      ) {
         labels.add(english.text);
       }
     }
