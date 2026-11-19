@@ -1,4 +1,6 @@
 import { useEffect, useState } from 'react';
+import { useTranslation } from 'react-i18next';
+import { courierAdminFrench } from './courierAdminFrench';
 import { isApiError } from '@/shared/api';
 import {
   adminAssignCourier,
@@ -23,7 +25,10 @@ type Props = {
 };
 
 export function AdminCourierOperations({ orders, onUpdated, ar }: Props) {
-  const tr = (a: string, b: string) => (ar ? a : b);
+  const { i18n } = useTranslation();
+  const fr = i18n.language.startsWith('fr');
+  const tr = (a: string, b: keyof typeof courierAdminFrench) =>
+    ar ? a : fr ? courierAdminFrench[b] : b;
   const [couriers, setCouriers] = useState<CourierChoice[]>([]);
   const [incidents, setIncidents] = useState<DeliveryIncident[]>([]);
   const [summary, setSummary] = useState<DailyCourierStatus | null>(null);
