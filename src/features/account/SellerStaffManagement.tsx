@@ -12,6 +12,7 @@ import {
   type SellerBranch,
   type SellerStaffInput,
 } from './sellerWorkspaceApi';
+import { sellerStaffFrench } from './sellerStaffFrench';
 
 type Props = { memberships: SellerMembership[] };
 type Editor = {
@@ -32,7 +33,9 @@ const blankEditor = (): Editor => ({
 export function SellerStaffManagement({ memberships }: Props) {
   const { i18n } = useTranslation();
   const ar = i18n.language.startsWith('ar');
-  const tr = (arabic: string, english: string) => (ar ? arabic : english);
+  const fr = i18n.language.startsWith('fr');
+  const tr = (arabic: string, english: keyof typeof sellerStaffFrench) =>
+    ar ? arabic : fr ? sellerStaffFrench[english] : english;
   const roleLabels: Record<string, string> = {
     owner: tr('مالك المتجر', 'Store owner'),
     branch_manager: tr('مدير الفرع', 'Branch manager'),
