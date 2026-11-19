@@ -27,6 +27,8 @@ async function findFiles(directory) {
 const findings = [];
 for (const file of await findFiles(join(root, 'src'))) {
   const source = await readFile(file, 'utf8');
+  // Pure data resolvers (such as API-provided product names) are not UI copy.
+  if (!file.endsWith('.tsx') && !/\b(?:const|let)\s+tr\s*=/.test(source)) continue;
   const usesBilingualTr = /\b(?:const|let)\s+tr\s*=/.test(source) && /\btr\(/.test(source);
   const hasFrenchChoice = /startsWith\(['"]fr['"]\)|\blanguage\s*===?\s*['"]fr['"]|\bfr\s*\?/.test(
     source,
