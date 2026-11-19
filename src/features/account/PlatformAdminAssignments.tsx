@@ -8,12 +8,15 @@ import {
   type PlatformAdminAccess,
   type AdminSellerChoice,
 } from './platformAdminApi';
+import { adminAssignmentsFrench } from './adminAssignmentsFrench';
 import styles from './PlatformAdminAssignments.module.css';
 
 export function PlatformAdminAssignments() {
   const { i18n } = useTranslation();
   const ar = i18n.language.startsWith('ar');
-  const tr = (a: string, en: string) => (ar ? a : en);
+  const fr = i18n.language.startsWith('fr');
+  const tr = (a: string, en: keyof typeof adminAssignmentsFrench) =>
+    ar ? a : fr ? adminAssignmentsFrench[en] : en;
   const [items, setItems] = useState<PlatformAdminAccess[]>([]);
   const [sellerChoices, setSellerChoices] = useState<AdminSellerChoice[]>([]);
   const [email, setEmail] = useState('');
