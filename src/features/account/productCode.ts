@@ -23,6 +23,10 @@ const normalize = (name: string) =>
     .replace(/[\s_-]/g, '');
 const isBarcode = (text: string) => /^(?:\d{8}|\d{12,14})$/.test(text);
 
+function isRecord(value: unknown): value is Record<string, unknown> {
+  return typeof value === 'object' && value !== null && !Array.isArray(value);
+}
+
 export function parseProductCode(raw: string, format?: string): ScannedProduct {
   const text = raw.trim().slice(0, 12000);
   if (!text) return {};
@@ -40,11 +44,11 @@ export function parseProductCode(raw: string, format?: string): ScannedProduct {
   if (text.startsWith('{')) {
     try {
       const parsed: unknown = JSON.parse(text);
-      if (parsed && typeof parsed === 'object' && !Array.isArray(parsed)) {
-        const obj = parsed as Record<string, unknown>;
+      if (isRecord(parsed)) {
+        const obj = parsed;
         // Support { product: { name_ar: ... } } as well as flat QR payloads.
         const nested = obj.product;
-        if (nested && typeof nested === 'object' && !Array.isArray(nested)) {
+        if (isRecord(nested)) {
           for (const [key, value] of Object.entries(nested)) insert(key, value);
         }
         for (const [key, value] of Object.entries(obj)) {
