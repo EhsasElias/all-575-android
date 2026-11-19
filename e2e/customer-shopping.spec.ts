@@ -75,7 +75,7 @@ test('company buyer, quotation request and real payment artwork', async ({ page 
   await page.getByLabel('6-digit code', { exact: true }).fill('123456');
   await page.getByRole('button', { name: 'Continue', exact: true }).click();
   await expect(page).toHaveURL(/\/account$/);
-  await page.getByRole('link', { name: 'Buyer and billing details', exact: true }).click();
+  await page.getByRole('navigation', { name: 'Account navigation' }).getByRole('link', { name: 'Billing', exact: true }).click();
   await page.getByLabel('I am shopping as').selectOption('business');
   await page.getByLabel('Legal company name').fill('Riyadh Supplies');
   await page.getByLabel('Company billing address').fill('Riyadh, Building 1234, Al Olaya, 12211');
@@ -84,7 +84,7 @@ test('company buyer, quotation request and real payment artwork', async ({ page 
   expect(billing).toMatchObject({ buyer_type: 'business', company_name: 'Riyadh Supplies' });
   await page.screenshot({ path: testInfo.outputPath('company-buyer.png'), fullPage: true });
   await page.getByRole('link', { name: 'Account', exact: true }).click();
-  await page.getByRole('link', { name: 'Quotes and account requests', exact: true }).click();
+  await page.getByRole('navigation', { name: 'Account navigation' }).getByRole('link', { name: 'Requests', exact: true }).click();
   await page.getByLabel('Subject', { exact: true }).fill('100 towels for Riyadh');
   await page
     .getByLabel('Details', { exact: true })
