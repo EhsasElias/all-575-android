@@ -457,7 +457,7 @@ export function SellerReviewScreen() {
 
   return (
     <Page>
-      <div className={styles.review + ' admin-workspace-family'} dir={ar ? 'rtl' : 'ltr'}>
+      <div className={(styles.review ?? '') + ' admin-workspace-family'} dir={ar ? 'rtl' : 'ltr'}>
         <PageHeader
           title={tr('مراجعة البائعين والمنتجات', 'Seller & product approvals')}
           lead={tr(
@@ -474,7 +474,7 @@ export function SellerReviewScreen() {
           </p>
         ) : (
           <>
-            <div className={styles.summary + ' admin-family-metrics'}>
+            <div className={(styles.summary ?? '') + ' admin-family-metrics'}>
               <div>
                 <span>{tr('طلبات البائعين', 'Seller applications')}</span>
                 <strong>{overview?.pending_applications ?? '—'}</strong>
@@ -522,7 +522,7 @@ export function SellerReviewScreen() {
                 ↻ {tr('تحديث', 'Refresh')}
               </button>
             </div>
-            <div className={styles.filters + ' admin-family-filters'} role="search">
+            <div className={(styles.filters ?? '') + ' admin-family-filters'} role="search">
               <label>
                 {tr('بحث', 'Search')}
                 <input
