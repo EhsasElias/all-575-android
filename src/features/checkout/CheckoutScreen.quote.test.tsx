@@ -44,7 +44,7 @@ describe('Checkout: VAT added to net prices', () => {
     });
 
     const summary = await screen.findByRole('region', { name: 'Order summary' });
-    expect(within(summary).getByText('VAT (15% where applicable)')).toBeVisible();
+    expect(await within(summary).findByText('VAT (15% where applicable)')).toBeVisible();
     expect(within(summary).getByText(/^0\.75\s+SAR$/)).toBeVisible();
     expect(within(summary).getByText(/^5\.75\s+SAR$/)).toBeVisible();
     expect(await screen.findByRole('button', { name: /^Pay 5\.75/ })).toBeInTheDocument();
