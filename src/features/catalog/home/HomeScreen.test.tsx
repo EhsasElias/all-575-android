@@ -38,7 +38,7 @@ describe('Home', () => {
       '/products/demo-food-1',
     );
     expect(within(popular).getByRole('link', { name: 'Socks' })).toBeVisible();
-    expect(within(popular).getAllByText(/5\.75\s+SAR/)).toHaveLength(3);
+    expect(within(popular).getAllByText(/5\.00\s+SAR/)).toHaveLength(3);
   });
 
   it('asks for categories and products at the same time, and for a first page only', async () => {
@@ -167,7 +167,7 @@ describe('Home', () => {
     ).toBeVisible();
     expect(await screen.findByRole('link', { name: 'بسكويت' })).toBeVisible();
     expect(screen.getByRole('link', { name: 'أطعمة' })).toBeVisible();
-    expect(screen.getAllByText(/5\.75\s+ر\.س/).length).toBeGreaterThanOrEqual(3);
+    expect(screen.getAllByText(/5\.00\s+ر\.س/).length).toBeGreaterThanOrEqual(3);
     expect(screen.queryByText('Biscuits')).not.toBeInTheDocument();
     expect(screen.getByRole('button', { name: /اختر منطقة التوصيل/ })).toBeVisible();
   });
@@ -207,7 +207,7 @@ describe('Home in French', () => {
 
     const popular = screen.getByRole('region', { name: 'Populaires' });
     expect(await within(popular).findByRole('link', { name: 'Biscuits' })).toBeVisible();
-    expect(within(popular).getAllByText(/5,75\s+SAR/)).toHaveLength(3);
+    expect(within(popular).getAllByText(/5,00\s+SAR/)).toHaveLength(3);
     expect(document.documentElement).toHaveAttribute('lang', 'fr');
     expect(document.documentElement).toHaveAttribute('dir', 'ltr');
   });
