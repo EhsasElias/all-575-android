@@ -130,6 +130,7 @@ for (const language of ['ar', 'en', 'fr'] as const)
       );
       await openApp(page, '/sign-in?next=%2Faccount%2Fdashboard');
       await page.getByRole('button', { name: 'Use one-time code (OTP)' }).click();
+      await page.getByRole('button', { name: 'Use mobile number instead' }).click();
       await page.getByLabel('Mobile number', { exact: true }).fill('0512345678');
       await page.getByRole('button', { name: 'Send code' }).click();
       await page.getByLabel('6-digit code', { exact: true }).fill('123456');
