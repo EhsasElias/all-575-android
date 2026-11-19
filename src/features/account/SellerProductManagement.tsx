@@ -141,7 +141,9 @@ export function SellerProductManagement({ products, memberships, onUpdated }: Pr
     }
     const objectUrl = URL.createObjectURL(coverFile);
     setLocalCoverPreview(objectUrl);
-    return () => URL.revokeObjectURL(objectUrl);
+    return () => {
+      URL.revokeObjectURL(objectUrl);
+    };
   }, [coverFile]);
 
   const fieldError = (name: keyof Draft) =>
@@ -154,10 +156,7 @@ export function SellerProductManagement({ products, memberships, onUpdated }: Pr
     'aria-invalid': !!fieldErrors[name],
     'aria-describedby': fieldErrors[name] ? 'seller-error-' + name : undefined,
   });
-  const flatCategories = (
-    items: SellerCategory[],
-    depth = 0,
-  ): Array<{ id: number; label: string }> =>
+  const flatCategories = (items: SellerCategory[], depth = 0): { id: number; label: string }[] =>
     items.flatMap((item) => [
       { id: item.id, label: '—'.repeat(depth) + (ar ? item.name.ar : item.name.en) },
       ...flatCategories(item.children ?? [], depth + 1),
@@ -681,7 +680,9 @@ export function SellerProductManagement({ products, memberships, onUpdated }: Pr
       document.body.appendChild(anchor);
       anchor.click();
       anchor.remove();
-      window.setTimeout(() => URL.revokeObjectURL(objectUrl), 30000);
+      window.setTimeout(() => {
+        URL.revokeObjectURL(objectUrl);
+      }, 30000);
     } catch (cause) {
       setError(explainApiError(cause, tr('تعذر تحميل القالب.', 'Could not download template.')));
     } finally {
@@ -832,7 +833,9 @@ export function SellerProductManagement({ products, memberships, onUpdated }: Pr
                 autoComplete="off"
                 maxLength={100}
                 value={quickSku}
-                onChange={(event) => setQuickSku(event.target.value)}
+                onChange={(event) => {
+                  setQuickSku(event.target.value);
+                }}
                 placeholder="SKU-001"
               />
             </label>
@@ -898,7 +901,9 @@ export function SellerProductManagement({ products, memberships, onUpdated }: Pr
                     )}
                     <select
                       value={categoryRequestParent}
-                      onChange={(event) => setCategoryRequestParent(event.target.value)}
+                      onChange={(event) => {
+                        setCategoryRequestParent(event.target.value);
+                      }}
                     >
                       <option value="">{tr('تصنيف رئيسي جديد', 'New parent category')}</option>
                       {categories.map((category) => (
@@ -916,7 +921,9 @@ export function SellerProductManagement({ products, memberships, onUpdated }: Pr
                       required
                       maxLength={180}
                       value={categoryRequestAr}
-                      onChange={(event) => setCategoryRequestAr(event.target.value)}
+                      onChange={(event) => {
+                        setCategoryRequestAr(event.target.value);
+                      }}
                     />
                   </label>
                   <label style={field}>
@@ -925,7 +932,9 @@ export function SellerProductManagement({ products, memberships, onUpdated }: Pr
                       required
                       maxLength={180}
                       value={categoryRequestEn}
-                      onChange={(event) => setCategoryRequestEn(event.target.value)}
+                      onChange={(event) => {
+                        setCategoryRequestEn(event.target.value);
+                      }}
                     />
                   </label>
                 </div>
@@ -935,7 +944,9 @@ export function SellerProductManagement({ products, memberships, onUpdated }: Pr
                     rows={2}
                     maxLength={1000}
                     value={categoryRequestReason}
-                    onChange={(event) => setCategoryRequestReason(event.target.value)}
+                    onChange={(event) => {
+                      setCategoryRequestReason(event.target.value);
+                    }}
                   />
                 </label>
                 <div>
@@ -978,7 +989,13 @@ export function SellerProductManagement({ products, memberships, onUpdated }: Pr
       )}
       <div style={{ ...controls, marginBottom: 12 }}>
         {sellerIds.length > 0 && (
-          <button type="button" style={button} onClick={() => newProduct()}>
+          <button
+            type="button"
+            style={button}
+            onClick={() => {
+              newProduct();
+            }}
+          >
             {tr('إضافة منتج جديد', 'Add new product')}
           </button>
         )}
@@ -1084,7 +1101,9 @@ export function SellerProductManagement({ products, memberships, onUpdated }: Pr
               type="button"
               style={button}
               disabled={busy || importFile === null}
-              onClick={() => setConfirmation({ kind: 'import' })}
+              onClick={() => {
+                setConfirmation({ kind: 'import' });
+              }}
             >
               {tr('استيراد المسودات', 'Import drafts')}
             </button>
@@ -1092,7 +1111,9 @@ export function SellerProductManagement({ products, memberships, onUpdated }: Pr
               type="button"
               style={button}
               disabled={busy || importFile === null}
-              onClick={() => setConfirmation({ kind: 'importSubmit' })}
+              onClick={() => {
+                setConfirmation({ kind: 'importSubmit' });
+              }}
             >
               {tr('استيراد ونشر مباشرة', 'Import & publish now')}
             </button>
@@ -1184,7 +1205,9 @@ export function SellerProductManagement({ products, memberships, onUpdated }: Pr
               type="button"
               className="seller-product-scan-button"
               disabled={busy}
-              onClick={() => setScannerOpen((open) => !open)}
+              onClick={() => {
+                setScannerOpen((open) => !open);
+              }}
             >
               <span aria-hidden="true">▣</span>
               {scannerOpen
@@ -1196,7 +1219,9 @@ export function SellerProductManagement({ products, memberships, onUpdated }: Pr
                 <ProductCameraScanner
                   ar={ar}
                   onRead={(text, format) => void applyScan(text, format)}
-                  onClose={() => setScannerOpen(false)}
+                  onClose={() => {
+                    setScannerOpen(false);
+                  }}
                 />
               </Suspense>
             )}
@@ -1239,7 +1264,9 @@ export function SellerProductManagement({ products, memberships, onUpdated }: Pr
                     maxLength={100}
                     {...fieldProps('sku')}
                     value={draft.sku}
-                    onChange={(event) => set('sku', event.target.value)}
+                    onChange={(event) => {
+                      set('sku', event.target.value);
+                    }}
                   />
                   {fieldError('sku')}
                 </label>
@@ -1249,7 +1276,9 @@ export function SellerProductManagement({ products, memberships, onUpdated }: Pr
                     maxLength={100}
                     {...fieldProps('barcode')}
                     value={draft.barcode}
-                    onChange={(event) => set('barcode', event.target.value)}
+                    onChange={(event) => {
+                      set('barcode', event.target.value);
+                    }}
                   />
                   {fieldError('barcode')}
                 </label>
@@ -1259,7 +1288,9 @@ export function SellerProductManagement({ products, memberships, onUpdated }: Pr
                     maxLength={180}
                     value={draft.variantNameAr}
                     placeholder={tr('مثل: حبة، علبة، كرتون', 'e.g. حبة، علبة، كرتون')}
-                    onChange={(event) => set('variantNameAr', event.target.value)}
+                    onChange={(event) => {
+                      set('variantNameAr', event.target.value);
+                    }}
                   />
                   {fieldError('variantNameAr')}
                 </label>
@@ -1272,7 +1303,9 @@ export function SellerProductManagement({ products, memberships, onUpdated }: Pr
                     maxLength={180}
                     value={draft.variantNameEn}
                     placeholder="Piece, Box, Pack"
-                    onChange={(event) => set('variantNameEn', event.target.value)}
+                    onChange={(event) => {
+                      set('variantNameEn', event.target.value);
+                    }}
                   />
                   {fieldError('variantNameEn')}
                 </label>
@@ -1286,7 +1319,9 @@ export function SellerProductManagement({ products, memberships, onUpdated }: Pr
                   {...fieldProps('sellerId')}
                   value={draft.sellerId}
                   disabled={selected !== null}
-                  onChange={(event) => set('sellerId', event.target.value)}
+                  onChange={(event) => {
+                    set('sellerId', event.target.value);
+                  }}
                 >
                   <option value="">{tr('اختر المتجر', 'Select store')}</option>
                   {sellerIds.map((id) => {
@@ -1306,7 +1341,9 @@ export function SellerProductManagement({ products, memberships, onUpdated }: Pr
                   required
                   {...fieldProps('categoryId')}
                   value={draft.categoryId}
-                  onChange={(event) => set('categoryId', event.target.value)}
+                  onChange={(event) => {
+                    set('categoryId', event.target.value);
+                  }}
                 >
                   <option value="">{tr('اختر التصنيف', 'Select category')}</option>
                   {flatCategories(categories).map((category) => (
@@ -1326,7 +1363,9 @@ export function SellerProductManagement({ products, memberships, onUpdated }: Pr
                   maxLength={180}
                   {...fieldProps('nameAr')}
                   value={draft.nameAr}
-                  onChange={(event) => set('nameAr', event.target.value)}
+                  onChange={(event) => {
+                    set('nameAr', event.target.value);
+                  }}
                 />
                 {fieldError('nameAr')}
               </label>
@@ -1337,7 +1376,9 @@ export function SellerProductManagement({ products, memberships, onUpdated }: Pr
                   maxLength={180}
                   {...fieldProps('nameEn')}
                   value={draft.nameEn}
-                  onChange={(event) => set('nameEn', event.target.value)}
+                  onChange={(event) => {
+                    set('nameEn', event.target.value);
+                  }}
                 />
                 {fieldError('nameEn')}
               </label>
@@ -1349,7 +1390,9 @@ export function SellerProductManagement({ products, memberships, onUpdated }: Pr
                   maxLength={10000}
                   {...fieldProps('descriptionAr')}
                   value={draft.descriptionAr}
-                  onChange={(event) => set('descriptionAr', event.target.value)}
+                  onChange={(event) => {
+                    set('descriptionAr', event.target.value);
+                  }}
                 />
                 {fieldError('descriptionAr')}
               </label>
@@ -1359,7 +1402,9 @@ export function SellerProductManagement({ products, memberships, onUpdated }: Pr
                   maxLength={10000}
                   {...fieldProps('descriptionEn')}
                   value={draft.descriptionEn}
-                  onChange={(event) => set('descriptionEn', event.target.value)}
+                  onChange={(event) => {
+                    set('descriptionEn', event.target.value);
+                  }}
                 />
                 {fieldError('descriptionEn')}
               </label>
@@ -1375,7 +1420,9 @@ export function SellerProductManagement({ products, memberships, onUpdated }: Pr
                   step="0.01"
                   {...fieldProps('price')}
                   value={draft.price}
-                  onChange={(event) => set('price', event.target.value)}
+                  onChange={(event) => {
+                    set('price', event.target.value);
+                  }}
                 />
                 {fieldError('price')}
               </label>
@@ -1419,7 +1466,9 @@ export function SellerProductManagement({ products, memberships, onUpdated }: Pr
                     maxLength={500}
                     rows={3}
                     value={draft.vatJustification}
-                    onChange={(event) => set('vatJustification', event.target.value)}
+                    onChange={(event) => {
+                      set('vatJustification', event.target.value);
+                    }}
                     placeholder={tr(
                       'اذكر المادة أو الحالة النظامية التي تجعل المنتج مؤهلًا لهذه المعاملة، مع أي تفاصيل داعمة.',
                       'Describe the applicable legal provision or eligible transaction and supporting details.',
@@ -1439,7 +1488,13 @@ export function SellerProductManagement({ products, memberships, onUpdated }: Pr
               <button style={button} type="submit" disabled={busy}>
                 {tr('حفظ المسودة', 'Save draft')}
               </button>
-              <button style={button} type="button" onClick={() => setFormVisible(false)}>
+              <button
+                style={button}
+                type="button"
+                onClick={() => {
+                  setFormVisible(false);
+                }}
+              >
                 {tr('إغلاق', 'Close')}
               </button>
             </div>
@@ -1450,7 +1505,9 @@ export function SellerProductManagement({ products, memberships, onUpdated }: Pr
                 type="button"
                 className="seller-product-image-toggle"
                 aria-expanded={imageCardOpen}
-                onClick={() => setImageCardOpen((value) => !value)}
+                onClick={() => {
+                  setImageCardOpen((value) => !value);
+                }}
               >
                 {tr('مرفقات المنتج — صورة الغلاف', 'Product attachments — cover image')}
                 <span aria-hidden="true">{imageCardOpen ? '−' : '+'}</span>
@@ -1561,7 +1618,9 @@ export function SellerProductManagement({ products, memberships, onUpdated }: Pr
                   <input
                     maxLength={100}
                     value={draft.sku}
-                    onChange={(event) => set('sku', event.target.value)}
+                    onChange={(event) => {
+                      set('sku', event.target.value);
+                    }}
                   />
                 </label>
                 <label style={field}>
@@ -1569,7 +1628,9 @@ export function SellerProductManagement({ products, memberships, onUpdated }: Pr
                   <input
                     maxLength={100}
                     value={draft.barcode}
-                    onChange={(event) => set('barcode', event.target.value)}
+                    onChange={(event) => {
+                      set('barcode', event.target.value);
+                    }}
                   />
                 </label>
                 <label style={field}>
@@ -1578,7 +1639,9 @@ export function SellerProductManagement({ products, memberships, onUpdated }: Pr
                     maxLength={180}
                     value={draft.variantNameAr}
                     placeholder={tr('مثل: حبة، علبة، كرتون', 'e.g. حبة، علبة، كرتون')}
-                    onChange={(event) => set('variantNameAr', event.target.value)}
+                    onChange={(event) => {
+                      set('variantNameAr', event.target.value);
+                    }}
                   />
                   {fieldError('variantNameAr')}
                 </label>
@@ -1591,7 +1654,9 @@ export function SellerProductManagement({ products, memberships, onUpdated }: Pr
                     maxLength={180}
                     value={draft.variantNameEn}
                     placeholder="Piece, Box, Pack"
-                    onChange={(event) => set('variantNameEn', event.target.value)}
+                    onChange={(event) => {
+                      set('variantNameEn', event.target.value);
+                    }}
                   />
                   {fieldError('variantNameEn')}
                 </label>
@@ -1609,7 +1674,9 @@ export function SellerProductManagement({ products, memberships, onUpdated }: Pr
                   type="button"
                   style={button}
                   disabled={busy || workingId === selected}
-                  onClick={() => void submit(selected)}
+                  onClick={() => {
+                    submit(selected);
+                  }}
                 >
                   {tr('نشر / إرسال المنتج', 'Publish / Submit product')}
                 </button>
@@ -1648,7 +1715,14 @@ export function SellerProductManagement({ products, memberships, onUpdated }: Pr
           </small>
           {editable(product) && sellerIds.includes(product.seller_id) && (
             <div style={{ ...controls, marginTop: 10 }}>
-              <button type="button" style={button} disabled={busy} onClick={() => edit(product)}>
+              <button
+                type="button"
+                style={button}
+                disabled={busy}
+                onClick={() => {
+                  edit(product);
+                }}
+              >
                 {tr('تعديل', 'Edit')}
               </button>
               {product.status === 'draft' && (
@@ -1657,7 +1731,9 @@ export function SellerProductManagement({ products, memberships, onUpdated }: Pr
                     type="button"
                     style={button}
                     disabled={busy}
-                    onClick={() => void submit(product.id)}
+                    onClick={() => {
+                      submit(product.id);
+                    }}
                   >
                     {tr('نشر / إرسال المنتج', 'Publish / Submit product')}
                   </button>
@@ -1666,7 +1742,9 @@ export function SellerProductManagement({ products, memberships, onUpdated }: Pr
                     title={tr('حذف المسودة', 'Delete draft')}
                     aria-label={tr('حذف مسودة المنتج', 'Delete draft product')}
                     disabled={busy}
-                    onClick={() => setConfirmation({ kind: 'delete', productId: product.id })}
+                    onClick={() => {
+                      setConfirmation({ kind: 'delete', productId: product.id });
+                    }}
                     style={{
                       ...button,
                       color: '#b42318',
@@ -1727,7 +1805,9 @@ export function SellerProductManagement({ products, memberships, onUpdated }: Pr
                 type="button"
                 className="seller-confirm-primary"
                 autoFocus
-                onClick={() => setImportSuccessMessage(null)}
+                onClick={() => {
+                  setImportSuccessMessage(null);
+                }}
               >
                 {tr('حسنًا', 'OK')}
               </button>
@@ -1791,7 +1871,13 @@ export function SellerProductManagement({ products, memberships, onUpdated }: Pr
                         )}
             </p>
             <div className="seller-confirm-actions">
-              <button type="button" onClick={() => setConfirmation(null)} disabled={busy}>
+              <button
+                type="button"
+                onClick={() => {
+                  setConfirmation(null);
+                }}
+                disabled={busy}
+              >
                 {tr('إلغاء', 'Cancel')}
               </button>
               <button

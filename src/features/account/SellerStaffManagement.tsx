@@ -225,7 +225,13 @@ export function SellerStaffManagement({ memberships }: Props) {
             ))}
           </select>
         </label>
-        <button type="button" disabled={busy} onClick={() => setRevision((v) => v + 1)}>
+        <button
+          type="button"
+          disabled={busy}
+          onClick={() => {
+            setRevision((v) => v + 1);
+          }}
+        >
           {tr('تحديث', 'Refresh')}
         </button>
       </div>
@@ -297,12 +303,24 @@ export function SellerStaffManagement({ memberships }: Props) {
                     </td>
                     <td>
                       <div className="seller-team-actions">
-                        <button type="button" disabled={busy} onClick={() => setDetail(member)}>
+                        <button
+                          type="button"
+                          disabled={busy}
+                          onClick={() => {
+                            setDetail(member);
+                          }}
+                        >
                           {tr('تفاصيل', 'Details')}
                         </button>
                         {member.role !== 'owner' && (
                           <>
-                            <button type="button" disabled={busy} onClick={() => openEdit(member)}>
+                            <button
+                              type="button"
+                              disabled={busy}
+                              onClick={() => {
+                                openEdit(member);
+                              }}
+                            >
                               {tr('تعديل', 'Edit')}
                             </button>
                             {member.is_active && (
@@ -310,7 +328,9 @@ export function SellerStaffManagement({ memberships }: Props) {
                                 type="button"
                                 className="seller-team-danger"
                                 disabled={busy}
-                                onClick={() => setConfirmDeactivate(member)}
+                                onClick={() => {
+                                  setConfirmDeactivate(member);
+                                }}
                               >
                                 {tr('إيقاف', 'Deactivate')}
                               </button>
@@ -319,7 +339,9 @@ export function SellerStaffManagement({ memberships }: Props) {
                               <button
                                 type="button"
                                 disabled={busy || storeBranches.length === 0}
-                                onClick={() => openEdit(member)}
+                                onClick={() => {
+                                  openEdit(member);
+                                }}
                               >
                                 {tr('إعادة تفعيل', 'Reactivate')}
                               </button>
@@ -368,7 +390,12 @@ export function SellerStaffManagement({ memberships }: Props) {
               <dt>{tr('الحالة', 'Status')}</dt>
               <dd>{detail.is_active ? tr('نشط', 'Active') : tr('موقوف', 'Inactive')}</dd>
             </dl>
-            <button type="button" onClick={() => setDetail(null)}>
+            <button
+              type="button"
+              onClick={() => {
+                setDetail(null);
+              }}
+            >
               {tr('إغلاق', 'Close')}
             </button>
           </div>
@@ -418,7 +445,9 @@ export function SellerStaffManagement({ memberships }: Props) {
                 required
                 disabled={busy || !!editor.member}
                 value={editor.userId}
-                onChange={(e) => setEditor({ ...editor, userId: e.target.value })}
+                onChange={(e) => {
+                  setEditor({ ...editor, userId: e.target.value });
+                }}
               />
             </label>
             <label>
@@ -426,9 +455,9 @@ export function SellerStaffManagement({ memberships }: Props) {
               <select
                 value={editor.role}
                 disabled={busy}
-                onChange={(e) =>
-                  setEditor({ ...editor, role: e.target.value as SellerStaffInput['role'] })
-                }
+                onChange={(e) => {
+                  setEditor({ ...editor, role: e.target.value as SellerStaffInput['role'] });
+                }}
               >
                 <option value="picker">{roleLabels.picker}</option>
                 <option value="branch_manager">{roleLabels.branch_manager}</option>
@@ -440,7 +469,9 @@ export function SellerStaffManagement({ memberships }: Props) {
                 required
                 value={editor.branchId}
                 disabled={busy}
-                onChange={(e) => setEditor({ ...editor, branchId: e.target.value })}
+                onChange={(e) => {
+                  setEditor({ ...editor, branchId: e.target.value });
+                }}
               >
                 <option value="">{tr('اختر الفرع', 'Select branch')}</option>
                 {storeBranches.map((branch) => (
@@ -456,7 +487,9 @@ export function SellerStaffManagement({ memberships }: Props) {
                   type="checkbox"
                   checked={editor.active}
                   disabled={busy}
-                  onChange={(e) => setEditor({ ...editor, active: e.target.checked })}
+                  onChange={(e) => {
+                    setEditor({ ...editor, active: e.target.checked });
+                  }}
                 />
                 {tr('حساب الموظف نشط', 'Membership active')}
               </label>
@@ -467,7 +500,13 @@ export function SellerStaffManagement({ memberships }: Props) {
               </p>
             )}
             <div className="seller-team-dialog-actions">
-              <button type="button" disabled={busy} onClick={() => setEditor(null)}>
+              <button
+                type="button"
+                disabled={busy}
+                onClick={() => {
+                  setEditor(null);
+                }}
+              >
                 {tr('إلغاء', 'Cancel')}
               </button>
               <button type="submit" disabled={busy || !editor.branchId}>
@@ -502,7 +541,13 @@ export function SellerStaffManagement({ memberships }: Props) {
               )}
             </p>
             <div className="seller-team-dialog-actions">
-              <button type="button" disabled={busy} onClick={() => setConfirmDeactivate(null)}>
+              <button
+                type="button"
+                disabled={busy}
+                onClick={() => {
+                  setConfirmDeactivate(null);
+                }}
+              >
                 {tr('إلغاء', 'Cancel')}
               </button>
               <button

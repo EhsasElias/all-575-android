@@ -242,7 +242,12 @@ export function EmailPasswordAccess({ createAccount }: Props) {
   if (useOtp) {
     return (
       <div className={styles.step}>
-        <Button variant="ghost" onClick={() => setUseOtp(false)}>
+        <Button
+          variant="ghost"
+          onClick={() => {
+            setUseOtp(false);
+          }}
+        >
           {t('emailPassword.backToEmail')}
         </Button>
         <SignInSteps />
@@ -275,7 +280,9 @@ export function EmailPasswordAccess({ createAccount }: Props) {
               maxLength={6}
               required
               value={otp}
-              onChange={(event) => setOtp(event.target.value)}
+              onChange={(event) => {
+                setOtp(event.target.value);
+              }}
             />
           </label>
           {stage === 'reset' && (
@@ -290,7 +297,9 @@ export function EmailPasswordAccess({ createAccount }: Props) {
               required
               autoComplete="new-password"
               value={password}
-              onChange={(event) => setPassword(event.target.value)}
+              onChange={(event) => {
+                setPassword(event.target.value);
+              }}
             />
           )}
           <Button type="submit" size="lg" fullWidth loading={pending}>
@@ -338,7 +347,9 @@ export function EmailPasswordAccess({ createAccount }: Props) {
       onReset={() => {
         void sendCode(true);
       }}
-      onOtp={() => setUseOtp(true)}
+      onOtp={() => {
+        setUseOtp(true);
+      }}
     />
   );
 }

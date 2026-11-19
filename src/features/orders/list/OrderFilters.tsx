@@ -71,21 +71,27 @@ export function OrderFilters() {
             label="Product name / اسم المنتج"
             maxLength={120}
             value={product}
-            onChange={(event) => setProduct(event.target.value)}
+            onChange={(event) => {
+              setProduct(event.target.value);
+            }}
           />
           <TextField
             type="search"
             label="Company name / اسم الشركة"
             maxLength={120}
             value={seller}
-            onChange={(event) => setSeller(event.target.value)}
+            onChange={(event) => {
+              setSeller(event.target.value);
+            }}
           />
           <TextField
             type="search"
             label="Branch name / اسم الفرع"
             maxLength={120}
             value={branch}
-            onChange={(event) => setBranch(event.target.value)}
+            onChange={(event) => {
+              setBranch(event.target.value);
+            }}
           />
           <div className={styles.dates}>
             <TextField
@@ -93,7 +99,9 @@ export function OrderFilters() {
               label="Min price (SAR) / أقل سعر"
               value={minPrice}
               min="0"
-              onChange={(event) => setMinPrice(event.target.value)}
+              onChange={(event) => {
+                setMinPrice(event.target.value);
+              }}
             />
             <TextField
               type="number"
@@ -101,12 +109,19 @@ export function OrderFilters() {
               value={maxPrice}
               min="0"
               error={reversedPrice ? 'Maximum must be greater than minimum' : undefined}
-              onChange={(event) => setMaxPrice(event.target.value)}
+              onChange={(event) => {
+                setMaxPrice(event.target.value);
+              }}
             />
           </div>
           <label>
             Payment type / نوع الدفع
-            <select value={payment} onChange={(event) => setPayment(event.target.value)}>
+            <select
+              value={payment}
+              onChange={(event) => {
+                setPayment(event.target.value);
+              }}
+            >
               <option value="">All / الكل</option>
               <option value="mada">Mada</option>
               <option value="card">Card (Visa / Mastercard)</option>

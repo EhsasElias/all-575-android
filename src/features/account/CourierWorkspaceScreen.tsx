@@ -99,7 +99,13 @@ export function CourierWorkspaceScreen() {
         >
           {online ? tr('التحويل إلى غير متصل', 'Go offline') : tr('التحويل إلى متصل', 'Go online')}
         </button>
-        <button type="button" disabled={busy} onClick={() => setRevision((x) => x + 1)}>
+        <button
+          type="button"
+          disabled={busy}
+          onClick={() => {
+            setRevision((x) => x + 1);
+          }}
+        >
           {tr('تحديث المهام', 'Refresh jobs')}
         </button>
         {error && (
@@ -173,7 +179,9 @@ export function CourierWorkspaceScreen() {
                     pattern="[0-9]{6}"
                     maxLength={6}
                     value={code[job.id] ?? ''}
-                    onChange={(e) => setCode((v) => ({ ...v, [job.id]: e.target.value }))}
+                    onChange={(e) => {
+                      setCode((v) => ({ ...v, [job.id]: e.target.value }));
+                    }}
                   />
                 </label>
                 <label>
@@ -183,7 +191,9 @@ export function CourierWorkspaceScreen() {
                     min={1}
                     max={500}
                     value={parcels[job.id] ?? '1'}
-                    onChange={(e) => setParcels((v) => ({ ...v, [job.id]: e.target.value }))}
+                    onChange={(e) => {
+                      setParcels((v) => ({ ...v, [job.id]: e.target.value }));
+                    }}
                   />
                 </label>
                 <button

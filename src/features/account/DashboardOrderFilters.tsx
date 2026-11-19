@@ -35,8 +35,9 @@ export function DashboardOrderFilters() {
   const navigate = useNavigate();
   const [values, setValues] = useState<FilterValues>(emptyFilters);
   const [advanced, setAdvanced] = useState(false);
-  const set = (key: FilterKey, value: string) =>
+  const set = (key: FilterKey, value: string) => {
     setValues((previous) => ({ ...previous, [key]: value }));
+  };
 
   const datesValid = !values.from || !values.to || values.from <= values.to;
   const pricesValid =
@@ -70,13 +71,20 @@ export function DashboardOrderFilters() {
               type="search"
               value={values.product}
               placeholder={t('dashboard.filters.productHint')}
-              onChange={(event) => set('product', event.target.value)}
+              onChange={(event) => {
+                set('product', event.target.value);
+              }}
               maxLength={120}
             />
           </label>
           <label className={styles.filterField}>
             <span>{t('dashboard.filters.status')}</span>
-            <select value={values.status} onChange={(event) => set('status', event.target.value)}>
+            <select
+              value={values.status}
+              onChange={(event) => {
+                set('status', event.target.value);
+              }}
+            >
               <option value="">{t('dashboard.filters.all')}</option>
               <option value="pending_payment">{t('dashboard.filters.pending')}</option>
               <option value="confirmed">{t('dashboard.filters.confirmed')}</option>
@@ -90,7 +98,9 @@ export function DashboardOrderFilters() {
               type="date"
               value={values.from}
               max={values.to || undefined}
-              onChange={(event) => set('from', event.target.value)}
+              onChange={(event) => {
+                set('from', event.target.value);
+              }}
             />
           </label>
           <label className={styles.filterField}>
@@ -99,7 +109,9 @@ export function DashboardOrderFilters() {
               type="date"
               value={values.to}
               min={values.from || undefined}
-              onChange={(event) => set('to', event.target.value)}
+              onChange={(event) => {
+                set('to', event.target.value);
+              }}
             />
           </label>
         </div>
@@ -107,7 +119,9 @@ export function DashboardOrderFilters() {
           type="button"
           className={styles.filterMore}
           aria-expanded={advanced}
-          onClick={() => setAdvanced((current) => !current)}
+          onClick={() => {
+            setAdvanced((current) => !current);
+          }}
         >
           {t('dashboard.filters.advanced')}
           <span aria-hidden="true">{advanced ? '−' : '+'}</span>
@@ -122,7 +136,9 @@ export function DashboardOrderFilters() {
                 step="0.01"
                 inputMode="decimal"
                 value={values.min_price}
-                onChange={(event) => set('min_price', event.target.value)}
+                onChange={(event) => {
+                  set('min_price', event.target.value);
+                }}
               />
             </label>
             <label className={styles.filterField}>
@@ -133,7 +149,9 @@ export function DashboardOrderFilters() {
                 step="0.01"
                 inputMode="decimal"
                 value={values.max_price}
-                onChange={(event) => set('max_price', event.target.value)}
+                onChange={(event) => {
+                  set('max_price', event.target.value);
+                }}
               />
             </label>
             <label className={styles.filterField}>
@@ -142,7 +160,9 @@ export function DashboardOrderFilters() {
                 type="search"
                 maxLength={120}
                 value={values.seller}
-                onChange={(event) => set('seller', event.target.value)}
+                onChange={(event) => {
+                  set('seller', event.target.value);
+                }}
               />
             </label>
             <label className={styles.filterField}>
@@ -151,14 +171,18 @@ export function DashboardOrderFilters() {
                 type="search"
                 maxLength={120}
                 value={values.branch}
-                onChange={(event) => set('branch', event.target.value)}
+                onChange={(event) => {
+                  set('branch', event.target.value);
+                }}
               />
             </label>
             <label className={styles.filterField}>
               <span>{t('dashboard.filters.payment')}</span>
               <select
                 value={values.payment_method}
-                onChange={(event) => set('payment_method', event.target.value)}
+                onChange={(event) => {
+                  set('payment_method', event.target.value);
+                }}
               >
                 <option value="">{t('dashboard.filters.allPayments')}</option>
                 <option value="mada">Mada</option>

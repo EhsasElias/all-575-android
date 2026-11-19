@@ -159,7 +159,9 @@ export function SellerReturnManagement() {
           type="button"
           className="seller-returns-refresh"
           disabled={loading || busy}
-          onClick={() => setRevision((value) => value + 1)}
+          onClick={() => {
+            setRevision((value) => value + 1);
+          }}
         >
           {tr('تحديث القائمة', 'Refresh list')}
         </button>
@@ -209,7 +211,12 @@ export function SellerReturnManagement() {
             )}
           </p>
           {filter !== 'all' && (
-            <button type="button" onClick={() => setFilter('all')}>
+            <button
+              type="button"
+              onClick={() => {
+                setFilter('all');
+              }}
+            >
               {tr('عرض كل الحالات', 'Show all statuses')}
             </button>
           )}
@@ -257,7 +264,7 @@ export function SellerReturnManagement() {
                 </p>
               )}
 
-              {!Boolean(item.seller_responded) &&
+              {!item.seller_responded &&
                 (item.status === 'submitted' || item.status === 'in_review') && (
                   <div className="seller-return-response-area">
                     <button
@@ -291,9 +298,9 @@ export function SellerReturnManagement() {
                           <select
                             value={position}
                             disabled={busy}
-                            onChange={(event) =>
-                              setPosition(event.target.value as 'accept' | 'dispute')
-                            }
+                            onChange={(event) => {
+                              setPosition(event.target.value as 'accept' | 'dispute');
+                            }}
                           >
                             <option value="accept">
                               {tr('موافقة مبدئية', 'Preliminary acceptance')}
@@ -312,7 +319,9 @@ export function SellerReturnManagement() {
                             rows={4}
                             value={explanation}
                             disabled={busy}
-                            onChange={(event) => setExplanation(event.target.value)}
+                            onChange={(event) => {
+                              setExplanation(event.target.value);
+                            }}
                             placeholder={tr(
                               'اكتب تفاصيل رد المتجر بوضوح (10 أحرف على الأقل)',
                               'Describe the store response (at least 10 characters)',
@@ -320,7 +329,13 @@ export function SellerReturnManagement() {
                           />
                         </label>
                         <div className="seller-return-form-actions">
-                          <button type="button" disabled={busy} onClick={() => setSelected(null)}>
+                          <button
+                            type="button"
+                            disabled={busy}
+                            onClick={() => {
+                              setSelected(null);
+                            }}
+                          >
                             {tr('إلغاء', 'Cancel')}
                           </button>
                           <button

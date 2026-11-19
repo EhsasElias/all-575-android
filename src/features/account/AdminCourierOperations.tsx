@@ -148,7 +148,12 @@ export function AdminCourierOperations({ orders, onUpdated, ar }: Props) {
         </label>
         <label>
           {tr('المندوب', 'Courier')}
-          <select value={courierId} onChange={(e) => setCourierId(e.target.value)}>
+          <select
+            value={courierId}
+            onChange={(e) => {
+              setCourierId(e.target.value);
+            }}
+          >
             <option value="">{tr('اختر المندوب', 'Select courier')}</option>
             {couriers
               .filter((x) => x.approval_status === 'approved' && x.is_online)
@@ -161,7 +166,13 @@ export function AdminCourierOperations({ orders, onUpdated, ar }: Props) {
         </label>
         <label>
           {tr('سبب إعادة الإسناد (عند الحاجة)', 'Reassignment reason')}
-          <input value={reason} maxLength={300} onChange={(e) => setReason(e.target.value)} />
+          <input
+            value={reason}
+            maxLength={300}
+            onChange={(e) => {
+              setReason(e.target.value);
+            }}
+          />
         </label>
         <button
           className="admin-family-primary"
@@ -211,8 +222,12 @@ export function AdminCourierOperations({ orders, onUpdated, ar }: Props) {
           onClick={() => {
             setIssue('');
             void adminCourierHistory(selected)
-              .then((r) => setHistory(r.data))
-              .catch((cause) => setIssue(errorText(cause)));
+              .then((r) => {
+                setHistory(r.data);
+              })
+              .catch((cause) => {
+                setIssue(errorText(cause));
+              });
           }}
         >
           {tr('عرض سجل الإسناد', 'View assignment history')}
@@ -273,7 +288,9 @@ export function AdminCourierOperations({ orders, onUpdated, ar }: Props) {
             type="number"
             min={1}
             value={newCourierUser}
-            onChange={(e) => setNewCourierUser(e.target.value)}
+            onChange={(e) => {
+              setNewCourierUser(e.target.value);
+            }}
           />
         </label>
         <label>
@@ -283,12 +300,19 @@ export function AdminCourierOperations({ orders, onUpdated, ar }: Props) {
             type="number"
             min={1}
             value={newCourierZone}
-            onChange={(e) => setNewCourierZone(e.target.value)}
+            onChange={(e) => {
+              setNewCourierZone(e.target.value);
+            }}
           />
         </label>
         <label>
           {tr('وسيلة التوصيل', 'Vehicle type')}
-          <select value={newCourierVehicle} onChange={(e) => setNewCourierVehicle(e.target.value)}>
+          <select
+            value={newCourierVehicle}
+            onChange={(e) => {
+              setNewCourierVehicle(e.target.value);
+            }}
+          >
             <option value="motorcycle">{tr('دراجة نارية', 'Motorcycle')}</option>
             <option value="car">{tr('سيارة', 'Car')}</option>
             <option value="van">{tr('فان', 'Van')}</option>
@@ -320,7 +344,13 @@ export function AdminCourierOperations({ orders, onUpdated, ar }: Props) {
       >
         <label>
           {tr('الطلب', 'Order')}
-          <select value={issueOrder} onChange={(e) => setIssueOrder(e.target.value)} required>
+          <select
+            value={issueOrder}
+            onChange={(e) => {
+              setIssueOrder(e.target.value);
+            }}
+            required
+          >
             <option value="">{tr('اختر', 'Choose')}</option>
             {orders.map((x) => (
               <option value={x.id} key={x.id}>
@@ -333,7 +363,9 @@ export function AdminCourierOperations({ orders, onUpdated, ar }: Props) {
           {tr('نوع البلاغ', 'Incident type')}
           <select
             value={issueType}
-            onChange={(e) => setIssueType(e.target.value as typeof issueType)}
+            onChange={(e) => {
+              setIssueType(e.target.value as typeof issueType);
+            }}
           >
             <option value="delivery_issue">{tr('مشكلة توصيل', 'Delivery issue')}</option>
             <option value="complaint">{tr('شكوى', 'Complaint')}</option>
@@ -347,7 +379,9 @@ export function AdminCourierOperations({ orders, onUpdated, ar }: Props) {
             minLength={10}
             maxLength={2000}
             value={description}
-            onChange={(e) => setDescription(e.target.value)}
+            onChange={(e) => {
+              setDescription(e.target.value);
+            }}
           />
         </label>
         <button type="submit" className="admin-family-primary" disabled={busy}>

@@ -121,7 +121,9 @@ export function SellerWorkspaceScreen() {
   const [error, setError] = useState('');
   const [revision, setRevision] = useState(0);
 
-  const reload = useCallback(() => setRevision((value) => value + 1), []);
+  const reload = useCallback(() => {
+    setRevision((value) => value + 1);
+  }, []);
 
   useEffect(() => {
     let active = true;
@@ -353,7 +355,9 @@ export function SellerWorkspaceScreen() {
       link.click();
       link.remove();
       // Android Chrome may not start the download before the current task ends.
-      window.setTimeout(() => URL.revokeObjectURL(url), 30_000);
+      window.setTimeout(() => {
+        URL.revokeObjectURL(url);
+      }, 30_000);
     } catch (cause) {
       const detail = cause instanceof Error ? cause.message : '';
       setError(
@@ -636,7 +640,7 @@ export function SellerWorkspaceScreen() {
     }
   };
 
-  const sections: Array<{ id: Section; ar: string; en: string }> = [
+  const sections: { id: Section; ar: string; en: string }[] = [
     { id: 'overview', ar: 'الرئيسية', en: 'Overview' },
     { id: 'store', ar: 'المتجر والفروع', en: 'Store & branches' },
     { id: 'products', ar: 'المنتجات', en: 'Products' },
@@ -707,7 +711,9 @@ export function SellerWorkspaceScreen() {
                       className="seller-stock-close"
                       disabled={busy}
                       aria-label={tr('إغلاق', 'Close')}
-                      onClick={() => setStockEditor(null)}
+                      onClick={() => {
+                        setStockEditor(null);
+                      }}
                     >
                       ×
                     </button>
@@ -795,7 +801,9 @@ export function SellerWorkspaceScreen() {
                       type="button"
                       className="seller-stock-cancel"
                       disabled={busy}
-                      onClick={() => setStockEditor(null)}
+                      onClick={() => {
+                        setStockEditor(null);
+                      }}
                     >
                       {tr('إلغاء', 'Cancel')}
                     </button>
@@ -831,7 +839,13 @@ export function SellerWorkspaceScreen() {
               {tr('طلب التسجيل كبائع', 'Apply to become a seller')}
             </Link>
             <div style={{ marginTop: 12 }}>
-              <button type="button" style={action} onClick={() => window.location.reload()}>
+              <button
+                type="button"
+                style={action}
+                onClick={() => {
+                  window.location.reload();
+                }}
+              >
                 {tr('إعادة المحاولة', 'Retry')}
               </button>
             </div>
@@ -854,7 +868,12 @@ export function SellerWorkspaceScreen() {
               <div className="seller-filters" style={{ marginBottom: 16 }}>
                 <label>
                   {tr('الفرع', 'Branch')}{' '}
-                  <select value={branchId} onChange={(event) => setBranchId(event.target.value)}>
+                  <select
+                    value={branchId}
+                    onChange={(event) => {
+                      setBranchId(event.target.value);
+                    }}
+                  >
                     <option value="">{tr('كل الفروع', 'All branches')}</option>
                     {branches.map((branch) => (
                       <option value={branch.id} key={branch.id}>
@@ -868,7 +887,9 @@ export function SellerWorkspaceScreen() {
                     {tr('الحالة', 'Status')}{' '}
                     <select
                       value={orderStatus}
-                      onChange={(event) => setOrderStatus(event.target.value)}
+                      onChange={(event) => {
+                        setOrderStatus(event.target.value);
+                      }}
                     >
                       {orderStatuses.map((status) => (
                         <option key={status} value={status}>
@@ -886,7 +907,9 @@ export function SellerWorkspaceScreen() {
                         type="date"
                         value={orderFrom}
                         max={orderTo || undefined}
-                        onChange={(event) => setOrderFrom(event.target.value)}
+                        onChange={(event) => {
+                          setOrderFrom(event.target.value);
+                        }}
                       />
                     </label>
                     <label>
@@ -895,7 +918,9 @@ export function SellerWorkspaceScreen() {
                         type="date"
                         value={orderTo}
                         min={orderFrom || undefined}
-                        onChange={(event) => setOrderTo(event.target.value)}
+                        onChange={(event) => {
+                          setOrderTo(event.target.value);
+                        }}
                       />
                     </label>
                     {(orderFrom || orderTo) && (
@@ -929,7 +954,9 @@ export function SellerWorkspaceScreen() {
                           maxLength={100}
                           value={stockSearchDraft}
                           placeholder={tr('اسم المنتج أو SKU', 'Product name or SKU')}
-                          onChange={(event) => setStockSearchDraft(event.target.value)}
+                          onChange={(event) => {
+                            setStockSearchDraft(event.target.value);
+                          }}
                         />
                       </label>
                       <button type="submit" style={action} disabled={loading}>
@@ -953,7 +980,9 @@ export function SellerWorkspaceScreen() {
                       <input
                         type="checkbox"
                         checked={lowStockOnly}
-                        onChange={(event) => setLowStockOnly(event.target.checked)}
+                        onChange={(event) => {
+                          setLowStockOnly(event.target.checked);
+                        }}
                       />
                       <span>{tr('المتاح 5 أو أقل', 'Available stock 5 or less')}</span>
                     </label>
@@ -981,7 +1010,9 @@ export function SellerWorkspaceScreen() {
                         'SKU أو اسم المنتج أو رقم المتجر',
                         'SKU, product name or store number',
                       )}
-                      onChange={(event) => setProductSearchDraft(event.target.value)}
+                      onChange={(event) => {
+                        setProductSearchDraft(event.target.value);
+                      }}
                     />
                   </label>
                   <button type="submit" style={action} disabled={loading}>
@@ -1005,7 +1036,9 @@ export function SellerWorkspaceScreen() {
                   {tr('الحالة', 'Status')}
                   <select
                     value={productStatus}
-                    onChange={(event) => setProductStatus(event.target.value)}
+                    onChange={(event) => {
+                      setProductStatus(event.target.value);
+                    }}
                   >
                     <option value="all">{tr('كل الحالات', 'All statuses')}</option>
                     <option value="draft">{tr('مسودة', 'Draft')}</option>
@@ -1036,7 +1069,9 @@ export function SellerWorkspaceScreen() {
                       key={status}
                       className="seller-metric-card"
                       aria-expanded={insightMetric === status}
-                      onClick={() => setInsightMetric(insightMetric === status ? null : status)}
+                      onClick={() => {
+                        setInsightMetric(insightMetric === status ? null : status);
+                      }}
                     >
                       <span className="seller-metric-label">{labels[status]}</span>
                       <strong>{dashboard[status] ?? 0}</strong>
@@ -1049,7 +1084,9 @@ export function SellerWorkspaceScreen() {
                     type="button"
                     className="seller-metric-card"
                     aria-expanded={insightMetric === 'orders'}
-                    onClick={() => setInsightMetric(insightMetric === 'orders' ? null : 'orders')}
+                    onClick={() => {
+                      setInsightMetric(insightMetric === 'orders' ? null : 'orders');
+                    }}
                   >
                     <span className="seller-metric-label">
                       {tr('إجمالي الطلبات المعروضة حسب الحالات', 'Orders in tracked statuses')}
@@ -1071,7 +1108,9 @@ export function SellerWorkspaceScreen() {
                     type="button"
                     className="seller-metric-card seller-metric-featured"
                     aria-expanded={insightMetric === 'sales'}
-                    onClick={() => setInsightMetric(insightMetric === 'sales' ? null : 'sales')}
+                    onClick={() => {
+                      setInsightMetric(insightMetric === 'sales' ? null : 'sales');
+                    }}
                   >
                     <span className="seller-metric-label">
                       {tr('إجمالي المبيعات المسلّمة', 'Total delivered merchandise')}
@@ -1090,14 +1129,16 @@ export function SellerWorkspaceScreen() {
                       ['products', tr('المنتجات الأكثر مبيعًا', 'Top products')],
                       ['branches', tr('أداء الفروع', 'Branch performance')],
                       ['stock', tr('تتبع المخزون', 'Inventory health')],
-                    ] as Array<[SellerInsightMetric, string]>
+                    ] as [SellerInsightMetric, string][]
                   ).map(([metric, title]) => (
                     <button
                       className="seller-metric-card seller-metric-shortcut"
                       type="button"
                       key={metric}
                       aria-expanded={insightMetric === metric}
-                      onClick={() => setInsightMetric(insightMetric === metric ? null : metric)}
+                      onClick={() => {
+                        setInsightMetric(insightMetric === metric ? null : metric);
+                      }}
                     >
                       <span>{title}</span>
                       <span className="seller-metric-more">
@@ -1116,7 +1157,9 @@ export function SellerWorkspaceScreen() {
                   <SellerInsightPanel
                     metric={insightMetric}
                     branches={branches}
-                    onClose={() => setInsightMetric(null)}
+                    onClose={() => {
+                      setInsightMetric(null);
+                    }}
                   />
                 )}
                 <section style={panel}>
@@ -1195,7 +1238,9 @@ export function SellerWorkspaceScreen() {
                           required
                           value={newStockBranch || String(stockWritableBranches[0]?.id ?? '')}
                           disabled={busy}
-                          onChange={(event) => setNewStockBranch(event.target.value)}
+                          onChange={(event) => {
+                            setNewStockBranch(event.target.value);
+                          }}
                         >
                           {stockWritableBranches.map((item) => (
                             <option key={item.id} value={item.id}>
@@ -1212,7 +1257,9 @@ export function SellerWorkspaceScreen() {
                           value={newStockSku}
                           disabled={busy}
                           placeholder="SKU-001"
-                          onChange={(event) => setNewStockSku(event.target.value)}
+                          onChange={(event) => {
+                            setNewStockSku(event.target.value);
+                          }}
                         />
                       </label>
                       <label>
@@ -1225,7 +1272,9 @@ export function SellerWorkspaceScreen() {
                           step={1}
                           value={newStockQuantity}
                           disabled={busy}
-                          onChange={(event) => setNewStockQuantity(event.target.value)}
+                          onChange={(event) => {
+                            setNewStockQuantity(event.target.value);
+                          }}
                         />
                       </label>
                     </div>
@@ -1281,7 +1330,9 @@ export function SellerWorkspaceScreen() {
                             type="button"
                             className="seller-stock-adjust"
                             disabled={busy}
-                            onClick={() => changeStock(item)}
+                            onClick={() => {
+                              changeStock(item);
+                            }}
                           >
                             <svg
                               width="16"
@@ -1373,7 +1424,9 @@ export function SellerWorkspaceScreen() {
                   <button
                     type="button"
                     disabled={busy || selectedOrderIds.length === 0}
-                    onClick={() => setSelectedOrderIds([])}
+                    onClick={() => {
+                      setSelectedOrderIds([]);
+                    }}
                   >
                     {tr('إلغاء التحديد', 'Clear selection')}
                   </button>
@@ -1396,9 +1449,9 @@ export function SellerWorkspaceScreen() {
                             )}
                             checked={allSelectableOrdersSelected}
                             disabled={busy || selectableOrderIds.length === 0}
-                            onChange={(event) =>
-                              setSelectedOrderIds(event.target.checked ? selectableOrderIds : [])
-                            }
+                            onChange={(event) => {
+                              setSelectedOrderIds(event.target.checked ? selectableOrderIds : []);
+                            }}
                           />
                         </th>
                         <th scope="col">{tr('رقم الطلب', 'Order number')}</th>
@@ -1429,13 +1482,13 @@ export function SellerWorkspaceScreen() {
                                 aria-label={
                                   tr('تحديد الطلب ', 'Select order ') + order.order_number
                                 }
-                                onChange={(event) =>
+                                onChange={(event) => {
                                   setSelectedOrderIds((previous) =>
                                     event.target.checked
                                       ? [...previous, order.id]
                                       : previous.filter((id) => id !== order.id),
-                                  )
-                                }
+                                  );
+                                }}
                               />
                             </td>
                             <td>
@@ -1521,7 +1574,12 @@ export function SellerWorkspaceScreen() {
                         {tr('قائمة تجهيز الطلب', 'Order packing list')} —{' '}
                         <bdi>{packing.order_number}</bdi>
                       </h3>
-                      <button type="button" onClick={() => setPacking(null)}>
+                      <button
+                        type="button"
+                        onClick={() => {
+                          setPacking(null);
+                        }}
+                      >
                         {tr('إغلاق', 'Close')}
                       </button>
                     </div>

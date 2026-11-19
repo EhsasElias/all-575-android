@@ -31,7 +31,9 @@ function saveFile(blob: Blob, filename: string) {
   document.body.append(link);
   link.click();
   link.remove();
-  window.setTimeout(() => URL.revokeObjectURL(url), 1000);
+  window.setTimeout(() => {
+    URL.revokeObjectURL(url);
+  }, 1000);
 }
 
 export function SuperAdminDashboardScreen() {
@@ -295,7 +297,9 @@ export function SuperAdminDashboardScreen() {
       }
       aria-pressed={selected === metric.key}
       aria-label={tr('عرض تفاصيل', 'View details for') + ' ' + metric.label}
-      onClick={() => openDetails(metric.key)}
+      onClick={() => {
+        openDetails(metric.key);
+      }}
     >
       <span className={styles.statMain}>
         <span aria-hidden="true" className={styles.statIcon}>
@@ -364,7 +368,9 @@ export function SuperAdminDashboardScreen() {
           <button
             type="button"
             className={styles.primary + ' admin-family-primary'}
-            onClick={() => setRevision((value) => value + 1)}
+            onClick={() => {
+              setRevision((value) => value + 1);
+            }}
           >
             ↻ {tr('تحديث البيانات', 'Refresh data')}
           </button>
@@ -381,7 +387,12 @@ export function SuperAdminDashboardScreen() {
         {!loading && error && (
           <p role="alert">
             {error}{' '}
-            <button type="button" onClick={() => setRevision((x) => x + 1)}>
+            <button
+              type="button"
+              onClick={() => {
+                setRevision((x) => x + 1);
+              }}
+            >
               {tr('إعادة المحاولة', 'Retry')}
             </button>
           </p>
@@ -463,7 +474,9 @@ export function SuperAdminDashboardScreen() {
                         type="button"
                         className="admin-family-secondary"
                         aria-label={tr('إغلاق التفاصيل', 'Close details')}
-                        onClick={() => setSelected(null)}
+                        onClick={() => {
+                          setSelected(null);
+                        }}
                       >
                         ✕
                       </button>
@@ -489,9 +502,9 @@ export function SuperAdminDashboardScreen() {
                               maxLength={100}
                               value={draft.q}
                               placeholder={tr('اسم أو بريد أو رقم...', 'Name, email, number...')}
-                              onChange={(event) =>
-                                setDraft((prev) => ({ ...prev, q: event.target.value }))
-                              }
+                              onChange={(event) => {
+                                setDraft((prev) => ({ ...prev, q: event.target.value }));
+                              }}
                             />
                           </label>
                         )}
@@ -501,9 +514,9 @@ export function SuperAdminDashboardScreen() {
                             type="date"
                             max={draft.to || undefined}
                             value={draft.from}
-                            onChange={(event) =>
-                              setDraft((prev) => ({ ...prev, from: event.target.value }))
-                            }
+                            onChange={(event) => {
+                              setDraft((prev) => ({ ...prev, from: event.target.value }));
+                            }}
                           />
                         </label>
                         <label>
@@ -512,9 +525,9 @@ export function SuperAdminDashboardScreen() {
                             type="date"
                             min={draft.from || undefined}
                             value={draft.to}
-                            onChange={(event) =>
-                              setDraft((prev) => ({ ...prev, to: event.target.value }))
-                            }
+                            onChange={(event) => {
+                              setDraft((prev) => ({ ...prev, to: event.target.value }));
+                            }}
                           />
                         </label>
                         {supportsSeller && (
@@ -525,9 +538,9 @@ export function SuperAdminDashboardScreen() {
                               min={1}
                               step={1}
                               value={draft.seller_id}
-                              onChange={(event) =>
-                                setDraft((prev) => ({ ...prev, seller_id: event.target.value }))
-                              }
+                              onChange={(event) => {
+                                setDraft((prev) => ({ ...prev, seller_id: event.target.value }));
+                              }}
                             />
                           </label>
                         )}
@@ -536,9 +549,9 @@ export function SuperAdminDashboardScreen() {
                             {tr('الحالة', 'Status')}
                             <select
                               value={draft.status}
-                              onChange={(event) =>
-                                setDraft((prev) => ({ ...prev, status: event.target.value }))
-                              }
+                              onChange={(event) => {
+                                setDraft((prev) => ({ ...prev, status: event.target.value }));
+                              }}
                             >
                               <option value="">{tr('جميع الحالات', 'All statuses')}</option>
                               {Array.from(
@@ -607,7 +620,7 @@ export function SuperAdminDashboardScreen() {
                                 {details.columns.map((column) => (
                                   <td key={column}>
                                     {column === 'is_active'
-                                      ? Boolean(row[column])
+                                      ? row[column]
                                         ? tr('نشط', 'Active')
                                         : tr('معطل', 'Inactive')
                                       : String(row[column] ?? '—')}
@@ -619,13 +632,13 @@ export function SuperAdminDashboardScreen() {
                                       <button
                                         type="button"
                                         disabled={accountBusy || typeof row.id !== 'number'}
-                                        onClick={() =>
+                                        onClick={() => {
                                           setSellerEditor({
                                             id: Number(row.id),
                                             name_ar: String(row.name_ar ?? ''),
                                             name_en: String(row.name_en ?? ''),
-                                          })
-                                        }
+                                          });
+                                        }}
                                       >
                                         {tr('تعديل', 'Edit')}
                                       </button>
@@ -668,12 +681,12 @@ export function SuperAdminDashboardScreen() {
                                       <button
                                         type="button"
                                         disabled={accountBusy || typeof row.id !== 'number'}
-                                        onClick={() =>
+                                        onClick={() => {
                                           setAccountEditor({
                                             id: Number(row.id),
                                             name: String(row.name ?? ''),
-                                          })
-                                        }
+                                          });
+                                        }}
                                       >
                                         {tr('تعديل', 'Edit')}
                                       </button>
@@ -681,7 +694,7 @@ export function SuperAdminDashboardScreen() {
                                         type="button"
                                         disabled={accountBusy || typeof row.id !== 'number'}
                                         onClick={() => {
-                                          const enable = !Boolean(row.is_active);
+                                          const enable = !row.is_active;
                                           if (
                                             window.confirm(
                                               enable
@@ -699,7 +712,7 @@ export function SuperAdminDashboardScreen() {
                                           }
                                         }}
                                       >
-                                        {Boolean(row.is_active)
+                                        {row.is_active
                                           ? tr('تعطيل', 'Deactivate')
                                           : tr('تفعيل', 'Activate')}
                                       </button>
@@ -730,11 +743,11 @@ export function SuperAdminDashboardScreen() {
                                 required
                                 maxLength={160}
                                 value={sellerEditor.name_ar}
-                                onChange={(event) =>
+                                onChange={(event) => {
                                   setSellerEditor((previous) =>
                                     previous ? { ...previous, name_ar: event.target.value } : null,
-                                  )
-                                }
+                                  );
+                                }}
                               />
                             </label>
                             <label>
@@ -743,11 +756,11 @@ export function SuperAdminDashboardScreen() {
                                 required
                                 maxLength={160}
                                 value={sellerEditor.name_en}
-                                onChange={(event) =>
+                                onChange={(event) => {
                                   setSellerEditor((previous) =>
                                     previous ? { ...previous, name_en: event.target.value } : null,
-                                  )
-                                }
+                                  );
+                                }}
                               />
                             </label>
                             <button
@@ -763,7 +776,9 @@ export function SuperAdminDashboardScreen() {
                             <button
                               type="button"
                               disabled={accountBusy}
-                              onClick={() => setSellerEditor(null)}
+                              onClick={() => {
+                                setSellerEditor(null);
+                              }}
                             >
                               {tr('إلغاء', 'Cancel')}
                             </button>
@@ -786,11 +801,11 @@ export function SuperAdminDashboardScreen() {
                               required
                               maxLength={150}
                               value={accountEditor.name}
-                              onChange={(event) =>
+                              onChange={(event) => {
                                 setAccountEditor((previous) =>
                                   previous ? { ...previous, name: event.target.value } : null,
-                                )
-                              }
+                                );
+                              }}
                             />
                           </label>
                           <button
@@ -802,7 +817,9 @@ export function SuperAdminDashboardScreen() {
                           <button
                             type="button"
                             disabled={accountBusy}
-                            onClick={() => setAccountEditor(null)}
+                            onClick={() => {
+                              setAccountEditor(null);
+                            }}
                           >
                             {tr('إلغاء', 'Cancel')}
                           </button>

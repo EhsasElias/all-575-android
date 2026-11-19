@@ -73,7 +73,9 @@ function saveDownload(blob: Blob, filename: string) {
   document.body.appendChild(anchor);
   anchor.click();
   anchor.remove();
-  window.setTimeout(() => URL.revokeObjectURL(uri), 30000);
+  window.setTimeout(() => {
+    URL.revokeObjectURL(uri);
+  }, 30000);
 }
 
 export function SellerInsightPanel({ metric, branches, onClose }: Props) {
@@ -213,7 +215,9 @@ export function SellerInsightPanel({ metric, branches, onClose }: Props) {
             type="date"
             value={from}
             max={to}
-            onChange={(event) => setFrom(event.target.value)}
+            onChange={(event) => {
+              setFrom(event.target.value);
+            }}
           />
         </label>
         <label>
@@ -222,12 +226,19 @@ export function SellerInsightPanel({ metric, branches, onClose }: Props) {
             type="date"
             value={to}
             min={from}
-            onChange={(event) => setTo(event.target.value)}
+            onChange={(event) => {
+              setTo(event.target.value);
+            }}
           />
         </label>
         <label>
           {tr('الفرع', 'Branch')}
-          <select value={branch} onChange={(event) => setBranch(event.target.value)}>
+          <select
+            value={branch}
+            onChange={(event) => {
+              setBranch(event.target.value);
+            }}
+          >
             <option value="">{tr('كل الفروع المسموحة', 'All assigned branches')}</option>
             {branches.map((item) => (
               <option value={item.id} key={item.id}>

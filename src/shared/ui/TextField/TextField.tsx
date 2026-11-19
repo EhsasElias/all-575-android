@@ -55,7 +55,9 @@ export function TextField({
             aria-label={passwordVisible ? concealLabel : revealLabel}
             aria-pressed={passwordVisible}
             title={passwordVisible ? concealLabel : revealLabel}
-            onClick={() => setPasswordVisible((previous) => !previous)}
+            onClick={() => {
+              setPasswordVisible((previous) => !previous);
+            }}
           >
             <Icon name={passwordVisible ? 'eye-off' : 'eye'} size={22} />
           </button>

@@ -483,12 +483,12 @@ export function SellerApplicationScreen() {
                                   : 100
                             }
                             value={form[key] ?? ''}
-                            onChange={(event) =>
+                            onChange={(event) => {
                               setForm((previous) => ({
                                 ...previous,
                                 [key]: event.target.value || null,
-                              }))
-                            }
+                              }));
+                            }}
                           />
                         </label>
                       );

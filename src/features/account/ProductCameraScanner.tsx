@@ -83,7 +83,9 @@ export function ProductCameraScanner({ onRead, onClose, ar }: ProductCameraScann
           video: { facingMode: { ideal: 'environment' }, width: { ideal: 1280 } },
         });
         if (stopped) {
-          camera.getTracks().forEach((track) => track.stop());
+          camera.getTracks().forEach((track) => {
+            track.stop();
+          });
           return;
         }
         stream = camera;
@@ -106,7 +108,9 @@ export function ProductCameraScanner({ onRead, onClose, ar }: ProductCameraScann
     return () => {
       stopped = true;
       cancelAnimationFrame(frame);
-      stream?.getTracks().forEach((track) => track.stop());
+      stream?.getTracks().forEach((track) => {
+        track.stop();
+      });
       if (videoRef.current) videoRef.current.srcObject = null;
     };
   }, [ar]);
@@ -200,10 +204,18 @@ export function ProductCameraScanner({ onRead, onClose, ar }: ProductCameraScann
           <input
             value={manual}
             maxLength={12000}
-            onChange={(event) => setManual(event.target.value)}
+            onChange={(event) => {
+              setManual(event.target.value);
+            }}
           />
         </label>
-        <button type="button" disabled={!manual.trim()} onClick={() => onRead(manual.trim())}>
+        <button
+          type="button"
+          disabled={!manual.trim()}
+          onClick={() => {
+            onRead(manual.trim());
+          }}
+        >
           {ar ? 'استخدام الرمز' : 'Use code'}
         </button>
       </div>

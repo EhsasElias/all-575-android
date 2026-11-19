@@ -65,9 +65,15 @@ export function SuperAdminCouriers({ ar }: { ar: boolean }) {
                       setBusy(true);
                       setError('');
                       void superAdminApproveCourier(c.id, true)
-                        .then(() => setRevision((v) => v + 1))
-                        .catch(() => setError(tr('تعذر اعتماد المندوب.', 'Approval failed.')))
-                        .finally(() => setBusy(false));
+                        .then(() => {
+                          setRevision((v) => v + 1);
+                        })
+                        .catch(() => {
+                          setError(tr('تعذر اعتماد المندوب.', 'Approval failed.'));
+                        })
+                        .finally(() => {
+                          setBusy(false);
+                        });
                     }}
                   >
                     {tr('اعتماد', 'Approve')}
@@ -79,9 +85,15 @@ export function SuperAdminCouriers({ ar }: { ar: boolean }) {
                       setBusy(true);
                       setError('');
                       void superAdminApproveCourier(c.id, false)
-                        .then(() => setRevision((v) => v + 1))
-                        .catch(() => setError(tr('تعذر رفض المندوب.', 'Rejection failed.')))
-                        .finally(() => setBusy(false));
+                        .then(() => {
+                          setRevision((v) => v + 1);
+                        })
+                        .catch(() => {
+                          setError(tr('تعذر رفض المندوب.', 'Rejection failed.'));
+                        })
+                        .finally(() => {
+                          setBusy(false);
+                        });
                     }}
                   >
                     {tr('رفض / إيقاف', 'Reject / suspend')}

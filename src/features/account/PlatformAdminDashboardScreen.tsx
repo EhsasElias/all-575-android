@@ -246,7 +246,9 @@ export function PlatformAdminDashboardScreen() {
           <button
             type="button"
             className={styles.refresh + ' admin-family-primary'}
-            onClick={() => setRevision((x) => x + 1)}
+            onClick={() => {
+              setRevision((x) => x + 1);
+            }}
           >
             ↻ {tr('تحديث', 'Refresh')}
           </button>
@@ -316,9 +318,9 @@ export function PlatformAdminDashboardScreen() {
                   {tr('الحالة', 'Status')}
                   <select
                     value={draft.status}
-                    onChange={(event) =>
-                      setDraft((prev) => ({ ...prev, status: event.target.value }))
-                    }
+                    onChange={(event) => {
+                      setDraft((prev) => ({ ...prev, status: event.target.value }));
+                    }}
                   >
                     <option value="">{tr('الكل', 'All')}</option>
                     {Object.entries(statuses).map(([value, label]) => (
@@ -333,7 +335,9 @@ export function PlatformAdminDashboardScreen() {
                   <input
                     value={draft.q}
                     maxLength={100}
-                    onChange={(event) => setDraft((prev) => ({ ...prev, q: event.target.value }))}
+                    onChange={(event) => {
+                      setDraft((prev) => ({ ...prev, q: event.target.value }));
+                    }}
                   />
                 </label>
                 <label>
@@ -342,9 +346,9 @@ export function PlatformAdminDashboardScreen() {
                     type="number"
                     min={1}
                     value={draft.seller_id}
-                    onChange={(event) =>
-                      setDraft((prev) => ({ ...prev, seller_id: event.target.value }))
-                    }
+                    onChange={(event) => {
+                      setDraft((prev) => ({ ...prev, seller_id: event.target.value }));
+                    }}
                   />
                 </label>
                 <label>
@@ -353,9 +357,9 @@ export function PlatformAdminDashboardScreen() {
                     type="number"
                     min={1}
                     value={draft.branch_id}
-                    onChange={(event) =>
-                      setDraft((prev) => ({ ...prev, branch_id: event.target.value }))
-                    }
+                    onChange={(event) => {
+                      setDraft((prev) => ({ ...prev, branch_id: event.target.value }));
+                    }}
                   />
                 </label>
                 <label>
@@ -364,9 +368,9 @@ export function PlatformAdminDashboardScreen() {
                     type="date"
                     value={draft.from}
                     max={draft.to || undefined}
-                    onChange={(event) =>
-                      setDraft((prev) => ({ ...prev, from: event.target.value }))
-                    }
+                    onChange={(event) => {
+                      setDraft((prev) => ({ ...prev, from: event.target.value }));
+                    }}
                   />
                 </label>
                 <label>
@@ -375,7 +379,9 @@ export function PlatformAdminDashboardScreen() {
                     type="date"
                     value={draft.to}
                     min={draft.from || undefined}
-                    onChange={(event) => setDraft((prev) => ({ ...prev, to: event.target.value }))}
+                    onChange={(event) => {
+                      setDraft((prev) => ({ ...prev, to: event.target.value }));
+                    }}
                   />
                 </label>
                 <div className={styles.filterActions}>
@@ -448,7 +454,9 @@ export function PlatformAdminDashboardScreen() {
                 <button
                   type="button"
                   className={styles.metric + ' ' + styles.metricAction + ' admin-family-card'}
-                  onClick={() => openInventory(false)}
+                  onClick={() => {
+                    openInventory(false);
+                  }}
                 >
                   <span>{tr('سجلات المخزون', 'Stock records')}</span>
                   <strong>{number(data.stock_records)}</strong>
@@ -457,7 +465,9 @@ export function PlatformAdminDashboardScreen() {
                 <button
                   type="button"
                   className={styles.metric + ' ' + styles.metricAction + ' admin-family-card'}
-                  onClick={() => openInventory(true)}
+                  onClick={() => {
+                    openInventory(true);
+                  }}
                 >
                   <span>{tr('المخزون المنخفض (5 أو أقل)', 'Low stock (5 or less)')}</span>
                   <strong>{number(data.low_stock_records)}</strong>
@@ -480,7 +490,9 @@ export function PlatformAdminDashboardScreen() {
                   <button
                     type="button"
                     className="admin-family-secondary"
-                    onClick={() => setInventoryOpen(false)}
+                    onClick={() => {
+                      setInventoryOpen(false);
+                    }}
                   >
                     {tr('إغلاق', 'Close')} ✕
                   </button>
@@ -498,9 +510,9 @@ export function PlatformAdminDashboardScreen() {
                       type="search"
                       maxLength={100}
                       value={inventoryDraft.q}
-                      onChange={(event) =>
-                        setInventoryDraft((prev) => ({ ...prev, q: event.target.value }))
-                      }
+                      onChange={(event) => {
+                        setInventoryDraft((prev) => ({ ...prev, q: event.target.value }));
+                      }}
                     />
                   </label>
                   <label>
@@ -509,9 +521,9 @@ export function PlatformAdminDashboardScreen() {
                       type="number"
                       min={1}
                       value={inventoryDraft.seller_id}
-                      onChange={(event) =>
-                        setInventoryDraft((prev) => ({ ...prev, seller_id: event.target.value }))
-                      }
+                      onChange={(event) => {
+                        setInventoryDraft((prev) => ({ ...prev, seller_id: event.target.value }));
+                      }}
                     />
                   </label>
                   <label>
@@ -520,21 +532,21 @@ export function PlatformAdminDashboardScreen() {
                       type="number"
                       min={1}
                       value={inventoryDraft.branch_id}
-                      onChange={(event) =>
-                        setInventoryDraft((prev) => ({ ...prev, branch_id: event.target.value }))
-                      }
+                      onChange={(event) => {
+                        setInventoryDraft((prev) => ({ ...prev, branch_id: event.target.value }));
+                      }}
                     />
                   </label>
                   <label className={styles.inventoryCheck}>
                     <input
                       type="checkbox"
                       checked={inventoryDraft.low_stock_only}
-                      onChange={(event) =>
+                      onChange={(event) => {
                         setInventoryDraft((prev) => ({
                           ...prev,
                           low_stock_only: event.target.checked,
-                        }))
-                      }
+                        }));
+                      }}
                     />
                     {tr('المخزون المنخفض فقط', 'Low stock only')}
                   </label>
@@ -608,7 +620,9 @@ export function PlatformAdminDashboardScreen() {
             )}
             <AdminCourierOperations
               orders={orders}
-              onUpdated={() => setRevision((x) => x + 1)}
+              onUpdated={() => {
+                setRevision((x) => x + 1);
+              }}
               ar={ar}
             />
             <p className={styles.updated}>

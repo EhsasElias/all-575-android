@@ -23,11 +23,7 @@ function serveExport(bytes: Uint8Array, filename: string, contentType: string) {
 function recordedRequestUrl(fetchFn: ReturnType<typeof vi.fn<typeof fetch>>): URL {
   const input = fetchFn.mock.calls[0]?.[0];
   const value =
-    typeof input === 'string'
-      ? input
-      : input instanceof URL
-        ? input.href
-        : (input?.url ?? '');
+    typeof input === 'string' ? input : input instanceof URL ? input.href : (input?.url ?? '');
   return new URL(value, 'https://example.test');
 }
 

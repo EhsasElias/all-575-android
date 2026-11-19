@@ -117,7 +117,9 @@ export function PlatformAdminAssignments() {
         </div>
         <button
           type="button"
-          onClick={() => setRevision((x) => x + 1)}
+          onClick={() => {
+            setRevision((x) => x + 1);
+          }}
           disabled={busy}
           className={styles.refresh}
         >
@@ -144,7 +146,9 @@ export function PlatformAdminAssignments() {
               maxLength={255}
               placeholder={tr('أدخل بريد الإداري', 'Enter admin email')}
               value={email}
-              onChange={(e) => setEmail(e.target.value)}
+              onChange={(e) => {
+                setEmail(e.target.value);
+              }}
             />
           </label>
           {sellerChoices.length > 0 && (
@@ -155,7 +159,9 @@ export function PlatformAdminAssignments() {
                 aria-label={tr('اختر البائع', 'Select seller')}
                 required
                 value={sellerId}
-                onChange={(e) => setSellerId(e.target.value)}
+                onChange={(e) => {
+                  setSellerId(e.target.value);
+                }}
               >
                 <option value="">{tr('اختر المتجر...', 'Choose a seller...')}</option>
                 {sellerChoices.map((seller) => (
@@ -176,7 +182,9 @@ export function PlatformAdminAssignments() {
                 step={1}
                 placeholder={tr('رقم البائع الموجود', 'Existing seller ID')}
                 value={sellerId}
-                onChange={(e) => setSellerId(e.target.value)}
+                onChange={(e) => {
+                  setSellerId(e.target.value);
+                }}
               />
             </label>
           )}
@@ -189,12 +197,20 @@ export function PlatformAdminAssignments() {
               <input
                 type="checkbox"
                 checked={orders}
-                onChange={(e) => setOrders(e.target.checked)}
+                onChange={(e) => {
+                  setOrders(e.target.checked);
+                }}
               />
               {tr('عرض الطلبات', 'View orders')}
             </label>
             <label>
-              <input type="checkbox" checked={stock} onChange={(e) => setStock(e.target.checked)} />
+              <input
+                type="checkbox"
+                checked={stock}
+                onChange={(e) => {
+                  setStock(e.target.checked);
+                }}
+              />
               {tr('عرض المخزون', 'View inventory')}
             </label>
           </div>

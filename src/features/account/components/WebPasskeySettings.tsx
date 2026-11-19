@@ -97,7 +97,9 @@ export function WebPasskeySettings() {
               type="password"
               autoComplete="current-password"
               value={password}
-              onChange={(event) => setPassword(event.target.value)}
+              onChange={(event) => {
+                setPassword(event.target.value);
+              }}
               style={{ inlineSize: '100%', minBlockSize: '2.75rem' }}
             />
           </label>
@@ -107,7 +109,9 @@ export function WebPasskeySettings() {
               type="text"
               maxLength={100}
               value={name}
-              onChange={(event) => setName(event.target.value)}
+              onChange={(event) => {
+                setName(event.target.value);
+              }}
               style={{ inlineSize: '100%', minBlockSize: '2.75rem' }}
             />
           </label>

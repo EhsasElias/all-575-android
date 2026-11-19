@@ -515,7 +515,9 @@ export function SellerReviewScreen() {
                 type="button"
                 className="admin-family-primary"
                 disabled={busy || loading}
-                onClick={() => setRevision((value) => value + 1)}
+                onClick={() => {
+                  setRevision((value) => value + 1);
+                }}
               >
                 ↻ {tr('تحديث', 'Refresh')}
               </button>
@@ -525,7 +527,9 @@ export function SellerReviewScreen() {
                 {tr('بحث', 'Search')}
                 <input
                   value={query}
-                  onChange={(event) => setQuery(event.target.value)}
+                  onChange={(event) => {
+                    setQuery(event.target.value);
+                  }}
                   placeholder={tr('اسم أو رقم أو سجل تجاري...', 'Name, ID, registration...')}
                 />
               </label>
@@ -551,7 +555,9 @@ export function SellerReviewScreen() {
                   {tr('حالة طلب التصنيف', 'Category request status')}
                   <select
                     value={categoryStatus}
-                    onChange={(event) => setCategoryStatus(event.target.value)}
+                    onChange={(event) => {
+                      setCategoryStatus(event.target.value);
+                    }}
                   >
                     <option value="pending">{tr('قيد المراجعة', 'Pending')}</option>
                     <option value="approved">{tr('معتمد', 'Approved')}</option>
@@ -565,7 +571,9 @@ export function SellerReviewScreen() {
                 <input
                   type="date"
                   value={recordDate}
-                  onChange={(event) => setRecordDate(event.target.value)}
+                  onChange={(event) => {
+                    setRecordDate(event.target.value);
+                  }}
                 />
               </label>
               <button
@@ -673,7 +681,9 @@ export function SellerReviewScreen() {
                             rows={3}
                             maxLength={2000}
                             value={reason}
-                            onChange={(event) => setReason(event.target.value)}
+                            onChange={(event) => {
+                              setReason(event.target.value);
+                            }}
                           />
                         </label>
                         {item.status === 'submitted' && (
@@ -827,7 +837,9 @@ export function SellerReviewScreen() {
                       {tr('التصنيف الرئيسي', 'Parent category')}
                       <select
                         value={categoryParent}
-                        onChange={(event) => setCategoryParent(event.target.value)}
+                        onChange={(event) => {
+                          setCategoryParent(event.target.value);
+                        }}
                       >
                         <option value="">{tr('تصنيف رئيسي', 'Top-level category')}</option>
                         {categories
@@ -849,7 +861,9 @@ export function SellerReviewScreen() {
                       <input
                         value={categoryAr}
                         maxLength={180}
-                        onChange={(event) => setCategoryAr(event.target.value)}
+                        onChange={(event) => {
+                          setCategoryAr(event.target.value);
+                        }}
                       />
                     </label>
                     <label style={{ display: 'grid', gap: 4, flex: 1 }}>
@@ -857,7 +871,9 @@ export function SellerReviewScreen() {
                       <input
                         value={categoryEn}
                         maxLength={180}
-                        onChange={(event) => setCategoryEn(event.target.value)}
+                        onChange={(event) => {
+                          setCategoryEn(event.target.value);
+                        }}
                       />
                     </label>
                     <label style={{ display: 'grid', gap: 4, flex: 1 }}>
@@ -867,7 +883,9 @@ export function SellerReviewScreen() {
                         min={0}
                         max={10000}
                         value={categorySort}
-                        onChange={(event) => setCategorySort(event.target.value)}
+                        onChange={(event) => {
+                          setCategorySort(event.target.value);
+                        }}
                       />
                     </label>
                   </div>
@@ -990,12 +1008,12 @@ export function SellerReviewScreen() {
                           rows={2}
                           maxLength={1000}
                           value={categoryReviewNotes[item.id] ?? ''}
-                          onChange={(event) =>
+                          onChange={(event) => {
                             setCategoryReviewNotes((old) => ({
                               ...old,
                               [item.id]: event.target.value,
-                            }))
-                          }
+                            }));
+                          }}
                         />
                       </label>
                       {item.status === 'pending' && (

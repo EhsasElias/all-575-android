@@ -46,13 +46,23 @@ export function ShellLayout() {
       if (event.key === 'Escape') setSidebarOpen(false);
     };
     window.addEventListener('keydown', closeOnEscape);
-    return () => window.removeEventListener('keydown', closeOnEscape);
+    return () => {
+      window.removeEventListener('keydown', closeOnEscape);
+    };
   }, [sidebarOpen]);
 
   return (
     <div className={styles.shell}>
       <TestBuildBanner />
-      <TopBar {...(accountRoute ? { onAccountMenu: () => setSidebarOpen(true) } : {})} />
+      <TopBar
+        {...(accountRoute
+          ? {
+              onAccountMenu: () => {
+                setSidebarOpen(true);
+              },
+            }
+          : {})}
+      />
       {accountRoute ? (
         <div className={styles.accountShell}>
           <button
@@ -69,7 +79,9 @@ export function ShellLayout() {
                   ? 'فتح قائمة الحساب'
                   : 'Open account menu'
             }
-            onClick={() => setSidebarOpen((open) => !open)}
+            onClick={() => {
+              setSidebarOpen((open) => !open);
+            }}
           >
             <span aria-hidden="true">{sidebarOpen ? '✕' : '☰'}</span>
             <span>
@@ -87,7 +99,9 @@ export function ShellLayout() {
               type="button"
               className={styles.sidebarBackdrop}
               aria-label={ar ? 'إغلاق القائمة' : 'Close navigation'}
-              onClick={() => setSidebarOpen(false)}
+              onClick={() => {
+                setSidebarOpen(false);
+              }}
             />
           )}
           <div
@@ -97,9 +111,17 @@ export function ShellLayout() {
             }
           >
             {dashboardRoute ? (
-              <DashboardSidebar onNavigate={() => setSidebarOpen(false)} />
+              <DashboardSidebar
+                onNavigate={() => {
+                  setSidebarOpen(false);
+                }}
+              />
             ) : (
-              <AccountSidebar onNavigate={() => setSidebarOpen(false)} />
+              <AccountSidebar
+                onNavigate={() => {
+                  setSidebarOpen(false);
+                }}
+              />
             )}
           </div>
           <main

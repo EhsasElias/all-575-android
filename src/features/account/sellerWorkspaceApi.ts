@@ -66,7 +66,7 @@ export type SellerOrder = {
   branch_id: number;
   placed_at?: string | null;
   delivery_slot?: string | null;
-  items: Array<{ id: number; name: { ar: string; en: string }; quantity: number }>;
+  items: { id: number; name: { ar: string; en: string }; quantity: number }[];
 };
 export type SellerDashboard = {
   awaiting_seller: number;
@@ -120,7 +120,7 @@ export type SellerInsightDetails = {
   from: string;
   to: string;
   columns: string[];
-  rows: Array<Array<string | number>>;
+  rows: (string | number)[][];
   returned_rows: number;
   max_rows: number;
   note: string;
@@ -262,13 +262,13 @@ export const uploadSellerProductImage = (productId: number, image: File | string
 export type SellerCsvPreview = {
   valid_rows: number;
   created_drafts: number;
-  preview: Array<{
+  preview: {
     category_id: number;
     name_ar: string;
     name_en: string;
     price_halalas: number;
     sku: string;
-  }>;
+  }[];
 };
 
 export const importSellerProductCsv = (
@@ -409,12 +409,12 @@ export type SellerPackingList = {
   branch_id: number;
   status: string;
   created_at: string;
-  items: Array<{
+  items: {
     product: { ar: string; en: string };
     variant: { ar: string | null; en: string | null };
     quantity: number;
     variant_id: number;
-  }>;
+  }[];
 };
 
 export const sellerPackingList = (suborderId: string) =>

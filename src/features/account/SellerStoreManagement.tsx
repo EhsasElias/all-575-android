@@ -82,12 +82,13 @@ export function SellerStoreManagement({ memberships, onStoreUpdated }: Props) {
     Number.isFinite(Number(zoneDraft.center_lng))
       ? { lat: Number(zoneDraft.center_lat), lng: Number(zoneDraft.center_lng) }
       : null;
-  const setZonePin = (pin: MapPin) =>
+  const setZonePin = (pin: MapPin) => {
     setZoneDraft((current) => ({
       ...current,
       center_lat: String(pin.lat),
       center_lng: String(pin.lng),
     }));
+  };
   const [newBranch, setNewBranch] = useState({
     code: '',
     name_ar: '',
@@ -145,8 +146,9 @@ export function SellerStoreManagement({ memberships, onStoreUpdated }: Props) {
   const editZone = zones.find((zone) => zone.id === Number(branchDraft.service_zone_id));
   const editPinInZone =
     editPin !== null && editZone !== undefined && branchWithinZone(editPin, editZone);
-  const setEditPin = (pin: MapPin) =>
+  const setEditPin = (pin: MapPin) => {
     setBranchDraft((current) => ({ ...current, lat: String(pin.lat), lng: String(pin.lng) }));
+  };
   const { location: editLocation, locate: locateEdit } = useCurrentLocation(setEditPin);
   const [loading, setLoading] = useState(false);
   const [saving, setSaving] = useState(false);
@@ -484,7 +486,9 @@ export function SellerStoreManagement({ memberships, onStoreUpdated }: Props) {
         <button
           type="button"
           disabled={loading || saving}
-          onClick={() => setRevision((value) => value + 1)}
+          onClick={() => {
+            setRevision((value) => value + 1);
+          }}
         >
           {tr('تحديث', 'Refresh')}
         </button>
@@ -516,7 +520,9 @@ export function SellerStoreManagement({ memberships, onStoreUpdated }: Props) {
                   maxLength={180}
                   required
                   disabled={saving}
-                  onChange={(event) => setStoreAr(event.target.value)}
+                  onChange={(event) => {
+                    setStoreAr(event.target.value);
+                  }}
                 />
               </label>
               <label style={field}>
@@ -526,7 +532,9 @@ export function SellerStoreManagement({ memberships, onStoreUpdated }: Props) {
                   maxLength={180}
                   required
                   disabled={saving}
-                  onChange={(event) => setStoreEn(event.target.value)}
+                  onChange={(event) => {
+                    setStoreEn(event.target.value);
+                  }}
                 />
               </label>
             </div>
@@ -537,7 +545,13 @@ export function SellerStoreManagement({ memberships, onStoreUpdated }: Props) {
           <div className="seller-card seller-branches-panel" style={card}>
             <div className="seller-section-heading">
               <h3>{tr('الفروع الحالية', 'Existing branches')}</h3>
-              <button type="button" disabled={saving} onClick={() => setPropose((value) => !value)}>
+              <button
+                type="button"
+                disabled={saving}
+                onClick={() => {
+                  setPropose((value) => !value);
+                }}
+              >
                 {propose
                   ? tr('إلغاء إضافة فرع', 'Cancel new branch')
                   : tr('إضافة فرع جديد', 'Add new branch')}
@@ -548,7 +562,9 @@ export function SellerStoreManagement({ memberships, onStoreUpdated }: Props) {
                 type="button"
                 className="seller-zone-create-toggle"
                 disabled={saving}
-                onClick={() => setAddZoneOpen((current) => !current)}
+                onClick={() => {
+                  setAddZoneOpen((current) => !current);
+                }}
               >
                 {addZoneOpen
                   ? tr('إغلاق إضافة المنطقة', 'Close new zone')
@@ -574,9 +590,9 @@ export function SellerStoreManagement({ memberships, onStoreUpdated }: Props) {
                         maxLength={180}
                         disabled={saving}
                         value={zoneDraft.name_ar}
-                        onChange={(event) =>
-                          setZoneDraft((current) => ({ ...current, name_ar: event.target.value }))
-                        }
+                        onChange={(event) => {
+                          setZoneDraft((current) => ({ ...current, name_ar: event.target.value }));
+                        }}
                       />
                     </label>
                     <label>
@@ -586,9 +602,9 @@ export function SellerStoreManagement({ memberships, onStoreUpdated }: Props) {
                         maxLength={180}
                         disabled={saving}
                         value={zoneDraft.name_en}
-                        onChange={(event) =>
-                          setZoneDraft((current) => ({ ...current, name_en: event.target.value }))
-                        }
+                        onChange={(event) => {
+                          setZoneDraft((current) => ({ ...current, name_en: event.target.value }));
+                        }}
                       />
                     </label>
                     <label>
@@ -624,12 +640,12 @@ export function SellerStoreManagement({ memberships, onStoreUpdated }: Props) {
                           placeholder={tr('مثال: 2500', 'Example: 2500')}
                           disabled={saving}
                           value={zoneDraft.radius_meters}
-                          onChange={(event) =>
+                          onChange={(event) => {
                             setZoneDraft((current) => ({
                               ...current,
                               radius_meters: event.target.value,
-                            }))
-                          }
+                            }));
+                          }}
                         />
                       </label>
                     )}
@@ -690,12 +706,12 @@ export function SellerStoreManagement({ memberships, onStoreUpdated }: Props) {
                           min={key === 'center_lat' ? -90 : -180}
                           max={key === 'center_lat' ? 90 : 180}
                           value={zoneDraft[key]}
-                          onChange={(event) =>
+                          onChange={(event) => {
                             setZoneDraft((current) => ({
                               ...current,
                               [key]: event.target.value,
-                            }))
-                          }
+                            }));
+                          }}
                         />
                       </label>
                     ))}
@@ -704,7 +720,13 @@ export function SellerStoreManagement({ memberships, onStoreUpdated }: Props) {
                     <button type="submit" disabled={saving}>
                       {tr('حفظ المنطقة', 'Save zone')}
                     </button>
-                    <button type="button" disabled={saving} onClick={() => setAddZoneOpen(false)}>
+                    <button
+                      type="button"
+                      disabled={saving}
+                      onClick={() => {
+                        setAddZoneOpen(false);
+                      }}
+                    >
                       {tr('إلغاء', 'Cancel')}
                     </button>
                   </div>
@@ -764,14 +786,14 @@ export function SellerStoreManagement({ memberships, onStoreUpdated }: Props) {
                             type="checkbox"
                             disabled={saving || zone.id === Number(newBranch.service_zone_id)}
                             checked={newBranch.service_zone_ids.includes(zone.id)}
-                            onChange={(event) =>
+                            onChange={(event) => {
                               setNewBranch((current) => ({
                                 ...current,
                                 service_zone_ids: event.target.checked
                                   ? [...new Set([...current.service_zone_ids, zone.id])]
                                   : current.service_zone_ids.filter((id) => id !== zone.id),
-                              }))
-                            }
+                              }));
+                            }}
                           />
                           <span>{ar ? zone.name_ar : zone.name_en}</span>
                           {zone.id === Number(newBranch.service_zone_id) && (
@@ -794,9 +816,9 @@ export function SellerStoreManagement({ memberships, onStoreUpdated }: Props) {
                         required
                         maxLength={key === 'code' ? 32 : 180}
                         value={newBranch[key]}
-                        onChange={(event) =>
-                          setNewBranch((current) => ({ ...current, [key]: event.target.value }))
-                        }
+                        onChange={(event) => {
+                          setNewBranch((current) => ({ ...current, [key]: event.target.value }));
+                        }}
                       />
                     </label>
                   ))}
@@ -896,9 +918,9 @@ export function SellerStoreManagement({ memberships, onStoreUpdated }: Props) {
                         step="any"
                         required
                         value={newBranch[key]}
-                        onChange={(event) =>
-                          setNewBranch((current) => ({ ...current, [key]: event.target.value }))
-                        }
+                        onChange={(event) => {
+                          setNewBranch((current) => ({ ...current, [key]: event.target.value }));
+                        }}
                       />
                     </label>
                   ))}
@@ -986,7 +1008,9 @@ export function SellerStoreManagement({ memberships, onStoreUpdated }: Props) {
                       className="seller-branch-delete-icon"
                       aria-label={tr('حذف الفرع', 'Delete branch')}
                       title={tr('حذف الفرع', 'Delete branch')}
-                      onClick={() => setDeleteTarget(branch.id)}
+                      onClick={() => {
+                        setDeleteTarget(branch.id);
+                      }}
                     >
                       <svg
                         width="22"
@@ -1023,7 +1047,13 @@ export function SellerStoreManagement({ memberships, onStoreUpdated }: Props) {
                     >
                       {tr('تأكيد الحذف', 'Confirm deletion')}
                     </button>
-                    <button type="button" disabled={saving} onClick={() => setDeleteTarget(null)}>
+                    <button
+                      type="button"
+                      disabled={saving}
+                      onClick={() => {
+                        setDeleteTarget(null);
+                      }}
+                    >
                       {tr('إلغاء', 'Cancel')}
                     </button>
                   </div>
@@ -1045,12 +1075,12 @@ export function SellerStoreManagement({ memberships, onStoreUpdated }: Props) {
                             disabled={saving}
                             maxLength={key === 'code' ? 32 : 180}
                             value={branchDraft[key]}
-                            onChange={(event) =>
+                            onChange={(event) => {
                               setBranchDraft((current) => ({
                                 ...current,
                                 [key]: event.target.value,
-                              }))
-                            }
+                              }));
+                            }}
                           />
                         </label>
                       ))}
@@ -1099,14 +1129,14 @@ export function SellerStoreManagement({ memberships, onStoreUpdated }: Props) {
                               type="checkbox"
                               disabled={saving || zone.id === Number(branchDraft.service_zone_id)}
                               checked={branchDraft.service_zone_ids.includes(zone.id)}
-                              onChange={(event) =>
+                              onChange={(event) => {
                                 setBranchDraft((current) => ({
                                   ...current,
                                   service_zone_ids: event.target.checked
                                     ? [...new Set([...current.service_zone_ids, zone.id])]
                                     : current.service_zone_ids.filter((id) => id !== zone.id),
-                                }))
-                              }
+                                }));
+                              }}
                             />
                             <span>{ar ? zone.name_ar : zone.name_en}</span>
                             {zone.id === Number(branchDraft.service_zone_id) && (
@@ -1173,12 +1203,12 @@ export function SellerStoreManagement({ memberships, onStoreUpdated }: Props) {
                               step="any"
                               disabled={saving}
                               value={branchDraft[key]}
-                              onChange={(event) =>
+                              onChange={(event) => {
                                 setBranchDraft((current) => ({
                                   ...current,
                                   [key]: event.target.value,
-                                }))
-                              }
+                                }));
+                              }}
                             />
                           </label>
                         ))}
@@ -1204,7 +1234,13 @@ export function SellerStoreManagement({ memberships, onStoreUpdated }: Props) {
                       <button type="submit" disabled={saving || !editPinInZone}>
                         {tr('حفظ جميع التعديلات', 'Save all changes')}
                       </button>
-                      <button type="button" disabled={saving} onClick={() => setEditBranch(null)}>
+                      <button
+                        type="button"
+                        disabled={saving}
+                        onClick={() => {
+                          setEditBranch(null);
+                        }}
+                      >
                         {tr('إلغاء', 'Cancel')}
                       </button>
                     </div>
