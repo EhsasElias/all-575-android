@@ -17,7 +17,9 @@ export function TopBar({ onAccountMenu }: { onAccountMenu?: () => void }) {
   const ownerId = user?.id === undefined ? null : String(user.id);
   const unreadCount = status === 'signed-in' && unread?.ownerId === ownerId ? unread.count : 0;
   const { i18n } = useTranslation();
-  const notificationLabel = i18n.language.startsWith('ar') ? 'الإشعارات' : 'Notifications';
+  const ar = i18n.language.startsWith('ar');
+  const fr = i18n.language.startsWith('fr');
+  const notificationLabel = ar ? 'الإشعارات' : 'Notifications';
 
   useEffect(() => {
     if (status !== 'signed-in' || ownerId === null) return;
@@ -55,9 +57,11 @@ export function TopBar({ onAccountMenu }: { onAccountMenu?: () => void }) {
         <IconButton
           label={
             onAccountMenu
-              ? i18n.language.startsWith('ar')
+              ? ar
                 ? 'فتح قائمة الحساب أو لوحة التحكم'
-                : 'Open account or dashboard navigation'
+                : fr
+                  ? 'Ouvrir la navigation du compte ou du tableau de bord'
+                  : 'Open account or dashboard navigation'
               : tNavigation('open')
           }
           aria-haspopup="dialog"
