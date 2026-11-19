@@ -37,3 +37,33 @@ jobs:
         run: npm run api:check
       - name: TypeScript and production build
         run: npm run build
+
+  prettier-once:
+    if: ${{ github.event_name == 'pull_request' && github.event.pull_request.head.repo.full_name == github.repository && github.event.pull_request.head.ref == 'fix/qa-regression-20261119' }}
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.pull_request.head.ref }}
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci
+      - name: Prettier recently modified files
+        run: |
+          npx prettier --write src/app/layout/ShellLayout.tsx src/features/account/courierOperationsApi.ts src/features/account/PlatformAdminDashboardScreen.tsx src/features/account/sellerReviewApi.ts src/features/account/SuperAdminDashboardScreen.tsx
+      - name: Commit formatted files on QA branch
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add -u
+          if git diff --cached --quiet; then
+            echo "Formatting already clean"
+          else
+            git commit -m "Format latest strict lint fixes"
+            git push origin HEAD:refs/heads/fix/qa-regression-20261119
+          fi
