@@ -68,6 +68,7 @@ test('company buyer, quotation request and real payment artwork', async ({ page 
     },
   );
   await openApp(page, '/sign-in?next=%2Faccount');
+  await page.getByRole('button', { name: 'Use one-time code (OTP)' }).click();
   await page.getByLabel('Mobile number', { exact: true }).fill('0512345678');
   await page.getByRole('button', { name: 'Send code' }).click();
   await page.getByLabel('6-digit code', { exact: true }).fill('123456');
