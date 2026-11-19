@@ -9,6 +9,7 @@ import {
   type SellerMembership,
   type SellerSettlementReadiness,
 } from './sellerWorkspaceApi';
+import { sellerFinanceFrench } from './sellerFinanceFrench';
 
 type Props = { memberships: SellerMembership[] };
 const money = (halalas: number) => (halalas / 100).toFixed(2);
@@ -26,7 +27,9 @@ function dateInput(daysAgo: number): string {
 export function SellerFinanceOverview({ memberships }: Props) {
   const { i18n } = useTranslation();
   const ar = i18n.language.startsWith('ar');
-  const tr = (arabic: string, english: string) => (ar ? arabic : english);
+  const fr = i18n.language.startsWith('fr');
+  const tr = (arabic: string, english: keyof typeof sellerFinanceFrench) =>
+    ar ? arabic : fr ? sellerFinanceFrench[english] : english;
   const readinessLabels: Record<string, string> = {
     ready: tr('جاهزة', 'Ready'),
     pending: tr('بانتظار الاستكمال', 'Pending completion'),
