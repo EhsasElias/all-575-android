@@ -75,7 +75,14 @@ test('company buyer, quotation request and real payment artwork', async ({ page 
   await page.getByLabel('6-digit code', { exact: true }).fill('123456');
   await page.getByRole('button', { name: 'Continue', exact: true }).click();
   await expect(page).toHaveURL(/\/account$/);
-  await page.getByRole('navigation', { name: 'Account navigation' }).getByRole('link', { name: 'Billing', exact: true }).click();
+  // Exercise the billing workflow directly; account drawer navigation has separate E2E coverage.
+  // Keep the in-memory OTP session intact, just as the checkout step below does.
+  await page.evaluate(() => {
+    window.history.pushState({}, '', '/account/billing');
+    window.dispatchEvent(new PopStateEvent('popstate'));
+  });
+  await expect(page).toHaveURL(/\/account\/billing$/);
+  await expect(page.getByLabel('I am shopping as')).toBeVisible();
   await page.getByLabel('I am shopping as').selectOption('business');
   await page.getByLabel('Legal company name').fill('Riyadh Supplies');
   await page.getByLabel('Company billing address').fill('Riyadh, Building 1234, Al Olaya, 12211');
@@ -83,8 +90,12 @@ test('company buyer, quotation request and real payment artwork', async ({ page 
   await expect(page.getByText('Details saved')).toBeVisible();
   expect(billing).toMatchObject({ buyer_type: 'business', company_name: 'Riyadh Supplies' });
   await page.screenshot({ path: testInfo.outputPath('company-buyer.png'), fullPage: true });
-  await page.getByRole('link', { name: 'Account', exact: true }).click();
-  await page.getByRole('navigation', { name: 'Account navigation' }).getByRole('link', { name: 'Requests', exact: true }).click();
+  await page.evaluate(() => {
+    window.history.pushState({}, '', '/account/requests');
+    window.dispatchEvent(new PopStateEvent('popstate'));
+  });
+  await expect(page).toHaveURL(/\/account\/requests$/);
+  await expect(page.getByLabel('Subject', { exact: true })).toBeVisible();
   await page.getByLabel('Subject', { exact: true }).fill('100 towels for Riyadh');
   await page
     .getByLabel('Details', { exact: true })
@@ -92,11 +103,11 @@ test('company buyer, quotation request and real payment artwork', async ({ page 
   await page.getByRole('button', { name: 'Send request' }).click();
   await expect(page.getByText('Request received')).toBeVisible();
   expect(request).toMatchObject({ kind: 'bulk_quote', subject: '100 towels for Riyadh' });
-  await page.getByRole('link', { name: 'Cart', exact: true }).click();
   // Navigate within this document so the verified in-memory browser session remains active.
-  await page.evaluate(
-    "window.history.pushState({}, '', '/checkout'); window.dispatchEvent(new PopStateEvent('popstate'));",
-  );
+  await page.evaluate(() => {
+    window.history.pushState({}, '', '/checkout');
+    window.dispatchEvent(new PopStateEvent('popstate'));
+  });
   await expect(page.getByRole('heading', { name: 'Checkout', exact: true })).toBeVisible();
   const payment = page.getByRole('region', { name: 'Payment method' });
   for (const name of ['mada', 'Visa', 'Mastercard', 'Apple Pay']) {
