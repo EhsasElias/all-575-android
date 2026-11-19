@@ -24,6 +24,19 @@ export function CourierWorkspaceScreen() {
   const [parcels, setParcels] = useState<Record<number, string>>({});
   const [revision, setRevision] = useState(0);
   const [online, setOnline] = useState(false);
+  // Offer expiry follows a live clock, rather than reading an impure time during React render.
+  const [clockMs, setClockMs] = useState<number | null>(null);
+  useEffect(() => {
+    const updateClock = () => {
+      setClockMs(Date.now());
+    };
+    const initialTick = window.setTimeout(updateClock, 0);
+    const interval = window.setInterval(updateClock, 1_000);
+    return () => {
+      window.clearTimeout(initialTick);
+      window.clearInterval(interval);
+    };
+  }, []);
   useEffect(() => {
     let active = true;
     void courierProfile()
@@ -149,7 +162,9 @@ export function CourierWorkspaceScreen() {
               <div style={{ display: 'flex', gap: 12 }}>
                 <button
                   disabled={
-                    busy || !!(job.expires_at && new Date(job.expires_at).getTime() <= Date.now())
+                    busy ||
+                    clockMs === null ||
+                    (job.expires_at !== null && Date.parse(job.expires_at) <= clockMs)
                   }
                   onClick={() =>
                     void act(
