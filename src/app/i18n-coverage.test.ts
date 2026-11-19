@@ -12,7 +12,10 @@ function flatten(value: unknown, prefix = '', result = new Map<string, string>()
 }
 
 function interpolationKeys(value: string): string[] {
-  return Array.from(value.matchAll(/{{\s*([a-zA-Z_][a-zA-Z0-9_]*)[^}]*}}/g), (match) => match[1] ?? '').sort();
+  return Array.from(
+    value.matchAll(/{{\s*([a-zA-Z_][a-zA-Z0-9_]*)[^}]*}}/g),
+    (match) => match[1] ?? '',
+  ).sort();
 }
 
 describe('complete translation namespaces', () => {
@@ -42,7 +45,9 @@ describe('complete translation namespaces', () => {
       // Product names, currency abbreviations and technical abbreviations may legitimately use Latin.
       if (value.length < 8 || /^[0-9\s\W]+$/.test(value)) continue;
       // This is a smoke check for wholesale English fallback; not a linguistic quality review.
-      expect(value, key).not.toMatch(/^\s*(?:Loading|Submit|Continue|Save changes|Sign in|Sign out)\s*$/i);
+      expect(value, key).not.toMatch(
+        /^\s*(?:Loading|Submit|Continue|Save changes|Sign in|Sign out)\s*$/i,
+      );
     }
   });
 });

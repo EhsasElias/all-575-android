@@ -13,13 +13,28 @@ import styles from './AccountSidebar.module.css';
 type AccountLink = { path: string; ar: string; en: string; fr: string };
 
 const pages: AccountLink[] = [
-  { path: routePaths.account, ar: 'نظرة عامة على الحساب', en: 'Account overview', fr: 'Vue d’ensemble du compte' },
+  {
+    path: routePaths.account,
+    ar: 'نظرة عامة على الحساب',
+    en: 'Account overview',
+    fr: 'Vue d’ensemble du compte',
+  },
   { path: routePaths.profile, ar: 'الملف الشخصي', en: 'Profile', fr: 'Profil' },
   { path: routePaths.notifications, ar: 'الإشعارات', en: 'Notifications', fr: 'Notifications' },
   { path: routePaths.addresses, ar: 'العناوين', en: 'Addresses', fr: 'Adresses' },
   { path: routePaths.billing, ar: 'بيانات الفوترة', en: 'Billing', fr: 'Facturation' },
-  { path: routePaths.sessions, ar: 'الأجهزة والجلسات', en: 'Sessions', fr: 'Appareils et sessions' },
-  { path: routePaths.savedProducts, ar: 'المنتجات المحفوظة', en: 'Saved products', fr: 'Produits enregistrés' },
+  {
+    path: routePaths.sessions,
+    ar: 'الأجهزة والجلسات',
+    en: 'Sessions',
+    fr: 'Appareils et sessions',
+  },
+  {
+    path: routePaths.savedProducts,
+    ar: 'المنتجات المحفوظة',
+    en: 'Saved products',
+    fr: 'Produits enregistrés',
+  },
   { path: routePaths.customerRequests, ar: 'طلباتي الخاصة', en: 'Requests', fr: 'Demandes' },
   { path: routePaths.customerCases, ar: 'الدعم', en: 'Support', fr: 'Assistance' },
   { path: routePaths.orders, ar: 'طلباتي', en: 'My orders', fr: 'Mes commandes' },
@@ -125,7 +140,11 @@ export function AccountSidebar({ onNavigate }: { onNavigate?: () => void }) {
         )}
         {workspaces.includes('super') && (
           <Link className={styles.link} to={routePaths.superAdminDashboard} onClick={onNavigate}>
-            {tr('لوحة السوبر أدمن', 'Super Admin dashboard', 'Tableau de bord super administrateur')}
+            {tr(
+              'لوحة السوبر أدمن',
+              'Super Admin dashboard',
+              'Tableau de bord super administrateur',
+            )}
           </Link>
         )}
         {workspaces.includes('reviewer') && !workspaces.includes('super') && (

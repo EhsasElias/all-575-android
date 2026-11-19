@@ -10,7 +10,11 @@ import {
   type SellerDailyTrend,
   type SellerBranch,
 } from './sellerWorkspaceApi';
-import { sellerInsightFrench, frenchInsightColumns, frenchInsightStatuses } from './sellerInsightFrench';
+import {
+  sellerInsightFrench,
+  frenchInsightColumns,
+  frenchInsightStatuses,
+} from './sellerInsightFrench';
 
 type Props = {
   metric: SellerInsightMetric;
@@ -340,7 +344,11 @@ export function SellerInsightPanel({ metric, branches, onClose }: Props) {
                   <tr>
                     {details.columns.map((column, i) => (
                       <th key={i} scope="col">
-                        {ar ? (arabicColumns[column] ?? column) : fr ? (frenchInsightColumns[column] ?? column) : column}
+                        {ar
+                          ? (arabicColumns[column] ?? column)
+                          : fr
+                            ? (frenchInsightColumns[column] ?? column)
+                            : column}
                       </th>
                     ))}
                   </tr>
@@ -351,7 +359,11 @@ export function SellerInsightPanel({ metric, branches, onClose }: Props) {
                       {row.map((cell, i) => (
                         <td key={i}>
                           <bdi dir="auto">
-                            {typeof cell === 'string' && ar ? (arabicStatuses[cell] ?? cell) : typeof cell === 'string' && fr ? (frenchInsightStatuses[cell] ?? cell) : cell}
+                            {typeof cell === 'string' && ar
+                              ? (arabicStatuses[cell] ?? cell)
+                              : typeof cell === 'string' && fr
+                                ? (frenchInsightStatuses[cell] ?? cell)
+                                : cell}
                           </bdi>
                         </td>
                       ))}

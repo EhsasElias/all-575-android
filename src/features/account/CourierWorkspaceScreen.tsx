@@ -18,8 +18,7 @@ export function CourierWorkspaceScreen() {
   const { i18n } = useTranslation();
   const ar = i18n.language.startsWith('ar');
   const fr = i18n.language.startsWith('fr');
-  const tr = (a: string, en: keyof typeof courierFrench) =>
-    ar ? a : fr ? courierFrench[en] : en;
+  const tr = (a: string, en: keyof typeof courierFrench) => (ar ? a : fr ? courierFrench[en] : en);
   const [jobs, setJobs] = useState<CourierJob[]>([]);
   const [error, setError] = useState('');
   const [notice, setNotice] = useState('');

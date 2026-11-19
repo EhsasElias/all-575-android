@@ -220,7 +220,14 @@ export function SellerApplicationScreen() {
         }
       })
       .catch(() => {
-        if (live) setError(localized('تعذر تحميل طلب البائع.', 'Could not load seller application.', 'Impossible de charger la demande du vendeur.'));
+        if (live)
+          setError(
+            localized(
+              'تعذر تحميل طلب البائع.',
+              'Could not load seller application.',
+              'Impossible de charger la demande du vendeur.',
+            ),
+          );
       })
       .finally(() => {
         if (live) setLoading(false);
@@ -395,7 +402,11 @@ export function SellerApplicationScreen() {
                 style={{ padding: 12, border: '1px solid #d8e1db', borderRadius: 8 }}
               >
                 <strong>
-                  {localized('ملاحظات الإدارة للتصحيح:', 'Administrator correction request:', 'Demande de correction de l’administration :')}
+                  {localized(
+                    'ملاحظات الإدارة للتصحيح:',
+                    'Administrator correction request:',
+                    'Demande de correction de l’administration :',
+                  )}
                 </strong>{' '}
                 {reviewNote}
               </p>

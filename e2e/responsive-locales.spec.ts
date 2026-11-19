@@ -60,9 +60,10 @@ for (const language of languages) {
         );
         const pageWidth: number = await page.evaluate('document.documentElement.scrollWidth');
         const viewportWidth: number = await page.evaluate('window.innerWidth');
-        expect(pageWidth, `${language} ${path} at ${width}px overflows document`).toBeLessThanOrEqual(
-          viewportWidth + 1,
-        );
+        expect(
+          pageWidth,
+          `${language} ${path} at ${width}px overflows document`,
+        ).toBeLessThanOrEqual(viewportWidth + 1);
       }
     }
   });
