@@ -17,20 +17,10 @@ export async function setStorefrontPreferences(
 
   const menu = page.getByRole('dialog');
   await expect(menu).toBeVisible();
-  await menu
-    .locator('label')
-    .filter({
-      has: menu.locator(`input[type="radio"][value="${language}"]`),
-    })
-    .click();
+  await menu.locator(`label:has(input[type="radio"][value="${language}"])`).click();
   await expect(page.locator('html')).toHaveAttribute('lang', language);
   // Clicking the visible label triggers the theme control's React onChange.
-  await menu
-    .locator('label')
-    .filter({
-      has: menu.locator(`input[type="radio"][value="${theme}"]`),
-    })
-    .click();
+  await menu.locator(`label:has(input[type="radio"][value="${theme}"])`).click();
 
   await expect(page.locator('html')).toHaveAttribute('lang', language);
   await expect(page.locator('html')).toHaveAttribute('data-theme', theme);
