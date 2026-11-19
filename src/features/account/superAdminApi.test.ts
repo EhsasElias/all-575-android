@@ -20,6 +20,17 @@ function serveExport(bytes: Uint8Array, filename: string, contentType: string) {
   return fetchFn;
 }
 
+function recordedRequestUrl(fetchFn: ReturnType<typeof vi.fn<typeof fetch>>): URL {
+  const input = fetchFn.mock.calls[0]?.[0];
+  const value =
+    typeof input === 'string'
+      ? input
+      : input instanceof URL
+        ? input.href
+        : (input?.url ?? '');
+  return new URL(value, 'https://example.test');
+}
+
 describe('Super Admin statistics exports', () => {
   it('requests a valid XLSX export with the active report filters', async () => {
     const bytes = new Uint8Array([0x50, 0x4b, 0x03, 0x04, 0x01]);
@@ -33,7 +44,7 @@ describe('Super Admin statistics exports', () => {
     const result = await exportSuperAdminMetric('customers', 'xlsx', filters);
 
     expect(fetchFn).toHaveBeenCalledOnce();
-    const request = new URL(String(fetchFn.mock.calls[0]?.[0]), 'https://example.test');
+    const request = recordedRequestUrl(fetchFn);
     expect(request.pathname).toMatch(/\/platform\/super-admin\/metrics\/customers\/export\/xlsx$/);
     expect(Object.fromEntries(request.searchParams)).toEqual(filters);
     expect(result.filename).toBe('all575-customers.xlsx');
@@ -50,7 +61,7 @@ describe('Super Admin statistics exports', () => {
     const result = await exportSuperAdminMetric('customers', 'csv');
 
     expect(fetchFn).toHaveBeenCalledOnce();
-    const request = new URL(String(fetchFn.mock.calls[0]?.[0]), 'https://example.test');
+    const request = recordedRequestUrl(fetchFn);
     expect(request.pathname).toMatch(/\/platform\/super-admin\/metrics\/customers\/export\/csv$/);
     expect(request.search).toBe('');
     expect(result.filename).toBe('all575-customers.csv');
