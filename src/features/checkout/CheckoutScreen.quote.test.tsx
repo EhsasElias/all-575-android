@@ -30,7 +30,8 @@ function quotesWithPromo(otherwise: Reply) {
 
 describe('Checkout: VAT added to net prices', () => {
   it('shows SAR 5.00 goods plus SAR 0.75 VAT and charges SAR 5.75', async () => {
-    const item = quote().lines[0]!;
+    const item = quote().lines[0];
+    if (item === undefined) throw new Error('The quote fixture must contain an item');
     const beforeVat = quote({
       lines: [{ ...item, quantity: 1, unit_price: 500, line_price: 500, line_total: 500 }],
       subtotal: 500,
