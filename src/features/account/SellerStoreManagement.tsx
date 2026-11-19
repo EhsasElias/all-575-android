@@ -21,6 +21,7 @@ import {
 } from './sellerStoreProfileApi';
 import { isApiError } from '@/shared/api';
 import { branchWithinZone, mapLocationUrl } from './branchMap';
+import { sellerStoreFrench } from './sellerStoreFrench';
 
 type Props = {
   memberships: SellerMembership[];
@@ -38,7 +39,9 @@ const field: React.CSSProperties = { display: 'grid', gap: 5, flex: 1, minWidth:
 export function SellerStoreManagement({ memberships, onStoreUpdated }: Props) {
   const { i18n } = useTranslation();
   const ar = i18n.language.startsWith('ar');
-  const tr = (arabic: string, english: string) => (ar ? arabic : english);
+  const fr = i18n.language.startsWith('fr');
+  const tr = (arabic: string, english: string) =>
+    ar ? arabic : fr ? (sellerStoreFrench[english] ?? english) : english;
   const storeStatusLabels: Record<string, string> = {
     approved: tr('معتمد', 'Approved'),
     pending: tr('بانتظار الاعتماد', 'Pending approval'),
