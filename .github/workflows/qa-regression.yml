@@ -39,3 +39,32 @@ jobs:
         run: npm run api:check
       - name: TypeScript and production build
         run: npm run build
+
+  format-review-files:
+    if: ${{ github.event_name == 'pull_request' && github.event.pull_request.head.repo.full_name == github.repository && github.event.pull_request.head.ref == 'fix/qa-regression-20261119' }}
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.pull_request.head.ref }}
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci
+      - name: Format localization changes
+        run: npx prettier --write src/features/account/sellerProductsFrench.ts src/features/account/SellerProductManagement.tsx src/features/account/sellerReviewFrench.ts src/features/account/SellerReviewScreen.tsx src/features/account/sellerStoreFrench.ts src/features/account/SellerStoreManagement.tsx src/features/account/sellerWorkspaceFrench.ts src/features/account/SellerWorkspaceScreen.tsx src/features/account/platformAdminFrench.ts src/features/account/PlatformAdminDashboardScreen.tsx src/features/account/superAdminFrench.ts src/features/account/SuperAdminDashboardScreen.tsx src/features/auth/emailAccessFrench.ts src/features/auth/EmailPasswordAccess.tsx scripts/locale-audit.mjs
+      - name: Commit formatting on isolated QA branch
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add -u
+          if git diff --cached --quiet; then
+            echo "All reviewed files already formatted."
+          else
+            git commit -m "Format seller product and admin French localization"
+            git push origin HEAD:refs/heads/fix/qa-regression-20261119
+          fi
