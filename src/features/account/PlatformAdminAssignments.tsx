@@ -137,7 +137,12 @@ export function PlatformAdminAssignments() {
         </p>
       )}
       <div className={styles.layout}>
-        <form onSubmit={save} className={styles.form}>
+        <form
+          onSubmit={(event) => {
+            void save(event);
+          }}
+          className={styles.form}
+        >
           <label className={styles.field}>
             <span>{tr('البريد الإلكتروني للحساب', 'Account email')} *</span>
             <input
@@ -241,11 +246,11 @@ export function PlatformAdminAssignments() {
                   {items.map((item) => (
                     <tr key={item.id}>
                       <td>
-                        <strong>{item.name || item.email || `#${item.user_id}`}</strong>
+                        <strong>{item.name ?? item.email ?? `#${item.user_id}`}</strong>
                         <div className={styles.muted}>{item.email}</div>
                       </td>
                       <td>
-                        {(ar ? item.seller_name_ar : item.seller_name_en) || `#${item.seller_id}`}{' '}
+                        {(ar ? item.seller_name_ar : item.seller_name_en) ?? `#${item.seller_id}`}{' '}
                         (#{item.seller_id})
                       </td>
                       <td>
