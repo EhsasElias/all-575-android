@@ -13,21 +13,20 @@ export function TopBar({ onAccountMenu }: { onAccountMenu?: () => void }) {
   const { t: tNavigation } = useTranslation('navigation');
   const [open, setOpen] = useState(false);
   const { status, user } = useSession();
-  const [unreadCount, setUnreadCount] = useState(0);
+  const [unread, setUnread] = useState<{ ownerId: string; count: number } | null>(null);
+  const ownerId = user?.id === undefined ? null : String(user.id);
+  const unreadCount = status === 'signed-in' && unread?.ownerId === ownerId ? unread.count : 0;
   const { i18n } = useTranslation();
   const notificationLabel = i18n.language.startsWith('ar') ? 'الإشعارات' : 'Notifications';
 
   useEffect(() => {
-    if (status !== 'signed-in') {
-      setUnreadCount(0);
-      return;
-    }
+    if (status !== 'signed-in' || ownerId === null) return;
     let active = true;
     const refresh = () => {
       if (document.visibilityState === 'hidden') return;
       void getNotifications()
         .then((inbox) => {
-          if (active) setUnreadCount(inbox.unread_count);
+          if (active) setUnread({ ownerId, count: inbox.unread_count });
         })
         .catch(() => {
           /* Inbox displays fetch errors; keep the previous badge. */
@@ -45,7 +44,7 @@ export function TopBar({ onAccountMenu }: { onAccountMenu?: () => void }) {
       window.removeEventListener('focus', refresh);
       window.removeEventListener('all575-notifications-changed', refresh);
     };
-  }, [status, user?.id]);
+  }, [status, ownerId]);
   const close = useCallback(() => {
     setOpen(false);
   }, []);
