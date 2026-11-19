@@ -290,10 +290,10 @@ export function SuperAdminDashboardScreen() {
       key={metric.key}
       type="button"
       className={
-        styles.statCard +
+        (styles.statCard ?? '') +
         ' admin-family-card ' +
-        styles.metricButton +
-        (selected === metric.key ? ' ' + styles.activeCard : '')
+        (styles.metricButton ?? '') +
+        (selected === metric.key ? ' ' + (styles.activeCard ?? '') : '')
       }
       aria-pressed={selected === metric.key}
       aria-label={tr('عرض تفاصيل', 'View details for') + ' ' + metric.label}
@@ -347,8 +347,8 @@ export function SuperAdminDashboardScreen() {
 
   return (
     <Page>
-      <div className={styles.dashboard + ' admin-workspace-family'} dir={ar ? 'rtl' : 'ltr'}>
-        <div className={styles.heading + ' admin-family-hero'}>
+      <div className={(styles.dashboard ?? '') + ' admin-workspace-family'} dir={ar ? 'rtl' : 'ltr'}>
+        <div className={(styles.heading ?? '') + ' admin-family-hero'}>
           <div className={styles.headingIcon} aria-hidden="true">
             ♛
           </div>
@@ -363,11 +363,11 @@ export function SuperAdminDashboardScreen() {
           </div>
           <span className={styles.platformTag}>{tr('منصة ALL 5.75', 'ALL 5.75 Platform')}</span>
         </div>
-        <div className={styles.toolbar + ' admin-family-panel'}>
+        <div className={(styles.toolbar ?? '') + ' admin-family-panel'}>
           <span>{tr('نظرة شاملة على المنصة', 'Platform overview')}</span>
           <button
             type="button"
-            className={styles.primary + ' admin-family-primary'}
+            className={(styles.primary ?? '') + ' admin-family-primary'}
             onClick={() => {
               setRevision((value) => value + 1);
             }}
@@ -402,11 +402,11 @@ export function SuperAdminDashboardScreen() {
             <div className={styles.contentGrid}>
               <main className={styles.main}>
                 <h2>{tr('مؤشرات المنصة', 'Platform statistics')}</h2>
-                <div className={styles.statGrid + ' admin-family-metrics'}>
+                <div className={(styles.statGrid ?? '') + ' admin-family-metrics'}>
                   {metrics.slice(0, 5).map(metricCard)}
                 </div>
                 <h2>{tr('المبيعات والطلبات', 'Sales & Orders')}</h2>
-                <div className={styles.statGrid + ' admin-family-metrics'}>
+                <div className={(styles.statGrid ?? '') + ' admin-family-metrics'}>
                   {metrics.slice(5, 12).map(metricCard)}
                 </div>
               </main>
@@ -424,7 +424,7 @@ export function SuperAdminDashboardScreen() {
             <div ref={detailSectionRef} className={styles.fullWidthDetails}>
               {selected && (
                 <section
-                  className={styles.detailPanel + ' admin-family-panel'}
+                  className={(styles.detailPanel ?? '') + ' admin-family-panel'}
                   aria-label={selectedMetric?.label}
                   aria-live="polite"
                 >
@@ -598,7 +598,7 @@ export function SuperAdminDashboardScreen() {
                           {tr('التصدير يطابق الفلاتر', 'Excel/CSV uses the same filters')}
                         </span>
                       </div>
-                      <div className={styles.tableScroll + ' admin-family-table'}>
+                      <div className={(styles.tableScroll ?? '') + ' admin-family-table'}>
                         <table className={styles.dataTable}>
                           <thead>
                             <tr>
@@ -856,7 +856,7 @@ export function SuperAdminDashboardScreen() {
                 </section>
               )}
             </div>
-            <div id="admin-accounts" className={styles.permissions + ' admin-family-panel'}>
+            <div id="admin-accounts" className={(styles.permissions ?? '') + ' admin-family-panel'}>
               <PlatformAdminAssignments />
             </div>
             <SuperAdminCouriers ar={ar} />
