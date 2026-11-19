@@ -17,6 +17,7 @@ import {
   type SuperAdminMetricPage,
   type SuperAdminReportFilters,
 } from './superAdminApi';
+import { superAdminFrench } from './superAdminFrench';
 import styles from './SuperAdminDashboardScreen.module.css';
 import './adminWorkspaceFamily.css';
 
@@ -39,7 +40,9 @@ function saveFile(blob: Blob, filename: string) {
 export function SuperAdminDashboardScreen() {
   const { i18n } = useTranslation();
   const ar = i18n.language.startsWith('ar');
-  const tr = (arabic: string, english: string) => (ar ? arabic : english);
+  const fr = i18n.language.startsWith('fr');
+  const tr = (arabic: string, english: keyof typeof superAdminFrench) =>
+    ar ? arabic : fr ? superAdminFrench[english] : english;
   const [data, setData] = useState<SuperAdminDashboard | null>(null);
   const [loading, setLoading] = useState(true);
   const [unauthorized, setUnauthorized] = useState(false);
