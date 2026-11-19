@@ -9,7 +9,7 @@ afterEach(() => {
 function serveExport(bytes: Uint8Array, filename: string, contentType: string) {
   const fetchFn = vi.fn<typeof fetch>();
   fetchFn.mockResolvedValue(
-    new Response(bytes, {
+    new Response(new Uint8Array(bytes).buffer, {
       headers: {
         'Content-Type': contentType,
         'Content-Disposition': `attachment; filename="${filename}"`,
