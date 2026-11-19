@@ -33,6 +33,8 @@ jobs:
           node-version: 22
           cache: npm
       - run: npm ci
+      - name: Audit remaining untranslated screen copy
+        run: npm run locales:audit
       - name: API contract
         run: npm run api:check
       - name: TypeScript and production build
