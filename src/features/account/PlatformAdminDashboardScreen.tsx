@@ -14,12 +14,15 @@ import {
 } from './platformAdminApi';
 import styles from './PlatformAdminDashboardScreen.module.css';
 import { AdminCourierOperations } from './AdminCourierOperations';
+import { platformAdminFrench } from './platformAdminFrench';
 import './adminWorkspaceFamily.css';
 
 export function PlatformAdminDashboardScreen() {
   const { i18n } = useTranslation();
   const ar = i18n.language.startsWith('ar');
-  const tr = (a: string, en: string) => (ar ? a : en);
+  const fr = i18n.language.startsWith('fr');
+  const tr = (a: string, en: keyof typeof platformAdminFrench) =>
+    ar ? a : fr ? platformAdminFrench[en] : en;
   const [data, setData] = useState<PlatformAdminDashboard | null>(null);
   const [orders, setOrders] = useState<PlatformAdminOrder[]>([]);
   const [draft, setDraft] = useState({
