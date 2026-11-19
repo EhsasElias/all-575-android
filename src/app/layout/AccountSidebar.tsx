@@ -10,26 +10,27 @@ import { reviewOverview } from '@/features/account/sellerReviewApi';
 import { courierProfile } from '@/features/account/courierOperationsApi';
 import styles from './AccountSidebar.module.css';
 
-type AccountLink = { path: string; ar: string; en: string };
+type AccountLink = { path: string; ar: string; en: string; fr: string };
 
 const pages: AccountLink[] = [
-  { path: routePaths.account, ar: 'نظرة عامة على الحساب', en: 'Account overview' },
-  { path: routePaths.profile, ar: 'الملف الشخصي', en: 'Profile' },
-  { path: routePaths.notifications, ar: 'الإشعارات', en: 'Notifications' },
-  { path: routePaths.addresses, ar: 'العناوين', en: 'Addresses' },
-  { path: routePaths.billing, ar: 'بيانات الفوترة', en: 'Billing' },
-  { path: routePaths.sessions, ar: 'الأجهزة والجلسات', en: 'Sessions' },
-  { path: routePaths.savedProducts, ar: 'المنتجات المحفوظة', en: 'Saved products' },
-  { path: routePaths.customerRequests, ar: 'طلباتي الخاصة', en: 'Requests' },
-  { path: routePaths.customerCases, ar: 'الدعم', en: 'Support' },
-  { path: routePaths.orders, ar: 'طلباتي', en: 'My orders' },
-  { path: routePaths.spending, ar: 'المصروفات', en: 'Spending' },
+  { path: routePaths.account, ar: 'نظرة عامة على الحساب', en: 'Account overview', fr: 'Vue d’ensemble du compte' },
+  { path: routePaths.profile, ar: 'الملف الشخصي', en: 'Profile', fr: 'Profil' },
+  { path: routePaths.notifications, ar: 'الإشعارات', en: 'Notifications', fr: 'Notifications' },
+  { path: routePaths.addresses, ar: 'العناوين', en: 'Addresses', fr: 'Adresses' },
+  { path: routePaths.billing, ar: 'بيانات الفوترة', en: 'Billing', fr: 'Facturation' },
+  { path: routePaths.sessions, ar: 'الأجهزة والجلسات', en: 'Sessions', fr: 'Appareils et sessions' },
+  { path: routePaths.savedProducts, ar: 'المنتجات المحفوظة', en: 'Saved products', fr: 'Produits enregistrés' },
+  { path: routePaths.customerRequests, ar: 'طلباتي الخاصة', en: 'Requests', fr: 'Demandes' },
+  { path: routePaths.customerCases, ar: 'الدعم', en: 'Support', fr: 'Assistance' },
+  { path: routePaths.orders, ar: 'طلباتي', en: 'My orders', fr: 'Mes commandes' },
+  { path: routePaths.spending, ar: 'المصروفات', en: 'Spending', fr: 'Dépenses' },
 ];
 
 export function AccountSidebar({ onNavigate }: { onNavigate?: () => void }) {
   const { i18n } = useTranslation();
   const ar = i18n.language.startsWith('ar');
-  const tr = (a: string, en: string) => (ar ? a : en);
+  const fr = i18n.language.startsWith('fr');
+  const tr = (a: string, en: string, french: string) => (ar ? a : fr ? french : en);
   const { pathname } = useLocation();
   const { status, user } = useSession();
   // Keep workspace discovery tied to the signed-in identity, never a previous account.
@@ -76,15 +77,15 @@ export function AccountSidebar({ onNavigate }: { onNavigate?: () => void }) {
   return (
     <nav
       className={styles.sidebar}
-      aria-label={tr('قائمة الحساب', 'Account navigation')}
+      aria-label={tr('قائمة الحساب', 'Account navigation', 'Navigation du compte')}
       dir={ar ? 'rtl' : 'ltr'}
     >
       <div className={styles.brand}>
         <strong>ALL 5.75</strong>
-        <span>{tr('إعدادات الحساب', 'Account & settings')}</span>
+        <span>{tr('إعدادات الحساب', 'Account & settings', 'Compte et paramètres')}</span>
       </div>
       <div className={styles.group}>
-        <h2>{tr('الحساب الشخصي', 'Personal account')}</h2>
+        <h2>{tr('الحساب الشخصي', 'Personal account', 'Compte personnel')}</h2>
         {pages.map((item) => {
           const selected =
             pathname === item.path ||
@@ -97,43 +98,43 @@ export function AccountSidebar({ onNavigate }: { onNavigate?: () => void }) {
               aria-current={selected ? 'page' : undefined}
               className={selected ? styles.selected : styles.link}
             >
-              {ar ? item.ar : item.en}
+              {ar ? item.ar : fr ? item.fr : item.en}
             </Link>
           );
         })}
       </div>
       <div className={styles.group}>
-        <h2>{tr('مساحة العمل', 'Workspaces')}</h2>
+        <h2>{tr('مساحة العمل', 'Workspaces', 'Espaces de travail')}</h2>
         <Link className={styles.link} to={routePaths.dashboard} onClick={onNavigate}>
-          {tr('لوحة العميل', 'Customer dashboard')}
+          {tr('لوحة العميل', 'Customer dashboard', 'Tableau de bord client')}
         </Link>
         {workspaces.includes('seller') && (
           <Link className={styles.link} to={routePaths.sellerWorkspace} onClick={onNavigate}>
-            {tr('لوحة البائع', 'Seller dashboard')}
+            {tr('لوحة البائع', 'Seller dashboard', 'Tableau de bord vendeur')}
           </Link>
         )}
         {workspaces.includes('courier') && (
           <Link className={styles.link} to={routePaths.courierWorkspace} onClick={onNavigate}>
-            {tr('مساحة مندوب التوصيل', 'Courier workspace')}
+            {tr('مساحة مندوب التوصيل', 'Courier workspace', 'Espace livreur')}
           </Link>
         )}
         {workspaces.includes('admin') && (
           <Link className={styles.link} to={routePaths.platformAdminDashboard} onClick={onNavigate}>
-            {tr('لوحة الإدارة', 'Admin dashboard')}
+            {tr('لوحة الإدارة', 'Admin dashboard', 'Tableau de bord administrateur')}
           </Link>
         )}
         {workspaces.includes('super') && (
           <Link className={styles.link} to={routePaths.superAdminDashboard} onClick={onNavigate}>
-            {tr('لوحة السوبر أدمن', 'Super Admin dashboard')}
+            {tr('لوحة السوبر أدمن', 'Super Admin dashboard', 'Tableau de bord super administrateur')}
           </Link>
         )}
         {workspaces.includes('reviewer') && !workspaces.includes('super') && (
           <Link className={styles.link} to={routePaths.sellerReview} onClick={onNavigate}>
-            {tr('لوحة الموافقات', 'Approvals dashboard')}
+            {tr('لوحة الموافقات', 'Approvals dashboard', 'Tableau des approbations')}
           </Link>
         )}
         <Link className={styles.link} to={routePaths.sellerApplication} onClick={onNavigate}>
-          {tr('الانضمام كبائع', 'Seller application')}
+          {tr('الانضمام كبائع', 'Seller application', 'Devenir vendeur')}
         </Link>
       </div>
     </nav>
