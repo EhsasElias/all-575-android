@@ -7,7 +7,11 @@ type SectionLink = { to: string; ar: string; en: string };
 
 const seller: SectionLink[] = [
   { to: routePaths.sellerWorkspace + '?section=overview', ar: 'نظرة عامة', en: 'Overview' },
-  { to: routePaths.sellerWorkspace + '?section=store', ar: 'المتجر والفروع', en: 'Store & branches' },
+  {
+    to: routePaths.sellerWorkspace + '?section=store',
+    ar: 'المتجر والفروع',
+    en: 'Store & branches',
+  },
   { to: routePaths.sellerWorkspace + '?section=products', ar: 'المنتجات', en: 'Products' },
   { to: routePaths.sellerWorkspace + '?section=inventory', ar: 'المخزون', en: 'Inventory' },
   { to: routePaths.sellerWorkspace + '?section=orders', ar: 'الطلبات', en: 'Orders' },
@@ -17,7 +21,11 @@ const seller: SectionLink[] = [
 ];
 
 const review: SectionLink[] = [
-  { to: routePaths.sellerReview + '?tab=applications', ar: 'طلبات البائعين', en: 'Seller applications' },
+  {
+    to: routePaths.sellerReview + '?tab=applications',
+    ar: 'طلبات البائعين',
+    en: 'Seller applications',
+  },
   { to: routePaths.sellerReview + '?tab=branches', ar: 'اعتماد الفروع', en: 'Branch approvals' },
   { to: routePaths.sellerReview + '?tab=products', ar: 'مراجعة المنتجات', en: 'Product approvals' },
   { to: routePaths.sellerReview + '?tab=categories', ar: 'إدارة التصنيفات', en: 'Categories' },
@@ -25,16 +33,36 @@ const review: SectionLink[] = [
 
 const superAdmin: SectionLink[] = [
   { to: routePaths.superAdminDashboard, ar: 'الإحصائيات', en: 'Dashboard & statistics' },
-  { to: routePaths.superAdminDashboard + '#admin-accounts', ar: 'إدارة الحسابات والصلاحيات', en: 'Admin permissions' },
-  { to: routePaths.superAdminDashboard + '#courier-approvals', ar: 'اعتماد المندوبين', en: 'Courier approvals' },
+  {
+    to: routePaths.superAdminDashboard + '#admin-accounts',
+    ar: 'إدارة الحسابات والصلاحيات',
+    en: 'Admin permissions',
+  },
+  {
+    to: routePaths.superAdminDashboard + '#courier-approvals',
+    ar: 'اعتماد المندوبين',
+    en: 'Courier approvals',
+  },
   ...review,
 ];
 
 const admin: SectionLink[] = [
   { to: routePaths.platformAdminDashboard, ar: 'نظرة عامة', en: 'Operations overview' },
-  { to: routePaths.platformAdminDashboard + '#order-monitoring', ar: 'مراقبة الطلبات', en: 'Order monitoring' },
-  { to: routePaths.platformAdminDashboard + '#inventory-overview', ar: 'المخزون', en: 'Inventory overview' },
-  { to: routePaths.platformAdminDashboard + '#courier-operations', ar: 'التوصيل والبلاغات', en: 'Dispatch & incidents' },
+  {
+    to: routePaths.platformAdminDashboard + '#order-monitoring',
+    ar: 'مراقبة الطلبات',
+    en: 'Order monitoring',
+  },
+  {
+    to: routePaths.platformAdminDashboard + '#inventory-overview',
+    ar: 'المخزون',
+    en: 'Inventory overview',
+  },
+  {
+    to: routePaths.platformAdminDashboard + '#courier-operations',
+    ar: 'التوصيل والبلاغات',
+    en: 'Dispatch & incidents',
+  },
 ];
 
 const courier: SectionLink[] = [
@@ -51,26 +79,46 @@ const customer: SectionLink[] = [
 export function DashboardSidebar({ onNavigate }: { onNavigate?: () => void }) {
   const { i18n } = useTranslation();
   const ar = i18n.language.startsWith('ar');
-  const tr = (a: string, en: string) => ar ? a : en;
+  const tr = (a: string, en: string) => (ar ? a : en);
   const { pathname, search, hash } = useLocation();
 
   const workspace =
-    pathname === routePaths.superAdminDashboard ? 'super' :
-    pathname === routePaths.platformAdminDashboard ? 'admin' :
-    pathname === routePaths.sellerReview ? 'review' :
-    pathname === routePaths.sellerWorkspace ? 'seller' :
-    pathname === routePaths.courierWorkspace ? 'courier' : 'customer';
+    pathname === routePaths.superAdminDashboard
+      ? 'super'
+      : pathname === routePaths.platformAdminDashboard
+        ? 'admin'
+        : pathname === routePaths.sellerReview
+          ? 'review'
+          : pathname === routePaths.sellerWorkspace
+            ? 'seller'
+            : pathname === routePaths.courierWorkspace
+              ? 'courier'
+              : 'customer';
 
-  const sections = workspace === 'super' ? superAdmin :
-    workspace === 'admin' ? admin :
-    workspace === 'review' ? review :
-    workspace === 'seller' ? seller :
-    workspace === 'courier' ? courier : customer;
-  const title = workspace === 'super' ? tr('السوبر أدمن', 'Super Admin') :
-    workspace === 'admin' ? tr('الإدارة', 'Admin') :
-    workspace === 'review' ? tr('الموافقات', 'Approvals') :
-    workspace === 'seller' ? tr('البائع', 'Seller') :
-    workspace === 'courier' ? tr('المندوب', 'Courier') : tr('العميل', 'Customer');
+  const sections =
+    workspace === 'super'
+      ? superAdmin
+      : workspace === 'admin'
+        ? admin
+        : workspace === 'review'
+          ? review
+          : workspace === 'seller'
+            ? seller
+            : workspace === 'courier'
+              ? courier
+              : customer;
+  const title =
+    workspace === 'super'
+      ? tr('السوبر أدمن', 'Super Admin')
+      : workspace === 'admin'
+        ? tr('الإدارة', 'Admin')
+        : workspace === 'review'
+          ? tr('الموافقات', 'Approvals')
+          : workspace === 'seller'
+            ? tr('البائع', 'Seller')
+            : workspace === 'courier'
+              ? tr('المندوب', 'Courier')
+              : tr('العميل', 'Customer');
 
   const isActive = (to: string) => {
     const [pathAndQuery = '', targetHash] = to.split('#');
@@ -85,22 +133,33 @@ export function DashboardSidebar({ onNavigate }: { onNavigate?: () => void }) {
   };
 
   return (
-    <nav className={styles.sidebar} aria-label={tr('قائمة لوحة التحكم', 'Dashboard navigation')} dir={ar ? 'rtl' : 'ltr'}>
+    <nav
+      className={styles.sidebar}
+      aria-label={tr('قائمة لوحة التحكم', 'Dashboard navigation')}
+      dir={ar ? 'rtl' : 'ltr'}
+    >
       <div className={styles.brand}>
         <strong>{title}</strong>
         <span>{tr('لوحة تحكم ALL 5.75', 'ALL 5.75 workspace')}</span>
       </div>
       <div className={styles.group}>
         <h2>{tr('أقسام لوحة التحكم', 'Dashboard sections')}</h2>
-        <Link to={routePaths.notifications} onClick={onNavigate}
+        <Link
+          to={routePaths.notifications}
+          onClick={onNavigate}
           aria-current={pathname === routePaths.notifications ? 'page' : undefined}
-          className={pathname === routePaths.notifications ? styles.selected : styles.link}>
+          className={pathname === routePaths.notifications ? styles.selected : styles.link}
+        >
           {tr('الإشعارات', 'Notifications')}
         </Link>
-        {sections.map(item => (
-          <Link key={item.to} to={item.to} onClick={onNavigate}
+        {sections.map((item) => (
+          <Link
+            key={item.to}
+            to={item.to}
+            onClick={onNavigate}
             aria-current={isActive(item.to) ? 'page' : undefined}
-            className={isActive(item.to) ? styles.selected : styles.link}>
+            className={isActive(item.to) ? styles.selected : styles.link}
+          >
             {ar ? item.ar : item.en}
           </Link>
         ))}

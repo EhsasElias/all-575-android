@@ -19,8 +19,12 @@
   padding-inline: max(var(--space-4), var(--safe-inline-start))
     max(var(--space-4), var(--safe-inline-end));
 }
-.main:focus { outline: none; }
-.mainWide { max-inline-size: min(100%, 1500px); }
+.main:focus {
+  outline: none;
+}
+.mainWide {
+  max-inline-size: min(100%, 1500px);
+}
 
 /* Dedicated dashboard sidebar, independent from the storefront navigation. */
 .accountShell {
@@ -50,10 +54,14 @@
   overflow-wrap: anywhere;
 }
 .sidebarToggle,
-.sidebarBackdrop { display: none; }
+.sidebarBackdrop {
+  display: none;
+}
 
 @media (max-width: 1050px) {
-  .accountShell { grid-template-columns: minmax(0, 210px) minmax(0, 1fr); }
+  .accountShell {
+    grid-template-columns: minmax(0, 210px) minmax(0, 1fr);
+  }
 }
 @media (max-width: 850px) {
   .accountShell {
@@ -82,20 +90,28 @@
     border: 1px solid var(--color-border, #d3ddd0);
     border-radius: 12px;
     font: inherit;
-    font-size: .9rem;
+    font-size: 0.9rem;
     font-weight: 700;
     cursor: pointer;
   }
-  .sidebarToggle[aria-expanded="true"] { border-color: #22795c; }
-  .sidebarToggle:focus-visible { outline: 3px solid #77d8af; outline-offset: 2px; }
-  .sidebarToggle span:first-child { font-size: 1.3rem; line-height: 1; }
+  .sidebarToggle[aria-expanded='true'] {
+    border-color: #22795c;
+  }
+  .sidebarToggle:focus-visible {
+    outline: 3px solid #77d8af;
+    outline-offset: 2px;
+  }
+  .sidebarToggle span:first-child {
+    font-size: 1.3rem;
+    line-height: 1;
+  }
   .sidebarBackdrop {
     display: block;
     position: fixed;
     inset: 0;
     z-index: calc(var(--z-sticky) + 2);
     border: none;
-    background: rgba(12, 24, 17, .48);
+    background: rgba(12, 24, 17, 0.48);
     cursor: pointer;
   }
   .sidebarArea {
@@ -112,13 +128,22 @@
     overflow-y: auto;
     overscroll-behavior: contain;
     border-radius: 16px;
-    box-shadow: 0 18px 46px rgba(0,0,0,.18);
+    box-shadow: 0 18px 46px rgba(0, 0, 0, 0.18);
     background: var(--color-surface, #fff);
   }
-  .sidebarArea.sidebarOpen { display: block; }
-  .accountMain { width: 100%; padding-inline: 0; }
+  .sidebarArea.sidebarOpen {
+    display: block;
+  }
+  .accountMain {
+    width: 100%;
+    padding-inline: 0;
+  }
 }
 @media (max-width: 450px) {
-  .accountShell { inline-size: calc(100% - 16px); }
-  .sidebarToggle { top: calc(var(--size-topbar) + var(--safe-top)); }
+  .accountShell {
+    inline-size: calc(100% - 16px);
+  }
+  .sidebarToggle {
+    top: calc(var(--size-topbar) + var(--safe-top));
+  }
 }

@@ -23,7 +23,9 @@ describe('logical CSS properties', () => {
 
 describe('the physical CSS detector', () => {
   it('does not mistake adjacent CSS declarations for a four-value shorthand', () => {
-    expect(findPhysicalCss('.a { padding: 11px }\n.b { min-block-size: 114px; padding: 12px }')).toEqual([]);
+    expect(
+      findPhysicalCss('.a { padding: 11px }\n.b { min-block-size: 114px; padding: 12px }'),
+    ).toEqual([]);
     expect(findPhysicalCss('.a { margin: 0 auto; }\n.b { padding: 4px }')).toEqual([]);
   });
 

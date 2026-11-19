@@ -99,8 +99,16 @@ export const sellerOrders = (
 export const sellerDashboard = () => seller.get<{ data: SellerDashboard }>('/seller/dashboard');
 
 export type SellerInsightMetric =
-  | 'orders' | 'awaiting_seller' | 'preparing' | 'ready' | 'on_the_way'
-  | 'delivered' | 'sales' | 'products' | 'branches' | 'stock';
+  | 'orders'
+  | 'awaiting_seller'
+  | 'preparing'
+  | 'ready'
+  | 'on_the_way'
+  | 'delivered'
+  | 'sales'
+  | 'products'
+  | 'branches'
+  | 'stock';
 export type SellerInsightFilters = {
   metric: SellerInsightMetric;
   from: string;
@@ -123,7 +131,9 @@ export type SellerDailyTrend = {
   merchandise_halalas: number;
 };
 export const sellerInsightTrend = (filters: SellerInsightFilters) =>
-  seller.get<{ data: SellerDailyTrend[]; note: string }>('/seller/insights/trend', { query: filters });
+  seller.get<{ data: SellerDailyTrend[]; note: string }>('/seller/insights/trend', {
+    query: filters,
+  });
 export const sellerInsightDetails = (filters: SellerInsightFilters) =>
   seller.get<{ data: SellerInsightDetails }>('/seller/insights', { query: filters });
 export const exportSellerInsight = (filters: SellerInsightFilters, format: 'csv' | 'xlsx') =>
@@ -147,10 +157,9 @@ export const sellerStock = (
 export const advanceSellerOrder = (id: string, status: 'preparing' | 'ready') =>
   seller.patch('/seller/orders/' + encodeURIComponent(id) + '/status', { status });
 export const createSellerStock = (input: { branch_id: number; sku: string; on_hand: number }) =>
-  seller.post<{ data: { id: number; branch_id: number; variant_id: number; on_hand: number; reserved: number } }>(
-    '/seller/stock',
-    input,
-  );
+  seller.post<{
+    data: { id: number; branch_id: number; variant_id: number; on_hand: number; reserved: number };
+  }>('/seller/stock', input);
 
 export const adjustSellerStock = (id: number, on_hand: number) =>
   seller.patch('/seller/stock/' + id, { on_hand });
@@ -189,8 +198,11 @@ export const sellerCategoryRequests = (sellerId: number) =>
     query: { seller_id: sellerId },
   });
 export const requestSellerCategory = (input: {
-  seller_id: number; parent_id: number | null;
-  name_ar: string; name_en: string; reason?: string;
+  seller_id: number;
+  parent_id: number | null;
+  name_ar: string;
+  name_en: string;
+  reason?: string;
 }) => seller.post<{ data: { id: number; status: string } }>('/seller/category-requests', input);
 
 export type ScannedCatalogProduct = {
@@ -234,7 +246,8 @@ export const submitSellerProduct = (productId: number) =>
   seller.post<{ data: SellerProduct }>('/seller/products/' + productId + '/submit');
 
 export const sellerCatalogTemplate = () => seller.download('/seller/products/import/template.csv');
-export const sellerCatalogExcelTemplate = () => seller.download('/seller/products/import/template.xlsx');
+export const sellerCatalogExcelTemplate = () =>
+  seller.download('/seller/products/import/template.xlsx');
 
 export const uploadSellerProductImage = (productId: number, image: File | string) => {
   const form = new FormData();
@@ -258,16 +271,24 @@ export type SellerCsvPreview = {
   }>;
 };
 
-export const importSellerProductCsv = (sellerId: number, file: File, dryRun = false, submitAfterImport = false) => {
+export const importSellerProductCsv = (
+  sellerId: number,
+  file: File,
+  dryRun = false,
+  submitAfterImport = false,
+) => {
   const form = new FormData();
   form.append('seller_id', String(sellerId));
   form.append('file', file);
   if (dryRun) form.append('dry_run', '1');
   if (submitAfterImport && !dryRun) form.append('submit_after_import', '1');
-  return seller.upload<{ data: { created_drafts: number; published?: number; submitted_for_review?: number } & Partial<SellerCsvPreview> }>(
-    '/seller/products/import',
-    form,
-  );
+  return seller.upload<{
+    data: {
+      created_drafts: number;
+      published?: number;
+      submitted_for_review?: number;
+    } & Partial<SellerCsvPreview>;
+  }>('/seller/products/import', form);
 };
 
 export type SellerFinanceSummary = {
@@ -339,7 +360,10 @@ export type SellerStaffInput = {
 };
 export const addSellerStaff = (sellerId: number, userId: number, input: SellerStaffInput) =>
   seller.post<{ data: SellerStaffMember }>('/seller/staff', {
-    seller_id: sellerId, user_id: userId, role: input.role, branch_id: input.branch_id,
+    seller_id: sellerId,
+    user_id: userId,
+    role: input.role,
+    branch_id: input.branch_id,
   });
 export const updateSellerStaff = (membershipId: number, input: SellerStaffInput) =>
   seller.patch<{ data: SellerStaffMember }>('/seller/staff/' + membershipId, input);

@@ -104,9 +104,14 @@
   color: var(--color-text-muted);
   cursor: pointer;
 }
-.visibilityButton:hover { color: var(--color-text); }
+.visibilityButton:hover {
+  color: var(--color-text);
+}
 .visibilityButton:focus-visible {
   outline: 2px solid var(--color-focus);
   outline-offset: 1px;
 }
-.visibilityButton:disabled { opacity: .5; cursor: not-allowed; }
+.visibilityButton:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}

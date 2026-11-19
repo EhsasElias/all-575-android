@@ -54,7 +54,13 @@ export function TopBar({ onAccountMenu }: { onAccountMenu?: () => void }) {
     <>
       <header className={styles.topBar}>
         <IconButton
-          label={onAccountMenu ? (i18n.language.startsWith('ar') ? 'فتح قائمة الحساب أو لوحة التحكم' : 'Open account or dashboard navigation') : tNavigation('open')}
+          label={
+            onAccountMenu
+              ? i18n.language.startsWith('ar')
+                ? 'فتح قائمة الحساب أو لوحة التحكم'
+                : 'Open account or dashboard navigation'
+              : tNavigation('open')
+          }
           aria-haspopup="dialog"
           aria-expanded={open}
           onClick={() => {

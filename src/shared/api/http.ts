@@ -196,14 +196,20 @@ export function createHttpClient(config: HttpClientConfig): HttpClient {
     if (!response.ok) await rejectWith(response, await blob.text(), token);
     const filename = readFilename(response.headers.get('Content-Disposition'));
     const exportPath = path.split('?')[0] ?? path;
-    const expectsXlsx = exportPath.endsWith('.xlsx')
-      || exportPath.endsWith('/export/xlsx')
-      || (filename?.toLowerCase().endsWith('.xlsx') ?? false);
+    const expectsXlsx =
+      exportPath.endsWith('.xlsx') ||
+      exportPath.endsWith('/export/xlsx') ||
+      (filename?.toLowerCase().endsWith('.xlsx') ?? false);
     if (expectsXlsx) {
       // XLSX is a ZIP/OOXML file, never HTML, XML 2003, or CSV with an Excel extension.
       const signature = new Uint8Array(await blob.slice(0, 4).arrayBuffer());
-      if (signature.length < 4 || signature[0] !== 0x50 || signature[1] !== 0x4b
-        || signature[2] !== 0x03 || signature[3] !== 0x04) {
+      if (
+        signature.length < 4 ||
+        signature[0] !== 0x50 ||
+        signature[1] !== 0x4b ||
+        signature[2] !== 0x03 ||
+        signature[3] !== 0x04
+      ) {
         throw new Error('The server returned an invalid Excel file. Update the API and try again.');
       }
     }

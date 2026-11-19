@@ -3,7 +3,6 @@ import { useTranslation } from 'react-i18next';
 import { isApiError } from '@/shared/api';
 import { respondSellerReturn, sellerReturns, type SellerReturnCase } from './sellerWorkspaceApi';
 
-
 type ReturnFilter = 'all' | 'submitted' | 'in_review' | 'resolved' | 'rejected';
 
 export function SellerReturnManagement() {
@@ -123,51 +122,92 @@ export function SellerReturnManagement() {
     <section className="seller-returns-section" aria-labelledby="seller-returns-title">
       <header className="seller-returns-header">
         <div>
-          <span className="seller-returns-eyebrow">{tr('متابعة ما بعد البيع', 'After-sales management')}</span>
+          <span className="seller-returns-eyebrow">
+            {tr('متابعة ما بعد البيع', 'After-sales management')}
+          </span>
           <h2 id="seller-returns-title">{tr('طلبات الإرجاع', 'Return requests')}</h2>
-          <p>{tr(
-            'راجع الطلبات وسجّل رد المتجر. اعتماد الإرجاع والاسترداد المالي يتمان من الجهة المختصة.',
-            'Review requests and record your store response. Final approval and refunds are handled by the authorized team.',
-          )}</p>
+          <p>
+            {tr(
+              'راجع الطلبات وسجّل رد المتجر. اعتماد الإرجاع والاسترداد المالي يتمان من الجهة المختصة.',
+              'Review requests and record your store response. Final approval and refunds are handled by the authorized team.',
+            )}
+          </p>
         </div>
       </header>
 
       <div className="seller-returns-toolbar">
         <label htmlFor="seller-return-status">
           {tr('تصفية حسب الحالة', 'Filter by status')}
-          <select id="seller-return-status" value={filter} disabled={busy}
+          <select
+            id="seller-return-status"
+            value={filter}
+            disabled={busy}
             onChange={(event) => {
               setFilter(event.target.value as ReturnFilter);
               setSelected(null);
-            }}>
+            }}
+          >
             <option value="all">{tr('كل الحالات', 'All statuses')}</option>
             {(['submitted', 'in_review', 'resolved', 'rejected'] as const).map((status) => (
-              <option key={status} value={status}>{labels[status]}</option>
+              <option key={status} value={status}>
+                {labels[status]}
+              </option>
             ))}
           </select>
         </label>
-        <button type="button" className="seller-returns-refresh" disabled={loading || busy}
-          onClick={() => setRevision((value) => value + 1)}>
+        <button
+          type="button"
+          className="seller-returns-refresh"
+          disabled={loading || busy}
+          onClick={() => setRevision((value) => value + 1)}
+        >
           {tr('تحديث القائمة', 'Refresh list')}
         </button>
       </div>
 
-      {error && <p role="alert" className="seller-returns-error">{error}</p>}
-      {notice && <p role="status" className="seller-form-success">{notice}</p>}
-      {loading && <p role="status" className="seller-returns-loading">{tr('جار تحميل طلبات الإرجاع…', 'Loading return requests…')}</p>}
+      {error && (
+        <p role="alert" className="seller-returns-error">
+          {error}
+        </p>
+      )}
+      {notice && (
+        <p role="status" className="seller-form-success">
+          {notice}
+        </p>
+      )}
+      {loading && (
+        <p role="status" className="seller-returns-loading">
+          {tr('جار تحميل طلبات الإرجاع…', 'Loading return requests…')}
+        </p>
+      )}
 
       {!loading && cases.length === 0 && (
         <div className="seller-returns-empty" role="status">
-          <svg aria-hidden="true" width="42" height="42" viewBox="0 0 24 24"
-            fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
+          <svg
+            aria-hidden="true"
+            width="42"
+            height="42"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            strokeWidth="1.5"
+            strokeLinecap="round"
+            strokeLinejoin="round"
+          >
             <rect x="3" y="4" width="18" height="16" rx="3" />
-            <path d="M8 10h8M8 14h5"/>
+            <path d="M8 10h8M8 14h5" />
           </svg>
           <h3>{tr('لا توجد طلبات إرجاع مطابقة', 'No matching return requests')}</h3>
-          <p>{tr(
-            filter === 'all' ? 'ستظهر طلبات الإرجاع الجديدة هنا عند وصولها.' : 'لا توجد طلبات بهذه الحالة. يمكنك اختيار كل الحالات.',
-            filter === 'all' ? 'New return requests will appear here.' : 'No requests have this status. Try All statuses.',
-          )}</p>
+          <p>
+            {tr(
+              filter === 'all'
+                ? 'ستظهر طلبات الإرجاع الجديدة هنا عند وصولها.'
+                : 'لا توجد طلبات بهذه الحالة. يمكنك اختيار كل الحالات.',
+              filter === 'all'
+                ? 'New return requests will appear here.'
+                : 'No requests have this status. Try All statuses.',
+            )}
+          </p>
           {filter !== 'all' && (
             <button type="button" onClick={() => setFilter('all')}>
               {tr('عرض كل الحالات', 'Show all statuses')}
@@ -182,7 +222,9 @@ export function SellerReturnManagement() {
             <article key={item.id} className="seller-return-card">
               <div className="seller-return-card-head">
                 <div className="seller-return-product">
-                  <span className="seller-returns-eyebrow">{tr('منتج الإرجاع', 'Returned product')}</span>
+                  <span className="seller-returns-eyebrow">
+                    {tr('منتج الإرجاع', 'Returned product')}
+                  </span>
                   <h3>{ar ? item.name_ar : item.name_en}</h3>
                 </div>
                 <span className={'seller-return-status seller-return-status-' + item.status}>
@@ -218,44 +260,77 @@ export function SellerReturnManagement() {
               {!Boolean(item.seller_responded) &&
                 (item.status === 'submitted' || item.status === 'in_review') && (
                   <div className="seller-return-response-area">
-                    <button type="button" className="seller-return-response-toggle"
-                      aria-expanded={selected === item.id} disabled={busy}
+                    <button
+                      type="button"
+                      className="seller-return-response-toggle"
+                      aria-expanded={selected === item.id}
+                      disabled={busy}
                       onClick={() => {
                         setSelected(selected === item.id ? null : item.id);
                         setExplanation('');
                         setPosition('accept');
-                      }}>
-                      {selected === item.id ? tr('إغلاق الرد', 'Close response') : tr('الرد على طلب الإرجاع', 'Respond to request')}
+                      }}
+                    >
+                      {selected === item.id
+                        ? tr('إغلاق الرد', 'Close response')
+                        : tr('الرد على طلب الإرجاع', 'Respond to request')}
                     </button>
                     {selected === item.id && (
-                      <form className="seller-return-response-form"
-                        onSubmit={(event) => void respond(event)}>
-                        <p className="seller-return-form-help">{tr(
-                          'اختر موقف المتجر وأضف توضيحًا قبل إرسال الرد. لا يمكن تعديل الرد بعد الإرسال.',
-                          'Choose the store position and add an explanation. A submitted response cannot be edited.',
-                        )}</p>
+                      <form
+                        className="seller-return-response-form"
+                        onSubmit={(event) => void respond(event)}
+                      >
+                        <p className="seller-return-form-help">
+                          {tr(
+                            'اختر موقف المتجر وأضف توضيحًا قبل إرسال الرد. لا يمكن تعديل الرد بعد الإرسال.',
+                            'Choose the store position and add an explanation. A submitted response cannot be edited.',
+                          )}
+                        </p>
                         <label>
                           {tr('موقف المتجر *', 'Store position *')}
-                          <select value={position} disabled={busy}
-                            onChange={(event) => setPosition(event.target.value as 'accept' | 'dispute')}>
-                            <option value="accept">{tr('موافقة مبدئية', 'Preliminary acceptance')}</option>
-                            <option value="dispute">{tr('اعتراض مع التوضيح', 'Dispute with explanation')}</option>
+                          <select
+                            value={position}
+                            disabled={busy}
+                            onChange={(event) =>
+                              setPosition(event.target.value as 'accept' | 'dispute')
+                            }
+                          >
+                            <option value="accept">
+                              {tr('موافقة مبدئية', 'Preliminary acceptance')}
+                            </option>
+                            <option value="dispute">
+                              {tr('اعتراض مع التوضيح', 'Dispute with explanation')}
+                            </option>
                           </select>
                         </label>
                         <label>
                           {tr('التوضيح *', 'Explanation *')}
-                          <textarea required minLength={10} maxLength={2000} rows={4}
-                            value={explanation} disabled={busy}
+                          <textarea
+                            required
+                            minLength={10}
+                            maxLength={2000}
+                            rows={4}
+                            value={explanation}
+                            disabled={busy}
                             onChange={(event) => setExplanation(event.target.value)}
-                            placeholder={tr('اكتب تفاصيل رد المتجر بوضوح (10 أحرف على الأقل)', 'Describe the store response (at least 10 characters)')}/>
+                            placeholder={tr(
+                              'اكتب تفاصيل رد المتجر بوضوح (10 أحرف على الأقل)',
+                              'Describe the store response (at least 10 characters)',
+                            )}
+                          />
                         </label>
                         <div className="seller-return-form-actions">
                           <button type="button" disabled={busy} onClick={() => setSelected(null)}>
                             {tr('إلغاء', 'Cancel')}
                           </button>
-                          <button type="submit" className="seller-return-submit"
-                            disabled={busy || explanation.trim().length < 10}>
-                            {busy ? tr('جار الإرسال…', 'Submitting…') : tr('تأكيد إرسال الرد', 'Submit response')}
+                          <button
+                            type="submit"
+                            className="seller-return-submit"
+                            disabled={busy || explanation.trim().length < 10}
+                          >
+                            {busy
+                              ? tr('جار الإرسال…', 'Submitting…')
+                              : tr('تأكيد إرسال الرد', 'Submit response')}
                           </button>
                         </div>
                       </form>
@@ -267,8 +342,12 @@ export function SellerReturnManagement() {
         </div>
       )}
       {!loading && hasMore && (
-        <button type="button" className="seller-returns-more" disabled={busy}
-          onClick={() => void loadMore()}>
+        <button
+          type="button"
+          className="seller-returns-more"
+          disabled={busy}
+          onClick={() => void loadMore()}
+        >
           {busy ? tr('جار التحميل…', 'Loading…') : tr('عرض المزيد', 'Load more')}
         </button>
       )}

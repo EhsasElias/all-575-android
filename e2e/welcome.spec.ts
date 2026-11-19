@@ -4,7 +4,9 @@ test.describe('welcome screen', () => {
   test('first launch shows one language only', async ({ page }) => {
     await page.goto('/');
     await expect(page).toHaveURL(/\/welcome\/logo$/);
-    await expect(page.getByRole('main').getByRole('button', { name: 'Tap the logo to shop now' })).toBeVisible();
+    await expect(
+      page.getByRole('main').getByRole('button', { name: 'Tap the logo to shop now' }),
+    ).toBeVisible();
     await page.getByRole('main').getByRole('button', { name: 'Tap the logo to shop now' }).click();
 
     await expect(page).toHaveURL(/\/welcome$/);

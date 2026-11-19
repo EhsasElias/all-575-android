@@ -129,7 +129,10 @@ export function SellerProductManagement({ products, memberships, onUpdated }: Pr
   const [scanNotice, setScanNotice] = useState('');
   const [fieldErrors, setFieldErrors] = useState<Partial<Record<keyof Draft, string>>>({});
   const [formError, setFormError] = useState('');
-  const [confirmation, setConfirmation] = useState<{ kind: 'save' | 'publish' | 'delete' | 'import' | 'importSubmit'; productId?: number } | null>(null);
+  const [confirmation, setConfirmation] = useState<{
+    kind: 'save' | 'publish' | 'delete' | 'import' | 'importSubmit';
+    productId?: number;
+  } | null>(null);
 
   useEffect(() => {
     if (!coverFile) {
@@ -162,42 +165,94 @@ export function SellerProductManagement({ products, memberships, onUpdated }: Pr
 
   const collectErrors = (): Partial<Record<keyof Draft, string>> => {
     const next: Partial<Record<keyof Draft, string>> = {};
-    if (selected === null && !draft.sku.trim())
-      next.sku = tr('رمز SKU مطلوب.', 'SKU is required.');
+    if (selected === null && !draft.sku.trim()) next.sku = tr('رمز SKU مطلوب.', 'SKU is required.');
     if (selected === null && draft.sku.trim().length > 100)
       next.sku = tr('رمز SKU يجب ألا يتجاوز 100 حرف.', 'SKU must be at most 100 characters.');
     if (draft.barcode.trim().length > 100)
-      next.barcode = tr('الباركود يجب ألا يتجاوز 100 حرف.', 'Barcode must be at most 100 characters.');
+      next.barcode = tr(
+        'الباركود يجب ألا يتجاوز 100 حرف.',
+        'Barcode must be at most 100 characters.',
+      );
     if (draft.variantNameAr.trim().length > 180)
-      next.variantNameAr = tr('اسم وحدة البيع بالعربية يجب ألا يتجاوز 180 حرفًا.', 'Arabic selling-unit name must be at most 180 characters.');
+      next.variantNameAr = tr(
+        'اسم وحدة البيع بالعربية يجب ألا يتجاوز 180 حرفًا.',
+        'Arabic selling-unit name must be at most 180 characters.',
+      );
     if (draft.variantNameEn.trim().length > 180)
-      next.variantNameEn = tr('اسم وحدة البيع بالإنجليزية يجب ألا يتجاوز 180 حرفًا.', 'English selling-unit name must be at most 180 characters.');
+      next.variantNameEn = tr(
+        'اسم وحدة البيع بالإنجليزية يجب ألا يتجاوز 180 حرفًا.',
+        'English selling-unit name must be at most 180 characters.',
+      );
     if (!sellerIds.includes(Number(draft.sellerId)))
-      next.sellerId = tr('المتجر إجباري. اختر متجرًا مسموحًا.', 'Store is required. Select an authorized store.');
-    if (!draft.categoryId || !/^[0-9]+$/.test(draft.categoryId) ||
-        !flatCategories(categories).some((category) => String(category.id) === draft.categoryId))
-      next.categoryId = tr('التصنيف إجباري. اختر تصنيفًا صحيحًا.', 'Category is required. Select a valid category.');
-    if (!draft.nameAr.trim()) next.nameAr = tr('اسم المنتج بالعربية مطلوب.', 'Arabic product name is required.');
-    if (!draft.nameEn.trim()) next.nameEn = tr('اسم المنتج بالإنجليزية مطلوب.', 'English product name is required.');
-    if (draft.nameAr.trim().length > 180) next.nameAr = tr('الحد الأقصى 180 حرفًا.', 'Maximum 180 characters.');
-    if (draft.nameEn.trim().length > 180) next.nameEn = tr('الحد الأقصى 180 حرفًا.', 'Maximum 180 characters.');
-    if (draft.descriptionAr.length > 10000) next.descriptionAr = tr('الوصف بالعربية يجب ألا يتجاوز 10000 حرف.', 'Arabic description must not exceed 10,000 characters.');
-    if (draft.descriptionEn.length > 10000) next.descriptionEn = tr('الوصف بالإنجليزية يجب ألا يتجاوز 10000 حرف.', 'English description must not exceed 10,000 characters.');
+      next.sellerId = tr(
+        'المتجر إجباري. اختر متجرًا مسموحًا.',
+        'Store is required. Select an authorized store.',
+      );
+    if (
+      !draft.categoryId ||
+      !/^[0-9]+$/.test(draft.categoryId) ||
+      !flatCategories(categories).some((category) => String(category.id) === draft.categoryId)
+    )
+      next.categoryId = tr(
+        'التصنيف إجباري. اختر تصنيفًا صحيحًا.',
+        'Category is required. Select a valid category.',
+      );
+    if (!draft.nameAr.trim())
+      next.nameAr = tr('اسم المنتج بالعربية مطلوب.', 'Arabic product name is required.');
+    if (!draft.nameEn.trim())
+      next.nameEn = tr('اسم المنتج بالإنجليزية مطلوب.', 'English product name is required.');
+    if (draft.nameAr.trim().length > 180)
+      next.nameAr = tr('الحد الأقصى 180 حرفًا.', 'Maximum 180 characters.');
+    if (draft.nameEn.trim().length > 180)
+      next.nameEn = tr('الحد الأقصى 180 حرفًا.', 'Maximum 180 characters.');
+    if (draft.descriptionAr.length > 10000)
+      next.descriptionAr = tr(
+        'الوصف بالعربية يجب ألا يتجاوز 10000 حرف.',
+        'Arabic description must not exceed 10,000 characters.',
+      );
+    if (draft.descriptionEn.length > 10000)
+      next.descriptionEn = tr(
+        'الوصف بالإنجليزية يجب ألا يتجاوز 10000 حرف.',
+        'English description must not exceed 10,000 characters.',
+      );
     if (!['standard', 'zero', 'exempt'].includes(draft.vatClass))
-      next.vatClass = tr('فئة الضريبة إجبارية. اختر فئة صحيحة.', 'VAT class is required. Select a valid class.');
-    if (draft.vatClass !== 'standard' && (draft.vatJustification.trim().length < 15 || draft.vatJustification.trim().length > 500))
-      next.vatJustification = tr('اذكر سببًا نظاميًا واضحًا (15–500 حرف). ستخضع الحالة لمراجعة الإدارة.', 'State the applicable legal reason (15–500 characters). Admin review is required.');
-    if (!/^[0-9]+(?:\.[0-9]{1,2})?$/.test(draft.price) ||
-        Number(draft.price) < 1 || Number(draft.price) > 100)
-      next.price = tr('أدخل سعرًا من 1 إلى 100 ريال (حتى منزلتين عشريتين).', 'Enter a price from SAR 1 to SAR 100 (up to 2 decimals).');
+      next.vatClass = tr(
+        'فئة الضريبة إجبارية. اختر فئة صحيحة.',
+        'VAT class is required. Select a valid class.',
+      );
+    if (
+      draft.vatClass !== 'standard' &&
+      (draft.vatJustification.trim().length < 15 || draft.vatJustification.trim().length > 500)
+    )
+      next.vatJustification = tr(
+        'اذكر سببًا نظاميًا واضحًا (15–500 حرف). ستخضع الحالة لمراجعة الإدارة.',
+        'State the applicable legal reason (15–500 characters). Admin review is required.',
+      );
+    if (
+      !/^[0-9]+(?:\.[0-9]{1,2})?$/.test(draft.price) ||
+      Number(draft.price) < 1 ||
+      Number(draft.price) > 100
+    )
+      next.price = tr(
+        'أدخل سعرًا من 1 إلى 100 ريال (حتى منزلتين عشريتين).',
+        'Enter a price from SAR 1 to SAR 100 (up to 2 decimals).',
+      );
     return next;
   };
   const displayApiFieldErrors = (cause: unknown): boolean => {
     if (!isApiError(cause) || cause.kind !== 'validation') return false;
     const mapping: Record<string, keyof Draft> = {
-      sku: 'sku', barcode: 'barcode', seller_id: 'sellerId', category_id: 'categoryId',
-      name_ar: 'nameAr', name_en: 'nameEn', description_ar: 'descriptionAr',
-      description_en: 'descriptionEn', price_halalas: 'price', vat_class: 'vatClass', vat_justification: 'vatJustification',
+      sku: 'sku',
+      barcode: 'barcode',
+      seller_id: 'sellerId',
+      category_id: 'categoryId',
+      name_ar: 'nameAr',
+      name_en: 'nameEn',
+      description_ar: 'descriptionAr',
+      description_en: 'descriptionEn',
+      price_halalas: 'price',
+      vat_class: 'vatClass',
+      vat_justification: 'vatJustification',
     };
     const mapped: Partial<Record<keyof Draft, string>> = {};
     for (const [key, messages] of Object.entries(cause.fieldErrors)) {
@@ -208,7 +263,6 @@ export function SellerProductManagement({ products, memberships, onUpdated }: Pr
     setFieldErrors(mapped);
     return true;
   };
-
 
   useEffect(() => {
     let active = true;
@@ -254,10 +308,14 @@ export function SellerProductManagement({ products, memberships, onUpdated }: Pr
       setCategoryRequestAr('');
       setCategoryRequestEn('');
       setCategoryRequestReason('');
-      setCategoryRequestNotice(tr('تم إرسال طلب التصنيف إلى الإدارة.', 'Category request sent for admin review.'));
+      setCategoryRequestNotice(
+        tr('تم إرسال طلب التصنيف إلى الإدارة.', 'Category request sent for admin review.'),
+      );
       await loadCategoryRequests(sellerId);
     } catch (cause) {
-      setCategoryRequestError(explainApiError(cause, tr('تعذر إرسال طلب التصنيف.', 'Unable to submit category request.')));
+      setCategoryRequestError(
+        explainApiError(cause, tr('تعذر إرسال طلب التصنيف.', 'Unable to submit category request.')),
+      );
     } finally {
       setBusy(false);
     }
@@ -287,7 +345,9 @@ export function SellerProductManagement({ products, memberships, onUpdated }: Pr
     const validCategory = (id: string | undefined) =>
       id && flatCategories(categories).some((item) => String(item.id) === id) ? id : undefined;
     const candidates: Partial<Draft> = {};
-    const categoryId = validCategory(catalogMatch ? String(catalogMatch.category_id) : parsed.categoryId);
+    const categoryId = validCategory(
+      catalogMatch ? String(catalogMatch.category_id) : parsed.categoryId,
+    );
     if (categoryId) candidates.categoryId = categoryId;
     const nameAr = catalogMatch?.name_ar || parsed.nameAr;
     const nameEn = catalogMatch?.name_en || parsed.nameEn;
@@ -322,14 +382,22 @@ export function SellerProductManagement({ products, memberships, onUpdated }: Pr
     });
     setFieldErrors({});
     setError('');
-    setScanNotice(catalogMatch
-      ? tr('هذا الرمز موجود بالفعل في المتجر. عُرضت البيانات المتاحة دون تكرار SKU أو الباركود.',
-          'This code already exists in your store. Details were suggested without duplicating the SKU or barcode.')
-      : Object.keys(candidates).length
-        ? tr('تمت تعبئة الحقول الفارغة بالبيانات المقروءة. راجع كل البيانات قبل الحفظ.',
-            'Recognized data filled blank fields. Review the details before saving.')
-        : tr('تمت قراءة الرمز، لكن لا توجد به بيانات منتج معروفة. راجع النص المقروء.',
-            'Code read but no product fields recognized. Review the scanned text.'));
+    setScanNotice(
+      catalogMatch
+        ? tr(
+            'هذا الرمز موجود بالفعل في المتجر. عُرضت البيانات المتاحة دون تكرار SKU أو الباركود.',
+            'This code already exists in your store. Details were suggested without duplicating the SKU or barcode.',
+          )
+        : Object.keys(candidates).length
+          ? tr(
+              'تمت تعبئة الحقول الفارغة بالبيانات المقروءة. راجع كل البيانات قبل الحفظ.',
+              'Recognized data filled blank fields. Review the details before saving.',
+            )
+          : tr(
+              'تمت قراءة الرمز، لكن لا توجد به بيانات منتج معروفة. راجع النص المقروء.',
+              'Code read but no product fields recognized. Review the scanned text.',
+            ),
+    );
   };
 
   const edit = (product: SellerProduct) => {
@@ -425,7 +493,13 @@ export function SellerProductManagement({ products, memberships, onUpdated }: Pr
             ...(draft.variantNameAr.trim() ? { name_ar: draft.variantNameAr.trim() } : {}),
             ...(draft.variantNameEn.trim() ? { name_en: draft.variantNameEn.trim() } : {}),
           });
-          setDraft((current) => ({ ...current, sku: '', barcode: '', variantNameAr: '', variantNameEn: '' }));
+          setDraft((current) => ({
+            ...current,
+            sku: '',
+            barcode: '',
+            variantNameAr: '',
+            variantNameEn: '',
+          }));
           setSuccess(
             tr(
               'تم حفظ المنتج ورمز SKU. يمكنك رفع الصورة وإرسال المنتج للمراجعة.',
@@ -434,10 +508,15 @@ export function SellerProductManagement({ products, memberships, onUpdated }: Pr
           );
           setQuickSku('');
         } catch (cause) {
-          setError(explainApiError(cause, tr(
-            'تم حفظ المسودة، لكن تعذرت إضافة SKU. عدّل الرمز وأضفه من قسم وحدة البيع أدناه.',
-            'Draft saved, but SKU could not be added. Correct it in the variant section below.',
-          )));
+          setError(
+            explainApiError(
+              cause,
+              tr(
+                'تم حفظ المسودة، لكن تعذرت إضافة SKU. عدّل الرمز وأضفه من قسم وحدة البيع أدناه.',
+                'Draft saved, but SKU could not be added. Correct it in the variant section below.',
+              ),
+            ),
+          );
         }
       } else {
         setSuccess(tr('تم تحديث مسودة المنتج.', 'Product draft updated.'));
@@ -445,7 +524,12 @@ export function SellerProductManagement({ products, memberships, onUpdated }: Pr
       onUpdated();
     } catch (cause) {
       if (!displayApiFieldErrors(cause)) {
-        setFormError(tr('تعذر حفظ المنتج. تحقق من البيانات أو الاتصال ثم أعد المحاولة.', 'Product could not be saved. Check details or connection and retry.'));
+        setFormError(
+          tr(
+            'تعذر حفظ المنتج. تحقق من البيانات أو الاتصال ثم أعد المحاولة.',
+            'Product could not be saved. Check details or connection and retry.',
+          ),
+        );
       }
     } finally {
       setBusy(false);
@@ -467,7 +551,13 @@ export function SellerProductManagement({ products, memberships, onUpdated }: Pr
         ...(draft.variantNameAr.trim() ? { name_ar: draft.variantNameAr.trim() } : {}),
         ...(draft.variantNameEn.trim() ? { name_en: draft.variantNameEn.trim() } : {}),
       });
-      setDraft((current) => ({ ...current, sku: '', barcode: '', variantNameAr: '', variantNameEn: '' }));
+      setDraft((current) => ({
+        ...current,
+        sku: '',
+        barcode: '',
+        variantNameAr: '',
+        variantNameEn: '',
+      }));
       setSuccess(
         tr(
           'تمت إضافة وحدة البيع. يمكنك إرسال المنتج للمراجعة.',
@@ -475,10 +565,15 @@ export function SellerProductManagement({ products, memberships, onUpdated }: Pr
         ),
       );
     } catch (cause) {
-      setError(explainApiError(cause, tr(
-        'تعذر إضافة وحدة البيع. تحقق من SKU والباركود.',
-        'Could not add the variant. Check SKU and barcode.',
-      )));
+      setError(
+        explainApiError(
+          cause,
+          tr(
+            'تعذر إضافة وحدة البيع. تحقق من SKU والباركود.',
+            'Could not add the variant. Check SKU and barcode.',
+          ),
+        ),
+      );
     } finally {
       setBusy(false);
     }
@@ -488,13 +583,20 @@ export function SellerProductManagement({ products, memberships, onUpdated }: Pr
     if (!isApiError(cause)) {
       return cause instanceof Error && cause.message ? cause.message : fallback;
     }
-    const details = Object.entries(cause.fieldErrors)
-      .flatMap(([field, messages]) => messages.map((message) => field + ': ' + message));
+    const details = Object.entries(cause.fieldErrors).flatMap(([field, messages]) =>
+      messages.map((message) => field + ': ' + message),
+    );
     const prefix = cause.status === null ? '' : 'HTTP ' + cause.status + ' — ';
     const message = cause.message?.trim() || fallback;
-    const specific = details.filter((item) => !message.includes(item.split(': ').slice(1).join(': ')));
-    return prefix + message + (cause.code ? ' [' + cause.code + ']' : '') +
-      (specific.length ? '\n' + specific.join('\n') : '');
+    const specific = details.filter(
+      (item) => !message.includes(item.split(': ').slice(1).join(': ')),
+    );
+    return (
+      prefix +
+      message +
+      (cause.code ? ' [' + cause.code + ']' : '') +
+      (specific.length ? '\n' + specific.join('\n') : '')
+    );
   };
 
   const submit = (productId: number) => {
@@ -515,7 +617,10 @@ export function SellerProductManagement({ products, memberships, onUpdated }: Pr
       setSuccess(
         result.data.status === 'published'
           ? tr('تم نشر المنتج مباشرة.', 'Product published immediately.')
-          : tr('تم إرسال المنتج للمراجعة، ولم يُنشر بعد.', 'Product submitted for review; it is not yet published.'),
+          : tr(
+              'تم إرسال المنتج للمراجعة، ولم يُنشر بعد.',
+              'Product submitted for review; it is not yet published.',
+            ),
       );
       if (selected === productId) setFormVisible(false);
       onUpdated();
@@ -523,8 +628,10 @@ export function SellerProductManagement({ products, memberships, onUpdated }: Pr
       displayApiFieldErrors(cause);
       const message = explainApiError(
         cause,
-        tr('تعذر نشر المنتج. تحقق من متطلبات النشر ثم أعد المحاولة.',
-          'Could not publish the product. Check the publishing requirements and try again.'),
+        tr(
+          'تعذر نشر المنتج. تحقق من متطلبات النشر ثم أعد المحاولة.',
+          'Could not publish the product. Check the publishing requirements and try again.',
+        ),
       );
       setFormError(message);
       setError(message);
@@ -565,11 +672,12 @@ export function SellerProductManagement({ products, memberships, onUpdated }: Pr
     setBusy(true);
     setError('');
     try {
-      const file = format === 'xlsx' ? await sellerCatalogExcelTemplate() : await sellerCatalogTemplate();
+      const file =
+        format === 'xlsx' ? await sellerCatalogExcelTemplate() : await sellerCatalogTemplate();
       const objectUrl = URL.createObjectURL(file.blob);
       const anchor = document.createElement('a');
       anchor.href = objectUrl;
-      anchor.download = file.filename ?? ('seller-products-template.' + format);
+      anchor.download = file.filename ?? 'seller-products-template.' + format;
       document.body.appendChild(anchor);
       anchor.click();
       anchor.remove();
@@ -585,12 +693,22 @@ export function SellerProductManagement({ products, memberships, onUpdated }: Pr
     if (selected === null || busy) return;
     const imageUrl = coverUrl.trim();
     if (!coverFile && !/^https:\/\/[^\s]+$/i.test(imageUrl)) {
-      setError(tr('اختر صورة أو أدخل رابط HTTPS صالحًا.', 'Choose an image or enter a valid HTTPS URL.'));
+      setError(
+        tr('اختر صورة أو أدخل رابط HTTPS صالحًا.', 'Choose an image or enter a valid HTTPS URL.'),
+      );
       return;
     }
-    if (coverFile && (!['image/jpeg', 'image/png', 'image/webp'].includes(coverFile.type) ||
-        coverFile.size > 5 * 1024 * 1024)) {
-      setError(tr('اختر صورة JPG أو PNG أو WebP لا تتجاوز 5 ميجابايت.', 'Choose a JPG, PNG or WebP image under 5 MB.'));
+    if (
+      coverFile &&
+      (!['image/jpeg', 'image/png', 'image/webp'].includes(coverFile.type) ||
+        coverFile.size > 5 * 1024 * 1024)
+    ) {
+      setError(
+        tr(
+          'اختر صورة JPG أو PNG أو WebP لا تتجاوز 5 ميجابايت.',
+          'Choose a JPG, PNG or WebP image under 5 MB.',
+        ),
+      );
       return;
     }
     setBusy(true);
@@ -613,7 +731,12 @@ export function SellerProductManagement({ products, memberships, onUpdated }: Pr
     const sellerId = Number(importSeller || sellerIds[0]);
     if (busy || importFile === null || !sellerIds.includes(sellerId)) return;
     if (importFile.size > 20 * 1024 * 1024 || !/[.](csv|xlsx)$/i.test(importFile.name)) {
-      setError(tr('اختر ملف CSV أو Excel لا يتجاوز 20 ميجابايت.', 'Choose a CSV or Excel file under 20 MB.'));
+      setError(
+        tr(
+          'اختر ملف CSV أو Excel لا يتجاوز 20 ميجابايت.',
+          'Choose a CSV or Excel file under 20 MB.',
+        ),
+      );
       return;
     }
     setBusy(true);
@@ -657,23 +780,28 @@ export function SellerProductManagement({ products, memberships, onUpdated }: Pr
       setCsvPreview(null);
       const fields = isApiError(cause) ? cause.fieldErrors : null;
       const validation = fields
-        ? Object.values(fields).flat().filter((message): message is string => typeof message === 'string')
+        ? Object.values(fields)
+            .flat()
+            .filter((message): message is string => typeof message === 'string')
         : [];
       if (validation.length > 0) {
         setImportIssues(validation);
         setError('');
       } else {
-        setImportIssues([isApiError(cause) && cause.status !== null && cause.status >= 500
-          ? tr('تعذر استيراد الملف بسبب خطأ بالخادم. تحقق من الأسعار (1 إلى 100 ريال) ثم أعد المحاولة، أو أبلغ الدعم إذا استمر الخطأ.', 'Server error during import. Check that prices are within SAR 1–100 and retry, or contact support if it continues.')
-          : uploadErrorMessage(cause, ar ? 'ar' : 'en', 'csv')]);
+        setImportIssues([
+          isApiError(cause) && cause.status !== null && cause.status >= 500
+            ? tr(
+                'تعذر استيراد الملف بسبب خطأ بالخادم. تحقق من الأسعار (1 إلى 100 ريال) ثم أعد المحاولة، أو أبلغ الدعم إذا استمر الخطأ.',
+                'Server error during import. Check that prices are within SAR 1–100 and retry, or contact support if it continues.',
+              )
+            : uploadErrorMessage(cause, ar ? 'ar' : 'en', 'csv'),
+        ]);
         setError('');
       }
     } finally {
       setBusy(false);
     }
   };
-
-
 
   return (
     <section>
@@ -716,42 +844,67 @@ export function SellerProductManagement({ products, memberships, onUpdated }: Pr
       )}
       {sellerIds.length > 0 && (
         <div style={{ ...card, marginBottom: 16 }}>
-          <button type="button" style={button}
+          <button
+            type="button"
+            style={button}
             aria-expanded={categoryRequestVisible}
             onClick={() => {
               const visible = !categoryRequestVisible;
               setCategoryRequestVisible(visible);
               if (visible) void loadCategoryRequests(Number(categoryRequestSeller || sellerIds[0]));
-            }}>
+            }}
+          >
             {categoryRequestVisible
               ? tr('إغلاق طلب التصنيف', 'Close category request')
               : tr('طلب تصنيف أو تصنيف فرعي جديد', 'Request a new category or subcategory')}
           </button>
           {categoryRequestVisible && (
             <>
-              <p>{tr('إضافة التصنيفات وتعديلها من صلاحيات الإدارة فقط. يمكن للبائع طلب تصنيف جديد ومتابعة حالته هنا.',
-                'Only admin manages categories. Sellers can request a new category and track its approval here.')}</p>
-              <form onSubmit={(event) => void submitCategoryRequest(event)} style={{ display: 'grid', gap: 12 }}>
+              <p>
+                {tr(
+                  'إضافة التصنيفات وتعديلها من صلاحيات الإدارة فقط. يمكن للبائع طلب تصنيف جديد ومتابعة حالته هنا.',
+                  'Only admin manages categories. Sellers can request a new category and track its approval here.',
+                )}
+              </p>
+              <form
+                onSubmit={(event) => void submitCategoryRequest(event)}
+                style={{ display: 'grid', gap: 12 }}
+              >
                 <div style={controls}>
                   <label style={field}>
                     {tr('المتجر', 'Store')}
-                    <select value={categoryRequestSeller} required
+                    <select
+                      value={categoryRequestSeller}
+                      required
                       onChange={(event) => {
                         setCategoryRequestSeller(event.target.value);
                         void loadCategoryRequests(Number(event.target.value));
-                      }}>
+                      }}
+                    >
                       {sellerIds.map((id) => {
                         const entry = allowed.find((membership) => membership.seller_id === id);
-                        return <option key={id} value={id}>{entry ? (ar ? entry.name_ar : entry.name_en) : id}</option>;
+                        return (
+                          <option key={id} value={id}>
+                            {entry ? (ar ? entry.name_ar : entry.name_en) : id}
+                          </option>
+                        );
                       })}
                     </select>
                   </label>
                   <label style={field}>
-                    {tr('التصنيف الرئيسي (اختياري للتصنيف الفرعي)', 'Parent category (optional for subcategory)')}
-                    <select value={categoryRequestParent} onChange={(event) => setCategoryRequestParent(event.target.value)}>
+                    {tr(
+                      'التصنيف الرئيسي (اختياري للتصنيف الفرعي)',
+                      'Parent category (optional for subcategory)',
+                    )}
+                    <select
+                      value={categoryRequestParent}
+                      onChange={(event) => setCategoryRequestParent(event.target.value)}
+                    >
                       <option value="">{tr('تصنيف رئيسي جديد', 'New parent category')}</option>
                       {categories.map((category) => (
-                        <option key={category.id} value={category.id}>{ar ? category.name.ar : category.name.en}</option>
+                        <option key={category.id} value={category.id}>
+                          {ar ? category.name.ar : category.name.en}
+                        </option>
                       ))}
                     </select>
                   </label>
@@ -759,34 +912,61 @@ export function SellerProductManagement({ products, memberships, onUpdated }: Pr
                 <div style={controls}>
                   <label style={field}>
                     {tr('اسم التصنيف بالعربية *', 'Arabic category name *')}
-                    <input required maxLength={180} value={categoryRequestAr}
-                      onChange={(event) => setCategoryRequestAr(event.target.value)} />
+                    <input
+                      required
+                      maxLength={180}
+                      value={categoryRequestAr}
+                      onChange={(event) => setCategoryRequestAr(event.target.value)}
+                    />
                   </label>
                   <label style={field}>
                     {tr('اسم التصنيف بالإنجليزية *', 'English category name *')}
-                    <input required maxLength={180} value={categoryRequestEn}
-                      onChange={(event) => setCategoryRequestEn(event.target.value)} />
+                    <input
+                      required
+                      maxLength={180}
+                      value={categoryRequestEn}
+                      onChange={(event) => setCategoryRequestEn(event.target.value)}
+                    />
                   </label>
                 </div>
                 <label style={field}>
                   {tr('سبب الطلب (اختياري)', 'Reason (optional)')}
-                  <textarea rows={2} maxLength={1000} value={categoryRequestReason}
-                    onChange={(event) => setCategoryRequestReason(event.target.value)} />
+                  <textarea
+                    rows={2}
+                    maxLength={1000}
+                    value={categoryRequestReason}
+                    onChange={(event) => setCategoryRequestReason(event.target.value)}
+                  />
                 </label>
-                <div><button type="submit" style={button} disabled={busy || !categoryRequestAr.trim() || !categoryRequestEn.trim()}>
-                  {tr('إرسال الطلب للإدارة', 'Send request to admin')}
-                </button></div>
+                <div>
+                  <button
+                    type="submit"
+                    style={button}
+                    disabled={busy || !categoryRequestAr.trim() || !categoryRequestEn.trim()}
+                  >
+                    {tr('إرسال الطلب للإدارة', 'Send request to admin')}
+                  </button>
+                </div>
               </form>
-              {categoryRequestError && <p role="alert" style={{ color: '#b42318' }}>{categoryRequestError}</p>}
+              {categoryRequestError && (
+                <p role="alert" style={{ color: '#b42318' }}>
+                  {categoryRequestError}
+                </p>
+              )}
               {categoryRequestNotice && <p role="status">{categoryRequestNotice}</p>}
               <h4>{tr('طلبات التصنيفات السابقة', 'Previous category requests')}</h4>
-              {categoryRequestList.length === 0 ? <p>{tr('لا توجد طلبات.', 'No requests yet.')}</p> : (
+              {categoryRequestList.length === 0 ? (
+                <p>{tr('لا توجد طلبات.', 'No requests yet.')}</p>
+              ) : (
                 <ul>
                   {categoryRequestList.map((item) => (
                     <li key={item.id}>
-                      {ar ? item.name_ar : item.name_en} — {item.status === 'pending'
+                      {ar ? item.name_ar : item.name_en} —{' '}
+                      {item.status === 'pending'
                         ? tr('قيد المراجعة', 'Pending')
-                        : item.status === 'approved' ? tr('مقبول', 'Approved') : tr('مرفوض', 'Rejected')}
+                        : item.status === 'approved'
+                          ? tr('مقبول', 'Approved')
+                          : tr('مرفوض', 'Rejected')}
                       {item.review_note ? ` — ${item.review_note}` : ''}
                     </li>
                   ))}
@@ -823,7 +1003,10 @@ export function SellerProductManagement({ products, memberships, onUpdated }: Pr
         <div className="seller-import-card" style={card}>
           <h3>{tr('استيراد المنتجات عبر Excel أو CSV', 'Import products using Excel or CSV')}</h3>
           <p className="seller-required-hint">
-            {tr('في القالب: SKU والتصنيف والاسمان والسعر وفئة الضريبة إجبارية. المتجر والوصف والباركود اختيارية؛ المتجر يُحدد من هذه الصفحة.', 'In the template, SKU, category, both names, price and VAT class are required. Store, descriptions and barcode are optional; the store is selected on this page.')}
+            {tr(
+              'في القالب: SKU والتصنيف والاسمان والسعر وفئة الضريبة إجبارية. المتجر والوصف والباركود اختيارية؛ المتجر يُحدد من هذه الصفحة.',
+              'In the template, SKU, category, both names, price and VAT class are required. Store, descriptions and barcode are optional; the store is selected on this page.',
+            )}
           </p>
           <p className="seller-required-hint">
             {tr(
@@ -880,7 +1063,9 @@ export function SellerProductManagement({ products, memberships, onUpdated }: Pr
                   setImportIssues([]);
                 }}
               />
-              <span className="seller-upload-button">{tr('اختيار ملف Excel أو CSV', 'Choose Excel or CSV file')}</span>
+              <span className="seller-upload-button">
+                {tr('اختيار ملف Excel أو CSV', 'Choose Excel or CSV file')}
+              </span>
               <span className="seller-upload-name">
                 {importFile?.name ?? tr('لم يتم اختيار ملف بعد', 'No file selected')}
               </span>
@@ -915,13 +1100,19 @@ export function SellerProductManagement({ products, memberships, onUpdated }: Pr
           {importIssues.length > 0 && (
             <div className="seller-import-issues" role="alert" aria-live="assertive">
               <div className="seller-import-issues-head">
-                <strong>{tr('تعذر استيراد الملف — تفاصيل الأخطاء', 'Import failed — validation details')}</strong>
-                <span>{importIssues.length} {tr('ملاحظات', 'issues')}</span>
+                <strong>
+                  {tr('تعذر استيراد الملف — تفاصيل الأخطاء', 'Import failed — validation details')}
+                </strong>
+                <span>
+                  {importIssues.length} {tr('ملاحظات', 'issues')}
+                </span>
               </div>
-              <p>{tr(
-                'راجِع الصفوف والأعمدة الموضحة أدناه، صحّح القيم في Excel أو CSV ثم أعد رفع الملف. لم يتم استيراد أي منتج.',
-                'Check the rows and columns below, correct the values in Excel or CSV, then upload again. No products were imported.',
-              )}</p>
+              <p>
+                {tr(
+                  'راجِع الصفوف والأعمدة الموضحة أدناه، صحّح القيم في Excel أو CSV ثم أعد رفع الملف. لم يتم استيراد أي منتج.',
+                  'Check the rows and columns below, correct the values in Excel or CSV, then upload again. No products were imported.',
+                )}
+              </p>
               <ol>
                 {importIssues.map((issue, index) => (
                   <li key={index}>{issue}</li>
@@ -972,7 +1163,13 @@ export function SellerProductManagement({ products, memberships, onUpdated }: Pr
         </p>
       )}
       {!formVisible && (error || formError) && (
-        <div className="seller-form-message" role="alert">{(formError || error).split('\n').map((line, index) => <p key={index} style={{ margin: '2px 0' }}>{line}</p>)}</div>
+        <div className="seller-form-message" role="alert">
+          {(formError || error).split('\n').map((line, index) => (
+            <p key={index} style={{ margin: '2px 0' }}>
+              {line}
+            </p>
+          ))}
+        </div>
       )}
       {!formVisible && success && <p role="status">{success}</p>}
       {formVisible && (
@@ -983,19 +1180,31 @@ export function SellerProductManagement({ products, memberships, onUpdated }: Pr
               : tr('تعديل مسودة', 'Edit draft')}{' '}
           </h3>
           <div className="seller-product-scanner-section">
-            <button type="button" className="seller-product-scan-button" disabled={busy}
-              onClick={() => setScannerOpen((open) => !open)}>
+            <button
+              type="button"
+              className="seller-product-scan-button"
+              disabled={busy}
+              onClick={() => setScannerOpen((open) => !open)}
+            >
               <span aria-hidden="true">▣</span>
-              {scannerOpen ? tr('إغلاق الكاميرا', 'Close camera')
+              {scannerOpen
+                ? tr('إغلاق الكاميرا', 'Close camera')
                 : tr('مسح Barcode / QR بالكاميرا', 'Scan Barcode / QR with camera')}
             </button>
             {scannerOpen && (
               <Suspense fallback={<p>{tr('جار تجهيز الماسح…', 'Preparing scanner…')}</p>}>
-                <ProductCameraScanner ar={ar} onRead={(text, format) => void applyScan(text, format)}
-                  onClose={() => setScannerOpen(false)}/>
+                <ProductCameraScanner
+                  ar={ar}
+                  onRead={(text, format) => void applyScan(text, format)}
+                  onClose={() => setScannerOpen(false)}
+                />
               </Suspense>
             )}
-            {scanNotice && <p className="seller-form-success" role="status">{scanNotice}</p>}
+            {scanNotice && (
+              <p className="seller-form-success" role="status">
+                {scanNotice}
+              </p>
+            )}
             {scannedText && (
               <details className="seller-scanned-raw">
                 <summary>{tr('عرض النص المقروء من الرمز', 'Show scanned code content')}</summary>
@@ -1004,11 +1213,23 @@ export function SellerProductManagement({ products, memberships, onUpdated }: Pr
             )}
           </div>
           <form onSubmit={save} noValidate>
-            <p className="seller-required-hint">{tr('الحقول المميزة بـ * إلزامية.', 'Fields marked * are required.')}</p>
+            <p className="seller-required-hint">
+              {tr('الحقول المميزة بـ * إلزامية.', 'Fields marked * are required.')}
+            </p>
             {(formError || error) && (
-              <div className="seller-form-message" role="alert">{(formError || error).split('\n').map((line, index) => <p key={index} style={{ margin: '2px 0' }}>{line}</p>)}</div>
+              <div className="seller-form-message" role="alert">
+                {(formError || error).split('\n').map((line, index) => (
+                  <p key={index} style={{ margin: '2px 0' }}>
+                    {line}
+                  </p>
+                ))}
+              </div>
             )}
-            {success && <div className="seller-form-success" role="status">{success}</div>}
+            {success && (
+              <div className="seller-form-success" role="status">
+                {success}
+              </div>
+            )}
             {selected === null && (
               <div style={{ ...controls, marginBottom: 12 }}>
                 <label style={field}>
@@ -1017,20 +1238,20 @@ export function SellerProductManagement({ products, memberships, onUpdated }: Pr
                     required
                     maxLength={100}
                     {...fieldProps('sku')}
-                  value={draft.sku}
+                    value={draft.sku}
                     onChange={(event) => set('sku', event.target.value)}
                   />
-                {fieldError('sku')}
+                  {fieldError('sku')}
                 </label>
                 <label style={field}>
                   {tr('الباركود', 'Barcode')}
                   <input
                     maxLength={100}
                     {...fieldProps('barcode')}
-                  value={draft.barcode}
+                    value={draft.barcode}
                     onChange={(event) => set('barcode', event.target.value)}
                   />
-                {fieldError('barcode')}
+                  {fieldError('barcode')}
                 </label>
                 <label style={field}>
                   {tr('اسم وحدة البيع بالعربية (اختياري)', 'Selling-unit name (Arabic, optional)')}
@@ -1043,7 +1264,10 @@ export function SellerProductManagement({ products, memberships, onUpdated }: Pr
                   {fieldError('variantNameAr')}
                 </label>
                 <label style={field}>
-                  {tr('اسم وحدة البيع بالإنجليزية (اختياري)', 'Selling-unit name (English, optional)')}
+                  {tr(
+                    'اسم وحدة البيع بالإنجليزية (اختياري)',
+                    'Selling-unit name (English, optional)',
+                  )}
                   <input
                     maxLength={180}
                     value={draft.variantNameEn}
@@ -1164,7 +1388,11 @@ export function SellerProductManagement({ products, memberships, onUpdated }: Pr
                   onChange={(event) => {
                     const val = event.target.value;
                     if (val === 'standard' || val === 'zero' || val === 'exempt')
-                      setDraft((current) => ({ ...current, vatClass: val, vatJustification: val === 'standard' ? '' : current.vatJustification }));
+                      setDraft((current) => ({
+                        ...current,
+                        vatClass: val,
+                        vatJustification: val === 'standard' ? '' : current.vatJustification,
+                      }));
                   }}
                 >
                   <option value="standard">{tr('ضريبة قياسية (15%)', 'Standard VAT (15%)')}</option>
@@ -1172,7 +1400,12 @@ export function SellerProductManagement({ products, memberships, onUpdated }: Pr
                   <option value="exempt">{tr('معفى من الضريبة', 'VAT exempt')}</option>
                 </select>
                 {fieldError('vatClass')}
-                <small>{tr('تُستخدم القياسية افتراضيًا. الصفرية والإعفاء للحالات المؤهلة نظاميًا فقط.', 'Standard VAT is the default. Zero-rated and exempt are only for legally qualifying supplies.')}</small>
+                <small>
+                  {tr(
+                    'تُستخدم القياسية افتراضيًا. الصفرية والإعفاء للحالات المؤهلة نظاميًا فقط.',
+                    'Standard VAT is the default. Zero-rated and exempt are only for legally qualifying supplies.',
+                  )}
+                </small>
               </label>
             </div>
             {draft.vatClass !== 'standard' && (
@@ -1187,10 +1420,18 @@ export function SellerProductManagement({ products, memberships, onUpdated }: Pr
                     rows={3}
                     value={draft.vatJustification}
                     onChange={(event) => set('vatJustification', event.target.value)}
-                    placeholder={tr('اذكر المادة أو الحالة النظامية التي تجعل المنتج مؤهلًا لهذه المعاملة، مع أي تفاصيل داعمة.', 'Describe the applicable legal provision or eligible transaction and supporting details.')}
+                    placeholder={tr(
+                      'اذكر المادة أو الحالة النظامية التي تجعل المنتج مؤهلًا لهذه المعاملة، مع أي تفاصيل داعمة.',
+                      'Describe the applicable legal provision or eligible transaction and supporting details.',
+                    )}
                   />
                   {fieldError('vatJustification')}
-                  <small>{tr('لن يتم النشر المباشر؛ يلزم التحقق والموافقة من الإدارة.', 'Direct publishing is disabled; administrative review is required.')}</small>
+                  <small>
+                    {tr(
+                      'لن يتم النشر المباشر؛ يلزم التحقق والموافقة من الإدارة.',
+                      'Direct publishing is disabled; administrative review is required.',
+                    )}
+                  </small>
                 </label>
               </div>
             )}
@@ -1205,53 +1446,105 @@ export function SellerProductManagement({ products, memberships, onUpdated }: Pr
           </form>
           {selected !== null && (
             <section className="seller-product-image-card">
-              <button type="button" className="seller-product-image-toggle"
-                aria-expanded={imageCardOpen} onClick={() => setImageCardOpen((value) => !value)}>
+              <button
+                type="button"
+                className="seller-product-image-toggle"
+                aria-expanded={imageCardOpen}
+                onClick={() => setImageCardOpen((value) => !value)}
+              >
                 {tr('مرفقات المنتج — صورة الغلاف', 'Product attachments — cover image')}
                 <span aria-hidden="true">{imageCardOpen ? '−' : '+'}</span>
               </button>
               {imageCardOpen && (
                 <div className="seller-product-image-body">
-                  <p>{tr('يمكنك رفع صورة من الجهاز أو إدخال رابط صورة HTTPS.', 'Upload an image file or use an HTTPS image URL.')}</p>
+                  <p>
+                    {tr(
+                      'يمكنك رفع صورة من الجهاز أو إدخال رابط صورة HTTPS.',
+                      'Upload an image file or use an HTTPS image URL.',
+                    )}
+                  </p>
                   <div className="seller-product-image-layout">
                     <div className="seller-product-image-controls">
                       <label className="seller-upload" style={field}>
                         <span>{tr('ملف الصورة (حتى 5 MB)', 'Image file (up to 5 MB)')}</span>
-                        <input type="file" accept="image/jpeg,image/png,image/webp"
-                          onChange={(event) => { setCoverFile(event.target.files?.[0] ?? null); setCoverUrl(''); }} />
-                        <span className="seller-upload-button">{tr('اختيار صورة', 'Choose image')}</span>
-                        <span className="seller-upload-name">{coverFile?.name ?? tr('لا توجد صورة محددة', 'No selected image')}</span>
+                        <input
+                          type="file"
+                          accept="image/jpeg,image/png,image/webp"
+                          onChange={(event) => {
+                            setCoverFile(event.target.files?.[0] ?? null);
+                            setCoverUrl('');
+                          }}
+                        />
+                        <span className="seller-upload-button">
+                          {tr('اختيار صورة', 'Choose image')}
+                        </span>
+                        <span className="seller-upload-name">
+                          {coverFile?.name ?? tr('لا توجد صورة محددة', 'No selected image')}
+                        </span>
                       </label>
                       <label style={field}>
                         {tr('أو رابط الصورة (HTTPS)', 'Or image URL (HTTPS)')}
-                        <input type="url" dir="ltr" maxLength={2048}
-                          placeholder="https://example.com/image.jpg" value={coverUrl}
-                          onChange={(event) => { setCoverUrl(event.target.value); if (event.target.value) setCoverFile(null); }} />
+                        <input
+                          type="url"
+                          dir="ltr"
+                          maxLength={2048}
+                          placeholder="https://example.com/image.jpg"
+                          value={coverUrl}
+                          onChange={(event) => {
+                            setCoverUrl(event.target.value);
+                            if (event.target.value) setCoverFile(null);
+                          }}
+                        />
                       </label>
-                      <button type="button" style={button} disabled={busy || (!coverFile && !coverUrl.trim())}
-                        onClick={() => void uploadCover()}>
+                      <button
+                        type="button"
+                        style={button}
+                        disabled={busy || (!coverFile && !coverUrl.trim())}
+                        onClick={() => void uploadCover()}
+                      >
                         {tr('حفظ صورة المنتج', 'Save product image')}
                       </button>
                     </div>
-                    {!coverFile && !coverUrl.trim() && products.find((product) => product.id === selected)?.image_path && (
-                      <div className="seller-product-image-preview">
-                        <img
-                          src={new URL('/storage/' + (products.find((product) => product.id === selected)?.image_path ?? '').split('/').map(encodeURIComponent).join('/'), env.apiBaseUrl).toString()}
-                          alt={tr('صورة المنتج الحالية', 'Current product image')}
-                        />
-                        <span>{tr('الصورة الحالية', 'Current image')}</span>
-                      </div>
-                    )}
+                    {!coverFile &&
+                      !coverUrl.trim() &&
+                      products.find((product) => product.id === selected)?.image_path && (
+                        <div className="seller-product-image-preview">
+                          <img
+                            src={new URL(
+                              '/storage/' +
+                                (
+                                  products.find((product) => product.id === selected)?.image_path ??
+                                  ''
+                                )
+                                  .split('/')
+                                  .map(encodeURIComponent)
+                                  .join('/'),
+                              env.apiBaseUrl,
+                            ).toString()}
+                            alt={tr('صورة المنتج الحالية', 'Current product image')}
+                          />
+                          <span>{tr('الصورة الحالية', 'Current image')}</span>
+                        </div>
+                      )}
                     {coverFile && (
                       <div className="seller-product-image-preview">
                         <span>{tr('الصورة المختارة:', 'Selected image:')}</span>
-                        {localCoverPreview && <img src={localCoverPreview} alt={tr('معاينة صورة المنتج', 'Selected image preview')} />}
+                        {localCoverPreview && (
+                          <img
+                            src={localCoverPreview}
+                            alt={tr('معاينة صورة المنتج', 'Selected image preview')}
+                          />
+                        )}
                         <strong>{coverFile.name}</strong>
                       </div>
                     )}
                     {!coverFile && /^https:\/\//i.test(coverUrl.trim()) && (
                       <div className="seller-product-image-preview">
-                        <img key={coverUrl} src={coverUrl} alt={tr('معاينة الصورة', 'Image preview')} />
+                        <img
+                          key={coverUrl}
+                          src={coverUrl}
+                          alt={tr('معاينة الصورة', 'Image preview')}
+                        />
                       </div>
                     )}
                   </div>
@@ -1290,7 +1583,10 @@ export function SellerProductManagement({ products, memberships, onUpdated }: Pr
                   {fieldError('variantNameAr')}
                 </label>
                 <label style={field}>
-                  {tr('اسم وحدة البيع بالإنجليزية (اختياري)', 'Selling-unit name (English, optional)')}
+                  {tr(
+                    'اسم وحدة البيع بالإنجليزية (اختياري)',
+                    'Selling-unit name (English, optional)',
+                  )}
                   <input
                     maxLength={180}
                     value={draft.variantNameEn}
@@ -1347,8 +1643,8 @@ export function SellerProductManagement({ products, memberships, onUpdated }: Pr
             </p>
           )}
           <small>
-            {tr('رقم التصنيف', 'Category number')} #{product.category_id} · {tr('رقم المتجر', 'Store number')} #
-            {product.seller_id}
+            {tr('رقم التصنيف', 'Category number')} #{product.category_id} ·{' '}
+            {tr('رقم المتجر', 'Store number')} #{product.seller_id}
           </small>
           {editable(product) && sellerIds.includes(product.seller_id) && (
             <div style={{ ...controls, marginTop: 10 }}>
@@ -1371,10 +1667,28 @@ export function SellerProductManagement({ products, memberships, onUpdated }: Pr
                     aria-label={tr('حذف مسودة المنتج', 'Delete draft product')}
                     disabled={busy}
                     onClick={() => setConfirmation({ kind: 'delete', productId: product.id })}
-                    style={{ ...button, color: '#b42318', border: '1px solid #e9b3ad', display: 'inline-flex', alignItems: 'center', gap: 6 }}
+                    style={{
+                      ...button,
+                      color: '#b42318',
+                      border: '1px solid #e9b3ad',
+                      display: 'inline-flex',
+                      alignItems: 'center',
+                      gap: 6,
+                    }}
                   >
-                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
-                      <path d="M3 6h18M8 6V4h8v2m3 0-1 14H6L5 6m5 4v7m4-7v7"/>
+                    <svg
+                      xmlns="http://www.w3.org/2000/svg"
+                      width="16"
+                      height="16"
+                      viewBox="0 0 24 24"
+                      fill="none"
+                      stroke="currentColor"
+                      strokeWidth="2"
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      aria-hidden="true"
+                    >
+                      <path d="M3 6h18M8 6V4h8v2m3 0-1 14H6L5 6m5 4v7m4-7v7" />
                     </svg>
                     {tr('حذف', 'Delete')}
                   </button>
@@ -1386,16 +1700,35 @@ export function SellerProductManagement({ products, memberships, onUpdated }: Pr
       ))}
       {importSuccessMessage && (
         <div className="seller-confirm-overlay" role="presentation">
-          <div className="seller-confirm-dialog" role="alertdialog" aria-modal="true"
-               aria-labelledby="seller-import-success-title" aria-describedby="seller-import-success-description"
-               onKeyDown={(event) => { if (event.key === 'Escape') setImportSuccessMessage(null); }}>
-            <div aria-hidden="true" style={{ color: '#188451', fontSize: 48, textAlign: 'center', lineHeight: 1.2 }}>✓</div>
+          <div
+            className="seller-confirm-dialog"
+            role="alertdialog"
+            aria-modal="true"
+            aria-labelledby="seller-import-success-title"
+            aria-describedby="seller-import-success-description"
+            onKeyDown={(event) => {
+              if (event.key === 'Escape') setImportSuccessMessage(null);
+            }}
+          >
+            <div
+              aria-hidden="true"
+              style={{ color: '#188451', fontSize: 48, textAlign: 'center', lineHeight: 1.2 }}
+            >
+              ✓
+            </div>
             <h3 id="seller-import-success-title" style={{ textAlign: 'center' }}>
               {tr('تم استيراد المنتجات بنجاح', 'Products imported successfully')}
             </h3>
-            <p id="seller-import-success-description" style={{ textAlign: 'center' }}>{importSuccessMessage}</p>
+            <p id="seller-import-success-description" style={{ textAlign: 'center' }}>
+              {importSuccessMessage}
+            </p>
             <div className="seller-confirm-actions">
-              <button type="button" className="seller-confirm-primary" autoFocus onClick={() => setImportSuccessMessage(null)}>
+              <button
+                type="button"
+                className="seller-confirm-primary"
+                autoFocus
+                onClick={() => setImportSuccessMessage(null)}
+              >
                 {tr('حسنًا', 'OK')}
               </button>
             </div>
@@ -1403,12 +1736,23 @@ export function SellerProductManagement({ products, memberships, onUpdated }: Pr
         </div>
       )}
       {confirmation && (
-        <div className="seller-confirm-overlay" role="presentation" onMouseDown={(event) => {
-          if (event.target === event.currentTarget && !busy) setConfirmation(null);
-        }}>
-          <div className="seller-confirm-dialog" role="dialog" aria-modal="true"
-               aria-labelledby="seller-confirm-title" aria-describedby="seller-confirm-description"
-               onKeyDown={(event) => { if (event.key === 'Escape' && !busy) setConfirmation(null); }}>
+        <div
+          className="seller-confirm-overlay"
+          role="presentation"
+          onMouseDown={(event) => {
+            if (event.target === event.currentTarget && !busy) setConfirmation(null);
+          }}
+        >
+          <div
+            className="seller-confirm-dialog"
+            role="dialog"
+            aria-modal="true"
+            aria-labelledby="seller-confirm-title"
+            aria-describedby="seller-confirm-description"
+            onKeyDown={(event) => {
+              if (event.key === 'Escape' && !busy) setConfirmation(null);
+            }}
+          >
             <h3 id="seller-confirm-title">
               {confirmation.kind === 'save'
                 ? tr('تأكيد حفظ المنتج', 'Confirm saving product')
@@ -1422,9 +1766,15 @@ export function SellerProductManagement({ products, memberships, onUpdated }: Pr
             </h3>
             <p id="seller-confirm-description">
               {confirmation.kind === 'save'
-                ? tr('هل تريد حفظ بيانات المنتج كمسودة؟ يمكنك إكمال الصورة والتفاصيل بعد الحفظ.', 'Save this product as a draft? You can add an image and more details afterwards.')
+                ? tr(
+                    'هل تريد حفظ بيانات المنتج كمسودة؟ يمكنك إكمال الصورة والتفاصيل بعد الحفظ.',
+                    'Save this product as a draft? You can add an image and more details afterwards.',
+                  )
                 : confirmation.kind === 'delete'
-                  ? tr('هل تريد حذف هذه المسودة نهائياً؟ لا يمكن التراجع عن هذا الإجراء.', 'Permanently delete this draft? This action cannot be undone.')
+                  ? tr(
+                      'هل تريد حذف هذه المسودة نهائياً؟ لا يمكن التراجع عن هذا الإجراء.',
+                      'Permanently delete this draft? This action cannot be undone.',
+                    )
                   : confirmation.kind === 'import'
                     ? tr(
                         `هل تريد استيراد المنتجات من الملف «${importFile?.name ?? ''}» كمسودات فقط؟ لن يتم نشرها تلقائيًا.`,
@@ -1435,26 +1785,40 @@ export function SellerProductManagement({ products, memberships, onUpdated }: Pr
                           `هل تريد استيراد «${importFile?.name ?? ''}» ونشر المنتجات مباشرة على الموقع؟ يجب أن تكون صور المنتجات صالحة، وتُراجع باقي البيانات تلقائيًا.`,
                           `Import “${importFile?.name ?? ''}” and publish directly to the website? Each product needs a valid cover image and must pass validation.`,
                         )
-                      : tr('هل تريد نشر المنتج على الموقع؟ سيُنشر مباشرة عند استيفاء المتطلبات وإتاحة النشر المباشر، وإلا يُرسل للمراجعة.', 'Publish this product to the website? Eligible products publish immediately when direct publishing is enabled; otherwise they are sent for review.')}
+                      : tr(
+                          'هل تريد نشر المنتج على الموقع؟ سيُنشر مباشرة عند استيفاء المتطلبات وإتاحة النشر المباشر، وإلا يُرسل للمراجعة.',
+                          'Publish this product to the website? Eligible products publish immediately when direct publishing is enabled; otherwise they are sent for review.',
+                        )}
             </p>
             <div className="seller-confirm-actions">
-              <button type="button" onClick={() => setConfirmation(null)} disabled={busy}>{tr('إلغاء', 'Cancel')}</button>
-              <button type="button" className="seller-confirm-primary" disabled={busy} autoFocus
+              <button type="button" onClick={() => setConfirmation(null)} disabled={busy}>
+                {tr('إلغاء', 'Cancel')}
+              </button>
+              <button
+                type="button"
+                className="seller-confirm-primary"
+                disabled={busy}
+                autoFocus
                 onClick={() => {
                   if (confirmation.kind === 'save') void persist();
                   else if (confirmation.kind === 'import' || confirmation.kind === 'importSubmit') {
                     const submitAfterImport = confirmation.kind === 'importSubmit';
                     setConfirmation(null);
                     void uploadCsv(false, submitAfterImport);
-                  } else if (confirmation.kind === 'delete' && confirmation.productId !== undefined) void deleteDraft(confirmation.productId);
-                  else if (confirmation.productId !== undefined) void publish(confirmation.productId);
-                }}>{confirmation.kind === 'delete'
+                  } else if (confirmation.kind === 'delete' && confirmation.productId !== undefined)
+                    void deleteDraft(confirmation.productId);
+                  else if (confirmation.productId !== undefined)
+                    void publish(confirmation.productId);
+                }}
+              >
+                {confirmation.kind === 'delete'
                   ? tr('حذف المسودة', 'Delete draft')
                   : confirmation.kind === 'import'
                     ? tr('استيراد المسودات', 'Import drafts')
                     : confirmation.kind === 'importSubmit'
                       ? tr('استيراد ونشر مباشرة', 'Import & publish now')
-                      : tr('تأكيد', 'Confirm')}</button>
+                      : tr('تأكيد', 'Confirm')}
+              </button>
             </div>
           </div>
         </div>

@@ -5,13 +5,13 @@ Backend counterpart: [API Day 1 audit](https://github.com/EhsasElias/all-575-api
 
 ## Confirmed route coverage
 
-| Existing UI | Code location | Notes |
-| --- | --- | --- |
-| Customer checkout + payment | `src/features/checkout/routes.tsx` | Customer checkout and payment pages exist behind `RequireAuth`. |
-| Customer orders + spending | `src/features/orders/routes.tsx` | Order list/detail and spending routes exist behind `RequireAuth`. |
-| Seller workspace | `src/features/account/routes.tsx`, `SellerWorkspaceScreen.tsx` | Seller UI includes products, inventory, orders, preparation, finance and branches. |
-| Seller onboarding | `src/features/account/routes.tsx`, `SellerApplicationScreen.tsx` | Seller application route is registered. |
-| Seller review | `src/features/account/routes.tsx`, `SellerReviewScreen.tsx` | Applications, products, branches and categories review UI exists; backend uses explicit review grants. |
+| Existing UI                 | Code location                                                    | Notes                                                                                                  |
+| --------------------------- | ---------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------ |
+| Customer checkout + payment | `src/features/checkout/routes.tsx`                               | Customer checkout and payment pages exist behind `RequireAuth`.                                        |
+| Customer orders + spending  | `src/features/orders/routes.tsx`                                 | Order list/detail and spending routes exist behind `RequireAuth`.                                      |
+| Seller workspace            | `src/features/account/routes.tsx`, `SellerWorkspaceScreen.tsx`   | Seller UI includes products, inventory, orders, preparation, finance and branches.                     |
+| Seller onboarding           | `src/features/account/routes.tsx`, `SellerApplicationScreen.tsx` | Seller application route is registered.                                                                |
+| Seller review               | `src/features/account/routes.tsx`, `SellerReviewScreen.tsx`      | Applications, products, branches and categories review UI exists; backend uses explicit review grants. |
 
 ## Missing route-level integration for MVP
 

@@ -67,16 +67,27 @@ export function SellerStoreManagement({ memberships, onStoreUpdated }: Props) {
   const [propose, setPropose] = useState(false);
   const [addZoneOpen, setAddZoneOpen] = useState(false);
   const [zoneDraft, setZoneDraft] = useState({
-    name_ar: '', name_en: '', center_lat: '', center_lng: '', radius_meters: '3000',
+    name_ar: '',
+    name_en: '',
+    center_lat: '',
+    center_lng: '',
+    radius_meters: '3000',
   });
   const [zoneDistanceOption, setZoneDistanceOption] = useState('3000');
   const zoneDistanceMeters = Number(zoneDraft.radius_meters);
-  const zonePin: MapPin | null = zoneDraft.center_lat && zoneDraft.center_lng &&
-    Number.isFinite(Number(zoneDraft.center_lat)) && Number.isFinite(Number(zoneDraft.center_lng))
-      ? { lat: Number(zoneDraft.center_lat), lng: Number(zoneDraft.center_lng) } : null;
-  const setZonePin = (pin: MapPin) => setZoneDraft((current) => ({
-    ...current, center_lat: String(pin.lat), center_lng: String(pin.lng),
-  }));
+  const zonePin: MapPin | null =
+    zoneDraft.center_lat &&
+    zoneDraft.center_lng &&
+    Number.isFinite(Number(zoneDraft.center_lat)) &&
+    Number.isFinite(Number(zoneDraft.center_lng))
+      ? { lat: Number(zoneDraft.center_lat), lng: Number(zoneDraft.center_lng) }
+      : null;
+  const setZonePin = (pin: MapPin) =>
+    setZoneDraft((current) => ({
+      ...current,
+      center_lat: String(pin.lat),
+      center_lng: String(pin.lng),
+    }));
   const [newBranch, setNewBranch] = useState({
     code: '',
     name_ar: '',
@@ -115,18 +126,25 @@ export function SellerStoreManagement({ memberships, onStoreUpdated }: Props) {
   const [storeEn, setStoreEn] = useState('');
   const [editBranch, setEditBranch] = useState<number | null>(null);
   const [branchDraft, setBranchDraft] = useState({
-    code: '', name_ar: '', name_en: '', service_zone_id: '',
-    service_zone_ids: [] as number[], lat: '', lng: '',
+    code: '',
+    name_ar: '',
+    name_en: '',
+    service_zone_id: '',
+    service_zone_ids: [] as number[],
+    lat: '',
+    lng: '',
   });
   const [deleteTarget, setDeleteTarget] = useState<number | null>(null);
   const editPin: MapPin | null =
-    branchDraft.lat.trim() && branchDraft.lng.trim() &&
-    Number.isFinite(Number(branchDraft.lat)) && Number.isFinite(Number(branchDraft.lng))
+    branchDraft.lat.trim() &&
+    branchDraft.lng.trim() &&
+    Number.isFinite(Number(branchDraft.lat)) &&
+    Number.isFinite(Number(branchDraft.lng))
       ? { lat: Number(branchDraft.lat), lng: Number(branchDraft.lng) }
       : null;
   const editZone = zones.find((zone) => zone.id === Number(branchDraft.service_zone_id));
-  const editPinInZone = editPin !== null && editZone !== undefined &&
-    branchWithinZone(editPin, editZone);
+  const editPinInZone =
+    editPin !== null && editZone !== undefined && branchWithinZone(editPin, editZone);
   const setEditPin = (pin: MapPin) =>
     setBranchDraft((current) => ({ ...current, lat: String(pin.lat), lng: String(pin.lng) }));
   const { location: editLocation, locate: locateEdit } = useCurrentLocation(setEditPin);
@@ -204,7 +222,12 @@ export function SellerStoreManagement({ memberships, onStoreUpdated }: Props) {
         name_ar: result.data.name_ar,
         name_en: result.data.name_en,
       });
-      setNotice(tr('تم حفظ اسم المتجر وتحديثه في اللوحة.', 'Store name saved and updated in the workspace.'));
+      setNotice(
+        tr(
+          'تم حفظ اسم المتجر وتحديثه في اللوحة.',
+          'Store name saved and updated in the workspace.',
+        ),
+      );
     } catch (cause) {
       setError(errorMessage(cause));
     } finally {
@@ -215,15 +238,26 @@ export function SellerStoreManagement({ memberships, onStoreUpdated }: Props) {
   const saveBranch = async (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     if (editBranch === null || saving) return;
-    if (!branchDraft.name_ar.trim() || !branchDraft.name_en.trim() ||
-        !/^[A-Za-z0-9_-]{2,32}$/.test(branchDraft.code.trim())) {
-      setError(tr('أدخل أسماء الفرع ورمزًا صحيحًا (حرفان على الأقل، أرقام أو حروف إنجليزية).',
-        'Enter both branch names and a valid code (2+ Latin letters, numbers, _ or -).'));
+    if (
+      !branchDraft.name_ar.trim() ||
+      !branchDraft.name_en.trim() ||
+      !/^[A-Za-z0-9_-]{2,32}$/.test(branchDraft.code.trim())
+    ) {
+      setError(
+        tr(
+          'أدخل أسماء الفرع ورمزًا صحيحًا (حرفان على الأقل، أرقام أو حروف إنجليزية).',
+          'Enter both branch names and a valid code (2+ Latin letters, numbers, _ or -).',
+        ),
+      );
       return;
     }
     if (!editPinInZone) {
-      setError(tr('حدد موقع الفرع داخل منطقة التوصيل باستخدام الخريطة أو الإحداثيات.',
-        'Choose a location within the delivery zone, by map or coordinates.'));
+      setError(
+        tr(
+          'حدد موقع الفرع داخل منطقة التوصيل باستخدام الخريطة أو الإحداثيات.',
+          'Choose a location within the delivery zone, by map or coordinates.',
+        ),
+      );
       return;
     }
     setSaving(true);
@@ -240,7 +274,7 @@ export function SellerStoreManagement({ memberships, onStoreUpdated }: Props) {
         lng: Number(branchDraft.lng),
       });
       setBranches((current) =>
-        current.map((item) => item.id === editBranch ? { ...item, ...result.data } : item),
+        current.map((item) => (item.id === editBranch ? { ...item, ...result.data } : item)),
       );
       setEditBranch(null);
       setNotice(tr('تم تحديث بيانات الفرع وموقعه مباشرة.', 'Branch details and location updated.'));
@@ -265,8 +299,12 @@ export function SellerStoreManagement({ memberships, onStoreUpdated }: Props) {
       setRevision((v) => v + 1);
     } catch (cause) {
       if (isApiError(cause) && cause.status === 409) {
-        setError(tr('لا يمكن حذف الفرع لوجود طلبات أو مخزون أو موظفين مرتبطين به. احتفظ به لحماية السجلات.',
-          'This branch has orders, stock or staff assignments and cannot be deleted safely.'));
+        setError(
+          tr(
+            'لا يمكن حذف الفرع لوجود طلبات أو مخزون أو موظفين مرتبطين به. احتفظ به لحماية السجلات.',
+            'This branch has orders, stock or staff assignments and cannot be deleted safely.',
+          ),
+        );
       } else {
         setError(errorMessage(cause));
       }
@@ -279,13 +317,22 @@ export function SellerStoreManagement({ memberships, onStoreUpdated }: Props) {
   const createZone = async (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     if (saving) return;
-    if (!zoneDraft.name_ar.trim() || !zoneDraft.name_en.trim() ||
-        !zoneDraft.center_lat.trim() || !zoneDraft.center_lng.trim() ||
-        !Number.isFinite(Number(zoneDraft.center_lat)) ||
-        !Number.isFinite(Number(zoneDraft.center_lng)) ||
-        Number(zoneDraft.radius_meters) < 100 || Number(zoneDraft.radius_meters) > 50000) {
-      setError(tr('أدخل اسمي المنطقة والإحداثيات ونصف قطر من 100 إلى 50000 متر.',
-        'Enter both zone names, valid coordinates, and radius between 100 and 50000 meters.'));
+    if (
+      !zoneDraft.name_ar.trim() ||
+      !zoneDraft.name_en.trim() ||
+      !zoneDraft.center_lat.trim() ||
+      !zoneDraft.center_lng.trim() ||
+      !Number.isFinite(Number(zoneDraft.center_lat)) ||
+      !Number.isFinite(Number(zoneDraft.center_lng)) ||
+      Number(zoneDraft.radius_meters) < 100 ||
+      Number(zoneDraft.radius_meters) > 50000
+    ) {
+      setError(
+        tr(
+          'أدخل اسمي المنطقة والإحداثيات ونصف قطر من 100 إلى 50000 متر.',
+          'Enter both zone names, valid coordinates, and radius between 100 and 50000 meters.',
+        ),
+      );
       return;
     }
     setSaving(true);
@@ -302,10 +349,20 @@ export function SellerStoreManagement({ memberships, onStoreUpdated }: Props) {
       });
       setZones((current) => [...current, response.data]);
       setAddZoneOpen(false);
-      setZoneDraft({ name_ar: '', name_en: '', center_lat: '', center_lng: '', radius_meters: '3000' });
+      setZoneDraft({
+        name_ar: '',
+        name_en: '',
+        center_lat: '',
+        center_lng: '',
+        radius_meters: '3000',
+      });
       setZoneDistanceOption('3000');
-      setNotice(tr('تم إنشاء المنطقة. يمكنك الآن اختيارها ضمن مناطق تغطية الفرع.',
-        'Zone created. You can now select it as branch coverage.'));
+      setNotice(
+        tr(
+          'تم إنشاء المنطقة. يمكنك الآن اختيارها ضمن مناطق تغطية الفرع.',
+          'Zone created. You can now select it as branch coverage.',
+        ),
+      );
     } catch (cause) {
       setError(errorMessage(cause));
     } finally {
@@ -358,8 +415,15 @@ export function SellerStoreManagement({ memberships, onStoreUpdated }: Props) {
         lng,
       });
       setPropose(false);
-      setNewBranch({ code: '', name_ar: '', name_en: '', service_zone_id: '',
-        service_zone_ids: [], lat: '', lng: '' });
+      setNewBranch({
+        code: '',
+        name_ar: '',
+        name_en: '',
+        service_zone_id: '',
+        service_zone_ids: [],
+        lat: '',
+        lng: '',
+      });
       setNotice(
         created.data.is_active
           ? tr('تم إنشاء الفرع وتفعيله مباشرة.', 'Branch created and activated immediately.')
@@ -434,11 +498,15 @@ export function SellerStoreManagement({ memberships, onStoreUpdated }: Props) {
       {loading && <p role="status">{tr('جار تحميل البيانات…', 'Loading…')}</p>}
       {!loading && profile && (
         <>
-          <form className="seller-card seller-store-form" onSubmit={(event) => void saveStore(event)} style={card}>
+          <form
+            className="seller-card seller-store-form"
+            onSubmit={(event) => void saveStore(event)}
+            style={card}
+          >
             <h3>{tr('بيانات العرض', 'Display information')}</h3>
             <p>
-              {tr('الحالة', 'Status')}: {storeStatusLabels[profile.status] ?? profile.status} · {tr('معرّف المتجر', 'Store identifier')}:{' '}
-              {profile.slug}
+              {tr('الحالة', 'Status')}: {storeStatusLabels[profile.status] ?? profile.status} ·{' '}
+              {tr('معرّف المتجر', 'Store identifier')}: {profile.slug}
             </p>
             <div style={row}>
               <label style={field}>
@@ -469,42 +537,74 @@ export function SellerStoreManagement({ memberships, onStoreUpdated }: Props) {
           <div className="seller-card seller-branches-panel" style={card}>
             <div className="seller-section-heading">
               <h3>{tr('الفروع الحالية', 'Existing branches')}</h3>
-            <button type="button" disabled={saving} onClick={() => setPropose((value) => !value)}>
-              {propose
-                ? tr('إلغاء إضافة فرع', 'Cancel new branch')
-                : tr('إضافة فرع جديد', 'Add new branch')}
-            </button>
+              <button type="button" disabled={saving} onClick={() => setPropose((value) => !value)}>
+                {propose
+                  ? tr('إلغاء إضافة فرع', 'Cancel new branch')
+                  : tr('إضافة فرع جديد', 'Add new branch')}
+              </button>
             </div>
             <div className="seller-zone-create-section">
-              <button type="button" className="seller-zone-create-toggle"
-                disabled={saving} onClick={() => setAddZoneOpen((current) => !current)}>
-                {addZoneOpen ? tr('إغلاق إضافة المنطقة', 'Close new zone')
+              <button
+                type="button"
+                className="seller-zone-create-toggle"
+                disabled={saving}
+                onClick={() => setAddZoneOpen((current) => !current)}
+              >
+                {addZoneOpen
+                  ? tr('إغلاق إضافة المنطقة', 'Close new zone')
                   : tr('+ إضافة منطقة جديدة', '+ Add delivery zone')}
               </button>
               {addZoneOpen && (
-                <form className="seller-zone-create-form" onSubmit={(event) => void createZone(event)}>
+                <form
+                  className="seller-zone-create-form"
+                  onSubmit={(event) => void createZone(event)}
+                >
                   <h4>{tr('منطقة توصيل جديدة', 'New delivery zone')}</h4>
-                  <p>{tr('حدد مركز المنطقة ومسافة التوصيل منه. إنشاء المنطقة متاح لحساب البائع التجريبي.',
-                    'Choose the zone center and delivery distance. Zone creation is available to the demo seller account.')}</p>
+                  <p>
+                    {tr(
+                      'حدد مركز المنطقة ومسافة التوصيل منه. إنشاء المنطقة متاح لحساب البائع التجريبي.',
+                      'Choose the zone center and delivery distance. Zone creation is available to the demo seller account.',
+                    )}
+                  </p>
                   <div className="seller-zone-create-grid">
-                    <label>{tr('اسم المنطقة (AR) *', 'Zone name (AR) *')}
-                      <input required maxLength={180} disabled={saving} value={zoneDraft.name_ar}
-                        onChange={(event) => setZoneDraft((current) => ({ ...current, name_ar: event.target.value }))}/>
+                    <label>
+                      {tr('اسم المنطقة (AR) *', 'Zone name (AR) *')}
+                      <input
+                        required
+                        maxLength={180}
+                        disabled={saving}
+                        value={zoneDraft.name_ar}
+                        onChange={(event) =>
+                          setZoneDraft((current) => ({ ...current, name_ar: event.target.value }))
+                        }
+                      />
                     </label>
-                    <label>{tr('اسم المنطقة (EN) *', 'Zone name (EN) *')}
-                      <input required maxLength={180} disabled={saving} value={zoneDraft.name_en}
-                        onChange={(event) => setZoneDraft((current) => ({ ...current, name_en: event.target.value }))}/>
+                    <label>
+                      {tr('اسم المنطقة (EN) *', 'Zone name (EN) *')}
+                      <input
+                        required
+                        maxLength={180}
+                        disabled={saving}
+                        value={zoneDraft.name_en}
+                        onChange={(event) =>
+                          setZoneDraft((current) => ({ ...current, name_en: event.target.value }))
+                        }
+                      />
                     </label>
                     <label>
                       {tr('مدى التوصيل *', 'Delivery radius *')}
-                      <select required disabled={saving} value={zoneDistanceOption}
+                      <select
+                        required
+                        disabled={saving}
+                        value={zoneDistanceOption}
                         onChange={(event) => {
                           const value = event.target.value;
                           setZoneDistanceOption(value);
                           if (value !== 'custom') {
                             setZoneDraft((current) => ({ ...current, radius_meters: value }));
                           }
-                        }}>
+                        }}
+                      >
                         <option value="1000">{tr('1 كم', '1 km')}</option>
                         <option value="3000">{tr('3 كم', '3 km')}</option>
                         <option value="5000">{tr('5 كم', '5 km')}</option>
@@ -515,50 +615,95 @@ export function SellerStoreManagement({ memberships, onStoreUpdated }: Props) {
                     {zoneDistanceOption === 'custom' && (
                       <label>
                         {tr('المسافة (م) *', 'Distance (m) *')}
-                        <input type="number" required min={100} max={50000} step={1}
+                        <input
+                          type="number"
+                          required
+                          min={100}
+                          max={50000}
+                          step={1}
                           placeholder={tr('مثال: 2500', 'Example: 2500')}
-                          disabled={saving} value={zoneDraft.radius_meters}
-                          onChange={(event) => setZoneDraft((current) => ({
-                            ...current, radius_meters: event.target.value,
-                          }))}/>
+                          disabled={saving}
+                          value={zoneDraft.radius_meters}
+                          onChange={(event) =>
+                            setZoneDraft((current) => ({
+                              ...current,
+                              radius_meters: event.target.value,
+                            }))
+                          }
+                        />
                       </label>
                     )}
                   </div>
                   <p className="seller-zone-distance-help">
-                    {tr('حدد مركز المنطقة من الخريطة أو أدخل الإحداثيات. تُحسب المسافة بشكل دائري مباشر، وليس حسب مسار القيادة.',
-                      'Select a zone center on the map or enter coordinates. Distance is a straight-line radius, not driving distance.')}
+                    {tr(
+                      'حدد مركز المنطقة من الخريطة أو أدخل الإحداثيات. تُحسب المسافة بشكل دائري مباشر، وليس حسب مسار القيادة.',
+                      'Select a zone center on the map or enter coordinates. Distance is a straight-line radius, not driving distance.',
+                    )}
                   </p>
-                  {Number.isFinite(zoneDistanceMeters) && zoneDistanceMeters >= 100 && zoneDistanceMeters <= 50000 && (
-                    <p className="seller-zone-distance-preview" role="status">
-                      {tr('تغطي هذه المنطقة التوصيل حتى ', 'This zone covers delivery up to ')}
-                      {(zoneDistanceMeters / 1000).toLocaleString(ar ? 'ar-SA' : 'en-US', { maximumFractionDigits: 2 })}
-                      {tr(' كم من مركز المنطقة.', ' km from the zone center.')}
-                    </p>
-                  )}
-                  <MapBoundary fallback={<p>{tr('الخريطة غير متاحة، أدخل الإحداثيات يدويًا.', 'Map unavailable. Enter coordinates manually.')}</p>}>
+                  {Number.isFinite(zoneDistanceMeters) &&
+                    zoneDistanceMeters >= 100 &&
+                    zoneDistanceMeters <= 50000 && (
+                      <p className="seller-zone-distance-preview" role="status">
+                        {tr('تغطي هذه المنطقة التوصيل حتى ', 'This zone covers delivery up to ')}
+                        {(zoneDistanceMeters / 1000).toLocaleString(ar ? 'ar-SA' : 'en-US', {
+                          maximumFractionDigits: 2,
+                        })}
+                        {tr(' كم من مركز المنطقة.', ' km from the zone center.')}
+                      </p>
+                    )}
+                  <MapBoundary
+                    fallback={
+                      <p>
+                        {tr(
+                          'الخريطة غير متاحة، أدخل الإحداثيات يدويًا.',
+                          'Map unavailable. Enter coordinates manually.',
+                        )}
+                      </p>
+                    }
+                  >
                     <Suspense fallback={<p>{tr('جار تحميل الخريطة…', 'Loading map…')}</p>}>
-                      <BranchPinMap pin={zonePin} labels={branchMapLabels} onPinChange={setZonePin}
-                        coverageRadiusMeters={Number.isFinite(zoneDistanceMeters) && zoneDistanceMeters >= 100 && zoneDistanceMeters <= 50000
-                          ? zoneDistanceMeters : undefined}/>
+                      <BranchPinMap
+                        pin={zonePin}
+                        labels={branchMapLabels}
+                        onPinChange={setZonePin}
+                        coverageRadiusMeters={
+                          Number.isFinite(zoneDistanceMeters) &&
+                          zoneDistanceMeters >= 100 &&
+                          zoneDistanceMeters <= 50000
+                            ? zoneDistanceMeters
+                            : undefined
+                        }
+                      />
                     </Suspense>
                   </MapBoundary>
                   <div className="seller-zone-create-grid">
                     {(['center_lat', 'center_lng'] as const).map((key) => (
                       <label key={key}>
-                        {key === 'center_lat' ? tr('خط العرض *', 'Latitude *')
+                        {key === 'center_lat'
+                          ? tr('خط العرض *', 'Latitude *')
                           : tr('خط الطول *', 'Longitude *')}
-                        <input type="number" required step="any" disabled={saving}
+                        <input
+                          type="number"
+                          required
+                          step="any"
+                          disabled={saving}
                           min={key === 'center_lat' ? -90 : -180}
                           max={key === 'center_lat' ? 90 : 180}
                           value={zoneDraft[key]}
-                          onChange={(event) => setZoneDraft((current) => ({
-                            ...current, [key]: event.target.value,
-                          }))}/>
+                          onChange={(event) =>
+                            setZoneDraft((current) => ({
+                              ...current,
+                              [key]: event.target.value,
+                            }))
+                          }
+                        />
                       </label>
                     ))}
                   </div>
                   <div className="seller-branch-actions">
-                    <button type="submit" disabled={saving}>{tr('حفظ المنطقة', 'Save zone')}</button>
+                    <button type="submit" disabled={saving}>
+                      {tr('حفظ المنطقة', 'Save zone')}
+                    </button>
                     <button type="button" disabled={saving} onClick={() => setAddZoneOpen(false)}>
                       {tr('إلغاء', 'Cancel')}
                     </button>
@@ -606,20 +751,28 @@ export function SellerStoreManagement({ memberships, onStoreUpdated }: Props) {
                   </label>
                   <fieldset className="seller-coverage-fieldset">
                     <legend>{tr('مناطق التغطية', 'Coverage zones')}</legend>
-                    <p>{tr('اختر المناطق التي يخدمها الفرع. المنطقة الأساسية محددة تلقائيًا.',
-                      'Select the zones served by this branch. The primary zone is always included.')}</p>
+                    <p>
+                      {tr(
+                        'اختر المناطق التي يخدمها الفرع. المنطقة الأساسية محددة تلقائيًا.',
+                        'Select the zones served by this branch. The primary zone is always included.',
+                      )}
+                    </p>
                     <div className="seller-coverage-options">
                       {zones.map((zone) => (
                         <label key={zone.id} className="seller-coverage-option">
-                          <input type="checkbox" disabled={saving ||
-                            zone.id === Number(newBranch.service_zone_id)}
+                          <input
+                            type="checkbox"
+                            disabled={saving || zone.id === Number(newBranch.service_zone_id)}
                             checked={newBranch.service_zone_ids.includes(zone.id)}
-                            onChange={(event) => setNewBranch((current) => ({
-                              ...current,
-                              service_zone_ids: event.target.checked
-                                ? [...new Set([...current.service_zone_ids, zone.id])]
-                                : current.service_zone_ids.filter((id) => id !== zone.id),
-                            }))}/>
+                            onChange={(event) =>
+                              setNewBranch((current) => ({
+                                ...current,
+                                service_zone_ids: event.target.checked
+                                  ? [...new Set([...current.service_zone_ids, zone.id])]
+                                  : current.service_zone_ids.filter((id) => id !== zone.id),
+                              }))
+                            }
+                          />
                           <span>{ar ? zone.name_ar : zone.name_en}</span>
                           {zone.id === Number(newBranch.service_zone_id) && (
                             <small>{tr('أساسية', 'Primary')}</small>
@@ -773,12 +926,16 @@ export function SellerStoreManagement({ memberships, onStoreUpdated }: Props) {
                   <b>{tr('مناطق التغطية', 'Coverage zones')}</b>
                   <div className="seller-coverage-tags">
                     {(branch.service_zone_ids?.length
-                      ? branch.service_zone_ids : [branch.service_zone_id]).map((zoneId) => {
+                      ? branch.service_zone_ids
+                      : [branch.service_zone_id]
+                    ).map((zoneId) => {
                       const zone = zones.find((item) => item.id === zoneId);
-                      return <span key={zoneId}>
-                        {zone ? (ar ? zone.name_ar : zone.name_en) : String(zoneId)}
-                        {zoneId === branch.service_zone_id ? tr(' (أساسية)', ' (primary)') : ''}
-                      </span>;
+                      return (
+                        <span key={zoneId}>
+                          {zone ? (ar ? zone.name_ar : zone.name_en) : String(zoneId)}
+                          {zoneId === branch.service_zone_id ? tr(' (أساسية)', ' (primary)') : ''}
+                        </span>
+                      );
                     })}
                   </div>
                 </div>
@@ -801,45 +958,69 @@ export function SellerStoreManagement({ memberships, onStoreUpdated }: Props) {
                 )}
                 {editBranch !== branch.id && (
                   <div className="seller-branch-actions seller-branch-action-row">
-                  <button
-                    type="button"
-                    disabled={saving}
-                    onClick={() => {
-                      setEditBranch(branch.id);
-                      setBranchDraft({
-                        code: branch.code,
-                        name_ar: branch.name_ar,
-                        name_en: branch.name_en,
-                        service_zone_id: String(branch.service_zone_id),
-                        service_zone_ids: branch.service_zone_ids?.length
-                          ? branch.service_zone_ids : [branch.service_zone_id],
-                        lat: String(branch.lat),
-                        lng: String(branch.lng),
-                      });
-                      setDeleteTarget(null);
-                      setError('');
-                    }}
-                  >
-                    {tr('تعديل بيانات الفرع', 'Edit branch details')}
-                  </button>
-                  <button type="button" disabled={saving}
-                    className="seller-branch-delete-icon"
-                    aria-label={tr('حذف الفرع', 'Delete branch')}
-                    title={tr('حذف الفرع', 'Delete branch')}
-                    onClick={() => setDeleteTarget(branch.id)}>
-                    <svg width="22" height="22" viewBox="0 0 24 24" fill="none"
-                      stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"
-                      aria-hidden="true">
-                      <path d="M3 6h18M8 6V4h8v2M19 6l-1 14H6L5 6M10 10v7M14 10v7"/>
-                    </svg>
-                  </button>
+                    <button
+                      type="button"
+                      disabled={saving}
+                      onClick={() => {
+                        setEditBranch(branch.id);
+                        setBranchDraft({
+                          code: branch.code,
+                          name_ar: branch.name_ar,
+                          name_en: branch.name_en,
+                          service_zone_id: String(branch.service_zone_id),
+                          service_zone_ids: branch.service_zone_ids?.length
+                            ? branch.service_zone_ids
+                            : [branch.service_zone_id],
+                          lat: String(branch.lat),
+                          lng: String(branch.lng),
+                        });
+                        setDeleteTarget(null);
+                        setError('');
+                      }}
+                    >
+                      {tr('تعديل بيانات الفرع', 'Edit branch details')}
+                    </button>
+                    <button
+                      type="button"
+                      disabled={saving}
+                      className="seller-branch-delete-icon"
+                      aria-label={tr('حذف الفرع', 'Delete branch')}
+                      title={tr('حذف الفرع', 'Delete branch')}
+                      onClick={() => setDeleteTarget(branch.id)}
+                    >
+                      <svg
+                        width="22"
+                        height="22"
+                        viewBox="0 0 24 24"
+                        fill="none"
+                        stroke="currentColor"
+                        strokeWidth="2"
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        aria-hidden="true"
+                      >
+                        <path d="M3 6h18M8 6V4h8v2M19 6l-1 14H6L5 6M10 10v7M14 10v7" />
+                      </svg>
+                    </button>
                   </div>
                 )}
                 {deleteTarget === branch.id && editBranch !== branch.id && (
-                  <div className="seller-delete-confirm" role="group" aria-label={tr('تأكيد حذف الفرع', 'Confirm branch deletion')}>
-                    <p>{tr('هل تريد حذف الفرع؟ لن يتم حذفه إذا كان مرتبطًا بطلبات أو مخزون أو موظفين.',
-                      'Delete branch? This is blocked when orders, stock or staff are linked.')}</p>
-                    <button type="button" disabled={saving} onClick={() => void deleteBranch(branch.id)}>
+                  <div
+                    className="seller-delete-confirm"
+                    role="group"
+                    aria-label={tr('تأكيد حذف الفرع', 'Confirm branch deletion')}
+                  >
+                    <p>
+                      {tr(
+                        'هل تريد حذف الفرع؟ لن يتم حذفه إذا كان مرتبطًا بطلبات أو مخزون أو موظفين.',
+                        'Delete branch? This is blocked when orders, stock or staff are linked.',
+                      )}
+                    </p>
+                    <button
+                      type="button"
+                      disabled={saving}
+                      onClick={() => void deleteBranch(branch.id)}
+                    >
                       {tr('تأكيد الحذف', 'Confirm deletion')}
                     </button>
                     <button type="button" disabled={saving} onClick={() => setDeleteTarget(null)}>
@@ -850,25 +1031,39 @@ export function SellerStoreManagement({ memberships, onStoreUpdated }: Props) {
                 {editBranch === branch.id && (
                   <form className="seller-branch-edit" onSubmit={(event) => void saveBranch(event)}>
                     <div style={row}>
-                      {([
-                        ['code', tr('رمز الفرع *', 'Branch code *')],
-                        ['name_ar', tr('اسم الفرع (AR) *', 'Branch name (AR) *')],
-                        ['name_en', tr('اسم الفرع (EN) *', 'Branch name (EN) *')],
-                      ] as const).map(([key, label]) => (
+                      {(
+                        [
+                          ['code', tr('رمز الفرع *', 'Branch code *')],
+                          ['name_ar', tr('اسم الفرع (AR) *', 'Branch name (AR) *')],
+                          ['name_en', tr('اسم الفرع (EN) *', 'Branch name (EN) *')],
+                        ] as const
+                      ).map(([key, label]) => (
                         <label key={key} style={field}>
                           {label}
-                          <input required disabled={saving} maxLength={key === 'code' ? 32 : 180}
+                          <input
+                            required
+                            disabled={saving}
+                            maxLength={key === 'code' ? 32 : 180}
                             value={branchDraft[key]}
-                            onChange={(event) => setBranchDraft((current) => ({
-                              ...current, [key]: event.target.value,
-                            }))}/>
+                            onChange={(event) =>
+                              setBranchDraft((current) => ({
+                                ...current,
+                                [key]: event.target.value,
+                              }))
+                            }
+                          />
                         </label>
                       ))}
                       <label style={field}>
                         {tr('المنطقة الأساسية *', 'Primary zone *')}
-                        <select required disabled={saving} value={branchDraft.service_zone_id}
+                        <select
+                          required
+                          disabled={saving}
+                          value={branchDraft.service_zone_id}
                           onChange={(event) => {
-                            const zone = zones.find((item) => item.id === Number(event.target.value));
+                            const zone = zones.find(
+                              (item) => item.id === Number(event.target.value),
+                            );
                             setBranchDraft((current) => ({
                               ...current,
                               service_zone_id: event.target.value,
@@ -878,7 +1073,8 @@ export function SellerStoreManagement({ memberships, onStoreUpdated }: Props) {
                               lat: zone ? String(zone.center_lat) : '',
                               lng: zone ? String(zone.center_lng) : '',
                             }));
-                          }}>
+                          }}
+                        >
                           <option value="">{tr('اختر المنطقة', 'Choose zone')}</option>
                           {zones.map((zone) => (
                             <option key={zone.id} value={zone.id}>
@@ -889,69 +1085,118 @@ export function SellerStoreManagement({ memberships, onStoreUpdated }: Props) {
                       </label>
                     </div>
                     <fieldset className="seller-coverage-fieldset">
-                    <legend>{tr('مناطق التغطية', 'Coverage zones')}</legend>
-                    <p>{tr('اختر المناطق التي يخدمها الفرع. المنطقة الأساسية محددة تلقائيًا.',
-                      'Select the zones served by this branch. The primary zone is always included.')}</p>
-                    <div className="seller-coverage-options">
-                      {zones.map((zone) => (
-                        <label key={zone.id} className="seller-coverage-option">
-                          <input type="checkbox" disabled={saving ||
-                            zone.id === Number(branchDraft.service_zone_id)}
-                            checked={branchDraft.service_zone_ids.includes(zone.id)}
-                            onChange={(event) => setBranchDraft((current) => ({
-                              ...current,
-                              service_zone_ids: event.target.checked
-                                ? [...new Set([...current.service_zone_ids, zone.id])]
-                                : current.service_zone_ids.filter((id) => id !== zone.id),
-                            }))}/>
-                          <span>{ar ? zone.name_ar : zone.name_en}</span>
-                          {zone.id === Number(branchDraft.service_zone_id) && (
-                            <small>{tr('أساسية', 'Primary')}</small>
-                          )}
-                        </label>
-                      ))}
-                    </div>
-                  </fieldset>
+                      <legend>{tr('مناطق التغطية', 'Coverage zones')}</legend>
+                      <p>
+                        {tr(
+                          'اختر المناطق التي يخدمها الفرع. المنطقة الأساسية محددة تلقائيًا.',
+                          'Select the zones served by this branch. The primary zone is always included.',
+                        )}
+                      </p>
+                      <div className="seller-coverage-options">
+                        {zones.map((zone) => (
+                          <label key={zone.id} className="seller-coverage-option">
+                            <input
+                              type="checkbox"
+                              disabled={saving || zone.id === Number(branchDraft.service_zone_id)}
+                              checked={branchDraft.service_zone_ids.includes(zone.id)}
+                              onChange={(event) =>
+                                setBranchDraft((current) => ({
+                                  ...current,
+                                  service_zone_ids: event.target.checked
+                                    ? [...new Set([...current.service_zone_ids, zone.id])]
+                                    : current.service_zone_ids.filter((id) => id !== zone.id),
+                                }))
+                              }
+                            />
+                            <span>{ar ? zone.name_ar : zone.name_en}</span>
+                            {zone.id === Number(branchDraft.service_zone_id) && (
+                              <small>{tr('أساسية', 'Primary')}</small>
+                            )}
+                          </label>
+                        ))}
+                      </div>
+                    </fieldset>
                     <div className="seller-branch-edit-map">
-                      <p>{tr('حدد الموقع بالنقر أو تحريك الدبوس على الخريطة؛ سيتم تعبئة خط العرض والطول تلقائيًا. ويمكنك إدخالهما يدويًا.',
-                        'Tap or drag the map pin to fill latitude and longitude automatically, or enter both coordinates manually.')}</p>
-                      <button type="button" disabled={saving || editLocation.status === 'locating'}
-                        onClick={() => void locateEdit()}>
+                      <p>
+                        {tr(
+                          'حدد الموقع بالنقر أو تحريك الدبوس على الخريطة؛ سيتم تعبئة خط العرض والطول تلقائيًا. ويمكنك إدخالهما يدويًا.',
+                          'Tap or drag the map pin to fill latitude and longitude automatically, or enter both coordinates manually.',
+                        )}
+                      </p>
+                      <button
+                        type="button"
+                        disabled={saving || editLocation.status === 'locating'}
+                        onClick={() => void locateEdit()}
+                      >
                         {editLocation.status === 'locating'
                           ? tr('جار تحديد الموقع…', 'Finding location…')
                           : tr('استخدام موقعي الحالي', 'Use my current location')}
                       </button>
                       {editLocation.status === 'failed' && (
-                        <p role="alert">{tr('تعذر تحديد الموقع تلقائيًا؛ اختر الموقع من الخريطة أو أدخل الإحداثيات.',
-                          'Could not locate automatically. Use the map or coordinates.')}</p>
+                        <p role="alert">
+                          {tr(
+                            'تعذر تحديد الموقع تلقائيًا؛ اختر الموقع من الخريطة أو أدخل الإحداثيات.',
+                            'Could not locate automatically. Use the map or coordinates.',
+                          )}
+                        </p>
                       )}
                       {branchDraft.service_zone_id && (
-                        <MapBoundary fallback={<p role="alert">{tr('الخريطة غير متاحة؛ أدخل الإحداثيات يدويًا.',
-                          'Map unavailable; enter coordinates manually.')}</p>}>
+                        <MapBoundary
+                          fallback={
+                            <p role="alert">
+                              {tr(
+                                'الخريطة غير متاحة؛ أدخل الإحداثيات يدويًا.',
+                                'Map unavailable; enter coordinates manually.',
+                              )}
+                            </p>
+                          }
+                        >
                           <Suspense fallback={<p>{tr('جار تحميل الخريطة…', 'Loading map…')}</p>}>
-                            <BranchPinMap key={branchDraft.service_zone_id} pin={editPin}
-                              labels={branchMapLabels} onPinChange={setEditPin}/>
+                            <BranchPinMap
+                              key={branchDraft.service_zone_id}
+                              pin={editPin}
+                              labels={branchMapLabels}
+                              onPinChange={setEditPin}
+                            />
                           </Suspense>
                         </MapBoundary>
                       )}
                       <div style={row}>
                         {(['lat', 'lng'] as const).map((key) => (
                           <label key={key} style={field}>
-                            {key === 'lat' ? tr('خط العرض *', 'Latitude *')
+                            {key === 'lat'
+                              ? tr('خط العرض *', 'Latitude *')
                               : tr('خط الطول *', 'Longitude *')}
-                            <input type="number" required step="any" disabled={saving}
+                            <input
+                              type="number"
+                              required
+                              step="any"
+                              disabled={saving}
                               value={branchDraft[key]}
-                              onChange={(event) => setBranchDraft((current) => ({
-                                ...current, [key]: event.target.value,
-                              }))}/>
+                              onChange={(event) =>
+                                setBranchDraft((current) => ({
+                                  ...current,
+                                  [key]: event.target.value,
+                                }))
+                              }
+                            />
                           </label>
                         ))}
                       </div>
                       {editPin && editZone && (
-                        <p role="status" className={editPinInZone ? 'seller-zone-valid' : 'seller-zone-invalid'}>
+                        <p
+                          role="status"
+                          className={editPinInZone ? 'seller-zone-valid' : 'seller-zone-invalid'}
+                        >
                           {editPinInZone
-                            ? tr('الموقع داخل منطقة التوصيل.', 'Location is inside the delivery zone.')
-                            : tr('الموقع خارج منطقة التوصيل؛ اختر نقطة داخل المنطقة.', 'Location is outside the delivery zone.')}
+                            ? tr(
+                                'الموقع داخل منطقة التوصيل.',
+                                'Location is inside the delivery zone.',
+                              )
+                            : tr(
+                                'الموقع خارج منطقة التوصيل؛ اختر نقطة داخل المنطقة.',
+                                'Location is outside the delivery zone.',
+                              )}
                         </p>
                       )}
                     </div>

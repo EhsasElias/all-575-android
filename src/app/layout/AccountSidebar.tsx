@@ -29,38 +29,67 @@ const pages: AccountLink[] = [
 export function AccountSidebar({ onNavigate }: { onNavigate?: () => void }) {
   const { i18n } = useTranslation();
   const ar = i18n.language.startsWith('ar');
-  const tr = (a: string, en: string) => ar ? a : en;
+  const tr = (a: string, en: string) => (ar ? a : en);
   const { pathname } = useLocation();
   const { status, user } = useSession();
   const [workspaces, setWorkspaces] = useState<string[]>([]);
 
   useEffect(() => {
-    if (status !== 'signed-in' || !user) { setWorkspaces([]); return; }
+    if (status !== 'signed-in' || !user) {
+      setWorkspaces([]);
+      return;
+    }
     let active = true;
     void Promise.all([
-      memberships().then(r => r.data.some(m => m.is_active && m.seller_status === 'approved')).catch(() => false),
-      adminDashboard().then(() => true).catch(() => false),
-      superAdminDashboard().then(() => true).catch(() => false),
-      reviewOverview().then(() => true).catch(() => false),
-      courierProfile().then(() => true).catch(() => false),
-    ]).then(results => {
-      if (active) setWorkspaces(['seller', 'admin', 'super', 'reviewer', 'courier'].filter((_, i) => results[i]));
+      memberships()
+        .then((r) => r.data.some((m) => m.is_active && m.seller_status === 'approved'))
+        .catch(() => false),
+      adminDashboard()
+        .then(() => true)
+        .catch(() => false),
+      superAdminDashboard()
+        .then(() => true)
+        .catch(() => false),
+      reviewOverview()
+        .then(() => true)
+        .catch(() => false),
+      courierProfile()
+        .then(() => true)
+        .catch(() => false),
+    ]).then((results) => {
+      if (active)
+        setWorkspaces(
+          ['seller', 'admin', 'super', 'reviewer', 'courier'].filter((_, i) => results[i]),
+        );
     });
-    return () => { active = false; };
+    return () => {
+      active = false;
+    };
   }, [status, user?.id]);
   return (
-    <nav className={styles.sidebar} aria-label={tr('قائمة الحساب', 'Account navigation')} dir={ar ? 'rtl' : 'ltr'}>
+    <nav
+      className={styles.sidebar}
+      aria-label={tr('قائمة الحساب', 'Account navigation')}
+      dir={ar ? 'rtl' : 'ltr'}
+    >
       <div className={styles.brand}>
         <strong>ALL 5.75</strong>
         <span>{tr('إعدادات الحساب', 'Account & settings')}</span>
       </div>
       <div className={styles.group}>
         <h2>{tr('الحساب الشخصي', 'Personal account')}</h2>
-        {pages.map(item => {
-          const selected = pathname === item.path || (item.path !== routePaths.account && pathname.startsWith(item.path + '/'));
+        {pages.map((item) => {
+          const selected =
+            pathname === item.path ||
+            (item.path !== routePaths.account && pathname.startsWith(item.path + '/'));
           return (
-            <Link key={item.path} to={item.path} onClick={onNavigate} aria-current={selected ? 'page' : undefined}
-              className={selected ? styles.selected : styles.link}>
+            <Link
+              key={item.path}
+              to={item.path}
+              onClick={onNavigate}
+              aria-current={selected ? 'page' : undefined}
+              className={selected ? styles.selected : styles.link}
+            >
               {ar ? item.ar : item.en}
             </Link>
           );

@@ -13,7 +13,14 @@ type TextFieldProps = Omit<ComponentProps<'input'>, 'id'> & {
 };
 
 export function TextField({
-  label, hint, error, id, className, showPasswordToggle = false, type, ...rest
+  label,
+  hint,
+  error,
+  id,
+  className,
+  showPasswordToggle = false,
+  type,
+  ...rest
 }: TextFieldProps) {
   const { i18n } = useTranslation();
   const generatedId = useId();

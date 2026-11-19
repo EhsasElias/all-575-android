@@ -11,8 +11,10 @@ export function TotalsSection({ order }: { order: OrderDetail }) {
   const { language } = useLanguage();
   const { amounts } = order;
   // Do not relabel existing VAT-inclusive orders when displaying historical invoices.
-  const vatAdded = amounts.vat_included > 0 &&
-    amounts.total === amounts.subtotal - amounts.discount + amounts.delivery_fee + amounts.vat_included;
+  const vatAdded =
+    amounts.vat_included > 0 &&
+    amounts.total ===
+      amounts.subtotal - amounts.discount + amounts.delivery_fee + amounts.vat_included;
 
   return (
     <Section title={t('totals.title')}>
