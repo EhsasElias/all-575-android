@@ -33,10 +33,15 @@ export function AccountSidebar({ onNavigate }: { onNavigate?: () => void }) {
   const { pathname } = useLocation();
   const { status, user } = useSession();
   // Keep workspace discovery tied to the signed-in identity, never a previous account.
-  const [workspaceState, setWorkspaceState] = useState<{ ownerId: string; entries: string[] } | null>(null);
+  const [workspaceState, setWorkspaceState] = useState<{
+    ownerId: string;
+    entries: string[];
+  } | null>(null);
   const userId = user?.id;
-  const workspaces = status === 'signed-in' && userId !== undefined &&
-    workspaceState?.ownerId === String(userId) ? workspaceState.entries : [];
+  const workspaces =
+    status === 'signed-in' && userId !== undefined && workspaceState?.ownerId === String(userId)
+      ? workspaceState.entries
+      : [];
 
   useEffect(() => {
     if (status !== 'signed-in' || userId === undefined) return;
