@@ -51,8 +51,7 @@ export function SellerReviewScreen() {
   const { i18n } = useTranslation();
   const ar = i18n.language.startsWith('ar');
   const fr = i18n.language.startsWith('fr');
-  const tr = (a: string, en: string) =>
-    ar ? a : fr ? (sellerReviewFrench[en] ?? en) : en;
+  const tr = (a: string, en: string) => (ar ? a : fr ? (sellerReviewFrench[en] ?? en) : en);
   const statusLabels: Record<string, string> = {
     draft: tr('مسودة', 'Draft'),
     submitted: tr('مُرسل للمراجعة', 'Submitted for review'),

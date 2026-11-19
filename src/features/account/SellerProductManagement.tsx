@@ -725,7 +725,9 @@ export function SellerProductManagement({ products, memberships, onUpdated }: Pr
       setSuccess(tr('تم حفظ صورة المنتج.', 'Product cover image saved.'));
       onUpdated();
     } catch (cause) {
-      setError(explainApiError(cause, uploadErrorMessage(cause, ar ? 'ar' : fr ? 'fr' : 'en', 'image')));
+      setError(
+        explainApiError(cause, uploadErrorMessage(cause, ar ? 'ar' : fr ? 'fr' : 'en', 'image')),
+      );
     } finally {
       setBusy(false);
     }
