@@ -39,3 +39,32 @@ jobs:
         run: npm run api:check
       - name: TypeScript and production build
         run: npm run build
+
+  format-review-files:
+    if: ${{ github.event_name == 'pull_request' && github.event.pull_request.head.repo.full_name == github.repository && github.event.pull_request.head.ref == 'fix/qa-regression-20261119' }}
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.pull_request.head.ref }}
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci
+      - name: Format the reviewed courier and scanner files only
+        run: npx prettier --write src/features/account/scannerFrench.ts src/features/account/ProductCameraScanner.tsx src/features/account/courierAdminFrench.ts src/features/account/SuperAdminCouriers.tsx src/features/account/AdminCourierOperations.tsx
+      - name: Commit formatting only on QA branch
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add -u
+          if git diff --cached --quiet; then
+            echo "Already correctly formatted."
+          else
+            git commit -m "Format French courier and scanner localization"
+            git push origin HEAD:refs/heads/fix/qa-regression-20261119
+          fi
