@@ -91,7 +91,7 @@ describe('errors', () => {
     await user.click(within(alert).getByRole('button', { name: 'Try again' }));
 
     expect(await screen.findByRole('link', { name: 'Biscuits' })).toBeInTheDocument();
-    expect(screen.getByRole('region', { name: 'Order summary' })).toHaveTextContent(money(1150));
+    expect(screen.getByRole('region', { name: 'Order summary' })).toHaveTextContent(money(1000));
   });
 
   it('does not show an error for a guest with an empty cart, even if the price cannot load', async () => {
@@ -148,10 +148,10 @@ describe('both languages', () => {
     expect(screen.getByRole('button', { name: 'حذف بسكويت من السلة' })).toBeInTheDocument();
 
     const summary = screen.getByRole('region', { name: 'ملخص الطلب' });
-    expect(summary).toHaveTextContent(`المجموع الفرعي${money(2300, 'ar')}`);
+    expect(summary).toHaveTextContent(`المجموع الفرعي${money(2000, 'ar')}`);
     expect(summary).toHaveTextContent('ر.س');
     expect(
-      await within(summary).findByText('الأسعار شاملة ضريبة القيمة المضافة 15%'),
+      await within(summary).findByText('تُضاف ضريبة القيمة المضافة 15% عند إتمام الطلب'),
     ).toBeInTheDocument();
     expect(
       within(summary).getByText('تُحسب رسوم التوصيل وكود الخصم عند إتمام الطلب.'),
