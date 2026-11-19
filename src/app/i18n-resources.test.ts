@@ -53,3 +53,20 @@ describe('French texts', () => {
     }
   });
 });
+
+describe('Arabic texts', () => {
+  const english = new Map(namespaces('en'));
+
+  it.each(namespaces('ar'))('%s has every English key and no more', (name, arabic) => {
+    expect([...arabic.keys()].sort()).toEqual([...(english.get(name)?.keys() ?? [])].sort());
+  });
+
+  it.each(namespaces('ar'))('%s preserves the same interpolation parameters', (name, arabic) => {
+    for (const [path, text] of arabic) {
+      expect(text.trim(), `${name}.${path}`).not.toBe('');
+      expect(placeholders(text), `${name}.${path}`).toEqual(
+        placeholders(english.get(name)?.get(path) ?? ''),
+      );
+    }
+  });
+});
