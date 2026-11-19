@@ -30,12 +30,18 @@ export function CourierWorkspaceScreen() {
       .then((r) => {
         if (active) setOnline(r.data.is_online);
       })
-      .catch(() => {});
+      .catch(() => {
+        if (active) {
+          setError(
+            tr('تعذر تحميل حالة توفر المندوب.', 'Unable to check courier availability.'),
+          );
+        }
+      });
     void courierJobs()
       .then((r) => {
         if (active) setJobs(r.data);
       })
-      .catch((cause) => {
+      .catch((cause: unknown) => {
         if (active)
           setError(
             isApiError(cause) && cause.status === 403
