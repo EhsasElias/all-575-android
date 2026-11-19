@@ -32,9 +32,10 @@ for (const width of [320, 360, 393]) {
         path,
       );
       await page.locator('main').waitFor({ state: 'visible' });
-      const metrics = (await page.evaluate(
-        '() => ({ scrollWidth: document.documentElement.scrollWidth, viewport: window.innerWidth })',
-      )) as { scrollWidth: number; viewport: number };
+      const metrics = await page.evaluate(() => ({
+        scrollWidth: document.documentElement.scrollWidth,
+        viewport: window.innerWidth,
+      }));
       expect(
         metrics.scrollWidth,
         `Horizontal document overflow on ${path} at ${width}px`,
