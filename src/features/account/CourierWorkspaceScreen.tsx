@@ -10,6 +10,7 @@ import {
   courierProfile,
   type CourierJob,
 } from './courierOperationsApi';
+import { isExpiredCourierOffer } from './courierOfferTime';
 import './adminWorkspaceFamily.css';
 
 export function CourierWorkspaceScreen() {
@@ -162,9 +163,7 @@ export function CourierWorkspaceScreen() {
               <div style={{ display: 'flex', gap: 12 }}>
                 <button
                   disabled={
-                    busy ||
-                    clockMs === null ||
-                    (job.expires_at !== null && Date.parse(job.expires_at) <= clockMs)
+                    busy || isExpiredCourierOffer(job.expires_at, clockMs)
                   }
                   onClick={() =>
                     void act(
