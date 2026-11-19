@@ -32,13 +32,14 @@ export function AccountSidebar({ onNavigate }: { onNavigate?: () => void }) {
   const tr = (a: string, en: string) => (ar ? a : en);
   const { pathname } = useLocation();
   const { status, user } = useSession();
-  const [workspaces, setWorkspaces] = useState<string[]>([]);
+  // Keep workspace discovery tied to the signed-in identity, never a previous account.
+  const [workspaceState, setWorkspaceState] = useState<{ ownerId: string; entries: string[] } | null>(null);
+  const userId = user?.id;
+  const workspaces = status === 'signed-in' && userId !== undefined &&
+    workspaceState?.ownerId === String(userId) ? workspaceState.entries : [];
 
   useEffect(() => {
-    if (status !== 'signed-in' || !user) {
-      setWorkspaces([]);
-      return;
-    }
+    if (status !== 'signed-in' || userId === undefined) return;
     let active = true;
     void Promise.all([
       memberships()
@@ -58,14 +59,15 @@ export function AccountSidebar({ onNavigate }: { onNavigate?: () => void }) {
         .catch(() => false),
     ]).then((results) => {
       if (active)
-        setWorkspaces(
-          ['seller', 'admin', 'super', 'reviewer', 'courier'].filter((_, i) => results[i]),
-        );
+        setWorkspaceState({
+          ownerId: String(userId),
+          entries: ['seller', 'admin', 'super', 'reviewer', 'courier'].filter((_, i) => results[i]),
+        });
     });
     return () => {
       active = false;
     };
-  }, [status, user?.id]);
+  }, [status, userId]);
   return (
     <nav
       className={styles.sidebar}
