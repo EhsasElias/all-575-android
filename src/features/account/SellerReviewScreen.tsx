@@ -4,6 +4,7 @@ import { useTranslation } from 'react-i18next';
 import { isApiError } from '@/shared/api';
 import { Page } from './components/Page';
 import { PageHeader } from './components/PageHeader';
+import { sellerReviewFrench } from './sellerReviewFrench';
 import styles from './SellerReviewScreen.module.css';
 import './adminWorkspaceFamily.css';
 import {
@@ -49,7 +50,9 @@ const fields: React.CSSProperties = {
 export function SellerReviewScreen() {
   const { i18n } = useTranslation();
   const ar = i18n.language.startsWith('ar');
-  const tr = (a: string, en: string) => (ar ? a : en);
+  const fr = i18n.language.startsWith('fr');
+  const tr = (a: string, en: string) =>
+    ar ? a : fr ? (sellerReviewFrench[en] ?? en) : en;
   const statusLabels: Record<string, string> = {
     draft: tr('مسودة', 'Draft'),
     submitted: tr('مُرسل للمراجعة', 'Submitted for review'),
