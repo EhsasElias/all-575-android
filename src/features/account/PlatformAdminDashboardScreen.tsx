@@ -214,7 +214,7 @@ export function PlatformAdminDashboardScreen() {
   const metric = (label: string, value: number, status?: string) => (
     <button
       type="button"
-      className={styles.metric + ' ' + styles.metricAction + ' admin-family-card'}
+      className={(styles.metric ?? '') + ' ' + (styles.metricAction ?? '') + ' admin-family-card'}
       key={label}
       aria-pressed={filters.status === (status ?? '')}
       onClick={() => {
@@ -232,8 +232,8 @@ export function PlatformAdminDashboardScreen() {
 
   return (
     <Page>
-      <div className={styles.dashboard + ' admin-workspace-family'} dir={ar ? 'rtl' : 'ltr'}>
-        <header className={styles.hero + ' admin-family-hero'}>
+      <div className={(styles.dashboard ?? '') + ' admin-workspace-family'} dir={ar ? 'rtl' : 'ltr'}>
+        <header className={(styles.hero ?? '') + ' admin-family-hero'}>
           <div>
             <h1>{tr('لوحة الإدارة', 'Admin Dashboard')}</h1>
             <p>
@@ -245,7 +245,7 @@ export function PlatformAdminDashboardScreen() {
           </div>
           <button
             type="button"
-            className={styles.refresh + ' admin-family-primary'}
+            className={(styles.refresh ?? '') + ' admin-family-primary'}
             onClick={() => {
               setRevision((x) => x + 1);
             }}
@@ -263,8 +263,8 @@ export function PlatformAdminDashboardScreen() {
         {!loading && data && (
           <>
             <h2>{tr('نظرة عامة', 'Operations overview')}</h2>
-            <div className={styles.metrics + ' admin-family-metrics'}>
-              <div className={styles.metric + ' admin-family-card'}>
+            <div className={(styles.metrics ?? '') + ' admin-family-metrics'}>
+              <div className={(styles.metric ?? '') + ' admin-family-card'}>
                 <span>{tr('المتاجر المسندة', 'Assigned sellers')}</span>
                 <strong>{number(data.assigned_sellers)}</strong>
               </div>
@@ -295,7 +295,7 @@ export function PlatformAdminDashboardScreen() {
                 'delivered',
               )}
             </div>
-            <section id="order-monitoring" className={styles.panel + ' admin-family-panel'}>
+            <section id="order-monitoring" className={(styles.panel ?? '') + ' admin-family-panel'}>
               <div className={styles.panelHeading}>
                 <div>
                   <h2>{tr('متابعة الطلبات', 'Order monitoring')}</h2>
@@ -308,7 +308,7 @@ export function PlatformAdminDashboardScreen() {
                 </div>
               </div>
               <form
-                className={styles.filters + ' admin-family-filters'}
+                className={(styles.filters ?? '') + ' admin-family-filters'}
                 onSubmit={(event) => {
                   event.preventDefault();
                   applyFilters();
@@ -394,7 +394,7 @@ export function PlatformAdminDashboardScreen() {
                 </div>
               </form>
               {ordersError && <p role="alert">{ordersError}</p>}
-              <div className={styles.tableScroll + ' admin-family-table'}>
+              <div className={(styles.tableScroll ?? '') + ' admin-family-table'}>
                 <table>
                   <thead>
                     <tr>
@@ -453,7 +453,7 @@ export function PlatformAdminDashboardScreen() {
               <div className={styles.metrics}>
                 <button
                   type="button"
-                  className={styles.metric + ' ' + styles.metricAction + ' admin-family-card'}
+                  className={(styles.metric ?? '') + ' ' + (styles.metricAction ?? '') + ' admin-family-card'}
                   onClick={() => {
                     openInventory(false);
                   }}
@@ -464,7 +464,7 @@ export function PlatformAdminDashboardScreen() {
                 </button>
                 <button
                   type="button"
-                  className={styles.metric + ' ' + styles.metricAction + ' admin-family-card'}
+                  className={(styles.metric ?? '') + ' ' + (styles.metricAction ?? '') + ' admin-family-card'}
                   onClick={() => {
                     openInventory(true);
                   }}
@@ -476,7 +476,7 @@ export function PlatformAdminDashboardScreen() {
               </div>
             </section>
             {inventoryOpen && (
-              <section id="inventory-detail" className={styles.panel + ' admin-family-panel'}>
+              <section id="inventory-detail" className={(styles.panel ?? '') + ' admin-family-panel'}>
                 <div className={styles.panelHeading}>
                   <div>
                     <h2>{tr('تفاصيل المخزون', 'Inventory details')}</h2>
@@ -498,7 +498,7 @@ export function PlatformAdminDashboardScreen() {
                   </button>
                 </div>
                 <form
-                  className={styles.filters + ' admin-family-filters'}
+                  className={(styles.filters ?? '') + ' admin-family-filters'}
                   onSubmit={(event) => {
                     event.preventDefault();
                     applyInventory();
@@ -575,7 +575,7 @@ export function PlatformAdminDashboardScreen() {
                   <p role="status">{tr('جارٍ تحميل المخزون...', 'Loading inventory...')}</p>
                 )}
                 {inventoryError && <p role="alert">{inventoryError}</p>}
-                <div className={styles.tableScroll + ' admin-family-table'}>
+                <div className={(styles.tableScroll ?? '') + ' admin-family-table'}>
                   <table>
                     <thead>
                       <tr>
