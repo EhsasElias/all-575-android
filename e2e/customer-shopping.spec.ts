@@ -77,10 +77,7 @@ test('company buyer, quotation request and real payment artwork', async ({ page 
   await expect(page).toHaveURL(/\/account$/);
   // Exercise the billing workflow directly; account drawer navigation has separate E2E coverage.
   // Keep the in-memory OTP session intact, just as the checkout step below does.
-  await page.evaluate(() => {
-    window.history.pushState({}, '', '/account/billing');
-    window.dispatchEvent(new PopStateEvent('popstate'));
-  });
+  await page.evaluate("history.pushState({}, '', '/account/billing'); dispatchEvent(new PopStateEvent('popstate'))");
   await expect(page).toHaveURL(/\/account\/billing$/);
   await expect(page.getByLabel('I am shopping as')).toBeVisible();
   await page.getByLabel('I am shopping as').selectOption('business');
@@ -90,10 +87,7 @@ test('company buyer, quotation request and real payment artwork', async ({ page 
   await expect(page.getByText('Details saved')).toBeVisible();
   expect(billing).toMatchObject({ buyer_type: 'business', company_name: 'Riyadh Supplies' });
   await page.screenshot({ path: testInfo.outputPath('company-buyer.png'), fullPage: true });
-  await page.evaluate(() => {
-    window.history.pushState({}, '', '/account/requests');
-    window.dispatchEvent(new PopStateEvent('popstate'));
-  });
+  await page.evaluate("history.pushState({}, '', '/account/requests'); dispatchEvent(new PopStateEvent('popstate'))");
   await expect(page).toHaveURL(/\/account\/requests$/);
   await expect(page.getByLabel('Subject', { exact: true })).toBeVisible();
   await page.getByLabel('Subject', { exact: true }).fill('100 towels for Riyadh');
@@ -104,10 +98,7 @@ test('company buyer, quotation request and real payment artwork', async ({ page 
   await expect(page.getByText('Request received')).toBeVisible();
   expect(request).toMatchObject({ kind: 'bulk_quote', subject: '100 towels for Riyadh' });
   // Navigate within this document so the verified in-memory browser session remains active.
-  await page.evaluate(() => {
-    window.history.pushState({}, '', '/checkout');
-    window.dispatchEvent(new PopStateEvent('popstate'));
-  });
+  await page.evaluate("history.pushState({}, '', '/checkout'); dispatchEvent(new PopStateEvent('popstate'))");
   await expect(page.getByRole('heading', { name: 'Checkout', exact: true })).toBeVisible();
   const payment = page.getByRole('region', { name: 'Payment method' });
   for (const name of ['mada', 'Visa', 'Mastercard', 'Apple Pay']) {
