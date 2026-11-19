@@ -1,0 +1,39 @@
+name: Independent QA regression
+
+on:
+  pull_request:
+    branches: [v2]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  unit-and-component:
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci
+      # Execute test cases independently of formatting, so a Prettier failure cannot hide test defects.
+      - name: Unit and component regression (Vitest)
+        run: npm test
+
+  build-and-contract:
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci
+      - name: API contract
+        run: npm run api:check
+      - name: TypeScript and production build
+        run: npm run build
