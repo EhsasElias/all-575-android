@@ -1,6 +1,6 @@
 import { stripComments } from './css';
 
-const FOUR_VALUES = String.raw`[^;\s]+\s+[^;\s]+\s+[^;\s]+\s+[^;\s]+`;
+const FOUR_VALUES = String.raw`[^;{}\s]+\s+[^;{}\s]+\s+[^;{}\s]+\s+[^;{}\s]+`;
 
 const RULES: readonly { name: string; pattern: RegExp }[] = [
   { name: 'margin-left / margin-right', pattern: /\bmargin-(left|right)\s*:/ },
