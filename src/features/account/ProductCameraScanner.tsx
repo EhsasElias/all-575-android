@@ -44,13 +44,23 @@ export function ProductCameraScanner({ onRead, onClose, ar }: ProductCameraScann
     const Detector = (window as DetectorWindow).BarcodeDetector;
     if (!Detector) {
       setMessage(
-        scannerText(ar, fr, 'هذا المتصفح لا يدعم قراءة الرموز مباشرة بالكاميرا. استخدم Chrome حديثًا على Android أو أدخل الرمز يدويًا.', 'This browser cannot decode barcodes directly. Try current Chrome on Android or type the code.'),
+        scannerText(
+          ar,
+          fr,
+          'هذا المتصفح لا يدعم قراءة الرموز مباشرة بالكاميرا. استخدم Chrome حديثًا على Android أو أدخل الرمز يدويًا.',
+          'This browser cannot decode barcodes directly. Try current Chrome on Android or type the code.',
+        ),
       );
       return;
     }
     if (!navigator.mediaDevices?.getUserMedia) {
       setMessage(
-        scannerText(ar, fr, 'الكاميرا غير متاحة. افتح الموقع عبر HTTPS أو استخدم الإدخال اليدوي.', 'Camera unavailable. Use HTTPS or enter the code manually.'),
+        scannerText(
+          ar,
+          fr,
+          'الكاميرا غير متاحة. افتح الموقع عبر HTTPS أو استخدم الإدخال اليدوي.',
+          'Camera unavailable. Use HTTPS or enter the code manually.',
+        ),
       );
       return;
     }
@@ -108,7 +118,12 @@ export function ProductCameraScanner({ onRead, onClose, ar }: ProductCameraScann
       } catch {
         if (!stopped)
           setMessage(
-            scannerText(ar, fr, 'تعذر تشغيل الكاميرا. تأكد من منح الإذن ثم أعد فتح الماسح، أو أدخل الرمز يدويًا.', 'Camera could not start. Allow camera permission and retry, or type the code.'),
+            scannerText(
+              ar,
+              fr,
+              'تعذر تشغيل الكاميرا. تأكد من منح الإذن ثم أعد فتح الماسح، أو أدخل الرمز يدويًا.',
+              'Camera could not start. Allow camera permission and retry, or type the code.',
+            ),
           );
       }
     })();
@@ -127,7 +142,12 @@ export function ProductCameraScanner({ onRead, onClose, ar }: ProductCameraScann
     const Detector = (window as DetectorWindow).BarcodeDetector;
     if (!Detector) {
       setMessage(
-        scannerText(ar, fr, 'قراءة الصور غير مدعومة في هذا المتصفح.', 'Photo decoding is unavailable in this browser.'),
+        scannerText(
+          ar,
+          fr,
+          'قراءة الصور غير مدعومة في هذا المتصفح.',
+          'Photo decoding is unavailable in this browser.',
+        ),
       );
       return;
     }
@@ -139,7 +159,12 @@ export function ProductCameraScanner({ onRead, onClose, ar }: ProductCameraScann
         const hit = result.find((item) => item.rawValue.trim());
         if (!hit) {
           setMessage(
-            scannerText(ar, fr, 'لم يتم العثور على رمز واضح في الصورة.', 'No readable code found in the photo.'),
+            scannerText(
+              ar,
+              fr,
+              'لم يتم العثور على رمز واضح في الصورة.',
+              'No readable code found in the photo.',
+            ),
           );
         } else {
           onRead(hit.rawValue, hit.format);
@@ -149,7 +174,12 @@ export function ProductCameraScanner({ onRead, onClose, ar }: ProductCameraScann
       }
     } catch {
       setMessage(
-        scannerText(ar, fr, 'تعذرت قراءة الصورة. حاول تقريب الرمز أو استخدم الإدخال اليدوي.', 'Photo could not be read. Move closer to the code or enter it manually.'),
+        scannerText(
+          ar,
+          fr,
+          'تعذرت قراءة الصورة. حاول تقريب الرمز أو استخدم الإدخال اليدوي.',
+          'Photo could not be read. Move closer to the code or enter it manually.',
+        ),
       );
     } finally {
       setBusyImage(false);
@@ -164,7 +194,11 @@ export function ProductCameraScanner({ onRead, onClose, ar }: ProductCameraScann
     >
       <div className="seller-scanner-header">
         <strong>{scannerText(ar, fr, 'مسح المنتج بالكاميرا', 'Scan product with camera')}</strong>
-        <button type="button" onClick={onClose} aria-label={scannerText(ar, fr, 'إغلاق الماسح', 'Close scanner')}>
+        <button
+          type="button"
+          onClick={onClose}
+          aria-label={scannerText(ar, fr, 'إغلاق الماسح', 'Close scanner')}
+        >
           ×
         </button>
       </div>
@@ -179,7 +213,12 @@ export function ProductCameraScanner({ onRead, onClose, ar }: ProductCameraScann
         {ready && <span className="seller-scanner-target" aria-hidden="true" />}
       </div>
       <p>
-        {scannerText(ar, fr, 'وجّه الكاميرا نحو Barcode أو QR. ستُنسخ البيانات المقروءة إلى الحقول المناسبة للمراجعة.', 'Point the camera at a barcode or QR. Recognized fields will be filled for your review.')}
+        {scannerText(
+          ar,
+          fr,
+          'وجّه الكاميرا نحو Barcode أو QR. ستُنسخ البيانات المقروءة إلى الحقول المناسبة للمراجعة.',
+          'Point the camera at a barcode or QR. Recognized fields will be filled for your review.',
+        )}
       </p>
       {message && (
         <p role="status" className="seller-form-message">
