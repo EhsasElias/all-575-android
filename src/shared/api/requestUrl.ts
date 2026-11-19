@@ -33,7 +33,14 @@ export function buildRequestUrl(baseUrl: string, path: string, query: Query): st
   } catch {
     return unsafeAddress();
   }
-  const insecureAllowed = import.meta.env.DEV || import.meta.env.VITE_TEST_PANEL === 'true';
+  // A production bundle can be previewed on loopback HTTP without weakening the
+  // HTTPS requirement for remote APIs or arbitrary customer-controlled hosts.
+  const loopbackPreview =
+    relative &&
+    parsedBase.origin === window.location.origin &&
+    ['localhost', '127.0.0.1', '[::1]'].includes(window.location.hostname);
+  const insecureAllowed =
+    import.meta.env.DEV || import.meta.env.VITE_TEST_PANEL === 'true' || loopbackPreview;
   if (
     !['https:', ...(insecureAllowed ? ['http:'] : [])].includes(parsedBase.protocol) ||
     parsedBase.username !== '' ||
