@@ -237,7 +237,7 @@ describe('Delivery area of a signed-in customer', () => {
     await waitFor(() => {
       expect(queriesOf(api, 'GET /products').at(-1)?.get('zone_id')).toBe('1');
     });
-    expect(JSON.parse(getPreference('deliveryZone') ?? 'null')).toMatchObject({ id: 99 });
+    expect(getPreference('deliveryZone')).toBeNull();
   });
 
   it('never uses a stale guest zone when the signed-in default address is unavailable', async () => {
