@@ -75,7 +75,7 @@ export const updateSuperAdminAccount = (
   input: { name?: string; is_active?: boolean },
 ) =>
   http.patch<{ data: { id: number; name: string | null; email: string; is_active: boolean } }>(
-    '/platform/super-admin/accounts/' + id,
+    '/platform/super-admin/accounts/' + String(id),
     input,
   );
 
@@ -88,6 +88,6 @@ export const updateSuperAdminSeller = (
   },
 ) =>
   http.patch<{ data: { id: number; name_ar: string; name_en: string; status: string } }>(
-    '/platform/super-admin/sellers/' + id,
+    '/platform/super-admin/sellers/' + String(id),
     input,
   );

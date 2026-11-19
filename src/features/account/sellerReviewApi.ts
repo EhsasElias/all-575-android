@@ -59,7 +59,7 @@ export const reviewSellerApplication = (id: number) =>
       application: SellerReviewApplication & Record<string, unknown>;
       documents: SellerReviewDocument[];
     };
-  }>('/seller-review/applications/' + id);
+  }>('/seller-review/applications/' + String(id));
 export const reviewSellerProducts = () =>
   http.get<{ data: PendingSellerProduct[] }>('/seller-review/products', { query: { limit: 50 } });
 export const decideSellerApplication = (
@@ -68,16 +68,16 @@ export const decideSellerApplication = (
   reason: string,
 ) =>
   http.post<{ data: { id: number; status: string; seller_id: number | null } }>(
-    '/seller-review/applications/' + id + '/decision',
+    '/seller-review/applications/' + String(id) + '/decision',
     { decision, reason: reason.trim() || null },
   );
 export const decideSellerProduct = (id: number, decision: 'publish' | 'reject', reason: string) =>
   http.post<{ data: { id: number; status: string } }>(
-    '/seller-review/products/' + id + '/decision',
+    '/seller-review/products/' + String(id) + '/decision',
     { decision, reason: reason.trim() || null },
   );
 export const downloadReviewDocument = (applicationId: number, documentId: number) =>
-  http.download('/seller-review/applications/' + applicationId + '/documents/' + documentId);
+  http.download('/seller-review/applications/' + String(applicationId) + '/documents/' + String(documentId));
 
 export type SellerBranchReview = {
   id: number;
@@ -96,7 +96,7 @@ export const reviewSellerBranches = () =>
 
 export const activateSellerBranch = (branchId: number) =>
   http.post<{ data: { id: number; is_active: boolean } }>(
-    '/seller-review/branches/' + branchId + '/decision',
+    '/seller-review/branches/' + String(branchId) + '/decision',
     { decision: 'activate' },
   );
 
@@ -137,9 +137,9 @@ export const updateManagedCategory = (
     sort_order?: number;
     is_active?: boolean;
   },
-) => http.patch<{ data: ManagedCategory }>('/seller-review/categories/' + id, input);
+) => http.patch<{ data: ManagedCategory }>('/seller-review/categories/' + String(id), input);
 export const deleteManagedCategory = (id: number) =>
-  http.delete<{ message: string }>('/seller-review/categories/' + id);
+  http.delete<{ message: string }>('/seller-review/categories/' + String(id));
 export const reviewCategoryRequests = () =>
   http.get<{ data: CategoryRequestReview[] }>('/seller-review/category-requests');
 export const decideCategoryRequest = (
@@ -148,6 +148,6 @@ export const decideCategoryRequest = (
   reviewNote?: string,
 ) =>
   http.post<{ data: { id: number; status: string; category_id: number | null } }>(
-    '/seller-review/category-requests/' + id + '/decision',
+    '/seller-review/category-requests/' + String(id) + '/decision',
     { decision, review_note: reviewNote ?? null },
   );

@@ -162,7 +162,7 @@ export const createSellerStock = (input: { branch_id: number; sku: string; on_ha
   }>('/seller/stock', input);
 
 export const adjustSellerStock = (id: number, on_hand: number) =>
-  seller.patch('/seller/stock/' + id, { on_hand });
+  seller.patch('/seller/stock/' + String(id), { on_hand });
 
 export type SellerProductInput = {
   category_id: number;
@@ -228,22 +228,22 @@ export const createSellerProduct = (sellerId: number, input: SellerProductInput)
   seller.post<{ data: SellerProduct }>('/seller/products', { ...input, seller_id: sellerId });
 
 export const deleteSellerProduct = (productId: number) =>
-  seller.delete<{ message: string }>('/seller/products/' + productId);
+  seller.delete<{ message: string }>('/seller/products/' + String(productId));
 
 export const updateSellerProduct = (productId: number, input: SellerProductInput) =>
-  seller.patch<{ data: SellerProduct }>('/seller/products/' + productId, input);
+  seller.patch<{ data: SellerProduct }>('/seller/products/' + String(productId), input);
 
 export const addSellerProductVariant = (
   productId: number,
   variant: { sku: string; barcode?: string | null; name_ar?: string; name_en?: string },
 ) =>
   seller.post<{ data: { id: number; product_id: number; sku: string; barcode: string | null } }>(
-    '/seller/products/' + productId + '/variants',
+    '/seller/products/' + String(productId) + '/variants',
     variant,
   );
 
 export const submitSellerProduct = (productId: number) =>
-  seller.post<{ data: SellerProduct }>('/seller/products/' + productId + '/submit');
+  seller.post<{ data: SellerProduct }>('/seller/products/' + String(productId) + '/submit');
 
 export const sellerCatalogTemplate = () => seller.download('/seller/products/import/template.csv');
 export const sellerCatalogExcelTemplate = () =>
@@ -254,7 +254,7 @@ export const uploadSellerProductImage = (productId: number, image: File | string
   if (typeof image === 'string') form.append('image_url', image);
   else form.append('image', image);
   return seller.upload<{ data: { product_id: number; image_path: string } }>(
-    '/seller/products/' + productId + '/image',
+    '/seller/products/' + String(productId) + '/image',
     form,
   );
 };
@@ -366,11 +366,11 @@ export const addSellerStaff = (sellerId: number, userId: number, input: SellerSt
     branch_id: input.branch_id,
   });
 export const updateSellerStaff = (membershipId: number, input: SellerStaffInput) =>
-  seller.patch<{ data: SellerStaffMember }>('/seller/staff/' + membershipId, input);
+  seller.patch<{ data: SellerStaffMember }>('/seller/staff/' + String(membershipId), input);
 
 export const deactivateSellerStaff = (membershipId: number) =>
   seller.patch<{ data: { id: number; is_active: boolean } }>(
-    '/seller/staff/' + membershipId + '/deactivate',
+    '/seller/staff/' + String(membershipId) + '/deactivate',
     {},
   );
 

@@ -63,14 +63,14 @@ export const adminCreateIncident = (data: {
   description: string;
 }) => http.post<{ data: { id: number } }>('/platform/admin/incidents', data);
 export const adminUpdateIncident = (id: number, data: { status: string; resolution?: string }) =>
-  http.patch<{ data: { id: number; status: string } }>('/platform/admin/incidents/' + id, data);
+  http.patch<{ data: { id: number; status: string } }>('/platform/admin/incidents/' + String(id), data);
 export const courierJobs = () => http.get<{ data: CourierJob[] }>('/courier/jobs');
 export const courierAvailability = (is_online: boolean) =>
   http.patch<{ data: { is_online: boolean } }>('/courier/availability', { is_online });
 export const courierRespond = (id: number, decision: 'accept' | 'decline') =>
-  http.post<{ data: { status: string } }>('/courier/jobs/' + id + '/respond', { decision });
+  http.post<{ data: { status: string } }>('/courier/jobs/' + String(id) + '/respond', { decision });
 export const courierPickup = (id: number, pickup_code: string, parcel_count: number) =>
-  http.post<{ data: { status: string } }>('/courier/jobs/' + id + '/pickup', {
+  http.post<{ data: { status: string } }>('/courier/jobs/' + String(id) + '/pickup', {
     pickup_code,
     parcel_count,
   });
@@ -94,7 +94,7 @@ export const adminRegisterCourier = (data: {
   http.post<{ data: { id: number; approval_status: string } }>('/platform/admin/couriers', data);
 export const superAdminApproveCourier = (id: number, approved: boolean) =>
   http.patch<{ data: { approval_status: string } }>(
-    '/platform/super-admin/couriers/' + id + '/approval',
+    '/platform/super-admin/couriers/' + String(id) + '/approval',
     { approved },
   );
 

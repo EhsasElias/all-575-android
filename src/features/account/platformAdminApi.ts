@@ -50,7 +50,7 @@ export const updateAdminAssignment = (
     can_view_orders?: boolean;
     can_view_inventory?: boolean;
   },
-) => http.patch<{ data: PlatformAdminAccess }>('/platform/super-admin/admins/' + id, data);
+) => http.patch<{ data: PlatformAdminAccess }>('/platform/super-admin/admins/' + String(id), data);
 
 export type PlatformAdminOrder = {
   id: string;
