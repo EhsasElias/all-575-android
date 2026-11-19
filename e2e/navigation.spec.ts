@@ -1,5 +1,5 @@
 import { expect, test } from '@playwright/test';
-import { finishIntro, openApp } from './openApp';
+import { openApp } from './openApp';
 
 const LANGUAGES = ['ar', 'en', 'fr'] as const;
 const THEMES = ['light', 'dark'] as const;
