@@ -103,4 +103,28 @@ export const sellerReviewFrench: Record<string, string> = {
   'Review note / rejection reason': 'Note d’examen / motif du refus',
   'Approve & create category': 'Approuver et créer la catégorie',
   'Recent review decisions': 'Décisions récentes',
+  'Could not save category. Check names and parent category.':
+    'Impossible d’enregistrer la catégorie. Vérifiez les noms et la catégorie parente.',
+  'Category may have products or children. Move them before removing or disabling it.':
+    'Cette catégorie peut contenir des produits ou des sous-catégories. Déplacez-les avant sa suppression ou sa désactivation.',
+  'Could not process request. The name may be duplicated or already reviewed.':
+    'Impossible de traiter la demande. Le nom est peut-être déjà utilisé ou la demande déjà examinée.',
+  'Approval requires the essential official documents.':
+    'L’approbation nécessite les documents officiels obligatoires.',
+  'Could not record decision. Verify permissions and current status.':
+    'Impossible d’enregistrer la décision. Vérifiez les autorisations et l’état actuel.',
+  'Could not publish product. Check image, category and SKU.':
+    'Impossible de publier le produit. Vérifiez l’image, la catégorie et le SKU.',
+  'Activate this branch after verifying its physical location?':
+    'Activer cette succursale après vérification de son emplacement physique ?',
+  'Could not activate branch. Check location and delivery zone.':
+    'Impossible d’activer la succursale. Vérifiez l’emplacement et la zone de livraison.',
+  'For authorized reviewers only. Decisions are audited.':
+    'Réservé aux évaluateurs autorisés. Les décisions sont consignées dans le journal d’audit.',
+  'You do not have Seller reviewer permission. Access must be explicitly granted by an administrator.':
+    'Vous n’avez pas l’autorisation d’examiner les vendeurs. Un administrateur doit vous accorder cet accès.',
+  'Correction/rejection reason (at least 10 characters)':
+    'Motif de correction ou de refus (au moins 10 caractères)',
+  'This application has already been reviewed; decisions are available only for submitted requests.':
+    'Cette candidature a déjà été examinée ; seules les demandes soumises peuvent recevoir une décision.',
 };
