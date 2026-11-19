@@ -344,7 +344,8 @@ export type SellerStaffMember = {
   name?: string | null;
   seller_id: number;
   branch_id: number | null;
-  role: 'owner' | 'branch_manager' | 'picker' | string;
+  // Backend may add staff roles. Restrict the write input separately, not the read response.
+  role: string;
   is_active: boolean;
 };
 
