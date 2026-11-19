@@ -440,8 +440,8 @@ export function SellerWorkspaceScreen() {
     if (
       !window.confirm(
         tr(
-          'تأكيد تنفيذ الإجراء على ' + eligible.length + ' طلب؟',
-          'Apply this action to ' + eligible.length + ' orders?',
+          `تأكيد تنفيذ الإجراء على ${eligible.length} طلب؟`,
+          `Apply this action to ${eligible.length} orders?`,
         ),
       )
     )
@@ -463,11 +463,11 @@ export function SellerWorkspaceScreen() {
     setOrderBulkNotice(
       tr(
         'تم تحديث ' +
-          succeeded.length +
+          String(succeeded.length) +
           ' طلب. ' +
           (failed.length ? 'تعذر تحديث: ' + failed.join('، ') : ''),
         'Updated ' +
-          succeeded.length +
+          String(succeeded.length) +
           ' orders. ' +
           (failed.length ? 'Failed: ' + failed.join(', ') : ''),
       ),
@@ -1300,7 +1300,7 @@ export function SellerWorkspaceScreen() {
                             ? ar
                               ? branches.find((branch) => branch.id === item.branch_id)?.name_ar
                               : branches.find((branch) => branch.id === item.branch_id)?.name_en
-                            : tr('فرع', 'Branch') + ' #' + item.branch_id}
+                            : tr('فرع', 'Branch') + ` #${item.branch_id}`}
                         </span>
                       </div>
                       <div className="seller-stock-stats">
@@ -1593,7 +1593,7 @@ export function SellerWorkspaceScreen() {
                           <span>
                             {ar ? item.product.ar : item.product.en}
                             {' — '}
-                            {(ar ? item.variant.ar : item.variant.en) || '#' + item.variant_id}
+                            {(ar ? item.variant.ar : item.variant.en) || `#${item.variant_id}`}
                           </span>
                           <strong>× {item.quantity}</strong>
                         </li>
