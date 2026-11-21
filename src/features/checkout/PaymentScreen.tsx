@@ -62,7 +62,7 @@ export function PaymentScreen() {
         retrying={flow.retry.isPending}
         retryError={flow.retry.error}
         onRetry={(method) => {
-          flow.retry.mutate(method);
+          flow.retryOnce(method);
         }}
       />
     );
@@ -79,7 +79,7 @@ export function PaymentScreen() {
       retrying={flow.retry.isPending}
       retryError={flow.retry.error}
       onRetry={(method) => {
-        flow.retry.mutate(method);
+        flow.retryOnce(method);
       }}
       devPanel={
         DevPaymentPanel && (
