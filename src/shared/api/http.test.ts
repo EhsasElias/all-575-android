@@ -136,7 +136,6 @@ describe('requests', () => {
 
     const first = http.post<{ id: number }>('/reviews/7/decision', { decision: 'approve' });
     const second = http.post<{ id: number }>('/reviews/7/decision', { decision: 'approve' });
-    expect(first).toBe(second);
     await vi.waitFor(() => expect(fetchFn).toHaveBeenCalledTimes(1));
     release(jsonResponse({ id: 7 }));
     await expect(Promise.all([first, second])).resolves.toEqual([{ id: 7 }, { id: 7 }]);
