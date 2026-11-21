@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 import { useSearchParams } from 'react-router';
 import { useTranslation } from 'react-i18next';
 import { isApiError } from '@/shared/api';
@@ -94,6 +94,24 @@ export function SellerReviewScreen() {
   );
   const [reason, setReason] = useState('');
   const [busy, setBusy] = useState(false);
+  const actionInFlight = useRef(false);
+  const completedActionKeys = useRef(new Set<string>());
+  const [completedActions, setCompletedActions] = useState<Set<string>>(() => new Set());
+
+  const startReviewAction = (key: string) => {
+    if (actionInFlight.current || completedActionKeys.current.has(key)) return false;
+    actionInFlight.current = true;
+    setBusy(true);
+    return true;
+  };
+  const finishReviewAction = (key: string) => {
+    completedActionKeys.current.add(key);
+    setCompletedActions(new Set(completedActionKeys.current));
+  };
+  const unlockReviewAction = () => {
+    actionInFlight.current = false;
+    setBusy(false);
+  };
   const [loading, setLoading] = useState(true);
   const [unauthorized, setUnauthorized] = useState(false);
   const [error, setError] = useState('');
@@ -306,11 +324,13 @@ export function SellerReviewScreen() {
       setError(tr('اكتب سبب الرفض.', 'Enter a rejection reason.'));
       return;
     }
-    setBusy(true);
+    const key = 'category-request:' + id;
+    if (!startReviewAction(key)) return;
     setError('');
     setNotice('');
     try {
       await decideCategoryRequest(id, decision, note);
+      finishReviewAction(key);
       setNotice(tr('تم تسجيل قرار طلب التصنيف.', 'Category request decision recorded.'));
       setRevision((v) => v + 1);
     } catch {
@@ -321,7 +341,7 @@ export function SellerReviewScreen() {
         ),
       );
     } finally {
-      setBusy(false);
+      unlockReviewAction();
     }
   };
 
@@ -354,11 +374,13 @@ export function SellerReviewScreen() {
   ) => {
     if (busy || (decision !== 'approve' && reason.trim().length < 10)) return;
     if (!window.confirm(tr('تأكيد قرار مراجعة البائع؟', 'Confirm seller review decision?'))) return;
-    setBusy(true);
+    const key = 'seller-application:' + applicationId;
+    if (!startReviewAction(key)) return;
     setError('');
     setNotice('');
     try {
       await decideSellerApplication(applicationId, decision, reason);
+      finishReviewAction(key);
       setSelected(null);
       setDocuments([]);
       setSelectedApplication(null);
@@ -378,7 +400,7 @@ export function SellerReviewScreen() {
             ),
       );
     } finally {
-      setBusy(false);
+      unlockReviewAction();
     }
   };
 
@@ -386,11 +408,13 @@ export function SellerReviewScreen() {
     if (busy || (decision === 'reject' && reason.trim().length < 10)) return;
     if (!window.confirm(tr('تأكيد قرار مراجعة المنتج؟', 'Confirm product review decision?')))
       return;
-    setBusy(true);
+    const key = 'seller-product:' + productId;
+    if (!startReviewAction(key)) return;
     setError('');
     setNotice('');
     try {
       await decideSellerProduct(productId, decision, reason);
+      finishReviewAction(key);
       setReason('');
       setRevision((v) => v + 1);
       setNotice(tr('تم تسجيل قرار المنتج.', 'Product review recorded.'));
@@ -402,7 +426,7 @@ export function SellerReviewScreen() {
         ),
       );
     } finally {
-      setBusy(false);
+      unlockReviewAction();
     }
   };
 
@@ -417,11 +441,13 @@ export function SellerReviewScreen() {
       )
     )
       return;
-    setBusy(true);
+    const key = 'seller-branch:' + branchId;
+    if (!startReviewAction(key)) return;
     setError('');
     setNotice('');
     try {
       await activateSellerBranch(branchId);
+      finishReviewAction(key);
       setRevision((value) => value + 1);
       setNotice(tr('تم تفعيل الفرع وتسجيل القرار.', 'Branch activated and review recorded.'));
     } catch {
@@ -432,7 +458,7 @@ export function SellerReviewScreen() {
         ),
       );
     } finally {
-      setBusy(false);
+      unlockReviewAction();
     }
   };
 
@@ -683,21 +709,21 @@ export function SellerReviewScreen() {
                           <div style={{ ...fields, marginTop: 10 }}>
                             <button
                               type="button"
-                              disabled={busy}
+                              disabled={busy || completedActions.has('seller-application:' + item.id)}
                               onClick={() => void saveApplicationDecision(item.id, 'approve')}
                             >
                               {tr('اعتماد البائع', 'Approve seller')}
                             </button>
                             <button
                               type="button"
-                              disabled={busy || reason.trim().length < 10}
+                              disabled={busy || reason.trim().length < 10 || completedActions.has('seller-application:' + item.id)}
                               onClick={() => void saveApplicationDecision(item.id, 'correction')}
                             >
                               {tr('طلب تصحيح', 'Request correction')}
                             </button>
                             <button
                               type="button"
-                              disabled={busy || reason.trim().length < 10}
+                              disabled={busy || reason.trim().length < 10 || completedActions.has('seller-application:' + item.id)}
                               onClick={() => void saveApplicationDecision(item.id, 'reject')}
                             >
                               {tr('رفض الطلب', 'Reject')}
@@ -744,7 +770,7 @@ export function SellerReviewScreen() {
                     </p>
                     <button
                       type="button"
-                      disabled={busy}
+                      disabled={busy || completedActions.has('seller-branch:' + branch.id)}
                       onClick={() => void approveBranch(branch.id)}
                     >
                       {tr('اعتماد وتفعيل الفرع', 'Approve & activate')}
@@ -800,14 +826,14 @@ export function SellerReviewScreen() {
                     <div style={{ ...fields, marginTop: 10 }}>
                       <button
                         type="button"
-                        disabled={busy}
+                        disabled={busy || completedActions.has('seller-product:' + item.id)}
                         onClick={() => void saveProductDecision(item.id, 'publish')}
                       >
                         {tr('نشر المنتج', 'Publish')}
                       </button>
                       <button
                         type="button"
-                        disabled={busy || selected !== item.id || reason.trim().length < 10}
+                        disabled={busy || selected !== item.id || reason.trim().length < 10 || completedActions.has('seller-product:' + item.id)}
                         onClick={() => void saveProductDecision(item.id, 'reject')}
                       >
                         {tr('رفض المنتج', 'Reject')}
@@ -1013,14 +1039,14 @@ export function SellerReviewScreen() {
                         <div style={{ ...fields, marginTop: 8 }}>
                           <button
                             type="button"
-                            disabled={busy}
+                            disabled={busy || completedActions.has('category-request:' + item.id)}
                             onClick={() => void categoryRequestDecision(item.id, 'approve')}
                           >
                             {tr('اعتماد وإضافة التصنيف', 'Approve & create category')}
                           </button>
                           <button
                             type="button"
-                            disabled={busy || !categoryReviewNotes[item.id]?.trim()}
+                            disabled={busy || !categoryReviewNotes[item.id]?.trim() || completedActions.has('category-request:' + item.id)}
                             onClick={() => void categoryRequestDecision(item.id, 'reject')}
                           >
                             {tr('رفض الطلب', 'Reject')}
