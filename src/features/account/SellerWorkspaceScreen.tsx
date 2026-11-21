@@ -129,6 +129,7 @@ export function SellerWorkspaceScreen() {
   const [loading, setLoading] = useState(true);
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState('');
+  const [sessionAttempt, setSessionAttempt] = useState(0);
   const [revision, setRevision] = useState(0);
 
   const reload = useCallback(() => {
@@ -174,7 +175,7 @@ export function SellerWorkspaceScreen() {
     };
     // Language changes should not discard an existing seller session.
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+  }, [sessionAttempt]);
 
   useEffect(() => {
     if (!eligible) return;
@@ -828,21 +829,27 @@ export function SellerWorkspaceScreen() {
         )}
         {!eligible && !loading && (
           <div style={panel}>
-            <p>
-              {tr(
-                'هذه اللوحة متاحة للبائعين المعتمدين فقط.',
-                'This workspace is for approved sellers only.',
-              )}
-            </p>
-            <Link to={routePaths.sellerApplication}>
-              {tr('طلب التسجيل كبائع', 'Apply to become a seller')}
-            </Link>
+            {!error && (
+              <>
+                <p>
+                  {tr(
+                    'هذه اللوحة متاحة للبائعين المعتمدين فقط.',
+                    'This workspace is for approved sellers only.',
+                  )}
+                </p>
+                <Link to={routePaths.sellerApplication}>
+                  {tr('طلب التسجيل كبائع', 'Apply to become a seller')}
+                </Link>
+              </>
+            )}
             <div style={{ marginTop: 12 }}>
               <button
                 type="button"
                 style={action}
                 onClick={() => {
-                  window.location.reload();
+                  setLoading(true);
+                  setError('');
+                  setSessionAttempt((attempt) => attempt + 1);
                 }}
               >
                 {tr('إعادة المحاولة', 'Retry')}
