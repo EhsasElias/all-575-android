@@ -117,6 +117,9 @@ async function sendWithTimeout<Body>(
 export function createHttpClient(config: HttpClientConfig): HttpClient {
   const fetchFn: typeof fetch = config.fetchFn ?? ((input, init) => fetch(input, init));
   const defaultTimeoutMs = config.timeoutMs ?? DEFAULT_TIMEOUT_MS;
+  // Share an in-flight mutation with an identical caller. This prevents two
+  // rapid clicks from sending the same write to the API twice.
+  const inFlightMutations = new Map<string, Promise<unknown>>();
 
   async function buildHeaders(
     hasBody: boolean,
@@ -132,16 +135,42 @@ export function createHttpClient(config: HttpClientConfig): HttpClient {
     return { headers, token };
   }
 
-  async function request<T>(method: string, path: string, options: SendOptions): Promise<T> {
-    const trace = config.trace?.begin(method, path);
-    try {
-      return await send<T>(method, path, options, trace);
-    } catch (error) {
-      const { reason, note } = describeFailure(error);
-      if (note !== '') trace?.note(note);
-      trace?.failed(reason);
-      throw error;
+  function request<T>(method: string, path: string, options: SendOptions): Promise<T> {
+    // GETs stay independent; different payloads and destinations must not be merged.
+    // Requests with caller-specific cancellation also remain independent.
+    const key =
+      method !== 'GET' && !options.signal
+        ? JSON.stringify([
+            method,
+            path,
+            options.query,
+            options.body,
+            options.headers,
+            options.timeoutMs,
+          ])
+        : null;
+    if (key !== null) {
+      const running = inFlightMutations.get(key);
+      if (running) return running as Promise<T>;
     }
+    const trace = config.trace?.begin(method, path);
+    const operation = (async () => {
+      try {
+        return await send<T>(method, path, options, trace);
+      } catch (error) {
+        const { reason, note } = describeFailure(error);
+        if (note !== '') trace?.note(note);
+        trace?.failed(reason);
+        throw error;
+      }
+    })();
+    if (key !== null) {
+      inFlightMutations.set(key, operation);
+      void operation.finally(() => {
+        if (inFlightMutations.get(key) === operation) inFlightMutations.delete(key);
+      }).catch(() => undefined);
+    }
+    return operation;
   }
 
   async function send<T>(
