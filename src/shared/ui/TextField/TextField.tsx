@@ -13,7 +13,14 @@ type TextFieldProps = Omit<ComponentProps<'input'>, 'id'> & {
 };
 
 export function TextField({
-  label, hint, error, id, className, showPasswordToggle = false, type, ...rest
+  label,
+  hint,
+  error,
+  id,
+  className,
+  showPasswordToggle = false,
+  type,
+  ...rest
 }: TextFieldProps) {
   const { i18n } = useTranslation();
   const generatedId = useId();
@@ -48,7 +55,9 @@ export function TextField({
             aria-label={passwordVisible ? concealLabel : revealLabel}
             aria-pressed={passwordVisible}
             title={passwordVisible ? concealLabel : revealLabel}
-            onClick={() => setPasswordVisible((previous) => !previous)}
+            onClick={() => {
+              setPasswordVisible((previous) => !previous);
+            }}
           >
             <Icon name={passwordVisible ? 'eye-off' : 'eye'} size={22} />
           </button>

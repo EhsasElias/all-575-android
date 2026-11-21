@@ -23,7 +23,7 @@ export const legalFr: Translations<typeof legalEn> = {
       },
       prices: {
         title: 'Prix, TVA et produits',
-        body: 'Les prix unitaires vont de 1 à 5,75 SAR, TVA applicable comprise. Le serveur calcule les articles, remises et frais de livraison avant confirmation. Le numéro de TVA d’une entreprise ne supprime pas automatiquement la taxe. Les photos sont descriptives : vérifiez le texte, la taille, la variante et la quantité. Si le prix ou la disponibilité change avant acceptation, vérifiez le nouveau total. Les commandes confirmées conservent leurs prix enregistrés.',
+        body: 'Les prix unitaires vont de 1 à 5,75 SAR, hors TVA. La TVA applicable aux articles et à la livraison est ajoutée au paiement. Le serveur calcule les articles, remises et frais de livraison avant confirmation. Le numéro de TVA d’une entreprise ne supprime pas automatiquement la taxe. Les photos sont descriptives : vérifiez le texte, la taille, la variante et la quantité. Si le prix ou la disponibilité change avant acceptation, vérifiez le nouveau total. Les commandes confirmées conservent leurs prix enregistrés.',
       },
       orders: {
         title: 'Commandes, paiements et devis',

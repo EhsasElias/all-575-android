@@ -21,7 +21,9 @@ const FIVE_MINUTES_MS = 5 * 60 * 1000;
  * The zone of the signed-in customer's default address. Any failure means "no address zone": browsing
  * must never depend on it.
  */
-async function loadAddressZone(signal: AbortSignal): Promise<{ zone: DeliveryZone; displayName: string } | null> {
+async function loadAddressZone(
+  signal: AbortSignal,
+): Promise<{ zone: DeliveryZone; displayName: string } | null> {
   try {
     const addresses = await fetchAddresses(signal);
     const address = addresses.find((candidate) => candidate.is_default);
@@ -57,9 +59,13 @@ export function useDeliveryZone(): DeliveryZoneState {
 
   // An authenticated customer must never shop using a stale area from a previous guest/account.
   if (status !== 'guest') {
-    if (status === 'signed-in' && addressZone) return {
-      zone: addressZone.zone, zoneId: addressZone.zone.id, source: 'address', displayName: addressZone.displayName,
-    };
+    if (status === 'signed-in' && addressZone)
+      return {
+        zone: addressZone.zone,
+        zoneId: addressZone.zone.id,
+        source: 'address',
+        displayName: addressZone.displayName,
+      };
     return { zone: null, zoneId: null, source: 'none' };
   }
   if (saved) return { zone: saved, zoneId: saved.id, source: 'saved' };

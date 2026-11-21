@@ -159,7 +159,14 @@
 }
 
 @media (max-width: 42rem) {
-  .grid { grid-template-columns: repeat(auto-fill, minmax(min(100%, 9rem), 1fr)); }
-  .calendarDay { min-block-size: 2.5rem; padding-inline: 0; }
-  .weekday { font-size: 0.75rem; }
+  .grid {
+    grid-template-columns: repeat(auto-fill, minmax(min(100%, 9rem), 1fr));
+  }
+  .calendarDay {
+    min-block-size: 2.5rem;
+    padding-inline: 0;
+  }
+  .weekday {
+    font-size: 0.75rem;
+  }
 }

@@ -10,11 +10,12 @@ type Context = 'document' | 'image' | 'csv';
 export function uploadErrorMessage(error: unknown, language: Language, context: Context): string {
   const translated = (ar: string, en: string, fr: string): string =>
     language === 'ar' ? ar : language === 'fr' ? fr : en;
-  const kind = context === 'document'
-    ? translated('المستند', 'document', 'document')
-    : context === 'image'
-      ? translated('الصورة', 'image', 'image')
-      : translated('ملف CSV', 'CSV file', 'fichier CSV');
+  const kind =
+    context === 'document'
+      ? translated('المستند', 'document', 'document')
+      : context === 'image'
+        ? translated('الصورة', 'image', 'image')
+        : translated('ملف CSV', 'CSV file', 'fichier CSV');
 
   if (!isApiError(error)) {
     return translated(
@@ -32,14 +33,18 @@ export function uploadErrorMessage(error: unknown, language: Language, context: 
     );
   }
   if (error.status === 401) {
-    return translated('انتهت جلسة الدخول. سجّل الدخول مجددًا ثم حاول الرفع.',
+    return translated(
+      'انتهت جلسة الدخول. سجّل الدخول مجددًا ثم حاول الرفع.',
       'Your session expired. Sign in again, then retry.',
-      'Session expirée. Reconnectez-vous puis réessayez.');
+      'Session expirée. Reconnectez-vous puis réessayez.',
+    );
   }
   if (error.status === 403) {
-    return translated('الحساب غير مخوّل للرفع. تأكد من توثيق البريد أو الجوال ومن صلاحيات حسابك.',
+    return translated(
+      'الحساب غير مخوّل للرفع. تأكد من توثيق البريد أو الجوال ومن صلاحيات حسابك.',
       'Upload not authorized. Verify your email or phone and account permissions.',
-      'Transfert non autorisé. Vérifiez votre compte et ses autorisations.');
+      'Transfert non autorisé. Vérifiez votre compte et ses autorisations.',
+    );
   }
   if (error.status === 404) {
     return translated(
@@ -55,9 +60,11 @@ export function uploadErrorMessage(error: unknown, language: Language, context: 
     );
   }
   if (error.status === 409) {
-    return translated('لا يمكن تعديل هذا الملف في الحالة الحالية. حدّث الصفحة وتحقق من حالة الطلب أو المنتج.',
+    return translated(
+      'لا يمكن تعديل هذا الملف في الحالة الحالية. حدّث الصفحة وتحقق من حالة الطلب أو المنتج.',
       'Upload is not allowed in its current state. Refresh and check the application/product status.',
-      'Transfert non autorisé dans cet état. Actualisez la page.');
+      'Transfert non autorisé dans cet état. Actualisez la page.',
+    );
   }
   if (error.status === 422) {
     const specifics = messages.length ? ' ' + messages.join(' | ') : '';
@@ -68,25 +75,36 @@ export function uploadErrorMessage(error: unknown, language: Language, context: 
     );
   }
   if (error.status === 429) {
-    return translated('تم تجاوز عدد محاولات الرفع. حاول بعد دقيقة.',
+    return translated(
+      'تم تجاوز عدد محاولات الرفع. حاول بعد دقيقة.',
       'Too many uploads. Try again in one minute.',
-      'Trop de tentatives. Réessayez dans une minute.');
+      'Trop de tentatives. Réessayez dans une minute.',
+    );
   }
   if (error.kind === 'timeout') {
-    return translated('انتهت مهلة الرفع. تحقق من الإنترنت وحدود الخادم ثم حاول مجددًا.',
+    return translated(
+      'انتهت مهلة الرفع. تحقق من الإنترنت وحدود الخادم ثم حاول مجددًا.',
       'Upload timed out. Check your connection and server limits.',
-      'Délai de transfert dépassé. Vérifiez votre connexion.');
+      'Délai de transfert dépassé. Vérifiez votre connexion.',
+    );
   }
   if (error.kind === 'network') {
-    return translated('تعذر الاتصال بخادم الملفات. تأكد من الإنترنت ثم حاول مجددًا.',
+    return translated(
+      'تعذر الاتصال بخادم الملفات. تأكد من الإنترنت ثم حاول مجددًا.',
       'Could not reach the upload server. Check your connection.',
-      'Serveur de transfert inaccessible. Vérifiez votre connexion.');
+      'Serveur de transfert inaccessible. Vérifiez votre connexion.',
+    );
   }
   if (error.status !== null && error.status >= 500) {
-    return translated('فشل الخادم أثناء حفظ الملف. راجع سجلات Laravel وصلاحيات مجلد التخزين.',
+    return translated(
+      'فشل الخادم أثناء حفظ الملف. راجع سجلات Laravel وصلاحيات مجلد التخزين.',
       'Server failed while saving the file. Check Laravel logs and storage permissions.',
-      'Erreur du serveur pendant la sauvegarde. Vérifiez les journaux Laravel.');
+      'Erreur du serveur pendant la sauvegarde. Vérifiez les journaux Laravel.',
+    );
   }
-  return translated(`تعذر رفع ${kind}.`, `Could not upload the ${kind}.`,
-    `Impossible de transférer le ${kind}.`);
+  return translated(
+    `تعذر رفع ${kind}.`,
+    `Could not upload the ${kind}.`,
+    `Impossible de transférer le ${kind}.`,
+  );
 }

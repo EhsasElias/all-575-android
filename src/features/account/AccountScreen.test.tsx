@@ -99,36 +99,62 @@ describe('Account: a signed-in customer', () => {
     await renderApp({ route: '/account', signedIn: true, seenWelcome: true });
 
     const menu = await screen.findByRole('navigation', { name: 'Account navigation' });
-    const hrefs = within(menu).getAllByRole('link').map(link => link.getAttribute('href'));
-    expect(hrefs).toEqual(expect.arrayContaining([
-      '/account', '/account/dashboard', '/orders', '/account/notifications',
-      '/account/requests', '/account/support', '/account/saved',
-      '/account/addresses', '/account/spending', '/account/billing',
-      '/account/profile', '/account/sessions',
-    ]));
+    const hrefs = within(menu)
+      .getAllByRole('link')
+      .map((link) => link.getAttribute('href'));
+    expect(hrefs).toEqual(
+      expect.arrayContaining([
+        '/account',
+        '/account/dashboard',
+        '/orders',
+        '/account/notifications',
+        '/account/requests',
+        '/account/support',
+        '/account/saved',
+        '/account/addresses',
+        '/account/spending',
+        '/account/billing',
+        '/account/profile',
+        '/account/sessions',
+      ]),
+    );
   });
 
   it('keeps personal navigation separate from the customer dashboard sidebar', async () => {
     signedInApi();
     const { router } = await renderApp({ route: '/account', signedIn: true, seenWelcome: true });
     expect(screen.getByRole('navigation', { name: 'Account navigation' })).toBeInTheDocument();
-    expect(screen.queryByRole('navigation', { name: 'Dashboard navigation' })).not.toBeInTheDocument();
+    expect(
+      screen.queryByRole('navigation', { name: 'Dashboard navigation' }),
+    ).not.toBeInTheDocument();
 
     await router.navigate('/account/dashboard');
     const workspaceMenu = await screen.findByRole('navigation', { name: 'Dashboard navigation' });
-    expect(within(workspaceMenu).getByRole('link', { name: 'Customer overview' }))
-      .toHaveAttribute('href', '/account/dashboard');
-    expect(within(workspaceMenu).getByRole('link', { name: 'Back to my account' }))
-      .toHaveAttribute('href', '/account');
-    expect(screen.queryByRole('navigation', { name: 'Account navigation' })).not.toBeInTheDocument();
+    expect(within(workspaceMenu).getByRole('link', { name: 'Customer overview' })).toHaveAttribute(
+      'href',
+      '/account/dashboard',
+    );
+    expect(within(workspaceMenu).getByRole('link', { name: 'Back to my account' })).toHaveAttribute(
+      'href',
+      '/account',
+    );
+    expect(
+      screen.queryByRole('navigation', { name: 'Account navigation' }),
+    ).not.toBeInTheDocument();
   });
 
   it('shows seller workspace navigation separately from personal account links', async () => {
     signedInApi();
-    await renderApp({ route: '/account/seller-workspace?section=products', signedIn: true, seenWelcome: true });
+    await renderApp({
+      route: '/account/seller-workspace?section=products',
+      signedIn: true,
+      seenWelcome: true,
+    });
     const workspaceMenu = await screen.findByRole('navigation', { name: 'Dashboard navigation' });
-    expect(within(workspaceMenu).getByRole('link', { name: 'Products' }))
-      .toHaveAttribute('href', '/account/seller-workspace?section=products');
+    expect(within(workspaceMenu).getByRole('link', { name: 'Products' })).toHaveAttribute(
+      'href',
+      '/account/seller-workspace?section=products',
+    );
     expect(within(workspaceMenu).queryByRole('link', { name: 'Profile' })).not.toBeInTheDocument();
   });
 

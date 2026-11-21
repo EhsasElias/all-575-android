@@ -41,7 +41,7 @@ export const paymentsEn = {
     total: 'Total',
     vat: 'VAT',
     vatIncluded: 'VAT is included in the recorded amounts.',
-    vatAdded: 'VAT is added to the net prices above.'
+    vatAdded: 'VAT is added to the net prices above.',
   },
 };
 
@@ -86,7 +86,7 @@ export const paymentsAr: Translations<typeof paymentsEn> = {
     total: 'الإجمالي',
     vat: 'ضريبة القيمة المضافة',
     vatIncluded: 'الضريبة مضمنة في المبالغ المسجلة لهذا الطلب.',
-    vatAdded: 'أُضيفت الضريبة إلى الأسعار قبل الضريبة.'
+    vatAdded: 'أُضيفت الضريبة إلى الأسعار قبل الضريبة.',
   },
 };
 
@@ -132,6 +132,6 @@ export const paymentsFr: Translations<typeof paymentsEn> = {
     total: 'Total',
     vat: 'TVA',
     vatIncluded: 'La TVA est comprise dans les montants enregistrés.',
-    vatAdded: 'La TVA est ajoutée aux montants hors taxe.'
+    vatAdded: 'La TVA est ajoutée aux montants hors taxe.',
   },
 };

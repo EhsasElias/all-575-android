@@ -23,7 +23,8 @@
     "api:types": "openapi-typescript docs/api/openapi.json -o src/shared/api/schema.d.ts",
     "api:check": "node scripts/api-contract.mjs check",
     "api:update": "node scripts/api-contract.mjs update && npm run api:types",
-    "api:latest": "node scripts/api-contract.mjs latest"
+    "api:latest": "node scripts/api-contract.mjs latest",
+    "locales:audit": "node scripts/locale-audit.mjs"
   },
   "dependencies": {
     "@aparajita/capacitor-biometric-auth": "^9.1.2",

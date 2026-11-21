@@ -153,7 +153,9 @@ export function SlotPicker({
               className={styles.navButton}
               aria-label={labels.previous}
               disabled={!firstMonth || month <= firstMonth}
-              onClick={() => setRequestedMonth(shiftMonth(month, -1))}
+              onClick={() => {
+                setRequestedMonth(shiftMonth(month, -1));
+              }}
             >
               ‹
             </button>
@@ -163,7 +165,9 @@ export function SlotPicker({
               className={styles.navButton}
               aria-label={labels.next}
               disabled={!lastMonth || month >= lastMonth}
-              onClick={() => setRequestedMonth(shiftMonth(month, 1))}
+              onClick={() => {
+                setRequestedMonth(shiftMonth(month, 1));
+              }}
             >
               ›
             </button>
@@ -176,7 +180,7 @@ export function SlotPicker({
             ))}
             {datesInMonth(month).map((key, index) =>
               key === null ? (
-                <span key={'blank-' + index} aria-hidden="true" />
+                <span key={`blank-${index}`} aria-hidden="true" />
               ) : (
                 <button
                   key={key}
@@ -186,7 +190,9 @@ export function SlotPicker({
                   aria-pressed={activeDay === key}
                   aria-label={key}
                   data-selected={activeDay === key}
-                  onClick={() => chooseDay(key)}
+                  onClick={() => {
+                    chooseDay(key);
+                  }}
                 >
                   {Number(key.slice(-2))}
                   {isAvailable(key) && <span className={styles.dayDot} aria-hidden="true" />}
@@ -205,7 +211,9 @@ export function SlotPicker({
                   className={styles.input}
                   checked={slot.id === selectedId}
                   disabled={!slot.available}
-                  onChange={() => onSelect(slot.id)}
+                  onChange={() => {
+                    onSelect(slot.id);
+                  }}
                 />
                 <span className={styles.times}>
                   <Icon name="check" size={16} className={styles.check} />

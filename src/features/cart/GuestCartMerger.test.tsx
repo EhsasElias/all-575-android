@@ -44,7 +44,7 @@ describe('merging the guest cart when the customer signs in', () => {
     });
     expect(guestCartStore.getSnapshot()).toEqual([]);
     const stored: unknown = JSON.parse(getPreference('guestCart') ?? 'null');
-    expect(stored).toEqual({ version: 1, lines: [] });
+    expect(stored).toEqual({ version: 2, lines: [] });
     await waitFor(() => {
       expect(badge()).toHaveTextContent('5');
     });

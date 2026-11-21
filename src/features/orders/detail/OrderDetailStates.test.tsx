@@ -128,7 +128,7 @@ describe('Order detail: languages', () => {
     expect(screen.getByText('تاريخ الدفع').nextElementSibling).toHaveTextContent(
       /24 أكتوبر 2026، 8:20 م/,
     );
-    expect(screen.getByText('ضريبة القيمة المضافة المضمّنة')).toBeInTheDocument();
+    expect(screen.getByText('ضريبة القيمة المضافة')).toBeInTheDocument();
     expect(screen.queryByText('Cleaning Brush')).not.toBeInTheDocument();
   });
 

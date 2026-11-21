@@ -28,7 +28,7 @@ describe('Spending report: the numbers', () => {
     expect(summary.getByText('Orders').nextElementSibling).toHaveTextContent('2');
     expect(summary.getByText('Paid').nextElementSibling).toHaveTextContent(/^43\.00\s+SAR$/);
     expect(summary.getByText('Refunded').nextElementSibling).toHaveTextContent(/^21\.50\s+SAR$/);
-    expect(summary.getByText('VAT included').nextElementSibling).toHaveTextContent(/^5\.60\s+SAR$/);
+    expect(summary.getByText('VAT').nextElementSibling).toHaveTextContent(/^5\.60\s+SAR$/);
     expect(summary.getByText('Savings from discounts').nextElementSibling).toHaveTextContent(
       /^2\.00\s+SAR$/,
     );

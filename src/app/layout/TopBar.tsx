@@ -13,21 +13,22 @@ export function TopBar({ onAccountMenu }: { onAccountMenu?: () => void }) {
   const { t: tNavigation } = useTranslation('navigation');
   const [open, setOpen] = useState(false);
   const { status, user } = useSession();
-  const [unreadCount, setUnreadCount] = useState(0);
+  const [unread, setUnread] = useState<{ ownerId: string; count: number } | null>(null);
+  const ownerId = user?.id === undefined ? null : String(user.id);
+  const unreadCount = status === 'signed-in' && unread?.ownerId === ownerId ? unread.count : 0;
   const { i18n } = useTranslation();
-  const notificationLabel = i18n.language.startsWith('ar') ? 'الإشعارات' : 'Notifications';
+  const ar = i18n.language.startsWith('ar');
+  const fr = i18n.language.startsWith('fr');
+  const notificationLabel = ar ? 'الإشعارات' : 'Notifications';
 
   useEffect(() => {
-    if (status !== 'signed-in') {
-      setUnreadCount(0);
-      return;
-    }
+    if (status !== 'signed-in' || ownerId === null) return;
     let active = true;
     const refresh = () => {
       if (document.visibilityState === 'hidden') return;
       void getNotifications()
         .then((inbox) => {
-          if (active) setUnreadCount(inbox.unread_count);
+          if (active) setUnread({ ownerId, count: inbox.unread_count });
         })
         .catch(() => {
           /* Inbox displays fetch errors; keep the previous badge. */
@@ -45,7 +46,7 @@ export function TopBar({ onAccountMenu }: { onAccountMenu?: () => void }) {
       window.removeEventListener('focus', refresh);
       window.removeEventListener('all575-notifications-changed', refresh);
     };
-  }, [status, user?.id]);
+  }, [status, ownerId]);
   const close = useCallback(() => {
     setOpen(false);
   }, []);
@@ -54,7 +55,15 @@ export function TopBar({ onAccountMenu }: { onAccountMenu?: () => void }) {
     <>
       <header className={styles.topBar}>
         <IconButton
-          label={onAccountMenu ? (i18n.language.startsWith('ar') ? 'فتح قائمة الحساب أو لوحة التحكم' : 'Open account or dashboard navigation') : tNavigation('open')}
+          label={
+            onAccountMenu
+              ? ar
+                ? 'فتح قائمة الحساب أو لوحة التحكم'
+                : fr
+                  ? 'Ouvrir la navigation du compte ou du tableau de bord'
+                  : 'Open account or dashboard navigation'
+              : tNavigation('open')
+          }
           aria-haspopup="dialog"
           aria-expanded={open}
           onClick={() => {
@@ -76,7 +85,7 @@ export function TopBar({ onAccountMenu }: { onAccountMenu?: () => void }) {
             <Link
               to={routePaths.notifications}
               className={styles.notificationButton}
-              aria-label={notificationLabel + (unreadCount > 0 ? ' (' + unreadCount + ')' : '')}
+              aria-label={notificationLabel + (unreadCount > 0 ? ` (${unreadCount})` : '')}
               title={notificationLabel}
             >
               <svg

@@ -8,6 +8,7 @@ import { Page } from './components/Page';
 import './sellerWorkspace.css';
 import { PageHeader } from './components/PageHeader';
 import { SellerProductManagement } from './SellerProductManagement';
+import { sellerWorkspaceFrench } from './sellerWorkspaceFrench';
 import { SellerFinanceOverview } from './SellerFinanceOverview';
 import { SellerStaffManagement } from './SellerStaffManagement';
 import { SellerReturnManagement } from './SellerReturnManagement';
@@ -66,14 +67,26 @@ const action: React.CSSProperties = { padding: '9px 13px', borderRadius: 9, curs
 export function SellerWorkspaceScreen() {
   const { i18n } = useTranslation();
   const ar = i18n.language.startsWith('ar');
-  const tr = (arabic: string, english: string) => (ar ? arabic : english);
+  const fr = i18n.language.startsWith('fr');
+  const tr = (arabic: string, english: string) =>
+    ar ? arabic : fr ? (sellerWorkspaceFrench[english] ?? english) : english;
   const [eligible, setEligible] = useState(false);
   const [sellerMemberships, setSellerMemberships] = useState<SellerMembership[]>([]);
   const [searchParams] = useSearchParams();
   const requestedSection = searchParams.get('section');
   const section: Section = (
-    ['overview','store','products','inventory','orders','returns','finance','staff'].includes(requestedSection ?? '')
-      ? requestedSection : 'overview'
+    [
+      'overview',
+      'store',
+      'products',
+      'inventory',
+      'orders',
+      'returns',
+      'finance',
+      'staff',
+    ].includes(requestedSection ?? '')
+      ? requestedSection
+      : 'overview'
   ) as Section;
   const [dashboard, setDashboard] = useState<SellerDashboard | null>(null);
   const [insightMetric, setInsightMetric] = useState<SellerInsightMetric | null>(null);
@@ -105,13 +118,23 @@ export function SellerWorkspaceScreen() {
   const [stockNotice, setStockNotice] = useState('');
   const [stockEditor, setStockEditor] = useState<SellerStock | null>(null);
   const [stockEditQuantity, setStockEditQuantity] = useState('');
+  const editedStockQuantity = Number(stockEditQuantity);
+  const stockQuantityValid =
+    stockEditor !== null &&
+    /^\d+$/.test(stockEditQuantity.trim()) &&
+    Number.isSafeInteger(editedStockQuantity) &&
+    editedStockQuantity >= stockEditor.reserved &&
+    editedStockQuantity <= 100000000;
   const [stockEditError, setStockEditError] = useState('');
   const [loading, setLoading] = useState(true);
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState('');
+  const [sessionAttempt, setSessionAttempt] = useState(0);
   const [revision, setRevision] = useState(0);
 
-  const reload = useCallback(() => setRevision((value) => value + 1), []);
+  const reload = useCallback(() => {
+    setRevision((value) => value + 1);
+  }, []);
 
   useEffect(() => {
     let active = true;
@@ -152,7 +175,7 @@ export function SellerWorkspaceScreen() {
     };
     // Language changes should not discard an existing seller session.
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+  }, [sessionAttempt]);
 
   useEffect(() => {
     if (!eligible) return;
@@ -331,9 +354,10 @@ export function SellerWorkspaceScreen() {
         ...(orderFrom ? { from: orderFrom } : {}),
         ...(orderTo ? { to: orderTo } : {}),
       };
-      const file = format === 'xlsx'
-        ? await exportSellerOrdersExcel(filters)
-        : await exportSellerOrdersCsv(filters);
+      const file =
+        format === 'xlsx'
+          ? await exportSellerOrdersExcel(filters)
+          : await exportSellerOrdersCsv(filters);
       const url = URL.createObjectURL(file.blob);
       const link = document.createElement('a');
       link.href = url;
@@ -342,13 +366,20 @@ export function SellerWorkspaceScreen() {
       link.click();
       link.remove();
       // Android Chrome may not start the download before the current task ends.
-      window.setTimeout(() => URL.revokeObjectURL(url), 30_000);
+      window.setTimeout(() => {
+        URL.revokeObjectURL(url);
+      }, 30_000);
     } catch (cause) {
       const detail = cause instanceof Error ? cause.message : '';
       setError(
         tr('تعذر تصدير الطلبات.', 'Could not export orders.') +
-        (detail ? ' ' + detail : ' ' +
-          tr('تحقق من صلاحية البائع والاتصال بالخادم.', 'Check seller permissions and server connectivity.')),
+          (detail
+            ? ' ' + detail
+            : ' ' +
+              tr(
+                'تحقق من صلاحية البائع والاتصال بالخادم.',
+                'Check seller permissions and server connectivity.',
+              )),
       );
     } finally {
       setBusy(false);
@@ -394,10 +425,11 @@ export function SellerWorkspaceScreen() {
   };
 
   const selectedVisibleOrders = orders.filter((order) => selectedOrderIds.includes(order.id));
-  const selectableOrderIds = orders.filter((order) =>
-    order.status === 'awaiting_seller' || order.status === 'preparing',
-  ).map((order) => order.id);
-  const allSelectableOrdersSelected = selectableOrderIds.length > 0 &&
+  const selectableOrderIds = orders
+    .filter((order) => order.status === 'awaiting_seller' || order.status === 'preparing')
+    .map((order) => order.id);
+  const allSelectableOrdersSelected =
+    selectableOrderIds.length > 0 &&
     selectableOrderIds.every((id) => selectedOrderIds.includes(id));
 
   // Use the same authenticated and authorized endpoint as single-order updates.
@@ -408,14 +440,23 @@ export function SellerWorkspaceScreen() {
       status === 'preparing' ? order.status === 'awaiting_seller' : order.status === 'preparing',
     );
     if (!eligible.length) {
-      setOrderBulkNotice(tr('الطلبات المحددة ليست في الحالة المناسبة لهذا الإجراء.',
-        'No selected orders are eligible for this action.'));
+      setOrderBulkNotice(
+        tr(
+          'الطلبات المحددة ليست في الحالة المناسبة لهذا الإجراء.',
+          'No selected orders are eligible for this action.',
+        ),
+      );
       return;
     }
-    if (!window.confirm(tr(
-      'تأكيد تنفيذ الإجراء على ' + eligible.length + ' طلب؟',
-      'Apply this action to ' + eligible.length + ' orders?',
-    ))) return;
+    if (
+      !window.confirm(
+        tr(
+          `تأكيد تنفيذ الإجراء على ${eligible.length} طلب؟`,
+          `Apply this action to ${eligible.length} orders?`,
+        ),
+      )
+    )
+      return;
     setBusy(true);
     setError('');
     setOrderBulkNotice('');
@@ -430,12 +471,18 @@ export function SellerWorkspaceScreen() {
       }
     }
     setSelectedOrderIds((previous) => previous.filter((id) => !succeeded.includes(id)));
-    setOrderBulkNotice(tr(
-      'تم تحديث ' + succeeded.length + ' طلب. ' +
-        (failed.length ? 'تعذر تحديث: ' + failed.join('، ') : ''),
-      'Updated ' + succeeded.length + ' orders. ' +
-        (failed.length ? 'Failed: ' + failed.join(', ') : ''),
-    ));
+    setOrderBulkNotice(
+      tr(
+        'تم تحديث ' +
+          String(succeeded.length) +
+          ' طلب. ' +
+          (failed.length ? 'تعذر تحديث: ' + failed.join('، ') : ''),
+        'Updated ' +
+          String(succeeded.length) +
+          ' orders. ' +
+          (failed.length ? 'Failed: ' + failed.join(', ') : ''),
+      ),
+    );
     setBusy(false);
     reload();
   };
@@ -443,21 +490,24 @@ export function SellerWorkspaceScreen() {
   const canAdjustStock = (item: SellerStock) => {
     const branch = branches.find((candidate) => candidate.id === item.branch_id);
     if (!branch) return false;
-    return sellerMemberships.some((membership) =>
-      membership.is_active &&
-      membership.seller_status === 'approved' &&
-      membership.seller_id === branch.seller_id &&
-      (membership.role === 'owner' || membership.role === 'branch_manager') &&
-      (membership.branch_id === null || membership.branch_id === item.branch_id),
+    return sellerMemberships.some(
+      (membership) =>
+        membership.is_active &&
+        membership.seller_status === 'approved' &&
+        membership.seller_id === branch.seller_id &&
+        (membership.role === 'owner' || membership.role === 'branch_manager') &&
+        (membership.branch_id === null || membership.branch_id === item.branch_id),
     );
   };
 
   const stockWritableBranches = branches.filter((branch) =>
-    sellerMemberships.some((membership) =>
-      membership.is_active && membership.seller_status === 'approved' &&
-      membership.seller_id === branch.seller_id &&
-      (membership.role === 'owner' || membership.role === 'branch_manager') &&
-      (membership.branch_id === null || membership.branch_id === branch.id),
+    sellerMemberships.some(
+      (membership) =>
+        membership.is_active &&
+        membership.seller_status === 'approved' &&
+        membership.seller_id === branch.seller_id &&
+        (membership.role === 'owner' || membership.role === 'branch_manager') &&
+        (membership.branch_id === null || membership.branch_id === branch.id),
     ),
   );
 
@@ -466,11 +516,20 @@ export function SellerWorkspaceScreen() {
     if (busy || loading) return;
     const chosenBranch = Number(newStockBranch || stockWritableBranches[0]?.id);
     const quantity = Number(newStockQuantity);
-    if (!stockWritableBranches.some((item) => item.id === chosenBranch) ||
-        !newStockSku.trim() || newStockSku.trim().length > 100 ||
-        !Number.isSafeInteger(quantity) || quantity < 0 || quantity > 100000000) {
-      setError(tr('اختر فرعًا ورمز SKU صحيحًا وكمية صحيحة.',
-        'Choose an authorized branch, a valid SKU and a valid quantity.'));
+    if (
+      !stockWritableBranches.some((item) => item.id === chosenBranch) ||
+      !newStockSku.trim() ||
+      newStockSku.trim().length > 100 ||
+      !Number.isSafeInteger(quantity) ||
+      quantity < 0 ||
+      quantity > 100000000
+    ) {
+      setError(
+        tr(
+          'اختر فرعًا ورمز SKU صحيحًا وكمية صحيحة.',
+          'Choose an authorized branch, a valid SKU and a valid quantity.',
+        ),
+      );
       return;
     }
     setBusy(true);
@@ -478,12 +537,18 @@ export function SellerWorkspaceScreen() {
     setStockNotice('');
     try {
       await createSellerStock({
-        branch_id: chosenBranch, sku: newStockSku.trim(), on_hand: quantity,
+        branch_id: chosenBranch,
+        sku: newStockSku.trim(),
+        on_hand: quantity,
       });
       setNewStockSku('');
       setNewStockQuantity('0');
-      setStockNotice(tr('تم إنشاء سجل مخزون للمنتج في الفرع.',
-        'An inventory record was created for this product and branch.'));
+      setStockNotice(
+        tr(
+          'تم إنشاء سجل مخزون للمنتج في الفرع.',
+          'An inventory record was created for this product and branch.',
+        ),
+      );
       reload();
     } catch (cause) {
       const defaultMessage = tr(
@@ -494,16 +559,30 @@ export function SellerWorkspaceScreen() {
         const skuMessage = cause.fieldErrors.sku?.join(' ');
         const quantityMessage = cause.fieldErrors.on_hand?.join(' ');
         if (cause.status === 409) {
-          setError(tr('هذا المنتج لديه مخزون بالفعل في الفرع المحدد. استخدم «تعديل الكمية» بدل إضافته مجددًا.',
-            'This SKU already has stock in the selected branch. Use Adjust quantity instead.'));
+          setError(
+            tr(
+              'هذا المنتج لديه مخزون بالفعل في الفرع المحدد. استخدم «تعديل الكمية» بدل إضافته مجددًا.',
+              'This SKU already has stock in the selected branch. Use Adjust quantity instead.',
+            ),
+          );
         } else if (cause.status === 422 && skuMessage) {
-          setError(tr('رمز SKU غير موجود ضمن منتجات هذا المتجر. تحقق من الرمز في تبويب المنتجات.',
-            'The SKU is not among this store’s products. Check the exact SKU in Products.') + ' ' + skuMessage);
+          setError(
+            tr(
+              'رمز SKU غير موجود ضمن منتجات هذا المتجر. تحقق من الرمز في تبويب المنتجات.',
+              'The SKU is not among this store’s products. Check the exact SKU in Products.',
+            ) +
+              ' ' +
+              skuMessage,
+          );
         } else if (cause.status === 422 && quantityMessage) {
           setError(tr('الكمية غير صالحة.', 'Invalid stock quantity.') + ' ' + quantityMessage);
         } else if (cause.status === 404 || cause.status === 403) {
-          setError(tr('الفرع غير متاح لهذا الحساب أو لا تملك صلاحية إدارة مخزونه.',
-            'The branch is not accessible to this account or you lack stock-management permission.'));
+          setError(
+            tr(
+              'الفرع غير متاح لهذا الحساب أو لا تملك صلاحية إدارة مخزونه.',
+              'The branch is not accessible to this account or you lack stock-management permission.',
+            ),
+          );
         } else {
           setError(defaultMessage);
         }
@@ -520,7 +599,9 @@ export function SellerWorkspaceScreen() {
     if (!stockEditor) return;
     const previous = document.body.style.overflow;
     document.body.style.overflow = 'hidden';
-    return () => { document.body.style.overflow = previous; };
+    return () => {
+      document.body.style.overflow = previous;
+    };
   }, [stockEditor]);
 
   const changeStock = (item: SellerStock) => {
@@ -533,38 +614,38 @@ export function SellerWorkspaceScreen() {
   const saveStockQuantity = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     if (busy || stockEditor === null) return;
-    const quantity = Number(stockEditQuantity);
-    if (
-      !/^\d+$/.test(stockEditQuantity.trim()) ||
-      !Number.isSafeInteger(quantity) ||
-      quantity < stockEditor.reserved ||
-      quantity > 100000000
-    ) {
-      setStockEditError(tr(
-        'أدخل كمية صحيحة لا تقل عن المحجوز ولا تتجاوز 100,000,000.',
-        'Enter a whole number between reserved stock and 100,000,000.',
-      ));
+    if (!stockQuantityValid) {
+      setStockEditError(
+        tr(
+          'أدخل كمية صحيحة لا تقل عن المحجوز ولا تتجاوز 100,000,000.',
+          'Enter a whole number between reserved stock and 100,000,000.',
+        ),
+      );
       return;
     }
     setBusy(true);
     setStockEditError('');
     setError('');
     try {
-      await adjustSellerStock(stockEditor.id, quantity);
+      await adjustSellerStock(stockEditor.id, editedStockQuantity);
       setStockEditor(null);
       setStockNotice(tr('تم تحديث كمية المخزون بنجاح.', 'Stock quantity updated successfully.'));
       reload();
     } catch (cause) {
-      setStockEditError(cause instanceof Error && cause.message
-        ? cause.message
-        : tr('تعذر حفظ الكمية. تحقق من الصلاحيات وحاول مجدداً.',
-            'Could not save quantity. Check permissions and retry.'));
+      setStockEditError(
+        cause instanceof Error && cause.message
+          ? cause.message
+          : tr(
+              'تعذر حفظ الكمية. تحقق من الصلاحيات وحاول مجدداً.',
+              'Could not save quantity. Check permissions and retry.',
+            ),
+      );
     } finally {
       setBusy(false);
     }
   };
 
-  const sections: Array<{ id: Section; ar: string; en: string }> = [
+  const sections: { id: Section; ar: string; en: string }[] = [
     { id: 'overview', ar: 'الرئيسية', en: 'Overview' },
     { id: 'store', ar: 'المتجر والفروع', en: 'Store & branches' },
     { id: 'products', ar: 'المنتجات', en: 'Products' },
@@ -584,660 +665,965 @@ export function SellerWorkspaceScreen() {
 
   return (
     <div className="seller-workspace-shell" dir={ar ? 'rtl' : 'ltr'}>
-    <Page>
-      <PageHeader
-        title={tr('لوحة تشغيل البائع', 'Seller workspace')}
-        lead={tr(
-          'إدارة المنتجات والمخزون والطلبات حسب صلاحية الحساب.',
-          'Manage products, stock and orders within your assigned permissions.',
+      <Page>
+        <PageHeader
+          title={tr('لوحة تشغيل البائع', 'Seller workspace')}
+          lead={tr(
+            'إدارة المنتجات والمخزون والطلبات حسب صلاحية الحساب.',
+            'Manage products, stock and orders within your assigned permissions.',
+          )}
+        />
+        {error && (
+          <p role="alert" style={{ color: '#aa3434' }}>
+            {error}
+          </p>
         )}
-      />
-      {error && (
-        <p role="alert" style={{ color: '#aa3434' }}>
-          {error}
-        </p>
-      )}
-      {stockEditor && createPortal(
-        <div className="seller-stock-portal-root seller-workspace-shell" dir={ar ? 'rtl' : 'ltr'}>
-        <div
-          className="seller-stock-modal-overlay"
-          role="presentation"
-          onMouseDown={(event) => {
-            if (event.target === event.currentTarget && !busy) setStockEditor(null);
-          }}
-        >
-          <form
-            className="seller-stock-modal"
-            onSubmit={(event) => void saveStockQuantity(event)}
-            role="dialog"
-            aria-modal="true"
-            aria-labelledby="stock-editor-title"
-            aria-describedby="stock-editor-description"
-            onKeyDown={(event) => {
-              if (event.key === 'Escape' && !busy) setStockEditor(null);
-            }}
-          >
-            <div className="seller-stock-modal-head">
-              <div>
-                <span className="seller-stock-eyebrow">{tr('إدارة المخزون', 'Inventory management')}</span>
-                <h3 id="stock-editor-title">{tr('تعديل كمية المخزون', 'Adjust stock quantity')}</h3>
-              </div>
-              <button type="button" className="seller-stock-close" disabled={busy}
-                aria-label={tr('إغلاق', 'Close')} onClick={() => setStockEditor(null)}>×</button>
-            </div>
-            <p id="stock-editor-description" className="seller-stock-modal-product">
-              <strong>{ar ? stockEditor.name_ar : stockEditor.name_en}</strong>
-              <span dir="ltr">SKU: {stockEditor.sku}</span>
-            </p>
-            <div className="seller-stock-stats seller-stock-modal-stats">
-              <div><span>{tr('الفعلي الآن', 'Current stock')}</span><strong>{stockEditor.on_hand.toLocaleString()}</strong></div>
-              <div><span>{tr('المحجوز', 'Reserved')}</span><strong>{stockEditor.reserved.toLocaleString()}</strong></div>
-              <div className="seller-stock-stat-available"><span>{tr('المتاح الآن', 'Available')}</span>
-                <strong>{Math.max(0, stockEditor.on_hand - stockEditor.reserved).toLocaleString()}</strong></div>
-            </div>
-            <label className="seller-stock-quantity-field" htmlFor="seller-stock-new-quantity">
-              {tr('الكمية الفعلية الجديدة', 'New physical stock quantity')}
-              <input
-                id="seller-stock-new-quantity"
-                type="number"
-                inputMode="numeric"
-                autoFocus
-                required
-                min={stockEditor.reserved}
-                max={100000000}
-                step={1}
-                value={stockEditQuantity}
-                disabled={busy}
-                aria-invalid={Boolean(stockEditError)}
-                aria-describedby="seller-stock-quantity-help"
-                onChange={(event) => {
-                  setStockEditQuantity(event.target.value);
-                  setStockEditError('');
+        {stockEditor &&
+          createPortal(
+            <div
+              className="seller-stock-portal-root seller-workspace-shell"
+              dir={ar ? 'rtl' : 'ltr'}
+            >
+              <div
+                className="seller-stock-modal-overlay"
+                role="presentation"
+                onMouseDown={(event) => {
+                  if (event.target === event.currentTarget && !busy) setStockEditor(null);
                 }}
-              />
-            </label>
-            <p className="seller-stock-help" id="seller-stock-quantity-help">
-              {tr('أدخل الإجمالي الجديد، وليس الكمية المراد إضافتها. الحد الأدنى هو المحجوز.',
-                'Enter the new total, not the quantity to add. Minimum is reserved stock.')}
-            </p>
-            {/* Preview is informational only; the server validates the actual update. */}
-            {stockEditQuantity.trim() !== '' && Number.isSafeInteger(Number(stockEditQuantity)) &&
-              Number(stockEditQuantity) >= stockEditor.reserved && Number(stockEditQuantity) <= 100000000 && (
-                <div className="seller-stock-preview" role="status">
-                  <span>{tr('المتاح بعد التعديل', 'Available after update')}</span>
-                  <strong>{(Number(stockEditQuantity) - stockEditor.reserved).toLocaleString()}</strong>
-                  <small>
-                    {Number(stockEditQuantity) === stockEditor.on_hand
-                      ? tr('لا يوجد تغيير في الكمية', 'No change to quantity')
-                      : Number(stockEditQuantity) > stockEditor.on_hand
-                        ? tr('زيادة', 'Increase') + ': +' + (Number(stockEditQuantity) - stockEditor.on_hand).toLocaleString()
-                        : tr('نقصان', 'Decrease') + ': -' + (stockEditor.on_hand - Number(stockEditQuantity)).toLocaleString()}
-                  </small>
-                </div>
-              )}
-            {stockEditError && <p role="alert" className="seller-stock-edit-error">{stockEditError}</p>}
-            <div className="seller-stock-modal-actions">
-              <button type="button" className="seller-stock-cancel" disabled={busy}
-                onClick={() => setStockEditor(null)}>{tr('إلغاء', 'Cancel')}</button>
-              <button type="submit" className="seller-stock-save"
-                disabled={busy || !stockEditQuantity.trim() || Number(stockEditQuantity) === stockEditor.on_hand}>
-                {busy ? tr('جار الحفظ…', 'Saving…') : tr('حفظ الكمية', 'Save quantity')}
+              >
+                <form
+                  className="seller-stock-modal"
+                  onSubmit={(event) => void saveStockQuantity(event)}
+                  role="dialog"
+                  aria-modal="true"
+                  aria-labelledby="stock-editor-title"
+                  aria-describedby="stock-editor-description"
+                  onKeyDown={(event) => {
+                    if (event.key === 'Escape' && !busy) setStockEditor(null);
+                  }}
+                >
+                  <div className="seller-stock-modal-head">
+                    <div>
+                      <span className="seller-stock-eyebrow">
+                        {tr('إدارة المخزون', 'Inventory management')}
+                      </span>
+                      <h3 id="stock-editor-title">
+                        {tr('تعديل كمية المخزون', 'Adjust stock quantity')}
+                      </h3>
+                    </div>
+                    <button
+                      type="button"
+                      className="seller-stock-close"
+                      disabled={busy}
+                      aria-label={tr('إغلاق', 'Close')}
+                      onClick={() => {
+                        setStockEditor(null);
+                      }}
+                    >
+                      ×
+                    </button>
+                  </div>
+                  <p id="stock-editor-description" className="seller-stock-modal-product">
+                    <strong>{ar ? stockEditor.name_ar : stockEditor.name_en}</strong>
+                    <span dir="ltr">SKU: {stockEditor.sku}</span>
+                  </p>
+                  <div className="seller-stock-stats seller-stock-modal-stats">
+                    <div>
+                      <span>{tr('الفعلي الآن', 'Current stock')}</span>
+                      <strong>{stockEditor.on_hand.toLocaleString()}</strong>
+                    </div>
+                    <div>
+                      <span>{tr('المحجوز', 'Reserved')}</span>
+                      <strong>{stockEditor.reserved.toLocaleString()}</strong>
+                    </div>
+                    <div className="seller-stock-stat-available">
+                      <span>{tr('المتاح الآن', 'Available')}</span>
+                      <strong>
+                        {Math.max(0, stockEditor.on_hand - stockEditor.reserved).toLocaleString()}
+                      </strong>
+                    </div>
+                  </div>
+                  <label
+                    className="seller-stock-quantity-field"
+                    htmlFor="seller-stock-new-quantity"
+                  >
+                    {tr('الكمية الفعلية الجديدة', 'New physical stock quantity')}
+                    <input
+                      id="seller-stock-new-quantity"
+                      type="number"
+                      inputMode="numeric"
+                      autoFocus
+                      required
+                      min={stockEditor.reserved}
+                      max={100000000}
+                      step={1}
+                      value={stockEditQuantity}
+                      disabled={busy}
+                      aria-invalid={Boolean(stockEditError)}
+                      aria-describedby="seller-stock-quantity-help"
+                      onChange={(event) => {
+                        setStockEditQuantity(event.target.value);
+                        setStockEditError('');
+                      }}
+                    />
+                  </label>
+                  <p className="seller-stock-help" id="seller-stock-quantity-help">
+                    {tr(
+                      'أدخل الإجمالي الجديد، وليس الكمية المراد إضافتها. الحد الأدنى هو المحجوز.',
+                      'Enter the new total, not the quantity to add. Minimum is reserved stock.',
+                    )}
+                  </p>
+                  {/* Preview is informational only; the server validates the actual update. */}
+                  {stockQuantityValid && (
+                    <div className="seller-stock-preview" role="status">
+                      <span>{tr('المتاح بعد التعديل', 'Available after update')}</span>
+                      <strong>
+                        {(editedStockQuantity - stockEditor.reserved).toLocaleString()}
+                      </strong>
+                      <small>
+                        {editedStockQuantity === stockEditor.on_hand
+                          ? tr('لا يوجد تغيير في الكمية', 'No change to quantity')
+                          : editedStockQuantity > stockEditor.on_hand
+                            ? tr('زيادة', 'Increase') +
+                              ': +' +
+                              (editedStockQuantity - stockEditor.on_hand).toLocaleString()
+                            : tr('نقصان', 'Decrease') +
+                              ': -' +
+                              (stockEditor.on_hand - editedStockQuantity).toLocaleString()}
+                      </small>
+                    </div>
+                  )}
+                  {stockEditError && (
+                    <p role="alert" className="seller-stock-edit-error">
+                      {stockEditError}
+                    </p>
+                  )}
+                  <div className="seller-stock-modal-actions">
+                    <button
+                      type="button"
+                      className="seller-stock-cancel"
+                      disabled={busy}
+                      onClick={() => {
+                        setStockEditor(null);
+                      }}
+                    >
+                      {tr('إلغاء', 'Cancel')}
+                    </button>
+                    <button
+                      type="submit"
+                      className="seller-stock-save"
+                      disabled={
+                        busy || !stockQuantityValid || editedStockQuantity === stockEditor.on_hand
+                      }
+                    >
+                      {busy ? tr('جار الحفظ…', 'Saving…') : tr('حفظ الكمية', 'Save quantity')}
+                    </button>
+                  </div>
+                </form>
+              </div>
+            </div>,
+            document.body,
+          )}
+        {!eligible && loading && (
+          <p role="status">{tr('جار فتح حساب البائع…', 'Opening seller workspace…')}</p>
+        )}
+        {!eligible && !loading && (
+          <div style={panel}>
+            {!error && (
+              <>
+                <p>
+                  {tr(
+                    'هذه اللوحة متاحة للبائعين المعتمدين فقط.',
+                    'This workspace is for approved sellers only.',
+                  )}
+                </p>
+                <Link to={routePaths.sellerApplication}>
+                  {tr('طلب التسجيل كبائع', 'Apply to become a seller')}
+                </Link>
+              </>
+            )}
+            <div style={{ marginTop: 12 }}>
+              <button
+                type="button"
+                style={action}
+                onClick={() => {
+                  setLoading(true);
+                  setError('');
+                  setSessionAttempt((attempt) => attempt + 1);
+                }}
+              >
+                {tr('إعادة المحاولة', 'Retry')}
               </button>
             </div>
-          </form>
-        </div>
-        </div>,
-        document.body,
-      )}
-      {!eligible && loading && (
-        <p role="status">{tr('جار فتح حساب البائع…', 'Opening seller workspace…')}</p>
-      )}
-      {!eligible && !loading && (
-        <div style={panel}>
-          <p>
-            {tr(
-              'هذه اللوحة متاحة للبائعين المعتمدين فقط.',
-              'This workspace is for approved sellers only.',
-            )}
-          </p>
-          <Link to={routePaths.sellerApplication}>
-            {tr('طلب التسجيل كبائع', 'Apply to become a seller')}
-          </Link>
-          <div style={{ marginTop: 12 }}>
-            <button type="button" style={action} onClick={() => window.location.reload()}>
-              {tr('إعادة المحاولة', 'Retry')}
-            </button>
           </div>
-        </div>
-      )}
-      {eligible && (
-        <div className="seller-content">
-          <div className="seller-sidebar-content-toolbar">
-            <strong>{tr(sections.find(item => item.id === section)?.ar ?? 'الرئيسية', sections.find(item => item.id === section)?.en ?? 'Overview')}</strong>
-            <button type="button" disabled={loading || busy} onClick={reload}>
-              {tr('تحديث البيانات', 'Refresh data')}
-            </button>
-          </div>
-          {(section === 'orders' || section === 'inventory') && (
-            <div className="seller-filters" style={{ marginBottom: 16 }}>
-              <label>
-                {tr('الفرع', 'Branch')}{' '}
-                <select value={branchId} onChange={(event) => setBranchId(event.target.value)}>
-                  <option value="">{tr('كل الفروع', 'All branches')}</option>
-                  {branches.map((branch) => (
-                    <option value={branch.id} key={branch.id}>
-                      {ar ? branch.name_ar : branch.name_en}
-                    </option>
-                  ))}
-                </select>
-              </label>
-              {section === 'orders' && (
+        )}
+        {eligible && (
+          <div className="seller-content">
+            <div className="seller-sidebar-content-toolbar">
+              <strong>
+                {tr(
+                  sections.find((item) => item.id === section)?.ar ?? 'الرئيسية',
+                  sections.find((item) => item.id === section)?.en ?? 'Overview',
+                )}
+              </strong>
+              <button type="button" disabled={loading || busy} onClick={reload}>
+                {tr('تحديث البيانات', 'Refresh data')}
+              </button>
+            </div>
+            {(section === 'orders' || section === 'inventory') && (
+              <div className="seller-filters" style={{ marginBottom: 16 }}>
                 <label>
-                  {tr('الحالة', 'Status')}{' '}
+                  {tr('الفرع', 'Branch')}{' '}
                   <select
-                    value={orderStatus}
-                    onChange={(event) => setOrderStatus(event.target.value)}
+                    value={branchId}
+                    onChange={(event) => {
+                      setBranchId(event.target.value);
+                    }}
                   >
-                    {orderStatuses.map((status) => (
-                      <option key={status} value={status}>
-                        {status === 'all' ? tr('كل الحالات', 'All statuses') : labels[status]}
+                    <option value="">{tr('كل الفروع', 'All branches')}</option>
+                    {branches.map((branch) => (
+                      <option value={branch.id} key={branch.id}>
+                        {ar ? branch.name_ar : branch.name_en}
                       </option>
                     ))}
                   </select>
                 </label>
-              )}
-              {section === 'orders' && (
-                <>
+                {section === 'orders' && (
                   <label>
-                    {tr('من', 'From')}{' '}
+                    {tr('الحالة', 'Status')}{' '}
+                    <select
+                      value={orderStatus}
+                      onChange={(event) => {
+                        setOrderStatus(event.target.value);
+                      }}
+                    >
+                      {orderStatuses.map((status) => (
+                        <option key={status} value={status}>
+                          {status === 'all' ? tr('كل الحالات', 'All statuses') : labels[status]}
+                        </option>
+                      ))}
+                    </select>
+                  </label>
+                )}
+                {section === 'orders' && (
+                  <>
+                    <label>
+                      {tr('من', 'From')}{' '}
+                      <input
+                        type="date"
+                        value={orderFrom}
+                        max={orderTo || undefined}
+                        onChange={(event) => {
+                          setOrderFrom(event.target.value);
+                        }}
+                      />
+                    </label>
+                    <label>
+                      {tr('إلى', 'To')}{' '}
+                      <input
+                        type="date"
+                        value={orderTo}
+                        min={orderFrom || undefined}
+                        onChange={(event) => {
+                          setOrderTo(event.target.value);
+                        }}
+                      />
+                    </label>
+                    {(orderFrom || orderTo) && (
+                      <button
+                        type="button"
+                        style={action}
+                        onClick={() => {
+                          setOrderFrom('');
+                          setOrderTo('');
+                        }}
+                      >
+                        {tr('مسح التواريخ', 'Clear dates')}
+                      </button>
+                    )}
+                  </>
+                )}
+                {section === 'inventory' && (
+                  <>
+                    <form
+                      role="search"
+                      onSubmit={(event) => {
+                        event.preventDefault();
+                        setStockSearch(stockSearchDraft.trim());
+                      }}
+                      style={{ ...line, flex: '1 1 320px', alignItems: 'flex-end' }}
+                    >
+                      <label style={{ display: 'grid', gap: 6, flex: '1 1 220px' }}>
+                        {tr('البحث في المخزون', 'Search inventory')}
+                        <input
+                          type="search"
+                          maxLength={100}
+                          value={stockSearchDraft}
+                          placeholder={tr('اسم المنتج أو SKU', 'Product name or SKU')}
+                          onChange={(event) => {
+                            setStockSearchDraft(event.target.value);
+                          }}
+                        />
+                      </label>
+                      <button type="submit" style={action} disabled={loading}>
+                        {tr('بحث', 'Search')}
+                      </button>
+                      {(stockSearch || stockSearchDraft) && (
+                        <button
+                          type="button"
+                          style={action}
+                          disabled={loading}
+                          onClick={() => {
+                            setStockSearchDraft('');
+                            setStockSearch('');
+                          }}
+                        >
+                          {tr('مسح', 'Clear')}
+                        </button>
+                      )}
+                    </form>
+                    <label className="seller-low-stock-filter">
+                      <input
+                        type="checkbox"
+                        checked={lowStockOnly}
+                        onChange={(event) => {
+                          setLowStockOnly(event.target.checked);
+                        }}
+                      />
+                      <span>{tr('المتاح 5 أو أقل', 'Available stock 5 or less')}</span>
+                    </label>
+                  </>
+                )}
+              </div>
+            )}
+            {section === 'products' && (
+              <div style={{ ...line, marginBottom: 12, alignItems: 'flex-end' }}>
+                <form
+                  role="search"
+                  onSubmit={(event) => {
+                    event.preventDefault();
+                    setProductSearch(productSearchDraft.trim());
+                  }}
+                  style={{ ...line, flex: '1 1 320px', alignItems: 'flex-end' }}
+                >
+                  <label style={{ display: 'grid', gap: 6, flex: '1 1 220px' }}>
+                    {tr('البحث عن منتج', 'Search products')}
                     <input
-                      type="date"
-                      value={orderFrom}
-                      max={orderTo || undefined}
-                      onChange={(event) => setOrderFrom(event.target.value)}
+                      type="search"
+                      maxLength={100}
+                      value={productSearchDraft}
+                      placeholder={tr(
+                        'SKU أو اسم المنتج أو رقم المتجر',
+                        'SKU, product name or store number',
+                      )}
+                      onChange={(event) => {
+                        setProductSearchDraft(event.target.value);
+                      }}
                     />
                   </label>
-                  <label>
-                    {tr('إلى', 'To')}{' '}
-                    <input
-                      type="date"
-                      value={orderTo}
-                      min={orderFrom || undefined}
-                      onChange={(event) => setOrderTo(event.target.value)}
-                    />
-                  </label>
-                  {(orderFrom || orderTo) && (
+                  <button type="submit" style={action} disabled={loading}>
+                    {tr('بحث', 'Search')}
+                  </button>
+                  {(productSearch || productSearchDraft) && (
                     <button
                       type="button"
                       style={action}
+                      disabled={loading}
                       onClick={() => {
-                        setOrderFrom('');
-                        setOrderTo('');
+                        setProductSearchDraft('');
+                        setProductSearch('');
                       }}
                     >
-                      {tr('مسح التواريخ', 'Clear dates')}
+                      {tr('مسح', 'Clear')}
                     </button>
                   )}
-                </>
-              )}
-              {section === 'inventory' && (
-                <>
-                  <form role="search" onSubmit={(event) => {
-                    event.preventDefault();
-                    setStockSearch(stockSearchDraft.trim());
-                  }} style={{ ...line, flex: '1 1 320px', alignItems: 'flex-end' }}>
-                    <label style={{ display: 'grid', gap: 6, flex: '1 1 220px' }}>
-                      {tr('البحث في المخزون', 'Search inventory')}
-                      <input
-                        type="search"
-                        maxLength={100}
-                        value={stockSearchDraft}
-                        placeholder={tr('اسم المنتج أو SKU', 'Product name or SKU')}
-                        onChange={(event) => setStockSearchDraft(event.target.value)}
-                      />
-                    </label>
-                    <button type="submit" style={action} disabled={loading}>
-                      {tr('بحث', 'Search')}
-                    </button>
-                    {(stockSearch || stockSearchDraft) && (
-                      <button type="button" style={action} disabled={loading}
-                        onClick={() => { setStockSearchDraft(''); setStockSearch(''); }}>
-                        {tr('مسح', 'Clear')}
-                      </button>
-                    )}
-                  </form>
-                  <label className="seller-low-stock-filter">
-                    <input
-                      type="checkbox"
-                      checked={lowStockOnly}
-                      onChange={(event) => setLowStockOnly(event.target.checked)}
-                    />
-                    <span>{tr('المتاح 5 أو أقل', 'Available stock 5 or less')}</span>
-                  </label>
-                </>
-              )}
-            </div>
-          )}
-          {section === 'products' && (
-            <div style={{ ...line, marginBottom: 12, alignItems: 'flex-end' }}>
-              <form
-                role="search"
-                onSubmit={(event) => {
-                  event.preventDefault();
-                  setProductSearch(productSearchDraft.trim());
-                }}
-                style={{ ...line, flex: '1 1 320px', alignItems: 'flex-end' }}
-              >
-                <label style={{ display: 'grid', gap: 6, flex: '1 1 220px' }}>
-                  {tr('البحث عن منتج', 'Search products')}
-                  <input
-                    type="search"
-                    maxLength={100}
-                    value={productSearchDraft}
-                    placeholder={tr('SKU أو اسم المنتج أو رقم المتجر', 'SKU, product name or store number')}
-                    onChange={(event) => setProductSearchDraft(event.target.value)}
-                  />
+                </form>
+                <label style={{ display: 'grid', gap: 6 }}>
+                  {tr('الحالة', 'Status')}
+                  <select
+                    value={productStatus}
+                    onChange={(event) => {
+                      setProductStatus(event.target.value);
+                    }}
+                  >
+                    <option value="all">{tr('كل الحالات', 'All statuses')}</option>
+                    <option value="draft">{tr('مسودة', 'Draft')}</option>
+                    <option value="pending_review">
+                      {tr('بانتظار المراجعة', 'Pending review')}
+                    </option>
+                    <option value="published">{tr('منشور', 'Published')}</option>
+                    <option value="rejected">{tr('مرفوض', 'Rejected')}</option>
+                  </select>
                 </label>
-                <button type="submit" style={action} disabled={loading}>
-                  {tr('بحث', 'Search')}
-                </button>
-                {(productSearch || productSearchDraft) && (
+              </div>
+            )}
+            {loading && <p role="status">{tr('جار تحميل البيانات…', 'Loading data…')}</p>}
+            {!loading && section === 'overview' && dashboard && (
+              <>
+                <div
+                  style={{
+                    display: 'grid',
+                    gridTemplateColumns: 'repeat(auto-fit, minmax(135px, 1fr))',
+                    gap: 10,
+                  }}
+                >
+                  {(
+                    ['awaiting_seller', 'preparing', 'ready', 'on_the_way', 'delivered'] as const
+                  ).map((status) => (
+                    <button
+                      type="button"
+                      key={status}
+                      className="seller-metric-card"
+                      aria-expanded={insightMetric === status}
+                      onClick={() => {
+                        setInsightMetric(insightMetric === status ? null : status);
+                      }}
+                    >
+                      <span className="seller-metric-label">{labels[status]}</span>
+                      <strong>{dashboard[status] ?? 0}</strong>
+                      <span className="seller-metric-more">
+                        {tr('عرض تفاصيل الطلبات والتصدير', 'View details and export')}
+                      </span>
+                    </button>
+                  ))}
+                  <button
+                    type="button"
+                    className="seller-metric-card"
+                    aria-expanded={insightMetric === 'orders'}
+                    onClick={() => {
+                      setInsightMetric(insightMetric === 'orders' ? null : 'orders');
+                    }}
+                  >
+                    <span className="seller-metric-label">
+                      {tr('إجمالي الطلبات المعروضة حسب الحالات', 'Orders in tracked statuses')}
+                    </span>
+                    <strong>
+                      {dashboard.awaiting_seller +
+                        dashboard.preparing +
+                        dashboard.ready +
+                        dashboard.on_the_way +
+                        dashboard.delivered}
+                    </strong>
+                    <span className="seller-metric-more">
+                      {tr('تفاصيل الطلبات والتصدير', 'Details and export')}
+                    </span>
+                  </button>
+                </div>
+                <div className="seller-metric-grid">
+                  <button
+                    type="button"
+                    className="seller-metric-card seller-metric-featured"
+                    aria-expanded={insightMetric === 'sales'}
+                    onClick={() => {
+                      setInsightMetric(insightMetric === 'sales' ? null : 'sales');
+                    }}
+                  >
+                    <span className="seller-metric-label">
+                      {tr('إجمالي المبيعات المسلّمة', 'Total delivered merchandise')}
+                    </span>
+                    <strong>
+                      {(dashboard.delivered_merchandise_halalas / 100).toFixed(2)}{' '}
+                      {tr('ر.س', 'SAR')}
+                    </strong>
+                    <span className="seller-metric-more">
+                      {tr('التفاصيل حسب التاريخ والتصدير', 'Drill down by date and export')}
+                    </span>
+                  </button>
+                  {(
+                    [
+                      ['orders', tr('جميع الطلبات', 'All orders')],
+                      ['products', tr('المنتجات الأكثر مبيعًا', 'Top products')],
+                      ['branches', tr('أداء الفروع', 'Branch performance')],
+                      ['stock', tr('تتبع المخزون', 'Inventory health')],
+                    ] as [SellerInsightMetric, string][]
+                  ).map(([metric, title]) => (
+                    <button
+                      className="seller-metric-card seller-metric-shortcut"
+                      type="button"
+                      key={metric}
+                      aria-expanded={insightMetric === metric}
+                      onClick={() => {
+                        setInsightMetric(insightMetric === metric ? null : metric);
+                      }}
+                    >
+                      <span>{title}</span>
+                      <span className="seller-metric-more">
+                        {tr('عرض التفاصيل ←', 'View details →')}
+                      </span>
+                    </button>
+                  ))}
+                </div>
+                <p className="seller-insight-disclaimer">
+                  {tr(
+                    'هذه البطاقات تعرض الإجماليات الحالية، بينما التفاصيل تتيح تصفية التاريخ والفرع. المبيعات ليست صافي الربح؛ تكلفة الشراء والعمولات غير مكتملة.',
+                    'Cards show current totals; open a report to filter dates and branches. Sales are not profit; cost and commission data are incomplete.',
+                  )}
+                </p>
+                {insightMetric && (
+                  <SellerInsightPanel
+                    metric={insightMetric}
+                    branches={branches}
+                    onClose={() => {
+                      setInsightMetric(null);
+                    }}
+                  />
+                )}
+                <section style={panel}>
+                  <h2>{tr('الفروع المسموحة', 'Assigned branches')}</h2>
+                  {branches.length === 0 ? (
+                    <p>{tr('لا توجد فروع.', 'No branches.')}</p>
+                  ) : (
+                    <ul>
+                      {branches.map((branch) => (
+                        <li key={branch.id}>
+                          {ar ? branch.name_ar : branch.name_en} ({branch.code})
+                        </li>
+                      ))}
+                    </ul>
+                  )}
+                </section>
+              </>
+            )}
+            {section === 'products' && (
+              <>
+                <SellerProductManagement
+                  products={products}
+                  memberships={sellerMemberships}
+                  onUpdated={reload}
+                />
+                {hasMoreProducts && !loading && (
                   <button
                     type="button"
                     style={action}
-                    disabled={loading}
-                    onClick={() => {
-                      setProductSearchDraft('');
-                      setProductSearch('');
-                    }}
+                    disabled={loadingMoreProducts}
+                    onClick={() => void loadMoreProducts()}
                   >
-                    {tr('مسح', 'Clear')}
+                    {loadingMoreProducts
+                      ? tr('جار التحميل…', 'Loading…')
+                      : tr('عرض المزيد من المنتجات', 'Load more products')}
                   </button>
                 )}
-              </form>
-              <label style={{ display: 'grid', gap: 6 }}>
-                {tr('الحالة', 'Status')}
-                <select
-                  value={productStatus}
-                  onChange={(event) => setProductStatus(event.target.value)}
-                >
-                  <option value="all">{tr('كل الحالات', 'All statuses')}</option>
-                  <option value="draft">{tr('مسودة', 'Draft')}</option>
-                  <option value="pending_review">{tr('بانتظار المراجعة', 'Pending review')}</option>
-                  <option value="published">{tr('منشور', 'Published')}</option>
-                  <option value="rejected">{tr('مرفوض', 'Rejected')}</option>
-                </select>
-              </label>
-            </div>
-          )}
-          {loading && <p role="status">{tr('جار تحميل البيانات…', 'Loading data…')}</p>}
-          {!loading && section === 'overview' && dashboard && (
-            <>
-              <div
-                style={{
-                  display: 'grid',
-                  gridTemplateColumns: 'repeat(auto-fit, minmax(135px, 1fr))',
-                  gap: 10,
+              </>
+            )}
+            {section === 'store' && (
+              <SellerStoreManagement
+                memberships={sellerMemberships}
+                onStoreUpdated={(sellerId, names) => {
+                  setSellerMemberships((current) =>
+                    current.map((membership) =>
+                      membership.seller_id === sellerId
+                        ? { ...membership, name_ar: names.name_ar, name_en: names.name_en }
+                        : membership,
+                    ),
+                  );
                 }}
-              >
-                {(
-                  ['awaiting_seller', 'preparing', 'ready', 'on_the_way', 'delivered'] as const
-                ).map((status) => (
-                  <button type="button" key={status} className="seller-metric-card"
-                    aria-expanded={insightMetric === status}
-                    onClick={() => setInsightMetric(insightMetric === status ? null : status)}>
-                    <span className="seller-metric-label">{labels[status]}</span>
-                    <strong>{dashboard[status] ?? 0}</strong>
-                    <span className="seller-metric-more">{tr('عرض تفاصيل الطلبات والتصدير', 'View details and export')}</span>
+              />
+            )}
+            {section === 'returns' && <SellerReturnManagement />}
+            {section === 'finance' && <SellerFinanceOverview memberships={sellerMemberships} />}
+            {section === 'staff' && <SellerStaffManagement memberships={sellerMemberships} />}
+            {!loading && section === 'inventory' && (
+              <section>
+                <h2>{tr('مخزون الفروع', 'Branch inventory')}</h2>
+                {stockWritableBranches.length > 0 && (
+                  <form
+                    className="seller-stock-init"
+                    onSubmit={(event) => void initializeStock(event)}
+                  >
+                    <h3>{tr('إضافة للمخزون', 'Add stock')}</h3>
+                    <p>
+                      {tr(
+                        'أدخل SKU لوحدة بيع موجودة مسبقًا في منتجات متجرك، ثم حدد الفرع والكمية الأولية.',
+                        'Enter the SKU of an existing store product variant, then choose the branch and starting quantity.',
+                      )}
+                    </p>
+                    <div className="seller-stock-init-fields">
+                      <label>
+                        {tr('الفرع', 'Branch')}
+                        <select
+                          required
+                          value={newStockBranch || String(stockWritableBranches[0]?.id ?? '')}
+                          disabled={busy}
+                          onChange={(event) => {
+                            setNewStockBranch(event.target.value);
+                          }}
+                        >
+                          {stockWritableBranches.map((item) => (
+                            <option key={item.id} value={item.id}>
+                              {ar ? item.name_ar : item.name_en}
+                            </option>
+                          ))}
+                        </select>
+                      </label>
+                      <label>
+                        {tr('SKU *', 'SKU *')}
+                        <input
+                          required
+                          maxLength={100}
+                          value={newStockSku}
+                          disabled={busy}
+                          placeholder="SKU-001"
+                          onChange={(event) => {
+                            setNewStockSku(event.target.value);
+                          }}
+                        />
+                      </label>
+                      <label>
+                        {tr('الكمية *', 'Quantity *')}
+                        <input
+                          required
+                          type="number"
+                          min={0}
+                          max={100000000}
+                          step={1}
+                          value={newStockQuantity}
+                          disabled={busy}
+                          onChange={(event) => {
+                            setNewStockQuantity(event.target.value);
+                          }}
+                        />
+                      </label>
+                    </div>
+                    <button type="submit" disabled={busy}>
+                      {tr('إضافة إلى المخزون', 'Add to inventory')}
+                    </button>
+                    {stockNotice && <p role="status">{stockNotice}</p>}
+                  </form>
+                )}
+                {stock.length === 0 && <p>{tr('لا توجد سجلات مخزون.', 'No stock records.')}</p>}
+                <div className="seller-stock-card-grid">
+                  {stock.map((item) => (
+                    <article key={item.id} className="seller-stock-card">
+                      <div className="seller-stock-card-head">
+                        <div className="seller-stock-card-heading">
+                          <h3>{ar ? item.name_ar : item.name_en}</h3>
+                          <span className="seller-stock-sku" dir="ltr">
+                            SKU: {item.sku}
+                          </span>
+                        </div>
+                        <span className="seller-stock-branch">
+                          {branches.find((branch) => branch.id === item.branch_id)
+                            ? ar
+                              ? branches.find((branch) => branch.id === item.branch_id)?.name_ar
+                              : branches.find((branch) => branch.id === item.branch_id)?.name_en
+                            : tr('فرع', 'Branch') + ` #${item.branch_id}`}
+                        </span>
+                      </div>
+                      <div className="seller-stock-stats">
+                        <div>
+                          <span>{tr('الفعلي', 'On hand')}</span>
+                          <strong>{item.on_hand.toLocaleString()}</strong>
+                        </div>
+                        <div>
+                          <span>{tr('المحجوز', 'Reserved')}</span>
+                          <strong>{item.reserved.toLocaleString()}</strong>
+                        </div>
+                        <div className="seller-stock-stat-available">
+                          <span>{tr('المتاح', 'Available')}</span>
+                          <strong>
+                            {Math.max(0, item.on_hand - item.reserved).toLocaleString()}
+                          </strong>
+                        </div>
+                      </div>
+                      <div className="seller-stock-card-footer">
+                        {item.on_hand - item.reserved <= 5 ? (
+                          <span className="seller-stock-low">{tr('مخزون منخفض', 'Low stock')}</span>
+                        ) : (
+                          <span className="seller-stock-ok">{tr('متوفر', 'In stock')}</span>
+                        )}
+                        {canAdjustStock(item) && (
+                          <button
+                            type="button"
+                            className="seller-stock-adjust"
+                            disabled={busy}
+                            onClick={() => {
+                              changeStock(item);
+                            }}
+                          >
+                            <svg
+                              width="16"
+                              height="16"
+                              viewBox="0 0 24 24"
+                              fill="none"
+                              stroke="currentColor"
+                              strokeWidth="2"
+                              strokeLinecap="round"
+                              strokeLinejoin="round"
+                              aria-hidden="true"
+                            >
+                              <path d="M12 20h9M16.5 3.5a2.12 2.12 0 0 1 3 3L9 17l-4 1 1-4Z" />
+                            </svg>
+                            {tr('تعديل الكمية', 'Adjust quantity')}
+                          </button>
+                        )}
+                      </div>
+                    </article>
+                  ))}
+                </div>
+                <p>
+                  {tr(
+                    'تعديل الكمية متاح فقط للحسابات المخوّلة، ويمنع الخادم تخفيضها عن المحجوز.',
+                    'Only authorized accounts may update stock; the server prevents reducing it below reservations.',
+                  )}
+                </p>
+                {hasMoreStock && (
+                  <button
+                    type="button"
+                    style={action}
+                    disabled={loadingMore}
+                    onClick={() => void loadMoreStock()}
+                  >
+                    {loadingMore
+                      ? tr('جار التحميل…', 'Loading…')
+                      : tr('عرض المزيد من المخزون', 'Load more inventory')}
                   </button>
-                ))}
-                <button type="button" className="seller-metric-card"
-                  aria-expanded={insightMetric === 'orders'}
-                  onClick={() => setInsightMetric(insightMetric === 'orders' ? null : 'orders')}>
-                  <span className="seller-metric-label">{tr('إجمالي الطلبات المعروضة حسب الحالات', 'Orders in tracked statuses')}</span>
-                  <strong>{dashboard.awaiting_seller + dashboard.preparing + dashboard.ready +
-                    dashboard.on_the_way + dashboard.delivered}</strong>
-                  <span className="seller-metric-more">{tr('تفاصيل الطلبات والتصدير', 'Details and export')}</span>
-                </button>
-              </div>
-              <div className="seller-metric-grid">
-                <button type="button" className="seller-metric-card seller-metric-featured"
-                  aria-expanded={insightMetric === 'sales'}
-                  onClick={() => setInsightMetric(insightMetric === 'sales' ? null : 'sales')}>
-                  <span className="seller-metric-label">{tr('إجمالي المبيعات المسلّمة', 'Total delivered merchandise')}</span>
-                  <strong>{(dashboard.delivered_merchandise_halalas / 100).toFixed(2)} {tr('ر.س', 'SAR')}</strong>
-                  <span className="seller-metric-more">{tr('التفاصيل حسب التاريخ والتصدير', 'Drill down by date and export')}</span>
-                </button>
-                {([
-                  ['orders', tr('جميع الطلبات', 'All orders')],
-                  ['products', tr('المنتجات الأكثر مبيعًا', 'Top products')],
-                  ['branches', tr('أداء الفروع', 'Branch performance')],
-                  ['stock', tr('تتبع المخزون', 'Inventory health')],
-                ] as Array<[SellerInsightMetric, string]>).map(([metric, title]) => (
-                  <button className="seller-metric-card seller-metric-shortcut" type="button" key={metric}
-                    aria-expanded={insightMetric === metric}
-                    onClick={() => setInsightMetric(insightMetric === metric ? null : metric)}>
-                    <span>{title}</span>
-                    <span className="seller-metric-more">{tr('عرض التفاصيل ←', 'View details →')}</span>
-                  </button>
-                ))}
-              </div>
-              <p className="seller-insight-disclaimer">
-                {tr('هذه البطاقات تعرض الإجماليات الحالية، بينما التفاصيل تتيح تصفية التاريخ والفرع. المبيعات ليست صافي الربح؛ تكلفة الشراء والعمولات غير مكتملة.',
-                  'Cards show current totals; open a report to filter dates and branches. Sales are not profit; cost and commission data are incomplete.')}
-              </p>
-              {insightMetric && (
-                <SellerInsightPanel metric={insightMetric} branches={branches}
-                  onClose={() => setInsightMetric(null)}/>
-              )}
-              <section style={panel}>
-                <h2>{tr('الفروع المسموحة', 'Assigned branches')}</h2>
-                {branches.length === 0 ? (
-                  <p>{tr('لا توجد فروع.', 'No branches.')}</p>
-                ) : (
-                  <ul>
-                    {branches.map((branch) => (
-                      <li key={branch.id}>
-                        {ar ? branch.name_ar : branch.name_en} ({branch.code})
-                      </li>
-                    ))}
-                  </ul>
                 )}
               </section>
-            </>
-          )}
-          {section === 'products' && (
-            <>
-              <SellerProductManagement
-                products={products}
-                memberships={sellerMemberships}
-                onUpdated={reload}
-              />
-              {hasMoreProducts && !loading && (
-                <button
-                  type="button"
-                  style={action}
-                  disabled={loadingMoreProducts}
-                  onClick={() => void loadMoreProducts()}
-                >
-                  {loadingMoreProducts
-                    ? tr('جار التحميل…', 'Loading…')
-                    : tr('عرض المزيد من المنتجات', 'Load more products')}
-                </button>
-              )}
-            </>
-          )}
-          {section === 'store' && (
-            <SellerStoreManagement
-              memberships={sellerMemberships}
-              onStoreUpdated={(sellerId, names) => {
-                setSellerMemberships((current) =>
-                  current.map((membership) =>
-                    membership.seller_id === sellerId
-                      ? { ...membership, name_ar: names.name_ar, name_en: names.name_en }
-                      : membership,
-                  ),
-                );
-              }}
-            />
-          )}
-          {section === 'returns' && <SellerReturnManagement />}
-          {section === 'finance' && <SellerFinanceOverview memberships={sellerMemberships} />}
-          {section === 'staff' && <SellerStaffManagement memberships={sellerMemberships} />}
-          {!loading && section === 'inventory' && (
-            <section>
-              <h2>{tr('مخزون الفروع', 'Branch inventory')}</h2>
-              {stockWritableBranches.length > 0 && (
-                <form className="seller-stock-init" onSubmit={(event) => void initializeStock(event)}>
-                  <h3>{tr('إضافة للمخزون', 'Add stock')}</h3>
-                  <p>{tr('أدخل SKU لوحدة بيع موجودة مسبقًا في منتجات متجرك، ثم حدد الفرع والكمية الأولية.',
-                    'Enter the SKU of an existing store product variant, then choose the branch and starting quantity.')}</p>
-                  <div className="seller-stock-init-fields">
-                    <label>
-                      {tr('الفرع', 'Branch')}
-                      <select required value={newStockBranch || String(stockWritableBranches[0]?.id ?? '')}
-                        disabled={busy}
-                        onChange={(event) => setNewStockBranch(event.target.value)}>
-                        {stockWritableBranches.map((item) => (
-                          <option key={item.id} value={item.id}>
-                            {ar ? item.name_ar : item.name_en}
-                          </option>
-                        ))}
-                      </select>
-                    </label>
-                    <label>
-                      {tr('SKU *', 'SKU *')}
-                      <input required maxLength={100} value={newStockSku} disabled={busy}
-                        placeholder="SKU-001"
-                        onChange={(event) => setNewStockSku(event.target.value)}/>
-                    </label>
-                    <label>
-                      {tr('الكمية *', 'Quantity *')}
-                      <input required type="number" min={0} max={100000000} step={1}
-                        value={newStockQuantity} disabled={busy}
-                        onChange={(event) => setNewStockQuantity(event.target.value)}/>
-                    </label>
+            )}
+            {!loading && section === 'orders' && (
+              <section className="seller-orders-section">
+                <div className="seller-orders-heading">
+                  <h2>{tr('طلبات التجهيز', 'Fulfilment orders')}</h2>
+                  <div className="seller-orders-export">
+                    <button
+                      type="button"
+                      style={action}
+                      disabled={busy}
+                      onClick={() => void exportOrders('xlsx')}
+                    >
+                      {tr('تصدير Excel', 'Export Excel')}
+                    </button>
+                    <button
+                      type="button"
+                      style={action}
+                      disabled={busy}
+                      onClick={() => void exportOrders('csv')}
+                    >
+                      {tr('تصدير CSV', 'Export CSV')}
+                    </button>
                   </div>
-                  <button type="submit" disabled={busy}>
-                    {tr('إضافة إلى المخزون', 'Add to inventory')}
-                  </button>
-                  {stockNotice && <p role="status">{stockNotice}</p>}
-                </form>
-              )}
-              {stock.length === 0 && <p>{tr('لا توجد سجلات مخزون.', 'No stock records.')}</p>}
-              <div className="seller-stock-card-grid">
-                {stock.map((item) => (
-                  <article key={item.id} className="seller-stock-card">
-                    <div className="seller-stock-card-head">
-                      <div className="seller-stock-card-heading">
-                        <h3>{ar ? item.name_ar : item.name_en}</h3>
-                        <span className="seller-stock-sku" dir="ltr">SKU: {item.sku}</span>
-                      </div>
-                      <span className="seller-stock-branch">
-                        {branches.find((branch) => branch.id === item.branch_id)
-                          ? (ar ? branches.find((branch) => branch.id === item.branch_id)?.name_ar
-                            : branches.find((branch) => branch.id === item.branch_id)?.name_en)
-                          : tr('فرع', 'Branch') + ' #' + item.branch_id}
-                      </span>
-                    </div>
-                    <div className="seller-stock-stats">
-                      <div><span>{tr('الفعلي', 'On hand')}</span><strong>{item.on_hand.toLocaleString()}</strong></div>
-                      <div><span>{tr('المحجوز', 'Reserved')}</span><strong>{item.reserved.toLocaleString()}</strong></div>
-                      <div className="seller-stock-stat-available">
-                        <span>{tr('المتاح', 'Available')}</span>
-                        <strong>{Math.max(0, item.on_hand - item.reserved).toLocaleString()}</strong>
-                      </div>
-                    </div>
-                    <div className="seller-stock-card-footer">
-                      {item.on_hand - item.reserved <= 5
-                        ? <span className="seller-stock-low">{tr('مخزون منخفض', 'Low stock')}</span>
-                        : <span className="seller-stock-ok">{tr('متوفر', 'In stock')}</span>}
-                      {canAdjustStock(item) && (
-                        <button type="button" className="seller-stock-adjust" disabled={busy}
-                          onClick={() => changeStock(item)}>
-                          <svg width="16" height="16" viewBox="0 0 24 24" fill="none"
-                            stroke="currentColor" strokeWidth="2" strokeLinecap="round"
-                            strokeLinejoin="round" aria-hidden="true">
-                            <path d="M12 20h9M16.5 3.5a2.12 2.12 0 0 1 3 3L9 17l-4 1 1-4Z"/>
-                          </svg>
-                          {tr('تعديل الكمية', 'Adjust quantity')}
-                        </button>
-                      )}
-                    </div>
-                  </article>
-                ))}
-              </div>
-              <p>
-                {tr(
-                  'تعديل الكمية متاح فقط للحسابات المخوّلة، ويمنع الخادم تخفيضها عن المحجوز.',
-                  'Only authorized accounts may update stock; the server prevents reducing it below reservations.',
-                )}
-              </p>
-              {hasMoreStock && (
-                <button
-                  type="button"
-                  style={action}
-                  disabled={loadingMore}
-                  onClick={() => void loadMoreStock()}
-                >
-                  {loadingMore
-                    ? tr('جار التحميل…', 'Loading…')
-                    : tr('عرض المزيد من المخزون', 'Load more inventory')}
-                </button>
-              )}
-            </section>
-          )}
-          {!loading && section === 'orders' && (
-            <section className="seller-orders-section">
-              <div className="seller-orders-heading">
-                <h2>{tr('طلبات التجهيز', 'Fulfilment orders')}</h2>
-                <div className="seller-orders-export">
-              <button
-                type="button"
-                style={action}
-                disabled={busy}
-                onClick={() => void exportOrders('xlsx')}
-              >
-                {tr('تصدير Excel', 'Export Excel')}
-              </button>
-              <button
-                type="button"
-                style={action}
-                disabled={busy}
-                onClick={() => void exportOrders('csv')}
-              >
-                {tr('تصدير CSV', 'Export CSV')}
-              </button>
                 </div>
-              </div>
-              {orders.length === 0 && <p>{tr('لا توجد طلبات مطابقة.', 'No matching orders.')}</p>}
-              <div className="seller-orders-bulkbar">
-                <span>{tr('المحدد:', 'Selected:')} <strong>{selectedVisibleOrders.length}</strong></span>
-                <button type="button" disabled={busy || !selectedVisibleOrders.some((order) => order.status === 'awaiting_seller')}
-                  onClick={() => void bulkAdvanceOrders('preparing')}>
-                  {tr('بدء التجهيز للمحدد', 'Start preparing selected')}
-                </button>
-                <button type="button" disabled={busy || !selectedVisibleOrders.some((order) => order.status === 'preparing')}
-                  onClick={() => void bulkAdvanceOrders('ready')}>
-                  {tr('تحديد المحدد كجاهز', 'Mark selected ready')}
-                </button>
-                <button type="button" disabled={busy || selectedOrderIds.length === 0}
-                  onClick={() => setSelectedOrderIds([])}>
-                  {tr('إلغاء التحديد', 'Clear selection')}
-                </button>
-              </div>
-              {orderBulkNotice && <p role="status" className="seller-orders-bulknotice">{orderBulkNotice}</p>}
-              <div className="seller-orders-table-wrap">
-                <table className="seller-orders-table">
-                  <thead>
-                    <tr>
-                      <th scope="col" className="seller-orders-select-cell">
-                        <input type="checkbox" aria-label={tr('تحديد كل الطلبات القابلة للتحديث', 'Select all actionable orders')}
-                          checked={allSelectableOrdersSelected}
-                          disabled={busy || selectableOrderIds.length === 0}
-                          onChange={(event) => setSelectedOrderIds(event.target.checked ? selectableOrderIds : [])} />
-                      </th>
-                      <th scope="col">{tr('رقم الطلب', 'Order number')}</th>
-                      <th scope="col">{tr('الحالة', 'Status')}</th>
-                      <th scope="col">{tr('الفرع', 'Branch')}</th>
-                      <th scope="col">{tr('وقت الطلب', 'Placed at')}</th>
-                      <th scope="col">{tr('المنتجات المطلوبة', 'Items to prepare')}</th>
-                      <th scope="col">{tr('الإجراءات', 'Actions')}</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    {orders.map((order) => {
-                      const actionable = order.status === 'awaiting_seller' || order.status === 'preparing';
-                      const branch = branches.find((item) => item.id === order.branch_id);
-                      return (
-                        <tr key={order.id} className={selectedOrderIds.includes(order.id) ? 'seller-order-selected' : ''}>
-                          <td className="seller-orders-select-cell">
-                            <input type="checkbox" checked={selectedOrderIds.includes(order.id)}
-                              disabled={busy || !actionable}
-                              aria-label={tr('تحديد الطلب ', 'Select order ') + order.order_number}
-                              onChange={(event) => setSelectedOrderIds((previous) =>
-                                event.target.checked ? [...previous, order.id] : previous.filter((id) => id !== order.id),
-                              )} />
-                          </td>
-                          <td><strong dir="ltr">{order.order_number}</strong></td>
-                          <td><span className="seller-order-status">{labels[order.status] ?? order.status}</span></td>
-                          <td>{branch
-                            ? ((ar ? branch.name_ar : branch.name_en) || (ar ? branch.name_en : branch.name_ar) || tr('فرع غير مسمى', 'Unnamed branch'))
-                            : tr('فرع غير متاح', 'Branch unavailable')}</td>
-                          <td><bdi dir="auto">{order.placed_at ? order.placed_at.replace('T', ' ').replace(/\.\d+Z?$/, '') : '—'}</bdi></td>
-                          <td>
-                            <div className="seller-orders-items-cell">
-                              {order.items.map((item) => (
-                                <div key={item.id}>
-                                  <span>{(ar ? item.name.ar : item.name.en) || (ar ? item.name.en : item.name.ar) || tr('منتج بدون اسم', 'Unnamed product')}</span>
-                                  <strong dir="ltr">× {item.quantity}</strong>
-                                </div>
-                              ))}
-                            </div>
-                          </td>
-                          <td>
-                            <div className="seller-orders-row-actions">
-                              <button type="button" disabled={busy}
-                                aria-expanded={packing?.suborder_id === order.id}
-                                onClick={() => void viewPacking(order.id)}>
-                                {packing?.suborder_id === order.id
-                                  ? tr('إخفاء القائمة', 'Hide list') : tr('قائمة التجهيز', 'Packing list')}
-                              </button>
-                              {order.status === 'awaiting_seller' && (
-                                <button type="button" className="seller-order-primary" disabled={busy}
-                                  onClick={() => void changeStatus(order.id, 'preparing')}>
-                                  {tr('بدء التجهيز', 'Start preparing')}
+                {orders.length === 0 && <p>{tr('لا توجد طلبات مطابقة.', 'No matching orders.')}</p>}
+                <div className="seller-orders-bulkbar">
+                  <span>
+                    {tr('المحدد:', 'Selected:')} <strong>{selectedVisibleOrders.length}</strong>
+                  </span>
+                  <button
+                    type="button"
+                    disabled={
+                      busy ||
+                      !selectedVisibleOrders.some((order) => order.status === 'awaiting_seller')
+                    }
+                    onClick={() => void bulkAdvanceOrders('preparing')}
+                  >
+                    {tr('بدء التجهيز للمحدد', 'Start preparing selected')}
+                  </button>
+                  <button
+                    type="button"
+                    disabled={
+                      busy || !selectedVisibleOrders.some((order) => order.status === 'preparing')
+                    }
+                    onClick={() => void bulkAdvanceOrders('ready')}
+                  >
+                    {tr('تحديد المحدد كجاهز', 'Mark selected ready')}
+                  </button>
+                  <button
+                    type="button"
+                    disabled={busy || selectedOrderIds.length === 0}
+                    onClick={() => {
+                      setSelectedOrderIds([]);
+                    }}
+                  >
+                    {tr('إلغاء التحديد', 'Clear selection')}
+                  </button>
+                </div>
+                {orderBulkNotice && (
+                  <p role="status" className="seller-orders-bulknotice">
+                    {orderBulkNotice}
+                  </p>
+                )}
+                <div className="seller-orders-table-wrap">
+                  <table className="seller-orders-table">
+                    <thead>
+                      <tr>
+                        <th scope="col" className="seller-orders-select-cell">
+                          <input
+                            type="checkbox"
+                            aria-label={tr(
+                              'تحديد كل الطلبات القابلة للتحديث',
+                              'Select all actionable orders',
+                            )}
+                            checked={allSelectableOrdersSelected}
+                            disabled={busy || selectableOrderIds.length === 0}
+                            onChange={(event) => {
+                              setSelectedOrderIds(event.target.checked ? selectableOrderIds : []);
+                            }}
+                          />
+                        </th>
+                        <th scope="col">{tr('رقم الطلب', 'Order number')}</th>
+                        <th scope="col">{tr('الحالة', 'Status')}</th>
+                        <th scope="col">{tr('الفرع', 'Branch')}</th>
+                        <th scope="col">{tr('وقت الطلب', 'Placed at')}</th>
+                        <th scope="col">{tr('المنتجات المطلوبة', 'Items to prepare')}</th>
+                        <th scope="col">{tr('الإجراءات', 'Actions')}</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {orders.map((order) => {
+                        const actionable =
+                          order.status === 'awaiting_seller' || order.status === 'preparing';
+                        const branch = branches.find((item) => item.id === order.branch_id);
+                        return (
+                          <tr
+                            key={order.id}
+                            className={
+                              selectedOrderIds.includes(order.id) ? 'seller-order-selected' : ''
+                            }
+                          >
+                            <td className="seller-orders-select-cell">
+                              <input
+                                type="checkbox"
+                                checked={selectedOrderIds.includes(order.id)}
+                                disabled={busy || !actionable}
+                                aria-label={
+                                  tr('تحديد الطلب ', 'Select order ') + order.order_number
+                                }
+                                onChange={(event) => {
+                                  setSelectedOrderIds((previous) =>
+                                    event.target.checked
+                                      ? [...previous, order.id]
+                                      : previous.filter((id) => id !== order.id),
+                                  );
+                                }}
+                              />
+                            </td>
+                            <td>
+                              <strong dir="ltr">{order.order_number}</strong>
+                            </td>
+                            <td>
+                              <span className="seller-order-status">
+                                {labels[order.status] ?? order.status}
+                              </span>
+                            </td>
+                            <td>
+                              {branch
+                                ? (ar ? branch.name_ar : branch.name_en) ||
+                                  (ar ? branch.name_en : branch.name_ar) ||
+                                  tr('فرع غير مسمى', 'Unnamed branch')
+                                : tr('فرع غير متاح', 'Branch unavailable')}
+                            </td>
+                            <td>
+                              <bdi dir="auto">
+                                {order.placed_at
+                                  ? order.placed_at.replace('T', ' ').replace(/\.\d+Z?$/, '')
+                                  : '—'}
+                              </bdi>
+                            </td>
+                            <td>
+                              <div className="seller-orders-items-cell">
+                                {order.items.map((item) => (
+                                  <div key={item.id}>
+                                    <span>
+                                      {(ar ? item.name.ar : item.name.en) ||
+                                        (ar ? item.name.en : item.name.ar) ||
+                                        tr('منتج بدون اسم', 'Unnamed product')}
+                                    </span>
+                                    <strong dir="ltr">× {item.quantity}</strong>
+                                  </div>
+                                ))}
+                              </div>
+                            </td>
+                            <td>
+                              <div className="seller-orders-row-actions">
+                                <button
+                                  type="button"
+                                  disabled={busy}
+                                  aria-expanded={packing?.suborder_id === order.id}
+                                  onClick={() => void viewPacking(order.id)}
+                                >
+                                  {packing?.suborder_id === order.id
+                                    ? tr('إخفاء القائمة', 'Hide list')
+                                    : tr('قائمة التجهيز', 'Packing list')}
                                 </button>
-                              )}
-                              {order.status === 'preparing' && (
-                                <button type="button" className="seller-order-primary" disabled={busy}
-                                  onClick={() => void changeStatus(order.id, 'ready')}>
-                                  {tr('جاهز للاستلام', 'Ready for pickup')}
-                                </button>
-                              )}
-                            </div>
-                          </td>
-                        </tr>
-                      );
-                    })}
-                  </tbody>
-                </table>
-              </div>
-              {packing && orders.some((order) => order.id === packing.suborder_id) && (
-                <section className="seller-orders-packing-detail">
-                  <div className="seller-orders-packing-head">
-                    <h3>{tr('قائمة تجهيز الطلب', 'Order packing list')} — <bdi>{packing.order_number}</bdi></h3>
-                    <button type="button" onClick={() => setPacking(null)}>{tr('إغلاق', 'Close')}</button>
-                  </div>
-                  <p>{tr('الفرع', 'Branch')} #{packing.branch_id} · {labels[packing.status] ?? packing.status}</p>
-                  <ul>
-                    {packing.items.map((item) => (
-                      <li key={item.variant_id}>
-                        <span>{ar ? item.product.ar : item.product.en}
-                          {' — '}{(ar ? item.variant.ar : item.variant.en) || '#' + item.variant_id}</span>
-                        <strong>× {item.quantity}</strong>
-                      </li>
-                    ))}
-                  </ul>
-                </section>
-              )}
-              {hasMoreOrders && (
-                <button
-                  type="button"
-                  style={action}
-                  disabled={loadingMore}
-                  onClick={() => void loadMoreOrders()}
-                >
-                  {loadingMore
-                    ? tr('جار التحميل…', 'Loading…')
-                    : tr('عرض المزيد من الطلبات', 'Load more orders')}
-                </button>
-              )}
-            </section>
-          )}
-        </div>
-      )}
-    </Page>
+                                {order.status === 'awaiting_seller' && (
+                                  <button
+                                    type="button"
+                                    className="seller-order-primary"
+                                    disabled={busy}
+                                    onClick={() => void changeStatus(order.id, 'preparing')}
+                                  >
+                                    {tr('بدء التجهيز', 'Start preparing')}
+                                  </button>
+                                )}
+                                {order.status === 'preparing' && (
+                                  <button
+                                    type="button"
+                                    className="seller-order-primary"
+                                    disabled={busy}
+                                    onClick={() => void changeStatus(order.id, 'ready')}
+                                  >
+                                    {tr('جاهز للاستلام', 'Ready for pickup')}
+                                  </button>
+                                )}
+                              </div>
+                            </td>
+                          </tr>
+                        );
+                      })}
+                    </tbody>
+                  </table>
+                </div>
+                {packing && orders.some((order) => order.id === packing.suborder_id) && (
+                  <section className="seller-orders-packing-detail">
+                    <div className="seller-orders-packing-head">
+                      <h3>
+                        {tr('قائمة تجهيز الطلب', 'Order packing list')} —{' '}
+                        <bdi>{packing.order_number}</bdi>
+                      </h3>
+                      <button
+                        type="button"
+                        onClick={() => {
+                          setPacking(null);
+                        }}
+                      >
+                        {tr('إغلاق', 'Close')}
+                      </button>
+                    </div>
+                    <p>
+                      {tr('الفرع', 'Branch')} #{packing.branch_id} ·{' '}
+                      {labels[packing.status] ?? packing.status}
+                    </p>
+                    <ul>
+                      {packing.items.map((item) => (
+                        <li key={item.variant_id}>
+                          <span>
+                            {ar ? item.product.ar : item.product.en}
+                            {' — '}
+                            {(ar ? item.variant.ar : item.variant.en) || `#${item.variant_id}`}
+                          </span>
+                          <strong>× {item.quantity}</strong>
+                        </li>
+                      ))}
+                    </ul>
+                  </section>
+                )}
+                {hasMoreOrders && (
+                  <button
+                    type="button"
+                    style={action}
+                    disabled={loadingMore}
+                    onClick={() => void loadMoreOrders()}
+                  >
+                    {loadingMore
+                      ? tr('جار التحميل…', 'Loading…')
+                      : tr('عرض المزيد من الطلبات', 'Load more orders')}
+                  </button>
+                )}
+              </section>
+            )}
+          </div>
+        )}
+      </Page>
     </div>
   );
 }

@@ -71,7 +71,11 @@ export function parseGuestCart(stored: string | null): readonly GuestLine[] {
   } catch {
     return NO_LINES;
   }
-  if (!isRecord(parsed) || (parsed.version !== STORAGE_VERSION && parsed.version !== LEGACY_VAT_INCLUDED_VERSION) || !Array.isArray(parsed.lines)) {
+  if (
+    !isRecord(parsed) ||
+    (parsed.version !== STORAGE_VERSION && parsed.version !== LEGACY_VAT_INCLUDED_VERSION) ||
+    !Array.isArray(parsed.lines)
+  ) {
     return NO_LINES;
   }
 

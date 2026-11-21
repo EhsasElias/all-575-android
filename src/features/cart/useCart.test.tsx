@@ -62,7 +62,7 @@ describe('useCart for a guest', () => {
     expect(screen.getByText('kind: guest')).toBeInTheDocument();
     expect(screen.getByText('lines: 1x2,7x1')).toBeInTheDocument();
     expect(screen.getByText('items: 3')).toBeInTheDocument();
-    expect(screen.getByText('subtotal: 1725')).toBeInTheDocument();
+    expect(screen.getByText('subtotal: 1500')).toBeInTheDocument();
   });
 
   it('is ready at once when the cart is empty, because an empty cart needs no price', async () => {
@@ -95,7 +95,7 @@ describe('useCart for a guest', () => {
 
     await press('set biscuits to 5');
     expect(await screen.findByText('last: ok')).toBeInTheDocument();
-    expect(screen.getByText('subtotal: 2875')).toBeInTheDocument();
+    expect(screen.getByText('subtotal: 2500')).toBeInTheDocument();
 
     await press('set biscuits to 21');
     expect(await screen.findByText('last: quantity_out_of_range')).toBeInTheDocument();

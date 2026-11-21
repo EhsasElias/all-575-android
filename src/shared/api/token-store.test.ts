@@ -1,6 +1,10 @@
 import { afterEach, describe, expect, it, vi } from 'vitest';
 import { createSecureTokenStore, type SecureKeyValueStorage } from './secure-token-store';
-import { createMemoryTokenStore, createTokenStore, createWebSessionTokenStore } from './token-store';
+import {
+  createMemoryTokenStore,
+  createTokenStore,
+  createWebSessionTokenStore,
+} from './token-store';
 
 function createFakeSecureStorage() {
   const items = new Map<string, string>();
