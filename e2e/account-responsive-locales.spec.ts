@@ -121,10 +121,9 @@ for (const language of ['ar', 'en', 'fr'] as const) {
         );
         const scroll: number = await page.evaluate('document.documentElement.scrollWidth');
         const viewport: number = await page.evaluate('window.innerWidth');
-        expect(
-          scroll,
-          `${language} ${path} horizontal overflow at ${width}px`,
-        ).toBeLessThanOrEqual(viewport + 1);
+        expect(scroll, `${language} ${path} horizontal overflow at ${width}px`).toBeLessThanOrEqual(
+          viewport + 1,
+        );
       }
     }
   });

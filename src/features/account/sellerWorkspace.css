@@ -1584,19 +1584,12 @@
   }
 }
 
-/* Allow the seller workspace to expand beyond narrow account-page containers on desktop. */
+/* Fit the workspace inside the dashboard column beside the sidebar. */
 .seller-workspace-shell {
   box-sizing: border-box;
-  width: min(1240px, calc(100vw - 48px));
-  max-width: none;
+  max-inline-size: 1240px;
+  margin-inline: auto;
   position: relative;
-  /* Center the full-width seller workspace inside a narrower account container.
-     Logical inset + direction-aware translation works in both Arabic RTL and English LTR. */
-  inset-inline-start: 50%;
-  translate: -50% 0;
-}
-.seller-workspace-shell[dir='rtl'] {
-  translate: 50% 0;
 }
 .seller-workspace-shell > div {
   width: 100% !important;
@@ -1689,9 +1682,6 @@
   }
 }
 @media (max-width: 700px) {
-  .seller-workspace-shell {
-    width: calc(100vw - 20px);
-  }
   .seller-workspace-shell .seller-filters {
     grid-template-columns: minmax(0, 1fr);
     gap: 10px;
