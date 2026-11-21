@@ -135,12 +135,14 @@ export function createHttpClient(config: HttpClientConfig): HttpClient {
     return { headers, token };
   }
 
-  function request<T>(method: string, path: string, options: SendOptions): Promise<T> {
-    // GETs stay independent; different payloads and destinations must not be merged.
-    // Requests with caller-specific cancellation also remain independent.
+  async function request<T>(method: string, path: string, options: SendOptions): Promise<T> {
+    // The authenticated identity participates in the key: two different
+    // sessions must never share a mutation result, even across sign-out.
+    const token = method === 'GET' ? null : await readToken(config.tokenStore);
     const key =
       method !== 'GET' && !options.signal
         ? JSON.stringify([
+            token,
             method,
             path,
             options.query,
