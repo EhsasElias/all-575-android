@@ -124,6 +124,43 @@ describe('requests', () => {
     expect(lastRequest(fetchFn).init.method).toBe(method.toUpperCase());
   });
 
+  it('sends only one request for simultaneous identical writes', async () => {
+    const { http, fetchFn } = setup();
+    let release!: (response: Response) => void;
+    fetchFn.mockImplementation(
+      () =>
+        new Promise<Response>((resolve) => {
+          release = resolve;
+        }),
+    );
+
+    const first = http.post<{ id: number }>('/reviews/7/decision', { decision: 'approve' });
+    const second = http.post<{ id: number }>('/reviews/7/decision', { decision: 'approve' });
+    expect(first).toBe(second);
+    await vi.waitFor(() => expect(fetchFn).toHaveBeenCalledTimes(1));
+    release(jsonResponse({ id: 7 }));
+    await expect(Promise.all([first, second])).resolves.toEqual([{ id: 7 }, { id: 7 }]);
+  });
+
+  it('allows distinct writes and retries after a completed write', async () => {
+    const { http, fetchFn } = setup();
+    fetchFn.mockResolvedValue(jsonResponse({ ok: true }));
+    await Promise.all([
+      http.post('/cart/items', { productId: 1 }),
+      http.post('/cart/items', { productId: 2 }),
+    ]);
+    expect(fetchFn).toHaveBeenCalledTimes(2);
+    await http.post('/cart/items', { productId: 1 });
+    expect(fetchFn).toHaveBeenCalledTimes(3);
+  });
+
+  it('does not coalesce GET requests', async () => {
+    const { http, fetchFn } = setup();
+    fetchFn.mockResolvedValue(jsonResponse({}));
+    await Promise.all([http.get('/products'), http.get('/products')]);
+    expect(fetchFn).toHaveBeenCalledTimes(2);
+  });
+
   it('returns undefined for an empty 204 response', async () => {
     const { http, fetchFn } = setup();
     fetchFn.mockResolvedValue(new Response(null, { status: 204 }));
