@@ -23,6 +23,7 @@ test('seller imports the same selected file again and safely edits stock at diff
 }) => {
   test.setTimeout(60_000);
   let quantity = 5;
+  let sellerSessionAttempts = 0;
   await page.route('**/api/v1/**', async (route) => {
     const { pathname } = new URL(route.request().url());
     const method = route.request().method();
@@ -80,7 +81,9 @@ test('seller imports the same selected file again and safely edits stock at diff
         },
       ],
     };
-    if (pathname.endsWith('/seller/products/import')) {
+    if (pathname.endsWith('/seller/session') && ++sellerSessionAttempts === 1) {
+      await route.fulfill({ status: 503, json: { message: 'Service unavailable' } });
+    } else if (pathname.endsWith('/seller/products/import')) {
       const preview = route.request().postData()?.includes('name="dry_run"') === true;
       await route.fulfill({
         json: {
@@ -104,9 +107,18 @@ test('seller imports the same selected file again and safely edits stock at diff
   await page.getByRole('button', { name: 'Send code' }).click();
   await page.getByLabel('6-digit code', { exact: true }).fill('123456');
   await page.getByRole('button', { name: 'Continue', exact: true }).click();
+  await expect(page.getByText('Could not open the seller session. Please retry.')).toBeVisible();
+  await expect(page.getByText('This workspace is for approved sellers only.')).toHaveCount(0);
+  let documentRequests = 0;
+  page.on('request', (request) => {
+    if (request.resourceType() === 'document') documentRequests += 1;
+  });
+  await page.getByRole('button', { name: 'Retry', exact: true }).click();
   await expect(
     page.getByRole('heading', { name: 'Import products using Excel or CSV' }),
   ).toBeVisible();
+  expect(sellerSessionAttempts).toBe(2);
+  expect(documentRequests).toBe(0);
 
   const file = {
     name: 'products.csv',
