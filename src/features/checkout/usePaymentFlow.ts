@@ -1,5 +1,5 @@
 import { skipToken, useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { useNavigate } from 'react-router';
 import { cartQueryKey } from '@/features/cart';
 import { errorCode, isApiError } from '@/shared/api';
@@ -23,6 +23,8 @@ export function usePaymentFlow(orderId: string) {
   const queryClient = useQueryClient();
   const navigate = useNavigate();
   const [chooserOpen, setChooserOpen] = useState(false);
+  const retryInFlight = useRef(false);
+  const retryCompletedPayment = useRef<string | null>(null);
 
   const order = useQuery({
     queryKey: checkoutKeys.order(orderId),
@@ -46,6 +48,7 @@ export function usePaymentFlow(orderId: string) {
   const retry = useMutation({
     mutationFn: (method: PayMethod) => retryPayment(orderId, method),
     onSuccess: async (started) => {
+      retryCompletedPayment.current = paymentId;
       rememberPaymentAction(started);
       setChooserOpen(false);
       await queryClient.invalidateQueries({ queryKey: checkoutKeys.order(orderId) });
@@ -88,5 +91,10 @@ export function usePaymentFlow(orderId: string) {
     refreshPayment: () =>
       queryClient.invalidateQueries({ queryKey: checkoutKeys.payment(paymentId) }),
     retry,
+    retryOnce: (method: PayMethod) => {
+      if (retryInFlight.current || retryCompletedPayment.current === paymentId) return;
+      retryInFlight.current = true;
+      retry.mutate(method, { onSettled: () => { retryInFlight.current = false; } });
+    },
   };
 }

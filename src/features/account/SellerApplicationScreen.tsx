@@ -175,6 +175,7 @@ export function SellerApplicationScreen() {
   const [reviewNote, setReviewNote] = useState<string | null>(null);
   const [loading, setLoading] = useState(true);
   const [busy, setBusy] = useState(false);
+  const submissionRef = useRef(false);
   const [error, setError] = useState('');
   const [saved, setSaved] = useState(false);
   const [documents, setDocuments] = useState<SellerApplicationDocument[]>([]);
@@ -239,7 +240,8 @@ export function SellerApplicationScreen() {
 
   const submit = async (event: FormEvent) => {
     event.preventDefault();
-    if (busy || status === 'submitted' || status === 'reviewed') return;
+    if (busy || submissionRef.current || status === 'submitted' || status === 'reviewed') return;
+    submissionRef.current = true;
     setBusy(true);
     setError('');
     setSaved(false);
@@ -257,12 +259,14 @@ export function SellerApplicationScreen() {
             : 'Could not save application. Check the fields.'),
       );
     } finally {
+      submissionRef.current = false;
       setBusy(false);
     }
   };
 
   const sendForReview = async () => {
-    if (busy || status !== 'draft') return;
+    if (busy || submissionRef.current || status !== 'draft') return;
+    submissionRef.current = true;
     setBusy(true);
     setError('');
     try {
@@ -281,6 +285,7 @@ export function SellerApplicationScreen() {
             : 'Could not submit application.',
       );
     } finally {
+      submissionRef.current = false;
       setBusy(false);
     }
   };
