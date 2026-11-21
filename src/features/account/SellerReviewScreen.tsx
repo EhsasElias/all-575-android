@@ -496,22 +496,13 @@ export function SellerReviewScreen() {
             </div>
             <div className={styles.reviewToolbar}>
               <h2>
-                {tr(
-                  tab === 'applications'
-                    ? 'طلبات البائعين'
-                    : tab === 'branches'
-                      ? 'الفروع الجديدة'
-                      : tab === 'products'
-                        ? 'مراجعة المنتجات'
-                        : 'إدارة التصنيفات',
-                  tab === 'applications'
-                    ? 'Seller applications'
-                    : tab === 'branches'
-                      ? 'New branches'
-                      : tab === 'products'
-                        ? 'Product approvals'
-                        : 'Manage categories',
-                )}
+                {tab === 'applications'
+                  ? tr('طلبات البائعين', 'Seller applications')
+                  : tab === 'branches'
+                    ? tr('الفروع الجديدة', 'New branches')
+                    : tab === 'products'
+                      ? tr('مراجعة المنتجات', 'Product approvals')
+                      : tr('إدارة التصنيفات', 'Manage categories')}
               </h2>
               <button
                 type="button"
