@@ -9,9 +9,9 @@ import { onTheWayOrder } from '../testScenarios';
 import { CODE_VISIBLE_MS } from './useDeliveryCode';
 
 const signedIn = { 'GET /me': { body: { data: testUser } } };
-const CODE_PATH = `/orders/${ORDER_ID}/suborders/${SUBORDER_ID}/delivery-code`;
+const CODE_PATH = `/me/suborders/${SUBORDER_ID}/delivery-code`;
 const CODE_REPLY = {
-  body: { data: { code: '482913', expires_at: '2026-10-25T09:00:00.000000Z' } },
+  body: { data: { delivery_code: '482913', expires_in_seconds: 600 } },
 };
 
 function openOnTheWay(language: 'en' | 'ar' = 'en') {
@@ -57,7 +57,7 @@ describe('Delivery code', () => {
     const api = installFakeApi({
       ...signedIn,
       'GET /orders/:id': { body: { data: onTheWayOrder() } },
-      [`GET ${CODE_PATH}`]: CODE_REPLY,
+      [`POST ${CODE_PATH}`]: CODE_REPLY,
     });
     await openOnTheWay();
 
@@ -66,8 +66,8 @@ describe('Delivery code', () => {
     expect(await screen.findByText('482913')).toBeInTheDocument();
     expect(screen.getByText(/Give this code only to the courier at your door/)).toBeInTheDocument();
     expect(screen.getByText('4 8 2 9 1 3')).toBeInTheDocument();
-    expect(screen.getByText(/Valid until 25 Oct 2026, 12:00 pm/)).toBeInTheDocument();
-    expect(api.requests()).toContain(`GET ${CODE_PATH}`);
+    expect(screen.getByText(/Valid until/)).toBeInTheDocument();
+    expect(api.requests()).toContain(`POST ${CODE_PATH}`);
 
     await user.click(screen.getByRole('button', { name: 'Hide code' }));
 
@@ -81,7 +81,7 @@ describe('Delivery code', () => {
     installFakeApi({
       ...signedIn,
       'GET /orders/:id': { body: { data: onTheWayOrder() } },
-      [`GET ${CODE_PATH}`]: CODE_REPLY,
+      [`POST ${CODE_PATH}`]: CODE_REPLY,
     });
     await openOnTheWay();
     await user.click(await screen.findByRole('button', { name: 'Show my delivery code' }));
@@ -104,7 +104,7 @@ describe('Delivery code', () => {
     installFakeApi({
       ...signedIn,
       'GET /orders/:id': { body: { data: onTheWayOrder() } },
-      [`GET ${CODE_PATH}`]: CODE_REPLY,
+      [`POST ${CODE_PATH}`]: CODE_REPLY,
     });
     await openOnTheWay();
     await user.click(await screen.findByRole('button', { name: 'Show my delivery code' }));
@@ -124,7 +124,7 @@ describe('Delivery code', () => {
     installFakeApi({
       ...signedIn,
       'GET /orders/:id': { body: { data: onTheWayOrder() } },
-      [`GET ${CODE_PATH}`]: CODE_REPLY,
+      [`POST ${CODE_PATH}`]: CODE_REPLY,
     });
     const { router } = await openOnTheWay();
     await user.click(await screen.findByRole('button', { name: 'Show my delivery code' }));
@@ -152,7 +152,7 @@ describe('Delivery code', () => {
     installFakeApi({
       ...signedIn,
       'GET /orders/:id': { body: { data: onTheWayOrder() } },
-      [`GET ${CODE_PATH}`]: {
+      [`POST ${CODE_PATH}`]: {
         status: 404,
         body: {
           message: 'There is no active hand-over code for this delivery.',
@@ -179,7 +179,7 @@ describe('Delivery code', () => {
     installFakeApi({
       ...signedIn,
       'GET /orders/:id': { body: { data: onTheWayOrder() } },
-      [`GET ${CODE_PATH}`]: { status: 429, body: { message: 'Too many attempts' } },
+      [`POST ${CODE_PATH}`]: { status: 429, body: { message: 'Too many attempts' } },
     });
     await openOnTheWay();
 
@@ -193,7 +193,7 @@ describe('Delivery code', () => {
     installFakeApi({
       ...signedIn,
       'GET /orders/:id': { body: { data: onTheWayOrder() } },
-      [`GET ${CODE_PATH}`]: CODE_REPLY,
+      [`POST ${CODE_PATH}`]: CODE_REPLY,
     });
     await openOnTheWay('ar');
 
