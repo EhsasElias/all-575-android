@@ -59,6 +59,7 @@ export function SuperAdminDashboardScreen() {
   const detailSectionRef = useRef<HTMLDivElement | null>(null);
   const [accountEditor, setAccountEditor] = useState<{ id: number; name: string } | null>(null);
   const [accountBusy, setAccountBusy] = useState(false);
+  const accountActionInFlight = useRef(false);
   const [sellerEditor, setSellerEditor] = useState<{
     id: number;
     name_ar: string;
@@ -248,7 +249,8 @@ export function SuperAdminDashboardScreen() {
   };
 
   const saveAccount = async (id: number, input: { name?: string; is_active?: boolean }) => {
-    if (accountBusy) return;
+    if (accountBusy || accountActionInFlight.current) return;
+    accountActionInFlight.current = true;
     setAccountBusy(true);
     setDetailsError('');
     setAccountNotice('');
@@ -262,6 +264,7 @@ export function SuperAdminDashboardScreen() {
         isApiError(cause) ? cause.message : tr('تعذر تحديث الحساب.', 'Could not update account.'),
       );
     } finally {
+      accountActionInFlight.current = false;
       setAccountBusy(false);
     }
   };
@@ -270,7 +273,8 @@ export function SuperAdminDashboardScreen() {
     id: number,
     input: { name_ar?: string; name_en?: string; is_active?: boolean },
   ) => {
-    if (accountBusy) return;
+    if (accountBusy || accountActionInFlight.current) return;
+    accountActionInFlight.current = true;
     setAccountBusy(true);
     setDetailsError('');
     setAccountNotice('');
@@ -284,6 +288,7 @@ export function SuperAdminDashboardScreen() {
         isApiError(cause) ? cause.message : tr('تعذر تحديث البائع.', 'Could not update seller.'),
       );
     } finally {
+      accountActionInFlight.current = false;
       setAccountBusy(false);
     }
   };

@@ -1,4 +1,4 @@
-import { useEffect, useState, type FormEvent } from 'react';
+import { useEffect, useRef, useState, type FormEvent } from 'react';
 import { useTranslation } from 'react-i18next';
 import {
   adminAssignments,
@@ -24,6 +24,7 @@ export function PlatformAdminAssignments() {
   const [orders, setOrders] = useState(true);
   const [stock, setStock] = useState(true);
   const [busy, setBusy] = useState(false);
+  const submissionInFlight = useRef(false);
   const [error, setError] = useState('');
   const [notice, setNotice] = useState('');
   const [revision, setRevision] = useState(0);
@@ -60,6 +61,8 @@ export function PlatformAdminAssignments() {
 
   const save = async (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
+    if (submissionInFlight.current) return;
+    submissionInFlight.current = true;
     setBusy(true);
     setError('');
     setNotice('');
@@ -82,6 +85,7 @@ export function PlatformAdminAssignments() {
         ),
       );
     } finally {
+      submissionInFlight.current = false;
       setBusy(false);
     }
   };
@@ -90,6 +94,8 @@ export function PlatformAdminAssignments() {
     id: number,
     input: { is_active?: boolean; can_view_orders?: boolean; can_view_inventory?: boolean },
   ) => {
+    if (submissionInFlight.current) return;
+    submissionInFlight.current = true;
     setBusy(true);
     setError('');
     setNotice('');
@@ -100,6 +106,7 @@ export function PlatformAdminAssignments() {
     } catch {
       setError(tr('تعذر تحديث الصلاحية.', 'Could not update permission.'));
     } finally {
+      submissionInFlight.current = false;
       setBusy(false);
     }
   };
