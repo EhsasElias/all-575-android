@@ -1,4 +1,4 @@
-import { useEffect, useState, type FormEvent } from 'react';
+import { useEffect, useRef, useState, type FormEvent } from 'react';
 import { useTranslation } from 'react-i18next';
 import { isApiError } from '@/shared/api';
 import { respondSellerReturn, sellerReturns, type SellerReturnCase } from './sellerWorkspaceApi';
@@ -18,6 +18,7 @@ export function SellerReturnManagement() {
   const [revision, setRevision] = useState(0);
   const [loading, setLoading] = useState(true);
   const [busy, setBusy] = useState(false);
+  const responseInFlight = useRef(false);
   const [selected, setSelected] = useState<string | null>(null);
   const [position, setPosition] = useState<'accept' | 'dispute'>('accept');
   const [explanation, setExplanation] = useState('');
@@ -72,7 +73,7 @@ export function SellerReturnManagement() {
 
   const respond = async (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
-    if (!selected || busy || explanation.trim().length < 10) return;
+    if (!selected || busy || responseInFlight.current || explanation.trim().length < 10) return;
     if (
       !window.confirm(
         tr(
@@ -82,6 +83,7 @@ export function SellerReturnManagement() {
       )
     )
       return;
+    responseInFlight.current = true;
     setBusy(true);
     setError('');
     setNotice('');
@@ -110,6 +112,7 @@ export function SellerReturnManagement() {
             ),
       );
     } finally {
+      responseInFlight.current = false;
       setBusy(false);
     }
   };

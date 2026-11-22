@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useState } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 import { Link, useSearchParams } from 'react-router';
 import { createPortal } from 'react-dom';
 import { useTranslation } from 'react-i18next';
@@ -128,6 +128,8 @@ export function SellerWorkspaceScreen() {
   const [stockEditError, setStockEditError] = useState('');
   const [loading, setLoading] = useState(true);
   const [busy, setBusy] = useState(false);
+  const orderActionInFlight = useRef(false);
+  const [completedOrderSteps, setCompletedOrderSteps] = useState<Set<string>>(() => new Set());
   const [error, setError] = useState('');
   const [sessionAttempt, setSessionAttempt] = useState(0);
   const [revision, setRevision] = useState(0);
@@ -411,15 +413,19 @@ export function SellerWorkspaceScreen() {
   };
 
   const changeStatus = async (id: string, status: 'preparing' | 'ready') => {
-    if (busy) return;
+    const actionKey = id + ':' + status;
+    if (busy || orderActionInFlight.current || completedOrderSteps.has(actionKey)) return;
+    orderActionInFlight.current = true;
     setBusy(true);
     setError('');
     try {
       await advanceSellerOrder(id, status);
+      setCompletedOrderSteps((previous) => new Set(previous).add(actionKey));
       reload();
     } catch {
       setError(tr('تعذر تحديث الطلب.', 'Unable to update the order.'));
     } finally {
+      orderActionInFlight.current = false;
       setBusy(false);
     }
   };
@@ -435,7 +441,7 @@ export function SellerWorkspaceScreen() {
   // Use the same authenticated and authorized endpoint as single-order updates.
   // Each request is checked individually by the API and failures are reported.
   const bulkAdvanceOrders = async (status: 'preparing' | 'ready') => {
-    if (busy) return;
+    if (busy || orderActionInFlight.current) return;
     const eligible = selectedVisibleOrders.filter((order) =>
       status === 'preparing' ? order.status === 'awaiting_seller' : order.status === 'preparing',
     );
@@ -457,6 +463,7 @@ export function SellerWorkspaceScreen() {
       )
     )
       return;
+    orderActionInFlight.current = true;
     setBusy(true);
     setError('');
     setOrderBulkNotice('');
@@ -466,6 +473,7 @@ export function SellerWorkspaceScreen() {
       try {
         await advanceSellerOrder(order.id, status);
         succeeded.push(order.id);
+        setCompletedOrderSteps((previous) => new Set(previous).add(order.id + ':' + status));
       } catch {
         failed.push(order.order_number);
       }
@@ -483,6 +491,7 @@ export function SellerWorkspaceScreen() {
           (failed.length ? 'Failed: ' + failed.join(', ') : ''),
       ),
     );
+    orderActionInFlight.current = false;
     setBusy(false);
     reload();
   };
@@ -1549,7 +1558,7 @@ export function SellerWorkspaceScreen() {
                                   <button
                                     type="button"
                                     className="seller-order-primary"
-                                    disabled={busy}
+                                    disabled={busy || completedOrderSteps.has(order.id + ':preparing')}
                                     onClick={() => void changeStatus(order.id, 'preparing')}
                                   >
                                     {tr('بدء التجهيز', 'Start preparing')}
@@ -1559,7 +1568,7 @@ export function SellerWorkspaceScreen() {
                                   <button
                                     type="button"
                                     className="seller-order-primary"
-                                    disabled={busy}
+                                    disabled={busy || completedOrderSteps.has(order.id + ':ready')}
                                     onClick={() => void changeStatus(order.id, 'ready')}
                                   >
                                     {tr('جاهز للاستلام', 'Ready for pickup')}

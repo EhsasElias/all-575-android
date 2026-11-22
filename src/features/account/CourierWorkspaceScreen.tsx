@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { Page } from './components/Page';
 import { useTranslation } from 'react-i18next';
 import { isApiError } from '@/shared/api';
@@ -23,6 +23,7 @@ export function CourierWorkspaceScreen() {
   const [error, setError] = useState('');
   const [notice, setNotice] = useState('');
   const [busy, setBusy] = useState(false);
+  const busyRef = useRef(false);
   const [code, setCode] = useState<Record<number, string>>({});
   const [parcels, setParcels] = useState<Record<number, string>>({});
   const [revision, setRevision] = useState(0);
@@ -72,7 +73,8 @@ export function CourierWorkspaceScreen() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [revision]);
   const act = async (fn: () => Promise<unknown>, msg: string) => {
-    if (busy) return;
+    if ((busy || busyRef.current)) return;
+    busyRef.current = true;
     setBusy(true);
     setError('');
     setNotice('');
@@ -90,6 +92,7 @@ export function CourierWorkspaceScreen() {
             ),
       );
     } finally {
+      busyRef.current = false;
       setBusy(false);
     }
   };

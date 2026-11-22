@@ -115,6 +115,10 @@ export function SellerProductManagement({ products, memberships, onUpdated }: Pr
   const [draft, setDraft] = useState<Draft>(() => empty(String(sellerIds[0] ?? '')));
   const [workingId, setWorkingId] = useState<number | null>(null);
   const [busy, setBusy] = useState(false);
+  const terminalActionInFlight = useRef(false);
+  const [completedProductActions, setCompletedProductActions] = useState<Set<string>>(
+    () => new Set(),
+  );
   const [coverFile, setCoverFile] = useState<File | null>(null);
   const [localCoverPreview, setLocalCoverPreview] = useState<string | null>(null);
   const [coverUrl, setCoverUrl] = useState('');
@@ -603,13 +607,14 @@ export function SellerProductManagement({ products, memberships, onUpdated }: Pr
   };
 
   const submit = (productId: number) => {
-    if (busy) return;
+    if (busy || terminalActionInFlight.current || completedProductActions.has('publish:' + productId)) return;
     setFormError('');
     setConfirmation({ kind: 'publish', productId });
   };
 
   const publish = async (productId: number) => {
-    if (busy) return;
+    if (busy || terminalActionInFlight.current || completedProductActions.has('publish:' + productId)) return;
+    terminalActionInFlight.current = true;
     setConfirmation(null);
     setBusy(true);
     setWorkingId(productId);
@@ -617,6 +622,7 @@ export function SellerProductManagement({ products, memberships, onUpdated }: Pr
     setSuccess('');
     try {
       const result = await submitSellerProduct(productId);
+      setCompletedProductActions((previous) => new Set(previous).add('publish:' + productId));
       setSuccess(
         result.data.status === 'published'
           ? tr('تم نشر المنتج مباشرة.', 'Product published immediately.')
@@ -640,13 +646,15 @@ export function SellerProductManagement({ products, memberships, onUpdated }: Pr
       setError(message);
       if (selected === productId) setFormVisible(true);
     } finally {
+      terminalActionInFlight.current = false;
       setBusy(false);
       setWorkingId(null);
     }
   };
 
   const deleteDraft = async (productId: number) => {
-    if (busy) return;
+    if (busy || terminalActionInFlight.current || completedProductActions.has('delete:' + productId)) return;
+    terminalActionInFlight.current = true;
     setConfirmation(null);
     setBusy(true);
     setWorkingId(productId);
@@ -655,6 +663,7 @@ export function SellerProductManagement({ products, memberships, onUpdated }: Pr
     setSuccess('');
     try {
       await deleteSellerProduct(productId);
+      setCompletedProductActions((previous) => new Set(previous).add('delete:' + productId));
       if (selected === productId) {
         setSelected(null);
         setFormVisible(false);
@@ -665,6 +674,7 @@ export function SellerProductManagement({ products, memberships, onUpdated }: Pr
     } catch (cause) {
       setError(explainApiError(cause, tr('تعذر حذف المسودة.', 'Could not delete the draft.')));
     } finally {
+      terminalActionInFlight.current = false;
       setBusy(false);
       setWorkingId(null);
     }
@@ -1742,7 +1752,7 @@ export function SellerProductManagement({ products, memberships, onUpdated }: Pr
                   <button
                     type="button"
                     style={button}
-                    disabled={busy}
+                    disabled={busy || completedProductActions.has('publish:' + product.id)}
                     onClick={() => {
                       submit(product.id);
                     }}
@@ -1753,7 +1763,7 @@ export function SellerProductManagement({ products, memberships, onUpdated }: Pr
                     type="button"
                     title={tr('حذف المسودة', 'Delete draft')}
                     aria-label={tr('حذف مسودة المنتج', 'Delete draft product')}
-                    disabled={busy}
+                    disabled={busy || completedProductActions.has('delete:' + product.id)}
                     onClick={() => {
                       setConfirmation({ kind: 'delete', productId: product.id });
                     }}
