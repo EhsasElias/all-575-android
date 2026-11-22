@@ -82,11 +82,11 @@ export function CustomerNotifications() {
     } catch {
       setError(true);
     }
-  // Re-fetch localized API messages whenever the user changes the interface language.
-  }, [language]);
+  }, []);
 
   useEffect(() => {
-    void load();
+    // Schedule the initial fetch outside the synchronous effect body.
+    const initialFetch = window.setTimeout(() => { void load(); }, 0);
     const refresh = () => {
       if (document.visibilityState === 'visible') void load();
     };
@@ -94,11 +94,13 @@ export function CustomerNotifications() {
     window.addEventListener('focus', refresh);
     document.addEventListener('visibilitychange', refresh);
     return () => {
+      window.clearTimeout(initialFetch);
       window.clearInterval(interval);
       window.removeEventListener('focus', refresh);
       document.removeEventListener('visibilitychange', refresh);
     };
-  }, [load]);
+  // Re-fetch localized API messages whenever the interface language changes.
+  }, [load, language]);
 
   const markRead = async (id: number) => {
     if (busy) return;
@@ -161,7 +163,7 @@ export function CustomerNotifications() {
             type="button"
             className={styles.filterButton}
             aria-pressed={filter === 'all'}
-            onClick={() => setFilter('all')}
+            onClick={() => { setFilter('all'); }}
           >
             {t.allFilter} <span>{inbox.data.length}</span>
           </button>
@@ -169,7 +171,7 @@ export function CustomerNotifications() {
             type="button"
             className={styles.filterButton}
             aria-pressed={filter === 'unread'}
-            onClick={() => setFilter('unread')}
+            onClick={() => { setFilter('unread'); }}
           >
             {t.unreadFilter} <span>{inbox.unread_count}</span>
           </button>
