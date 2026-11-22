@@ -40,6 +40,12 @@ export const courierFrench = {
   'Failed delivery was reported to Admin.': 'L’échec de livraison a été signalé à l’administration.',
   'Report failed delivery': 'Signaler un échec de livraison',
   'Delivery completed and verified.': 'Livraison terminée et vérifiée.',
+  Offered: 'Proposée',
+  Accepted: 'Acceptée',
+  'Picked up': 'Récupérée',
+  Delivered: 'Livrée',
+  Declined: 'Refusée',
+  Expired: 'Expirée',
   'Completed jobs:': 'Missions terminées :',
   'Earnings: unavailable until settlements are enabled.':
     'Gains indisponibles avant l’activation des règlements.',
