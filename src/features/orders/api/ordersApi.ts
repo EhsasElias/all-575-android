@@ -52,13 +52,21 @@ export async function cancelOrder(orderId: string): Promise<OrderDetail> {
 }
 
 export async function fetchDeliveryCode(
-  orderId: string,
+  _orderId: string,
   suborderId: string,
   signal: AbortSignal,
 ): Promise<DeliveryCode> {
-  const path = `/orders/${segment(orderId)}/suborders/${segment(suborderId)}/delivery-code`;
-  const { data } = await http.get<Data<DeliveryCode>>(path, { signal });
-  return data;
+  // The buyer must explicitly request a new one-time delivery secret.
+  // It is never cached in the query store or disclosed in courier job responses.
+  const { data } = await http.post<Data<{ delivery_code: string; expires_in_seconds: number }>>(
+    `/me/suborders/${segment(suborderId)}/delivery-code`,
+    undefined,
+    { signal },
+  );
+  return {
+    code: data.delivery_code,
+    expires_at: new Date(Date.now() + data.expires_in_seconds * 1000).toISOString(),
+  };
 }
 
 export async function createReview(
