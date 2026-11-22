@@ -1,5 +1,6 @@
 import { expect, test } from '@playwright/test';
 import { openApp } from './openApp';
+import { setStorefrontPreferences } from './storefrontPreferences';
 
 const words = {
   en: {
@@ -129,22 +130,14 @@ for (const language of ['ar', 'en', 'fr'] as const)
         },
       );
       await openApp(page, '/sign-in?next=%2Faccount%2Fdashboard');
+      await page.getByRole('button', { name: 'Use one-time code (OTP)' }).click();
+      await page.getByRole('button', { name: 'Use mobile number instead' }).click();
       await page.getByLabel('Mobile number', { exact: true }).fill('0512345678');
       await page.getByRole('button', { name: 'Send code' }).click();
       await page.getByLabel('6-digit code', { exact: true }).fill('123456');
       await page.getByRole('button', { name: 'Continue', exact: true }).click();
       await expect(page).toHaveURL(/\/account\/dashboard$/);
-      await page.getByRole('button', { name: 'Open menu', exact: true }).click();
-      const menu = page.getByRole('dialog');
-      await menu
-        .locator('label')
-        .filter({ has: page.locator(`input[value="${language}"]`) })
-        .click();
-      await menu
-        .locator('label')
-        .filter({ has: page.locator(`input[value="${theme}"]`) })
-        .click();
-      await page.keyboard.press('Escape');
+      await setStorefrontPreferences(page, language, theme);
       const text = words[language];
       await expect(page.getByRole('heading', { level: 1, name: text.title })).toBeVisible();
       const journey = page.getByRole('region', { name: text.journey });

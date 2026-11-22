@@ -8,6 +8,7 @@ import { recallFlow } from './signInMemory';
 import { currentDeviceName } from './deviceName';
 import { EmailPasswordForm } from './EmailPasswordForm';
 import { useConsentVersions } from './useConsentVersions';
+import { emailAccessFrench } from './emailAccessFrench';
 import styles from './StepLayout.module.css';
 
 type LoginReply = {
@@ -27,7 +28,9 @@ type Props = { createAccount: boolean };
 export function EmailPasswordAccess({ createAccount }: Props) {
   const { t, i18n } = useTranslation('auth');
   const ar = i18n.language.startsWith('ar');
-  const tr = (arabic: string, english: string) => (ar ? arabic : english);
+  const fr = i18n.language.startsWith('fr');
+  const tr = (arabic: string, english: keyof typeof emailAccessFrench) =>
+    ar ? arabic : fr ? emailAccessFrench[english] : english;
   const session = useSession();
   const { showToast } = useToast();
   const legal = useConsentVersions(null);
@@ -242,7 +245,12 @@ export function EmailPasswordAccess({ createAccount }: Props) {
   if (useOtp) {
     return (
       <div className={styles.step}>
-        <Button variant="ghost" onClick={() => setUseOtp(false)}>
+        <Button
+          variant="ghost"
+          onClick={() => {
+            setUseOtp(false);
+          }}
+        >
           {t('emailPassword.backToEmail')}
         </Button>
         <SignInSteps />
@@ -275,7 +283,9 @@ export function EmailPasswordAccess({ createAccount }: Props) {
               maxLength={6}
               required
               value={otp}
-              onChange={(event) => setOtp(event.target.value)}
+              onChange={(event) => {
+                setOtp(event.target.value);
+              }}
             />
           </label>
           {stage === 'reset' && (
@@ -290,7 +300,9 @@ export function EmailPasswordAccess({ createAccount }: Props) {
               required
               autoComplete="new-password"
               value={password}
-              onChange={(event) => setPassword(event.target.value)}
+              onChange={(event) => {
+                setPassword(event.target.value);
+              }}
             />
           )}
           <Button type="submit" size="lg" fullWidth loading={pending}>
@@ -338,7 +350,9 @@ export function EmailPasswordAccess({ createAccount }: Props) {
       onReset={() => {
         void sendCode(true);
       }}
-      onOtp={() => setUseOtp(true)}
+      onOtp={() => {
+        setUseOtp(true);
+      }}
     />
   );
 }

@@ -2,10 +2,19 @@ import { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { isApiError } from '@/shared/api';
 import {
-  sellerInsightDetails, sellerInsightTrend, exportSellerInsight,
-  type SellerInsightMetric, type SellerInsightDetails, type SellerDailyTrend,
+  sellerInsightDetails,
+  sellerInsightTrend,
+  exportSellerInsight,
+  type SellerInsightMetric,
+  type SellerInsightDetails,
+  type SellerDailyTrend,
   type SellerBranch,
 } from './sellerWorkspaceApi';
+import {
+  sellerInsightFrench,
+  frenchInsightColumns,
+  frenchInsightStatuses,
+} from './sellerInsightFrench';
 
 type Props = {
   metric: SellerInsightMetric;
@@ -20,25 +29,25 @@ const dateAt = (daysAgo: number) => {
   return [date.getFullYear(), pad(date.getMonth() + 1), pad(date.getDate())].join('-');
 };
 const arabicColumns: Record<string, string> = {
-  'Order': 'رقم الطلب',
-  'Date': 'تاريخ الطلب',
-  'Branch': 'الفرع',
-  'Status': 'الحالة',
+  Order: 'رقم الطلب',
+  Date: 'تاريخ الطلب',
+  Branch: 'الفرع',
+  Status: 'الحالة',
   'Subtotal SAR': 'السعر قبل الخصم (ر.س)',
   'Discount SAR': 'الخصم (ر.س)',
   'Merchandise SAR': 'قيمة البضاعة (ر.س)',
   'Product ID': 'رقم المنتج',
   'Arabic name': 'اسم المنتج بالعربية',
   'English name': 'اسم المنتج بالإنجليزية',
-  'Units': 'الوحدات المباعة',
+  Units: 'الوحدات المباعة',
   'Branch ID': 'رقم الفرع',
-  'Orders': 'عدد الطلبات',
+  Orders: 'عدد الطلبات',
   'Delivered merchandise SAR': 'المبيعات المسلّمة (ر.س)',
-  'SKU': 'رمز SKU',
-  'Product': 'المنتج',
+  SKU: 'رمز SKU',
+  Product: 'المنتج',
   'On hand': 'المخزون الفعلي',
-  'Reserved': 'الكمية المحجوزة',
-  'Available': 'المتاح للبيع',
+  Reserved: 'الكمية المحجوزة',
+  Available: 'المتاح للبيع',
 };
 const arabicStatuses: Record<string, string> = {
   awaiting_seller: 'بانتظار البائع',
@@ -69,13 +78,16 @@ function saveDownload(blob: Blob, filename: string) {
   document.body.appendChild(anchor);
   anchor.click();
   anchor.remove();
-  window.setTimeout(() => URL.revokeObjectURL(uri), 30000);
+  window.setTimeout(() => {
+    URL.revokeObjectURL(uri);
+  }, 30000);
 }
 
 export function SellerInsightPanel({ metric, branches, onClose }: Props) {
   const { i18n } = useTranslation();
   const ar = i18n.language.startsWith('ar');
-  const tr = (a: string, b: string) => ar ? a : b;
+  const fr = i18n.language.startsWith('fr');
+  const tr = (a: string, b: string) => (ar ? a : fr ? (sellerInsightFrench[b] ?? b) : b);
   const [from, setFrom] = useState(() => dateAt(29));
   const [to, setTo] = useState(() => dateAt(0));
   const [branch, setBranch] = useState('');
@@ -85,29 +97,41 @@ export function SellerInsightPanel({ metric, branches, onClose }: Props) {
   const [downloading, setDownloading] = useState(false);
   const [error, setError] = useState('');
   const filters = {
-    metric, from, to, ...(branch ? { branch_id: Number(branch) } : {}),
+    metric,
+    from,
+    to,
+    ...(branch ? { branch_id: Number(branch) } : {}),
   };
 
   useEffect(() => {
     if (!from || !to || from > to) {
       setDetails(null);
-      setError(ar ? 'تحقق من الفترة الزمنية.' : 'Choose a valid date range.');
+      setError(tr('تحقق من الفترة الزمنية.', 'Choose a valid date range.'));
       return;
     }
     let active = true;
     setLoading(true);
     setError('');
     setDetails(null);
-    void sellerInsightDetails(filters).then(({ data }) => {
-      if (active) setDetails(data);
-    }).catch(() => {
-      if (active) setError(ar
-        ? 'تعذر تحميل التفاصيل. تأكد من الاتصال والصلاحيات.'
-        : 'Could not load details. Check connectivity and permissions.');
-    }).finally(() => {
-      if (active) setLoading(false);
-    });
-    return () => { active = false; };
+    void sellerInsightDetails(filters)
+      .then(({ data }) => {
+        if (active) setDetails(data);
+      })
+      .catch(() => {
+        if (active)
+          setError(
+            tr(
+              'تعذر تحميل التفاصيل. تأكد من الاتصال والصلاحيات.',
+              'Could not load details. Check connectivity and permissions.',
+            ),
+          );
+      })
+      .finally(() => {
+        if (active) setLoading(false);
+      });
+    return () => {
+      active = false;
+    };
     // All filter primitives are dependencies, not the constructed object.
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [metric, from, to, branch, ar]);
@@ -120,12 +144,16 @@ export function SellerInsightPanel({ metric, branches, onClose }: Props) {
     if (!from || !to || from > to) return;
     let active = true;
     setTrend([]);
-    void sellerInsightTrend(filters).then((result) => {
-      if (active) setTrend(result.data);
-    }).catch(() => {
-      if (active) setTrend([]);
-    });
-    return () => { active = false; };
+    void sellerInsightTrend(filters)
+      .then((result) => {
+        if (active) setTrend(result.data);
+      })
+      .catch(() => {
+        if (active) setTrend([]);
+      });
+    return () => {
+      active = false;
+    };
     // Primitive filter fields are watched to avoid repeated fetches.
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [metric, from, to, branch]);
@@ -136,14 +164,19 @@ export function SellerInsightPanel({ metric, branches, onClose }: Props) {
     setError('');
     try {
       const result = await exportSellerInsight(filters, format);
-      saveDownload(result.blob, result.filename ??
-        `seller-${metric}-${from}-${to}.${format}`);
+      saveDownload(result.blob, result.filename ?? `seller-${metric}-${from}-${to}.${format}`);
     } catch (cause) {
       const context = isApiError(cause)
         ? ` (HTTP ${cause.status}: ${cause.message})`
-        : cause instanceof Error ? ` (${cause.message})` : '';
-      setError(tr('تعذر تصدير التقرير. تحقق من الاتصال أو الصلاحيات.',
-        'Export failed. Check permissions or connectivity.') + context);
+        : cause instanceof Error
+          ? ` (${cause.message})`
+          : '';
+      setError(
+        tr(
+          'تعذر تصدير التقرير. تحقق من الاتصال أو الصلاحيات.',
+          'Export failed. Check permissions or connectivity.',
+        ) + context,
+      );
     } finally {
       setDownloading(false);
     }
@@ -163,42 +196,86 @@ export function SellerInsightPanel({ metric, branches, onClose }: Props) {
           <span className="seller-insight-eyebrow">{tr('تفاصيل المؤشر', 'Metric detail')}</span>
           <h2>{tr(...metricNames[metric])}</h2>
         </div>
-        <button type="button" onClick={onClose}>{tr('إغلاق التفاصيل', 'Close details')}</button>
+        <button type="button" onClick={onClose}>
+          {tr('إغلاق التفاصيل', 'Close details')}
+        </button>
       </div>
       <div className="seller-insight-presets">
         {presets.map((preset) => (
-          <button type="button" key={preset.days}
+          <button
+            type="button"
+            key={preset.days}
             aria-pressed={from === dateAt(preset.days) && to === dateAt(0)}
-            onClick={() => { setFrom(dateAt(preset.days)); setTo(dateAt(0)); }}>
+            onClick={() => {
+              setFrom(dateAt(preset.days));
+              setTo(dateAt(0));
+            }}
+          >
             {preset.label}
           </button>
         ))}
       </div>
       <div className="seller-insight-filters">
-        <label>{tr('من تاريخ', 'From date')}
-          <input type="date" value={from} max={to} onChange={(event) => setFrom(event.target.value)}/>
+        <label>
+          {tr('من تاريخ', 'From date')}
+          <input
+            type="date"
+            value={from}
+            max={to}
+            onChange={(event) => {
+              setFrom(event.target.value);
+            }}
+          />
         </label>
-        <label>{tr('إلى تاريخ', 'To date')}
-          <input type="date" value={to} min={from} onChange={(event) => setTo(event.target.value)}/>
+        <label>
+          {tr('إلى تاريخ', 'To date')}
+          <input
+            type="date"
+            value={to}
+            min={from}
+            onChange={(event) => {
+              setTo(event.target.value);
+            }}
+          />
         </label>
-        <label>{tr('الفرع', 'Branch')}
-          <select value={branch} onChange={(event) => setBranch(event.target.value)}>
+        <label>
+          {tr('الفرع', 'Branch')}
+          <select
+            value={branch}
+            onChange={(event) => {
+              setBranch(event.target.value);
+            }}
+          >
             <option value="">{tr('كل الفروع المسموحة', 'All assigned branches')}</option>
             {branches.map((item) => (
-              <option value={item.id} key={item.id}>{ar ? item.name_ar : item.name_en}</option>
+              <option value={item.id} key={item.id}>
+                {ar ? item.name_ar : item.name_en}
+              </option>
             ))}
           </select>
         </label>
       </div>
       <div className="seller-insight-actions">
-        <button type="button" disabled={downloading || !from || !to || from > to} onClick={() => void download('csv')}>
+        <button
+          type="button"
+          disabled={downloading || !from || !to || from > to}
+          onClick={() => void download('csv')}
+        >
           {tr('تصدير CSV', 'Export CSV')}
         </button>
-        <button type="button" disabled={downloading || !from || !to || from > to} onClick={() => void download('xlsx')}>
+        <button
+          type="button"
+          disabled={downloading || !from || !to || from > to}
+          onClick={() => void download('xlsx')}
+        >
           {tr('تصدير Excel', 'Export Excel')}
         </button>
       </div>
-      {error && <p role="alert" className="seller-insight-error">{error}</p>}
+      {error && (
+        <p role="alert" className="seller-insight-error">
+          {error}
+        </p>
+      )}
       {loading && <p role="status">{tr('جار تحميل التقرير…', 'Loading report…')}</p>}
       {details && (
         <>
@@ -206,13 +283,21 @@ export function SellerInsightPanel({ metric, branches, onClose }: Props) {
             <div className="seller-insight-trend">
               <h3>{tr('اتجاه المبيعات حسب تاريخ الطلب', 'Delivered merchandise by order date')}</h3>
               <p className="seller-insight-note">
-                {tr('يُعرض تاريخ إنشاء الطلب الذي وصل إلى حالة مسلّم، وليس تاريخ تحويل المستحقات.',
-                  'Grouped by the placement date of orders now delivered, not the payout date.')}
+                {tr(
+                  'يُعرض تاريخ إنشاء الطلب الذي وصل إلى حالة مسلّم، وليس تاريخ تحويل المستحقات.',
+                  'Grouped by the placement date of orders now delivered, not the payout date.',
+                )}
               </p>
-              <div className="seller-insight-trend-bars" role="img"
-                aria-label={tr('مخطط قيمة المبيعات حسب اليوم', 'Daily merchandise sales chart')}>
+              <div
+                className="seller-insight-trend-bars"
+                role="img"
+                aria-label={tr('مخطط قيمة المبيعات حسب اليوم', 'Daily merchandise sales chart')}
+              >
                 {trend.slice(-30).map((row) => {
-                  const maximum = Math.max(1, ...trend.slice(-30).map((item) => item.merchandise_halalas));
+                  const maximum = Math.max(
+                    1,
+                    ...trend.slice(-30).map((item) => item.merchandise_halalas),
+                  );
                   const ratio = row.merchandise_halalas / maximum;
                   return (
                     <div className="seller-insight-trend-row" key={row.day}>
@@ -229,37 +314,70 @@ export function SellerInsightPanel({ metric, branches, onClose }: Props) {
           )}
           {metric === 'stock' && (
             <p className="seller-insight-note">
-              {tr('المخزون يعرض الكميات الحالية، ولا يمثل حركة المخزون التاريخية حسب التواريخ المحددة.',
-                'Inventory is a current snapshot, not historic stock movements for the selected dates.')}
+              {tr(
+                'المخزون يعرض الكميات الحالية، ولا يمثل حركة المخزون التاريخية حسب التواريخ المحددة.',
+                'Inventory is a current snapshot, not historic stock movements for the selected dates.',
+              )}
             </p>
           )}
           <p className="seller-insight-note">
-            {tr('النتائج المعروضة: ', 'Rows shown: ')}{details.returned_rows}
+            {tr('النتائج المعروضة: ', 'Rows shown: ')}
+            {details.returned_rows}
             {details.returned_rows >= details.max_rows
-              ? tr(' — المعاينة تعرض أول 200 سجل، والتصدير يشمل حتى 5000 سجل.',
-                  ' — Preview shows 200 rows; export includes up to 5000 records.')
+              ? tr(
+                  ' — المعاينة تعرض أول 200 سجل، والتصدير يشمل حتى 5000 سجل.',
+                  ' — Preview shows 200 rows; export includes up to 5000 records.',
+                )
               : ''}
           </p>
-          {details.rows.length === 0
-            ? <p>{tr('لا توجد بيانات في الفترة المختارة.', 'No data for the selected period.')}</p>
-            : (
-              <div className="seller-insight-table-scroll" role="region" tabIndex={0}
-                aria-label={tr('جدول تفاصيل المؤشر', 'Metric breakdown table')}>
-                <table dir={ar ? 'rtl' : 'ltr'}>
-                  <thead><tr>{details.columns.map((column, i) =>
-                    <th key={i} scope="col">{ar ? (arabicColumns[column] ?? column) : column}</th>)}</tr></thead>
-                  <tbody>{details.rows.map((row, index) => (
-                    <tr key={index}>{row.map((cell, i) =>
-                      <td key={i}>
-                        <bdi dir="auto">{ar && typeof cell === 'string' ? (arabicStatuses[cell] ?? cell) : cell}</bdi>
-                      </td>)}</tr>
-                  ))}</tbody>
-                </table>
-              </div>
-            )}
+          {details.rows.length === 0 ? (
+            <p>{tr('لا توجد بيانات في الفترة المختارة.', 'No data for the selected period.')}</p>
+          ) : (
+            <div
+              className="seller-insight-table-scroll"
+              role="region"
+              tabIndex={0}
+              aria-label={tr('جدول تفاصيل المؤشر', 'Metric breakdown table')}
+            >
+              <table dir={ar ? 'rtl' : 'ltr'}>
+                <thead>
+                  <tr>
+                    {details.columns.map((column, i) => (
+                      <th key={i} scope="col">
+                        {ar
+                          ? (arabicColumns[column] ?? column)
+                          : fr
+                            ? (frenchInsightColumns[column] ?? column)
+                            : column}
+                      </th>
+                    ))}
+                  </tr>
+                </thead>
+                <tbody>
+                  {details.rows.map((row, index) => (
+                    <tr key={index}>
+                      {row.map((cell, i) => (
+                        <td key={i}>
+                          <bdi dir="auto">
+                            {typeof cell === 'string' && ar
+                              ? (arabicStatuses[cell] ?? cell)
+                              : typeof cell === 'string' && fr
+                                ? (frenchInsightStatuses[cell] ?? cell)
+                                : cell}
+                          </bdi>
+                        </td>
+                      ))}
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          )}
           <p className="seller-insight-note">
-            {tr('المبالغ الظاهرة هي قيمة البضاعة وليست صافي الربح أو المستحقات. لا توجد تكلفة شراء مكتملة لحساب الربح.',
-              'Amounts represent merchandise values, not net profit or payouts. Cost data is not yet available for profit calculations.')}
+            {tr(
+              'المبالغ الظاهرة هي قيمة البضاعة وليست صافي الربح أو المستحقات. لا توجد تكلفة شراء مكتملة لحساب الربح.',
+              'Amounts represent merchandise values, not net profit or payouts. Cost data is not yet available for profit calculations.',
+            )}
           </p>
         </>
       )}

@@ -37,21 +37,44 @@ export const adminAssignments = () =>
   http.get<{ data: PlatformAdminAccess[] }>('/platform/super-admin/admins');
 
 export const addAdminAssignment = (data: {
-  email: string; seller_id: number; can_view_orders: boolean; can_view_inventory: boolean;
+  email: string;
+  seller_id: number;
+  can_view_orders: boolean;
+  can_view_inventory: boolean;
 }) => http.post<{ data: PlatformAdminAccess }>('/platform/super-admin/admins', data);
 
-export const updateAdminAssignment = (id: number, data: {
-  is_active?: boolean; can_view_orders?: boolean; can_view_inventory?: boolean;
-}) => http.patch<{ data: PlatformAdminAccess }>('/platform/super-admin/admins/' + id, data);
+export const updateAdminAssignment = (
+  id: number,
+  data: {
+    is_active?: boolean;
+    can_view_orders?: boolean;
+    can_view_inventory?: boolean;
+  },
+) => http.patch<{ data: PlatformAdminAccess }>('/platform/super-admin/admins/' + String(id), data);
 
 export type PlatformAdminOrder = {
-  id: string; order_number: string; seller_id: number;
-  seller_name_ar: string; seller_name_en: string; branch_id: number;
-  status: string; placed_at: string | null;
-  ready_at: string | null; picked_up_at: string | null;
+  id: string;
+  order_number: string;
+  seller_id: number;
+  seller_name_ar: string;
+  seller_name_en: string;
+  branch_id: number;
+  status: string;
+  placed_at: string | null;
+  ready_at: string | null;
+  picked_up_at: string | null;
 };
 
-export type AdminOrderFilters = { limit?: number; status?: string; before_id?: string; from?: string; to?: string; seller_id?: number; branch_id?: number; q?: string };
+export type AdminOrderFilters = {
+  limit?: number;
+  status?: string;
+  before_id?: string;
+  from?: string;
+  to?: string;
+  seller_id?: number;
+  branch_id?: number;
+  q?: string;
+};
 
 export const adminOrders = (filters: AdminOrderFilters = {}) =>
   http.get<{ data: PlatformAdminOrder[] }>('/platform/admin/orders', { query: filters });

@@ -24,7 +24,7 @@ export function getNotifications(signal?: AbortSignal) {
 }
 
 export function markNotificationRead(id: number) {
-  return http.patch('/me/notifications/' + id + '/read');
+  return http.patch('/me/notifications/' + String(id) + '/read');
 }
 
 export function markAllNotificationsRead() {

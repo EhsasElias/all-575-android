@@ -9,11 +9,11 @@ type CreationOptionsJson = {
   timeout?: number;
   attestation?: AttestationConveyancePreference;
   authenticatorSelection?: AuthenticatorSelectionCriteria;
-  excludeCredentials?: Array<{
+  excludeCredentials?: {
     id: string;
     type: PublicKeyCredentialType;
     transports?: AuthenticatorTransport[];
-  }>;
+  }[];
 };
 
 type RequestOptionsJson = {
@@ -21,11 +21,11 @@ type RequestOptionsJson = {
   rpId?: string;
   timeout?: number;
   userVerification?: UserVerificationRequirement;
-  allowCredentials?: Array<{
+  allowCredentials?: {
     id: string;
     type: PublicKeyCredentialType;
     transports?: AuthenticatorTransport[];
-  }>;
+  }[];
 };
 
 type Issued<T> = { challenge_id: string; options: T };
@@ -50,7 +50,7 @@ function base64UrlToBytes(value: string): ArrayBuffer {
   const padded = value.replace(/-/g, '+').replace(/_/g, '/');
   const binary = atob(padded.padEnd(Math.ceil(padded.length / 4) * 4, '='));
   const bytes = Uint8Array.from(binary, (c) => c.charCodeAt(0));
-  return bytes.buffer as ArrayBuffer;
+  return bytes.buffer;
 }
 
 function bytesToBase64Url(value: ArrayBuffer | null): string | null {
@@ -146,7 +146,7 @@ function assertionCredential(credential: PublicKeyCredential) {
 export async function webPasskeysEnabled(): Promise<boolean> {
   try {
     const result = await http.get<Data<{ enabled: boolean }>>('/auth/passkeys/status');
-    return result.data.enabled === true;
+    return result.data.enabled;
   } catch {
     return false;
   }

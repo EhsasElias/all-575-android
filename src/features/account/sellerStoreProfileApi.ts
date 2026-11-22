@@ -22,20 +22,20 @@ export type SellerBranchDetails = {
 };
 
 export const getSellerStoreProfile = (sellerId: number) =>
-  seller.get<{ data: SellerStoreProfile }>('/seller/stores/' + sellerId);
+  seller.get<{ data: SellerStoreProfile }>('/seller/stores/' + String(sellerId));
 
 export const saveSellerStoreProfile = (
   sellerId: number,
   names: { name_ar: string; name_en: string },
-) => seller.patch<{ data: SellerStoreProfile }>('/seller/stores/' + sellerId, names);
+) => seller.patch<{ data: SellerStoreProfile }>('/seller/stores/' + String(sellerId), names);
 
 export const saveSellerBranchProfile = (
   branchId: number,
   details: Omit<SellerBranchDetails, 'id' | 'seller_id' | 'is_active'>,
-) => seller.patch<{ data: SellerBranchDetails }>('/seller/branches/' + branchId, details);
+) => seller.patch<{ data: SellerBranchDetails }>('/seller/branches/' + String(branchId), details);
 
 export const deleteSellerBranch = (branchId: number) =>
-  seller.delete<{ data: { deleted: boolean } }>('/seller/branches/' + branchId);
+  seller.delete<{ data: { deleted: boolean } }>('/seller/branches/' + String(branchId));
 
 export type SellerServiceZone = {
   id: number;

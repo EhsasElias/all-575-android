@@ -24,6 +24,6 @@ export function branchWithinZone(pin: MapPin, zone: SellerServiceZone): boolean 
 
 export function mapLocationUrl(pin: MapPin): string {
   return (
-    'https://www.google.com/maps/search/?api=1&query=' + encodeURIComponent(pin.lat + ',' + pin.lng)
+    'https://www.google.com/maps/search/?api=1&query=' + encodeURIComponent(`${pin.lat},${pin.lng}`)
   );
 }

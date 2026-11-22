@@ -20,7 +20,7 @@ export const legalEn = {
       },
       prices: {
         title: 'Prices, VAT and product information',
-        body: 'Product unit prices range from 1 to 5.75 SAR and include applicable VAT. The server calculates the final item amounts, discounts and delivery fees before confirmation. Company VAT details do not automatically remove tax. Photos help describe products; check the written description, selected size/variant and quantities. If price or availability changes before acceptance, review the updated total before proceeding. Confirmed orders retain their recorded prices.',
+        body: 'Product unit prices range from 1 to 5.75 SAR before VAT. Applicable VAT is added to the net item and delivery amounts at checkout. The server calculates the final item amounts, discounts and delivery fees before confirmation. Company VAT details do not automatically remove tax. Photos help describe products; check the written description, selected size/variant and quantities. If price or availability changes before acceptance, review the updated total before proceeding. Confirmed orders retain their recorded prices.',
       },
       orders: {
         title: 'Orders, payments and quotations',

@@ -129,7 +129,7 @@ const documentLabels: Record<
 const fileSizeLabel = (bytes: number): string =>
   bytes >= 1024 * 1024
     ? (bytes / (1024 * 1024)).toFixed(1) + ' MB'
-    : Math.max(1, Math.round(bytes / 1024)) + ' KB';
+    : `${Math.max(1, Math.round(bytes / 1024))} KB`;
 
 const formGroups = [
   {
@@ -220,7 +220,14 @@ export function SellerApplicationScreen() {
         }
       })
       .catch(() => {
-        if (live) setError(ar ? 'تعذر تحميل طلب البائع.' : 'Could not load seller application.');
+        if (live)
+          setError(
+            localized(
+              'تعذر تحميل طلب البائع.',
+              'Could not load seller application.',
+              'Impossible de charger la demande du vendeur.',
+            ),
+          );
       })
       .finally(() => {
         if (live) setLoading(false);
@@ -378,7 +385,7 @@ export function SellerApplicationScreen() {
           }
         />
         {loading ? (
-          <p role="status">{ar ? 'جار التحميل…' : 'Loading…'}</p>
+          <p role="status">{localized('جار التحميل…', 'Loading…', 'Chargement…')}</p>
         ) : (
           <>
             {status && (
@@ -395,7 +402,11 @@ export function SellerApplicationScreen() {
                 style={{ padding: 12, border: '1px solid #d8e1db', borderRadius: 8 }}
               >
                 <strong>
-                  {ar ? 'ملاحظات الإدارة للتصحيح:' : 'Administrator correction request:'}
+                  {localized(
+                    'ملاحظات الإدارة للتصحيح:',
+                    'Administrator correction request:',
+                    'Demande de correction de l’administration :',
+                  )}
                 </strong>{' '}
                 {reviewNote}
               </p>
@@ -414,7 +425,7 @@ export function SellerApplicationScreen() {
             )}
             {saved && (
               <p className={styles.success} role="status">
-                {ar ? 'تم حفظ المسودة.' : 'Draft saved.'}
+                {localized('تم حفظ المسودة.', 'Draft saved.', 'Brouillon enregistré.')}
               </p>
             )}
             <form onSubmit={(event) => void submit(event)} className={styles.form}>
@@ -483,12 +494,12 @@ export function SellerApplicationScreen() {
                                   : 100
                             }
                             value={form[key] ?? ''}
-                            onChange={(event) =>
+                            onChange={(event) => {
                               setForm((previous) => ({
                                 ...previous,
                                 [key]: event.target.value || null,
-                              }))
-                            }
+                              }));
+                            }}
                           />
                         </label>
                       );
@@ -670,7 +681,7 @@ export function SellerApplicationScreen() {
                 disabled={busy}
                 onClick={() => void sendForReview()}
               >
-                {ar ? 'إرسال للمراجعة' : 'Submit for review'}
+                {localized('إرسال للمراجعة', 'Submit for review', 'Envoyer pour examen')}
               </button>
             )}
           </>

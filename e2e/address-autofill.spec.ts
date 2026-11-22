@@ -1,5 +1,6 @@
 import { expect, test } from '@playwright/test';
 import { openApp } from './openApp';
+import { setStorefrontPreferences } from './storefrontPreferences';
 
 // Synthetic account/address fixtures only; no real customer records.
 const buyer = {
@@ -69,19 +70,14 @@ for (const language of ['en', 'ar', 'fr'] as const) {
       },
     );
     await openApp(page, '/sign-in?next=%2Faccount%2Faddresses%2Fnew');
+    await page.getByRole('button', { name: 'Use one-time code (OTP)' }).click();
+    await page.getByRole('button', { name: 'Use mobile number instead' }).click();
     await page.getByLabel('Mobile number', { exact: true }).fill('0512345678');
     await page.getByRole('button', { name: 'Send code' }).click();
     await page.getByLabel('6-digit code', { exact: true }).fill('123456');
     await page.getByRole('button', { name: 'Continue', exact: true }).click();
     await expect(page).toHaveURL(/\/account\/addresses\/new$/);
-    await page.getByRole('button', { name: 'Open menu', exact: true }).click();
-    const menu = page.getByRole('dialog');
-    await menu.locator(`input[value="${language}"]`).check({ force: true });
-    await menu
-      .locator('label')
-      .filter({ has: page.locator(`input[value="${language === 'ar' ? 'dark' : 'light'}"]`) })
-      .click();
-    await page.keyboard.press('Escape');
+    await setStorefrontPreferences(page, language, language === 'ar' ? 'dark' : 'light');
     await page
       .getByRole('button', {
         name: {

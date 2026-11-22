@@ -3,7 +3,7 @@ name: CI
 on:
   pull_request:
   push:
-    branches: [main, v2]
+    branches: [main, v2, fix/qa-regression-20261119]
 
 permissions:
   contents: read

@@ -202,7 +202,7 @@ describe('Order detail: address, slot, payment and totals', () => {
     );
     expect(totals.getByText('Delivery').nextElementSibling).toHaveTextContent('Free');
     expect(totals.getByText('Total').nextElementSibling).toHaveTextContent(/^19\.50\s+SAR$/);
-    expect(totals.getByText('VAT included').nextElementSibling).toHaveTextContent(/^2\.80\s+SAR$/);
-    expect(totals.getByText('All prices include VAT.')).toBeInTheDocument();
+    expect(totals.getByText('VAT').nextElementSibling).toHaveTextContent(/^2\.80\s+SAR$/);
+    expect(totals.getByText('VAT is included in the recorded amounts.')).toBeInTheDocument();
   });
 });

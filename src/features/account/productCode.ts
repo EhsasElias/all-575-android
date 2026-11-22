@@ -16,8 +16,16 @@ const limit = (value: unknown, max: number): string | undefined => {
   const text = String(value).trim();
   return text && text.length <= max ? text : undefined;
 };
-const normalize = (name: string) => name.trim().toLowerCase().replace(/[\s_-]/g, '');
+const normalize = (name: string) =>
+  name
+    .trim()
+    .toLowerCase()
+    .replace(/[\s_-]/g, '');
 const isBarcode = (text: string) => /^(?:\d{8}|\d{12,14})$/.test(text);
+
+function isRecord(value: unknown): value is Record<string, unknown> {
+  return typeof value === 'object' && value !== null && !Array.isArray(value);
+}
 
 export function parseProductCode(raw: string, format?: string): ScannedProduct {
   const text = raw.trim().slice(0, 12000);
@@ -36,11 +44,11 @@ export function parseProductCode(raw: string, format?: string): ScannedProduct {
   if (text.startsWith('{')) {
     try {
       const parsed: unknown = JSON.parse(text);
-      if (parsed && typeof parsed === 'object' && !Array.isArray(parsed)) {
-        const obj = parsed as Record<string, unknown>;
+      if (isRecord(parsed)) {
+        const obj = parsed;
         // Support { product: { name_ar: ... } } as well as flat QR payloads.
         const nested = obj.product;
-        if (nested && typeof nested === 'object' && !Array.isArray(nested)) {
+        if (isRecord(nested)) {
           for (const [key, value] of Object.entries(nested)) insert(key, value);
         }
         for (const [key, value] of Object.entries(obj)) {
@@ -82,24 +90,36 @@ export function parseProductCode(raw: string, format?: string): ScannedProduct {
   const category = read(['category_id', 'categoryId'], 12);
   const priceRaw = read(['price_sar', 'price', 'sar'], 25);
   const halalas = read(['price_halalas'], 12);
-  const price = priceRaw ?? (halalas && /^\d+$/.test(halalas)
-    ? (Number(halalas) / 100).toFixed(2) : undefined);
+  const price =
+    priceRaw ?? (halalas && /^\d+$/.test(halalas) ? (Number(halalas) / 100).toFixed(2) : undefined);
   const vat = read(['vat_class', 'vatClass', 'tax_class'], 24)?.toLowerCase();
   return {
     ...(sku ? { sku } : {}),
     ...(barcode ? { barcode } : {}),
-    ...(nameAr ? { nameAr } : neutralName && /[\u0600-\u06ff]/.test(neutralName)
-      ? { nameAr: neutralName } : {}),
-    ...(nameEn ? { nameEn } : neutralName && !/[\u0600-\u06ff]/.test(neutralName)
-      ? { nameEn: neutralName } : {}),
-    ...(descriptionAr ? { descriptionAr } : neutralDescription && /[\u0600-\u06ff]/.test(neutralDescription)
-      ? { descriptionAr: neutralDescription } : {}),
-    ...(descriptionEn ? { descriptionEn } : neutralDescription && !/[\u0600-\u06ff]/.test(neutralDescription)
-      ? { descriptionEn: neutralDescription } : {}),
+    ...(nameAr
+      ? { nameAr }
+      : neutralName && /[\u0600-\u06ff]/.test(neutralName)
+        ? { nameAr: neutralName }
+        : {}),
+    ...(nameEn
+      ? { nameEn }
+      : neutralName && !/[\u0600-\u06ff]/.test(neutralName)
+        ? { nameEn: neutralName }
+        : {}),
+    ...(descriptionAr
+      ? { descriptionAr }
+      : neutralDescription && /[\u0600-\u06ff]/.test(neutralDescription)
+        ? { descriptionAr: neutralDescription }
+        : {}),
+    ...(descriptionEn
+      ? { descriptionEn }
+      : neutralDescription && !/[\u0600-\u06ff]/.test(neutralDescription)
+        ? { descriptionEn: neutralDescription }
+        : {}),
     ...(category && /^\d+$/.test(category) ? { categoryId: category } : {}),
     ...(price && /^\d+(?:\.\d{1,2})?$/.test(price) && Number(price) >= 1 && Number(price) <= 10
-      ? { price } : {}),
-    ...(vat === 'standard' || vat === 'zero' || vat === 'exempt'
-      ? { vatClass: vat } : {}),
+      ? { price }
+      : {}),
+    ...(vat === 'standard' || vat === 'zero' || vat === 'exempt' ? { vatClass: vat } : {}),
   };
 }

@@ -30,7 +30,8 @@ function quotesWithPromo(otherwise: Reply) {
 
 describe('Checkout: VAT added to net prices', () => {
   it('shows SAR 5.00 goods plus SAR 0.75 VAT and charges SAR 5.75', async () => {
-    const item = quote().lines[0]!;
+    const item = quote().lines[0];
+    if (item === undefined) throw new Error('The quote fixture must contain an item');
     const beforeVat = quote({
       lines: [{ ...item, quantity: 1, unit_price: 500, line_price: 500, line_total: 500 }],
       subtotal: 500,
@@ -44,7 +45,7 @@ describe('Checkout: VAT added to net prices', () => {
     });
 
     const summary = await screen.findByRole('region', { name: 'Order summary' });
-    expect(within(summary).getByText('VAT (15% where applicable)')).toBeVisible();
+    expect(await within(summary).findByText('VAT (15% where applicable)')).toBeVisible();
     expect(within(summary).getByText(/^0\.75\s+SAR$/)).toBeVisible();
     expect(within(summary).getByText(/^5\.75\s+SAR$/)).toBeVisible();
     expect(await screen.findByRole('button', { name: /^Pay 5\.75/ })).toBeInTheDocument();

@@ -1,5 +1,5 @@
 import { expect, test } from '@playwright/test';
-import { finishIntro, openApp } from './openApp';
+import { openApp } from './openApp';
 
 const LANGUAGES = ['ar', 'en', 'fr'] as const;
 const THEMES = ['light', 'dark'] as const;
@@ -42,7 +42,8 @@ for (const language of LANGUAGES) {
         theme === 'dark' ? 'rgba(0, 0, 0, 0)' : 'rgb(255, 255, 255)',
       );
       await page.reload();
-      await finishIntro(page, '/account');
+      // An ordinary browser reload stays on the current page; a native app resume is separate.
+      await expect(page).toHaveURL(/\/account$/);
       await expect(page.locator('html')).toHaveAttribute('data-theme', theme);
       await expect(page.locator('html')).toHaveAttribute('lang', language);
     });
@@ -53,7 +54,8 @@ test('the loading logo leads to the slider before shopping', async ({ page }) =>
   await page.goto('/welcome');
   await expect(page).toHaveURL(/\/welcome\/logo$/);
   await expect(page.getByRole('navigation')).toHaveCount(0);
+  await page.getByRole('main').getByRole('button', { name: 'Tap the logo to shop now' }).click();
   await expect(page).toHaveURL(/\/welcome$/);
-  await page.locator('header').getByRole('button', { name: 'Tap the logo to shop now' }).click();
+  await page.getByRole('link', { name: 'Skip', exact: true }).click();
   await expect(page).toHaveURL(/\/home$/);
 });

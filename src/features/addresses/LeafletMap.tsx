@@ -151,8 +151,13 @@ export function LeafletMap({ pin, labels, onPinChange, coverageRadiusMeters }: P
   // Update the coverage circle in real geographic metres as the pin or distance changes.
   useEffect(() => {
     const map = mapRef.current;
-    if (!map || !pin || !coverageRadiusMeters || coverageRadiusMeters < 100 ||
-        coverageRadiusMeters > 50000) {
+    if (
+      !map ||
+      !pin ||
+      !coverageRadiusMeters ||
+      coverageRadiusMeters < 100 ||
+      coverageRadiusMeters > 50000
+    ) {
       coverageRef.current?.remove();
       coverageRef.current = null;
       return;

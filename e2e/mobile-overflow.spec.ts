@@ -8,7 +8,9 @@ import { openApp } from './openApp';
 const routes = ['/home', '/categories', '/cart', '/orders', '/account', '/legal/terms'];
 
 for (const width of [320, 360, 393]) {
-  test(`main screens fit a ${width}px phone without horizontal page scrolling`, async ({ page }) => {
+  test(`main screens fit a ${width}px phone without horizontal page scrolling`, async ({
+    page,
+  }) => {
     await page.setViewportSize({ width, height: 760 });
     await page.route('**/api/v1/**', async (route) => {
       const path = new URL(route.request().url()).pathname;
@@ -30,12 +32,15 @@ for (const width of [320, 360, 393]) {
         path,
       );
       await page.locator('main').waitFor({ state: 'visible' });
-      const metrics = (await page.evaluate(
-        "() => ({ scrollWidth: document.documentElement.scrollWidth, viewport: window.innerWidth })",
-      )) as { scrollWidth: number; viewport: number };
-      expect(metrics.scrollWidth, `Horizontal document overflow on ${path} at ${width}px`).toBeLessThanOrEqual(
-        metrics.viewport + 1,
-      );
+      // E2E TypeScript is compiled in Node mode (without DOM types).
+      // Evaluate the two browser expressions directly and assert both are numbers.
+      const scrollWidth: number = await page.evaluate('document.documentElement.scrollWidth');
+      const viewportWidth: number = await page.evaluate('window.innerWidth');
+      expect(Number.isFinite(scrollWidth) && Number.isFinite(viewportWidth)).toBe(true);
+      expect(
+        scrollWidth,
+        `Horizontal document overflow on ${path} at ${width}px`,
+      ).toBeLessThanOrEqual(viewportWidth + 1);
     }
   });
 }

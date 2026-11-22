@@ -213,7 +213,9 @@ describe('Delivery area of a signed-in customer', () => {
     const user = userEvent.setup();
     await renderApp({ route: '/home', seenWelcome: true, signedIn: true });
 
-    expect(await screen.findByRole('button', { name: /Deliver to\s*Riyadh, Al Olaya/ })).toBeVisible();
+    expect(
+      await screen.findByRole('button', { name: /Deliver to\s*Riyadh, Al Olaya/ }),
+    ).toBeVisible();
     expect(queriesOf(api, 'GET /zones/resolve')[0]?.toString()).toBe('lat=24.71&lng=46.67');
     await waitFor(() => {
       expect(queriesOf(api, 'GET /products').at(-1)?.get('zone_id')).toBe('1');
@@ -227,23 +229,33 @@ describe('Delivery area of a signed-in customer', () => {
   });
 
   it('ignores a stale guest zone after signing in and uses the default address instead', async () => {
-    setPreference('deliveryZone', JSON.stringify({
-      id: 99, name: { ar: 'رمام', en: 'Ramam' },
-    }));
+    setPreference(
+      'deliveryZone',
+      JSON.stringify({
+        id: 99,
+        name: { ar: 'رمام', en: 'Ramam' },
+      }),
+    );
     const api = signedIn();
     await renderApp({ route: '/home', seenWelcome: true, signedIn: true });
 
-    expect(await screen.findByRole('button', { name: /Deliver to\s*Riyadh, Al Olaya/ })).toBeVisible();
+    expect(
+      await screen.findByRole('button', { name: /Deliver to\s*Riyadh, Al Olaya/ }),
+    ).toBeVisible();
     await waitFor(() => {
       expect(queriesOf(api, 'GET /products').at(-1)?.get('zone_id')).toBe('1');
     });
-    expect(JSON.parse(getPreference('deliveryZone') ?? 'null')).toMatchObject({ id: 99 });
+    expect(getPreference('deliveryZone')).toBeNull();
   });
 
   it('never uses a stale guest zone when the signed-in default address is unavailable', async () => {
-    setPreference('deliveryZone', JSON.stringify({
-      id: 99, name: { ar: 'رمام', en: 'Ramam' },
-    }));
+    setPreference(
+      'deliveryZone',
+      JSON.stringify({
+        id: 99,
+        name: { ar: 'رمام', en: 'Ramam' },
+      }),
+    );
     const api = signedIn({
       'GET /addresses': {
         body: { data: [{ ...defaultAddress, serviceable: false, service_zone_id: null }] },
@@ -266,7 +278,9 @@ describe('Delivery area of a signed-in customer', () => {
     });
     await renderApp({ route: '/home', seenWelcome: true, signedIn: true });
 
-    expect(await screen.findByRole('button', { name: /Deliver to\s*Riyadh, Al Olaya/ })).toBeVisible();
+    expect(
+      await screen.findByRole('button', { name: /Deliver to\s*Riyadh, Al Olaya/ }),
+    ).toBeVisible();
     await waitFor(() => {
       expect(queriesOf(api, 'GET /products').at(-1)?.get('zone_id')).toBe('1');
     });

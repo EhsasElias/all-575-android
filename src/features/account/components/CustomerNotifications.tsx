@@ -65,7 +65,8 @@ export function CustomerNotifications() {
     } catch {
       setError(true);
     }
-  }, []);
+  // Re-fetch localized API messages whenever the user changes the interface language.
+  }, [language]);
 
   useEffect(() => {
     void load();
