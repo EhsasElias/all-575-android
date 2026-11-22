@@ -1,4 +1,4 @@
-import { lazy, Suspense, useEffect, useState, type FormEvent } from 'react';
+import { lazy, Suspense, useEffect, useRef, useState, type FormEvent } from 'react';
 import { MapBoundary } from '@/features/addresses/MapBoundary';
 import { useCurrentLocation } from '@/features/addresses/useCurrentLocation';
 import type { MapPin, PinMapLabels } from '@/features/addresses/mapTypes';
@@ -155,6 +155,7 @@ export function SellerStoreManagement({ memberships, onStoreUpdated }: Props) {
   const { location: editLocation, locate: locateEdit } = useCurrentLocation(setEditPin);
   const [loading, setLoading] = useState(false);
   const [saving, setSaving] = useState(false);
+  const savingRef = useRef(false);
   const [error, setError] = useState('');
   const [notice, setNotice] = useState('');
   const [revision, setRevision] = useState(0);
@@ -203,13 +204,14 @@ export function SellerStoreManagement({ memberships, onStoreUpdated }: Props) {
 
   const saveStore = async (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
-    if (!profile || saving) return;
+    if (!profile || (saving || savingRef.current)) return;
     if (!storeAr.trim() || !storeEn.trim()) {
       setError(
         tr('أدخل اسمي المتجر بالعربية والإنجليزية.', 'Enter both Arabic and English store names.'),
       );
       return;
     }
+    savingRef.current = true;
     setSaving(true);
     setError('');
     setNotice('');
@@ -236,13 +238,14 @@ export function SellerStoreManagement({ memberships, onStoreUpdated }: Props) {
     } catch (cause) {
       setError(errorMessage(cause));
     } finally {
+      savingRef.current = false;
       setSaving(false);
     }
   };
 
   const saveBranch = async (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
-    if (editBranch === null || saving) return;
+    if (editBranch === null || (saving || savingRef.current)) return;
     if (
       !branchDraft.name_ar.trim() ||
       !branchDraft.name_en.trim() ||
@@ -265,6 +268,7 @@ export function SellerStoreManagement({ memberships, onStoreUpdated }: Props) {
       );
       return;
     }
+    savingRef.current = true;
     setSaving(true);
     setError('');
     setNotice('');
@@ -286,12 +290,14 @@ export function SellerStoreManagement({ memberships, onStoreUpdated }: Props) {
     } catch (cause) {
       setError(errorMessage(cause));
     } finally {
+      savingRef.current = false;
       setSaving(false);
     }
   };
 
   const deleteBranch = async (id: number) => {
-    if (saving) return;
+    if ((saving || savingRef.current)) return;
+    savingRef.current = true;
     setSaving(true);
     setError('');
     setNotice('');
@@ -315,13 +321,14 @@ export function SellerStoreManagement({ memberships, onStoreUpdated }: Props) {
       }
       setDeleteTarget(null);
     } finally {
+      savingRef.current = false;
       setSaving(false);
     }
   };
 
   const createZone = async (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
-    if (saving) return;
+    if ((saving || savingRef.current)) return;
     if (
       !zoneDraft.name_ar.trim() ||
       !zoneDraft.name_en.trim() ||
@@ -340,6 +347,7 @@ export function SellerStoreManagement({ memberships, onStoreUpdated }: Props) {
       );
       return;
     }
+    savingRef.current = true;
     setSaving(true);
     setError('');
     setNotice('');
@@ -371,13 +379,14 @@ export function SellerStoreManagement({ memberships, onStoreUpdated }: Props) {
     } catch (cause) {
       setError(errorMessage(cause));
     } finally {
+      savingRef.current = false;
       setSaving(false);
     }
   };
 
   const createBranch = async (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
-    if (saving) return;
+    if ((saving || savingRef.current)) return;
     const zoneId = Number(newBranch.service_zone_id);
     const lat = Number(newBranch.lat);
     const lng = Number(newBranch.lng);
@@ -405,6 +414,7 @@ export function SellerStoreManagement({ memberships, onStoreUpdated }: Props) {
       );
       return;
     }
+    savingRef.current = true;
     setSaving(true);
     setError('');
     setNotice('');
@@ -441,6 +451,7 @@ export function SellerStoreManagement({ memberships, onStoreUpdated }: Props) {
     } catch (cause) {
       setError(errorMessage(cause));
     } finally {
+      savingRef.current = false;
       setSaving(false);
     }
   };

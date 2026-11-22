@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { courierAdminFrench } from './courierAdminFrench';
 import { isApiError } from '@/shared/api';
@@ -44,6 +44,7 @@ export function AdminCourierOperations({ orders, onUpdated, ar }: Props) {
   const [message, setMessage] = useState('');
   const [code, setCode] = useState('');
   const [busy, setBusy] = useState(false);
+  const actionInFlight = useRef(false);
   const [newCourierUser, setNewCourierUser] = useState('');
   const [newCourierZone, setNewCourierZone] = useState('');
   const [newCourierVehicle, setNewCourierVehicle] = useState('motorcycle');
@@ -84,7 +85,8 @@ export function AdminCourierOperations({ orders, onUpdated, ar }: Props) {
       : tr('تعذر الاتصال بالخادم.', 'Connection error.');
 
   const act = async (action: () => Promise<unknown>, success: string) => {
-    if (busy) return;
+    if (busy || actionInFlight.current) return;
+    actionInFlight.current = true;
     setBusy(true);
     setIssue('');
     setMessage('');
@@ -96,6 +98,7 @@ export function AdminCourierOperations({ orders, onUpdated, ar }: Props) {
     } catch (cause) {
       setIssue(errorText(cause));
     } finally {
+      actionInFlight.current = false;
       setBusy(false);
     }
   };

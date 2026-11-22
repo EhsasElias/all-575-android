@@ -1,4 +1,4 @@
-import { useEffect, useState, type FormEvent } from 'react';
+import { useEffect, useRef, useState, type FormEvent } from 'react';
 import { useTranslation } from 'react-i18next';
 import { isApiError } from '@/shared/api';
 import {
@@ -60,6 +60,7 @@ export function SellerStaffManagement({ memberships }: Props) {
   const [branches, setBranches] = useState<SellerBranch[]>([]);
   const [loaded, setLoaded] = useState(false);
   const [busy, setBusy] = useState(false);
+  const submissionInFlight = useRef(false);
   const [editor, setEditor] = useState<Editor | null>(null);
   const [detail, setDetail] = useState<SellerStaffMember | null>(null);
   const [confirmDeactivate, setConfirmDeactivate] = useState<SellerStaffMember | null>(null);
@@ -116,7 +117,7 @@ export function SellerStaffManagement({ memberships }: Props) {
 
   const save = async (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
-    if (!editor || busy) return;
+    if (!editor || busy || submissionInFlight.current) return;
     const branchId = Number(editor.branchId);
     if (!storeBranches.some((b) => b.id === branchId)) {
       setError(
@@ -132,6 +133,7 @@ export function SellerStaffManagement({ memberships }: Props) {
       setError(tr('أدخل رقم حساب مستخدم مسجل صحيحًا.', 'Enter a valid existing user account ID.'));
       return;
     }
+    submissionInFlight.current = true;
     setBusy(true);
     setError('');
     setNotice('');
@@ -153,13 +155,15 @@ export function SellerStaffManagement({ memberships }: Props) {
     } catch (cause) {
       setError(reason(cause));
     } finally {
+      submissionInFlight.current = false;
       setBusy(false);
     }
   };
 
   const deactivate = async () => {
     const member = confirmDeactivate;
-    if (!member || busy || member.role === 'owner' || !member.is_active) return;
+    if (!member || busy || submissionInFlight.current || member.role === 'owner' || !member.is_active) return;
+    submissionInFlight.current = true;
     setBusy(true);
     setError('');
     setNotice('');
@@ -171,6 +175,7 @@ export function SellerStaffManagement({ memberships }: Props) {
     } catch (cause) {
       setError(reason(cause));
     } finally {
+      submissionInFlight.current = false;
       setBusy(false);
     }
   };

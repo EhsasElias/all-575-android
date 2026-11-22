@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { courierAdminFrench } from './courierAdminFrench';
 import {
@@ -15,6 +15,7 @@ export function SuperAdminCouriers({ ar }: { ar: boolean }) {
   const [items, setItems] = useState<CourierChoice[]>([]);
   const [error, setError] = useState('');
   const [busy, setBusy] = useState(false);
+  const decisionInFlight = useRef(false);
   const [revision, setRevision] = useState(0);
   useEffect(() => {
     let active = true;
@@ -65,18 +66,22 @@ export function SuperAdminCouriers({ ar }: { ar: boolean }) {
                 <td>
                   <button
                     type="button"
-                    disabled={busy || c.approval_status === 'approved'}
+                    disabled={busy || decisionInFlight.current || c.approval_status === 'approved'}
                     onClick={() => {
+                      if (decisionInFlight.current) return;
+                      decisionInFlight.current = true;
                       setBusy(true);
                       setError('');
                       void superAdminApproveCourier(c.id, true)
                         .then(() => {
+                          setItems((previous) => previous.map((item) => item.id === c.id ? { ...item, approval_status: 'approved' } : item));
                           setRevision((v) => v + 1);
                         })
                         .catch(() => {
                           setError(tr('تعذر اعتماد المندوب.', 'Approval failed.'));
                         })
                         .finally(() => {
+                          decisionInFlight.current = false;
                           setBusy(false);
                         });
                     }}
@@ -85,18 +90,22 @@ export function SuperAdminCouriers({ ar }: { ar: boolean }) {
                   </button>
                   <button
                     type="button"
-                    disabled={busy || c.approval_status === 'rejected'}
+                    disabled={busy || decisionInFlight.current || c.approval_status === 'rejected'}
                     onClick={() => {
+                      if (decisionInFlight.current) return;
+                      decisionInFlight.current = true;
                       setBusy(true);
                       setError('');
                       void superAdminApproveCourier(c.id, false)
                         .then(() => {
+                          setItems((previous) => previous.map((item) => item.id === c.id ? { ...item, approval_status: 'rejected' } : item));
                           setRevision((v) => v + 1);
                         })
                         .catch(() => {
                           setError(tr('تعذر رفض المندوب.', 'Rejection failed.'));
                         })
                         .finally(() => {
+                          decisionInFlight.current = false;
                           setBusy(false);
                         });
                     }}
