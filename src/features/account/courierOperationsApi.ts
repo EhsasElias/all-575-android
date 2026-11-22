@@ -78,6 +78,20 @@ export const courierPickup = (id: number, pickup_code: string, parcel_count: num
     parcel_count,
   });
 
+export const courierDeliver = (id: number, delivery_code: string) =>
+  http.post<{ data: { status: string } }>('/courier/jobs/' + String(id) + '/deliver', {
+    delivery_code,
+  });
+export const courierFailedDelivery = (
+  id: number,
+  reason: 'customer_absent' | 'address_issue' | 'customer_refused' | 'other',
+  description: string,
+) =>
+  http.post<{ data: { incident_id: number; status: string } }>(
+    '/courier/jobs/' + String(id) + '/failed-delivery',
+    { reason, description },
+  );
+
 export type CourierAssignmentEvent = {
   action: string;
   reason: string | null;
