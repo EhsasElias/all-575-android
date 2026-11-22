@@ -20,6 +20,11 @@ const labels = {
     loading: 'جارٍ تحميل الإشعارات',
     unread: 'غير مقروء',
     open: 'عرض التفاصيل',
+    allFilter: 'الكل',
+    unreadFilter: 'غير المقروءة',
+    readStatus: 'تمت القراءة',
+    newStatus: 'جديد',
+    noUnread: 'تمت قراءة جميع الإشعارات',
   },
   en: {
     title: 'Notifications',
@@ -31,6 +36,11 @@ const labels = {
     loading: 'Loading notifications',
     unread: 'Unread',
     open: 'View details',
+    allFilter: 'All',
+    unreadFilter: 'Unread',
+    readStatus: 'Read',
+    newStatus: 'New',
+    noUnread: 'You are all caught up',
   },
   fr: {
     title: 'Notifications',
@@ -42,6 +52,11 @@ const labels = {
     loading: 'Chargement des notifications',
     unread: 'Non lu',
     open: 'Voir les détails',
+    allFilter: 'Tout',
+    unreadFilter: 'Non lues',
+    readStatus: 'Lu',
+    newStatus: 'Nouveau',
+    noUnread: 'Tous les avis sont lus',
   },
 } as const;
 
@@ -56,6 +71,8 @@ export function CustomerNotifications() {
   const [inbox, setInbox] = useState<NotificationInbox | null>(null);
   const [error, setError] = useState(false);
   const [busy, setBusy] = useState(false);
+  const [filter, setFilter] = useState<'all' | 'unread'>('all');
+  const visibleNotices = inbox?.data.filter((notice) => filter === 'all' || !notice.read_at) ?? [];
 
   const load = useCallback(async () => {
     try {
@@ -115,61 +132,77 @@ export function CustomerNotifications() {
     <section className={styles.section} aria-label={t.title}>
       <header className={styles.heading}>
         <div className={styles.titleLine}>
-          <h2>{t.title}</h2>
+          <div>
+            <h2>{t.title}</h2>
+            <p className={styles.subtitle}>{t.unread}: {inbox?.unread_count ?? 0}</p>
+          </div>
           {(inbox?.unread_count ?? 0) > 0 && (
             <span className={styles.count} aria-label={t.unread}>
               {inbox?.unread_count}
             </span>
           )}
         </div>
-        <button
-          type="button"
-          className={styles.refresh}
-          onClick={() => void load()}
-          disabled={busy}
-        >
-          {t.refresh}
-        </button>
+        <div className={styles.headingActions}>
+          <button type="button" className={styles.refresh} onClick={() => void load()} disabled={busy}>
+            {t.refresh}
+          </button>
+          {inbox && inbox.unread_count > 0 && (
+            <button type="button" className={styles.markAll} disabled={busy} onClick={() => void markAll()}>
+              {t.all}
+            </button>
+          )}
+        </div>
       </header>
-      {error && (
-        <p role="alert" className={styles.error}>
-          {t.failure}
-        </p>
-      )}
-      {inbox === null && !error && (
-        <p role="status" className={styles.empty}>
-          {t.loading}
-        </p>
-      )}
-      {inbox && inbox.unread_count > 0 && (
-        <div className={styles.toolbar}>
+      {error && <p role="alert" className={styles.error}>{t.failure}</p>}
+      {inbox === null && !error && <p role="status" className={styles.empty}>{t.loading}</p>}
+      {inbox && inbox.data.length > 0 && (
+        <div className={styles.filterBar} role="group" aria-label={t.title}>
           <button
             type="button"
-            className={styles.markAll}
-            disabled={busy}
-            onClick={() => void markAll()}
+            className={styles.filterButton}
+            aria-pressed={filter === 'all'}
+            onClick={() => setFilter('all')}
           >
-            {t.all}
+            {t.allFilter} <span>{inbox.data.length}</span>
+          </button>
+          <button
+            type="button"
+            className={styles.filterButton}
+            aria-pressed={filter === 'unread'}
+            onClick={() => setFilter('unread')}
+          >
+            {t.unreadFilter} <span>{inbox.unread_count}</span>
           </button>
         </div>
       )}
-      {inbox?.data.length === 0 && <p className={styles.empty}>{t.empty}</p>}
-      {inbox && inbox.data.length > 0 && (
+      {inbox && visibleNotices.length === 0 && (
+        <p className={styles.empty}>{filter === 'unread' ? t.noUnread : t.empty}</p>
+      )}
+      {visibleNotices.length > 0 && (
         <ul className={styles.list}>
-          {inbox.data.map((notice) => (
+          {visibleNotices.map((notice) => (
             <li key={notice.id}>
               <article className={styles.notice} data-unread={!notice.read_at}>
-                <div className={styles.noticeTitle}>
-                  <strong>{notice.title}</strong>
-                  {!notice.read_at && <span className={styles.unreadDot} aria-label={t.unread} />}
+                <div className={styles.noticeBody}>
+                  <span className={styles.noticeIcon} aria-hidden="true">
+                    {notice.read_at ? '✓' : '✉'}
+                  </span>
+                  <div className={styles.noticeContent}>
+                    <div className={styles.noticeTitle}>
+                      <strong dir="auto">{notice.title}</strong>
+                      <span className={styles.status} data-unread={!notice.read_at}>
+                        {notice.read_at ? t.readStatus : t.newStatus}
+                      </span>
+                    </div>
+                    <p className={styles.message} dir="auto">{notice.message}</p>
+                    <time className={styles.date} dateTime={notice.created_at}>
+                      {new Date(notice.created_at).toLocaleString(
+                        language === 'ar' ? 'ar-SA' : language === 'fr' ? 'fr-FR' : 'en-GB',
+                      )}
+                    </time>
+                  </div>
                 </div>
-                <p className={styles.message}>{notice.message}</p>
-                <div className={styles.meta}>
-                  <time dateTime={notice.created_at}>
-                    {new Date(notice.created_at).toLocaleString(
-                      language === 'ar' ? 'ar-SA' : language === 'fr' ? 'fr-FR' : 'en-GB',
-                    )}
-                  </time>
+                <div className={styles.noticeActions}>
                   {notice.target_path?.startsWith('/') && !notice.target_path.startsWith('//') && (
                     <Link to={notice.target_path} className={styles.markRead}>
                       {t.open}
