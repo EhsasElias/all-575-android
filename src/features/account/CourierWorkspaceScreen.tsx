@@ -21,6 +21,17 @@ export function CourierWorkspaceScreen() {
   const ar = i18n.language.startsWith('ar');
   const fr = i18n.language.startsWith('fr');
   const tr = (a: string, en: keyof typeof courierFrench) => (ar ? a : fr ? courierFrench[en] : en);
+  const courierStatus = (status: string): string => {
+    switch (status) {
+      case 'offered': return tr('معروضة', 'Offered');
+      case 'accepted': return tr('مقبولة', 'Accepted');
+      case 'picked_up': return tr('تم الاستلام', 'Picked up');
+      case 'delivered': return tr('تم التسليم', 'Delivered');
+      case 'declined': return tr('مرفوضة', 'Declined');
+      case 'expired': return tr('منتهية', 'Expired');
+      default: return status;
+    }
+  };
   const [jobs, setJobs] = useState<CourierJob[]>([]);
   const [error, setError] = useState('');
   const [notice, setNotice] = useState('');
@@ -159,7 +170,7 @@ export function CourierWorkspaceScreen() {
               {tr('الطلب', 'Order')} {job.order_number}
             </h2>
             <p>
-              {tr('الفرع', 'Branch')} #{job.branch_id} · {tr('الحالة', 'Status')}: {job.status}
+              {tr('الفرع', 'Branch')} #{job.branch_id} · {tr('الحالة', 'Status')}: {courierStatus(job.status)}
             </p>
             {job.pickup_lat !== null && job.pickup_lng !== null && (
               <p>
