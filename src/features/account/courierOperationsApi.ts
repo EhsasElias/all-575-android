@@ -16,6 +16,7 @@ export type CourierJob = {
   expires_at: string | null;
   accepted_at: string | null;
   picked_up_at: string | null;
+  delivered_at: string | null;
   parcel_count: number | null;
   order_number: string;
   branch_id: number;
