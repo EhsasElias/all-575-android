@@ -143,6 +143,12 @@ export function CourierWorkspaceScreen() {
         )}
         {notice && <p role="status">{notice}</p>}
         {jobs.length === 0 && <p>{tr('لا توجد مهام حالياً.', 'No assigned jobs.')}</p>}
+        <p>
+          {tr('المهام المكتملة:', 'Completed jobs:')}{' '}
+          {jobs.filter((job) => job.status === 'delivered').length}
+          {' · '}
+          {tr('الأرباح: غير متاحة حتى تفعيل نظام التسويات.', 'Earnings: unavailable until settlements are enabled.')}
+        </p>
         {jobs.map((job) => (
           <section
             className="admin-family-panel"
