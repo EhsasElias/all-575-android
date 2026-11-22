@@ -6,6 +6,8 @@ import {
   courierAvailability,
   courierJobs,
   courierPickup,
+  courierDeliver,
+  courierFailedDelivery,
   courierRespond,
   courierProfile,
   type CourierJob,
@@ -26,6 +28,9 @@ export function CourierWorkspaceScreen() {
   const busyRef = useRef(false);
   const [code, setCode] = useState<Record<number, string>>({});
   const [parcels, setParcels] = useState<Record<number, string>>({});
+  const [deliveryCode, setDeliveryCode] = useState<Record<number, string>>({});
+  const [failureReason, setFailureReason] = useState<Record<number, 'customer_absent' | 'address_issue' | 'customer_refused' | 'other'>>({});
+  const [failureDetails, setFailureDetails] = useState<Record<number, string>>({});
   const [revision, setRevision] = useState(0);
   const [online, setOnline] = useState(false);
   // Offer expiry follows a live clock, rather than reading an impure time during React render.
@@ -189,6 +194,79 @@ export function CourierWorkspaceScreen() {
                   {tr('رفض', 'Decline')}
                 </button>
               </div>
+            )}
+            {job.status === 'picked_up' && (
+              <div style={{ display: 'grid', gap: 12, marginBlock: 12 }}>
+                <p>{tr('اطلب رمز التسليم من العميل عند الوصول، ولا تشارك رمز استلام البائع.', 'Ask the customer for the separate delivery code at the door.')}</p>
+                <label>
+                  {tr('رمز تأكيد التسليم من العميل', 'Customer delivery code')}
+                  <input
+                    type="text"
+                    inputMode="numeric"
+                    autoComplete="off"
+                    pattern="[0-9]{6}"
+                    maxLength={6}
+                    value={deliveryCode[job.id] ?? ''}
+                    onChange={(e) => setDeliveryCode((prev) => ({
+                      ...prev,
+                      [job.id]: e.target.value.replace(/[^0-9]/g, '').slice(0, 6),
+                    }))}
+                  />
+                </label>
+                <button
+                  type="button"
+                  disabled={busy || !/^[0-9]{6}$/.test(deliveryCode[job.id] ?? '')}
+                  onClick={() => void act(
+                    async () => {
+                      await courierDeliver(job.id, deliveryCode[job.id] ?? '');
+                      setDeliveryCode((prev) => ({ ...prev, [job.id]: '' }));
+                    },
+                    tr('تم توثيق التسليم للعميل.', 'Delivery verified with customer.'),
+                  )}
+                >
+                  {tr('تأكيد التسليم', 'Confirm delivery')}
+                </button>
+                <label>
+                  {tr('سبب تعذر التسليم', 'Failed delivery reason')}
+                  <select
+                    value={failureReason[job.id] ?? 'customer_absent'}
+                    onChange={(e) => setFailureReason((prev) => ({
+                      ...prev,
+                      [job.id]: e.target.value as 'customer_absent' | 'address_issue' | 'customer_refused' | 'other',
+                    }))}
+                  >
+                    <option value="customer_absent">{tr('العميل غير متواجد', 'Customer absent')}</option>
+                    <option value="address_issue">{tr('مشكلة في العنوان', 'Address issue')}</option>
+                    <option value="customer_refused">{tr('رفض العميل الاستلام', 'Customer refused')}</option>
+                    <option value="other">{tr('سبب آخر', 'Other reason')}</option>
+                  </select>
+                </label>
+                <label>
+                  {tr('تفاصيل المحاولة', 'Attempt details')}
+                  <textarea
+                    value={failureDetails[job.id] ?? ''}
+                    maxLength={1000}
+                    onChange={(e) => setFailureDetails((prev) => ({ ...prev, [job.id]: e.target.value }))}
+                  />
+                </label>
+                <button
+                  type="button"
+                  disabled={busy || (failureDetails[job.id] ?? '').trim().length < 10}
+                  onClick={() => void act(
+                    () => courierFailedDelivery(
+                      job.id,
+                      failureReason[job.id] ?? 'customer_absent',
+                      (failureDetails[job.id] ?? '').trim(),
+                    ),
+                    tr('تم تسجيل تعذر التسليم لدى الإدارة.', 'Failed delivery was reported to Admin.'),
+                  )}
+                >
+                  {tr('إبلاغ تعذر التسليم', 'Report failed delivery')}
+                </button>
+              </div>
+            )}
+            {job.status === 'delivered' && (
+              <p role="status">{tr('تم تسليم الطلب وتوثيقه.', 'Delivery completed and verified.')}</p>
             )}
             {job.status === 'accepted' && (
               <div style={{ display: 'flex', flexWrap: 'wrap', gap: 10 }}>
