@@ -1,20 +1,6 @@
-import { useEffect, useRef, useState } from 'react';
+import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { scannerFrench } from './scannerFrench';
-
-type BarcodeHit = { rawValue: string; format?: string };
-type Detector = { detect(source: ImageBitmapSource): Promise<BarcodeHit[]> };
-type DetectorClass = new (options?: { formats: string[] }) => Detector;
-type DetectorWindow = Window & { BarcodeDetector?: DetectorClass };
-
-function scannerText(
-  ar: boolean,
-  fr: boolean,
-  arabic: string,
-  english: keyof typeof scannerFrench,
-): string {
-  return ar ? arabic : fr ? scannerFrench[english] : english;
-}
+import { getDetectorClass, scannerText, useProductCamera } from './useProductCamera';
 
 export type ProductCameraScannerProps = {
   onRead: (text: string, format?: string) => void;
@@ -29,118 +15,14 @@ export type ProductCameraScannerProps = {
 export function ProductCameraScanner({ onRead, onClose, ar }: ProductCameraScannerProps) {
   const { i18n } = useTranslation();
   const fr = i18n.language.startsWith('fr');
-  const videoRef = useRef<HTMLVideoElement>(null);
-  const callback = useRef(onRead);
-  const [message, setMessage] = useState('');
+  const { videoRef, ready, message, setMessage, unavailableMessage } = useProductCamera(onRead, ar, fr);
   const [manual, setManual] = useState('');
-  const [ready, setReady] = useState(false);
   const [busyImage, setBusyImage] = useState(false);
-
-  useEffect(() => {
-    callback.current = onRead;
-  }, [onRead]);
-
-  useEffect(() => {
-    const Detector = (window as DetectorWindow).BarcodeDetector;
-    if (!Detector) {
-      setMessage(
-        scannerText(
-          ar,
-          fr,
-          'هذا المتصفح لا يدعم قراءة الرموز مباشرة بالكاميرا. استخدم Chrome حديثًا على Android أو أدخل الرمز يدويًا.',
-          'This browser cannot decode barcodes directly. Try current Chrome on Android or type the code.',
-        ),
-      );
-      return;
-    }
-    if (!navigator.mediaDevices?.getUserMedia) {
-      setMessage(
-        scannerText(
-          ar,
-          fr,
-          'الكاميرا غير متاحة. افتح الموقع عبر HTTPS أو استخدم الإدخال اليدوي.',
-          'Camera unavailable. Use HTTPS or enter the code manually.',
-        ),
-      );
-      return;
-    }
-
-    let stopped = false;
-    let stream: MediaStream | null = null;
-    let frame = 0;
-    const detector = new Detector();
-    let detecting = false;
-    let lastScan = 0;
-
-    async function scan(timestamp: number) {
-      if (stopped) return;
-      const video = videoRef.current;
-      if (video && video.readyState >= 2 && !detecting && timestamp - lastScan > 250) {
-        lastScan = timestamp;
-        detecting = true;
-        try {
-          const hits = await detector.detect(video);
-          const hit = hits.find((item) => item.rawValue.trim());
-          if (hit && !stopped) {
-            stopped = true;
-            callback.current(hit.rawValue, hit.format);
-            return;
-          }
-        } catch {
-          // A temporary frame decode failure is normal; retry on the next frame.
-        } finally {
-          detecting = false;
-        }
-      }
-      if (!stopped) frame = requestAnimationFrame(scan);
-    }
-
-    void (async () => {
-      try {
-        const camera = await navigator.mediaDevices.getUserMedia({
-          audio: false,
-          video: { facingMode: { ideal: 'environment' }, width: { ideal: 1280 } },
-        });
-        if (stopped) {
-          camera.getTracks().forEach((track) => {
-            track.stop();
-          });
-          return;
-        }
-        stream = camera;
-        const video = videoRef.current;
-        if (!video) return;
-        video.srcObject = camera;
-        await video.play();
-        if (stopped) return;
-        setReady(true);
-        frame = requestAnimationFrame(scan);
-      } catch {
-        if (!stopped)
-          setMessage(
-            scannerText(
-              ar,
-              fr,
-              'تعذر تشغيل الكاميرا. تأكد من منح الإذن ثم أعد فتح الماسح، أو أدخل الرمز يدويًا.',
-              'Camera could not start. Allow camera permission and retry, or type the code.',
-            ),
-          );
-      }
-    })();
-    return () => {
-      stopped = true;
-      cancelAnimationFrame(frame);
-      stream?.getTracks().forEach((track) => {
-        track.stop();
-      });
-      if (videoRef.current) videoRef.current.srcObject = null;
-    };
-  }, [ar, fr]);
 
   const fromPhoto = async (file: File | undefined) => {
     if (!file || busyImage) return;
-    const Detector = (window as DetectorWindow).BarcodeDetector;
-    if (!Detector) {
+    const PhotoDetector = getDetectorClass();
+    if (!PhotoDetector) {
       setMessage(
         scannerText(
           ar,
@@ -155,7 +37,7 @@ export function ProductCameraScanner({ onRead, onClose, ar }: ProductCameraScann
     try {
       const bitmap = await createImageBitmap(file);
       try {
-        const result = await new Detector().detect(bitmap);
+        const result = await new PhotoDetector().detect(bitmap);
         const hit = result.find((item) => item.rawValue.trim());
         if (!hit) {
           setMessage(
@@ -220,9 +102,9 @@ export function ProductCameraScanner({ onRead, onClose, ar }: ProductCameraScann
           'Point the camera at a barcode or QR. Recognized fields will be filled for your review.',
         )}
       </p>
-      {message && (
+      {(message || unavailableMessage) && (
         <p role="status" className="seller-form-message">
-          {message}
+          {message || unavailableMessage}
         </p>
       )}
       <label className="seller-scanner-photo">
