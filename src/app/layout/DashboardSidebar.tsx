@@ -169,6 +169,9 @@ export function DashboardSidebar({ onNavigate }: { onNavigate?: () => void }) {
   const fr = i18n.language.startsWith('fr');
   const tr = (a: string, en: string, french: string) => (ar ? a : fr ? french : en);
   const { pathname, search, hash } = useLocation();
+  const notificationContext = pathname === routePaths.notifications
+    ? new URLSearchParams(search).get('workspace')
+    : null;
   const { status, user } = useSession();
   const [superAccess, setSuperAccess] = useState<{ userId: string; allowed: boolean } | null>(null);
   const userId = user?.id === undefined ? null : String(user.id);
@@ -190,15 +193,15 @@ export function DashboardSidebar({ onNavigate }: { onNavigate?: () => void }) {
     superAccess?.userId === userId && superAccess.allowed;
 
   const workspace =
-    (pathname === routePaths.superAdminDashboard || isSuperReviewer)
+    (pathname === routePaths.superAdminDashboard || isSuperReviewer || notificationContext === 'super')
       ? 'super'
-      : pathname === routePaths.platformAdminDashboard
+      : pathname === routePaths.platformAdminDashboard || notificationContext === 'admin'
         ? 'admin'
-        : pathname === routePaths.sellerReview
+        : pathname === routePaths.sellerReview || notificationContext === 'review'
           ? 'review'
-          : pathname === routePaths.sellerWorkspace
+          : pathname === routePaths.sellerWorkspace || notificationContext === 'seller'
             ? 'seller'
-            : pathname === routePaths.courierWorkspace
+            : pathname === routePaths.courierWorkspace || notificationContext === 'courier'
               ? 'courier'
               : 'customer';
 
@@ -252,7 +255,7 @@ export function DashboardSidebar({ onNavigate }: { onNavigate?: () => void }) {
       <div className={styles.group}>
         <h2>{tr('أقسام لوحة التحكم', 'Dashboard sections', 'Sections du tableau de bord')}</h2>
         <Link
-          to={routePaths.notifications}
+          to={routePaths.notifications + '?workspace=' + workspace}
           onClick={onNavigate}
           aria-current={pathname === routePaths.notifications ? 'page' : undefined}
           className={pathname === routePaths.notifications ? styles.selected : styles.link}
