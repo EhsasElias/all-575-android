@@ -16,6 +16,7 @@ export const courierFrench = {
   'Your courier account is not approved yet. You cannot accept deliveries.':
     'Votre compte livreur n’est pas encore approuvé. Vous ne pouvez pas accepter de livraisons.',
   'Active jobs': 'Missions actives',
+  'Completed jobs': 'Missions terminées',
   'Total jobs': 'Total des missions',
   'Filter jobs': 'Filtrer les missions',
   Active: 'Actives',
