@@ -12,6 +12,13 @@ export async function finishIntro(page: Page, target: string) {
 }
 
 export async function openApp(page: Page, target: string) {
+  // Keep JavaScript exceptions visible in CI when the app enters the route error boundary.
+  page.on('pageerror', (error) => {
+    console.error('[Browser page error]', error.stack ?? error.message);
+  });
+  page.on('console', (message) => {
+    if (message.type() === 'error') console.error('[Browser console]', message.text());
+  });
   await page.goto(target);
   await finishIntro(page, target);
 }
