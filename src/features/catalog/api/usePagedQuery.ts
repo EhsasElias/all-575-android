@@ -34,7 +34,7 @@ export function usePagedQuery<T>({
     enabled,
     // A rejected 4xx request is deterministic; do not silently retry and hide the error state.
     retry: (count, cause) =>
-      count < 2 && !(isApiError(cause) && cause.status >= 400 && cause.status < 500),
+      count < 2 && !(isApiError(cause) && cause.status !== null && cause.status >= 400 && cause.status < 500),
     initialPageParam: FIRST_PAGE,
     queryFn: ({ pageParam, signal }) =>
       http.get<Page<T>>(path, { query: { ...query, ...pageParam }, signal }),
