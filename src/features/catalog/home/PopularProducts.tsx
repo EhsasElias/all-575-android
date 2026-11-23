@@ -41,17 +41,29 @@ export function PopularProducts() {
             {tr('جميع المنتجات', 'All products', 'Tous les produits')}
           </h2>
           <p className={styles.sectionDescription}>
-            {tr('تصفح الأحدث أولاً، واكتشف بقية المنتجات أثناء التمرير.', 'Newest products first. Load more to explore the full catalogue.', 'Les nouveautés d’abord. Affichez la suite pour explorer tout le catalogue.')}
+            {tr(
+              'تصفح الأحدث أولاً، واكتشف بقية المنتجات أثناء التمرير.',
+              'Newest products first. Load more to explore the full catalogue.',
+              'Les nouveautés d’abord. Affichez la suite pour explorer tout le catalogue.',
+            )}
           </p>
         </div>
       </div>
-      <div className={styles.homeFilters} role="group" aria-label={tr('تصفية المنتجات', 'Filter products', 'Filtrer les produits')}>
+      <div
+        className={styles.homeFilters}
+        role="group"
+        aria-label={tr('تصفية المنتجات', 'Filter products', 'Filtrer les produits')}
+      >
         <label className={styles.homeFilterField}>
           <span>{tr('التصنيف', 'Category', 'Catégorie')}</span>
           <select value={category} onChange={(event) => setCategory(event.target.value)}>
-            <option value="">{tr('جميع التصنيفات', 'All categories', 'Toutes les catégories')}</option>
+            <option value="">
+              {tr('جميع التصنيفات', 'All categories', 'Toutes les catégories')}
+            </option>
             {(categories.data ?? []).map((item) => (
-              <option value={item.slug} key={item.slug}>{pickText(item.name, language)}</option>
+              <option value={item.slug} key={item.slug}>
+                {pickText(item.name, language)}
+              </option>
             ))}
           </select>
         </label>
@@ -59,17 +71,36 @@ export function PopularProducts() {
           <span>{tr('ترتيب حسب', 'Sort by', 'Trier par')}</span>
           <select value={sort} onChange={(event) => setSort(event.target.value as SortChoice)}>
             <option value="newest">{tr('الأحدث أولاً', 'Newest first', 'Plus récents')}</option>
-            <option value="price_asc">{tr('السعر: الأقل أولاً', 'Price: low to high', 'Prix croissant')}</option>
-            <option value="price_desc">{tr('السعر: الأعلى أولاً', 'Price: high to low', 'Prix décroissant')}</option>
-            <option value="best_selling">{tr('الأكثر مبيعاً', 'Best selling', 'Meilleures ventes')}</option>
+            <option value="price_asc">
+              {tr('السعر: الأقل أولاً', 'Price: low to high', 'Prix croissant')}
+            </option>
+            <option value="price_desc">
+              {tr('السعر: الأعلى أولاً', 'Price: high to low', 'Prix décroissant')}
+            </option>
+            <option value="best_selling">
+              {tr('الأكثر مبيعاً', 'Best selling', 'Meilleures ventes')}
+            </option>
           </select>
         </label>
         <label className={styles.homeCheck}>
-          <input type="checkbox" checked={inStock && zoneId !== null} disabled={zoneId === null} onChange={(event) => setInStock(event.target.checked)} />
+          <input
+            type="checkbox"
+            checked={inStock && zoneId !== null}
+            disabled={zoneId === null}
+            onChange={(event) => setInStock(event.target.checked)}
+          />
           <span>{tr('المتوفر فقط', 'In stock only', 'En stock seulement')}</span>
         </label>
         {(category || sort !== 'newest' || inStock) && (
-          <button type="button" className={styles.homeClear} onClick={() => { setCategory(''); setSort('newest'); setInStock(false); }}>
+          <button
+            type="button"
+            className={styles.homeClear}
+            onClick={() => {
+              setCategory('');
+              setSort('newest');
+              setInStock(false);
+            }}
+          >
             {tr('مسح الفلاتر', 'Clear filters', 'Effacer les filtres')}
           </button>
         )}
@@ -83,7 +114,9 @@ export function PopularProducts() {
             headingLevel={3}
             title={t('home.emptyTitle')}
             message={t('home.emptyMessage')}
-            action={<ButtonLink to={routePaths.categories}>{t('home.browseCategories')}</ButtonLink>}
+            action={
+              <ButtonLink to={routePaths.categories}>{t('home.browseCategories')}</ButtonLink>
+            }
           />
         }
       />

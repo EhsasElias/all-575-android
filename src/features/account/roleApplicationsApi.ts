@@ -42,8 +42,15 @@ export type PendingRoleApplication = RoleApplication & {
 export const reviewRoleApplications = () =>
   http.get<{ data: PendingRoleApplication[] }>('/platform/super-admin/role-applications');
 
-export const decideRoleApplication = (applicationId: number, decision: 'approved' | 'rejected', note: string) =>
-  http.patch<{ data: RoleApplication }>(`/platform/super-admin/role-applications/${applicationId}`, { decision, note });
+export const decideRoleApplication = (
+  applicationId: number,
+  decision: 'approved' | 'rejected',
+  note: string,
+) =>
+  http.patch<{ data: RoleApplication }>(
+    `/platform/super-admin/role-applications/${applicationId}`,
+    { decision, note },
+  );
 
 export type DeliveryZoneChoice = { id: number; name_ar: string; name_en: string };
 

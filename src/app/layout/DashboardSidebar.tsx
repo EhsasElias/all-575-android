@@ -169,9 +169,8 @@ export function DashboardSidebar({ onNavigate }: { onNavigate?: () => void }) {
   const fr = i18n.language.startsWith('fr');
   const tr = (a: string, en: string, french: string) => (ar ? a : fr ? french : en);
   const { pathname, search, hash } = useLocation();
-  const notificationContext = pathname === routePaths.notifications
-    ? new URLSearchParams(search).get('workspace')
-    : null;
+  const notificationContext =
+    pathname === routePaths.notifications ? new URLSearchParams(search).get('workspace') : null;
   const { status, user } = useSession();
   const [superAccess, setSuperAccess] = useState<{ userId: string; allowed: boolean } | null>(null);
   const userId = user?.id === undefined ? null : String(user.id);
@@ -182,18 +181,27 @@ export function DashboardSidebar({ onNavigate }: { onNavigate?: () => void }) {
     if (pathname !== routePaths.sellerReview || status !== 'signed-in' || !userId) return;
     let active = true;
     void superAdminDashboard()
-      .then(() => { if (active) setSuperAccess({ userId, allowed: true }); })
-      .catch(() => { if (active) setSuperAccess({ userId, allowed: false }); });
-    return () => { active = false; };
+      .then(() => {
+        if (active) setSuperAccess({ userId, allowed: true });
+      })
+      .catch(() => {
+        if (active) setSuperAccess({ userId, allowed: false });
+      });
+    return () => {
+      active = false;
+    };
   }, [pathname, status, userId]);
   const isSuperReviewer =
     pathname === routePaths.sellerReview &&
     status === 'signed-in' &&
     userId !== null &&
-    superAccess?.userId === userId && superAccess.allowed;
+    superAccess?.userId === userId &&
+    superAccess.allowed;
 
   const workspace =
-    (pathname === routePaths.superAdminDashboard || isSuperReviewer || notificationContext === 'super')
+    pathname === routePaths.superAdminDashboard ||
+    isSuperReviewer ||
+    notificationContext === 'super'
       ? 'super'
       : pathname === routePaths.platformAdminDashboard || notificationContext === 'admin'
         ? 'admin'
