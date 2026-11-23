@@ -52,8 +52,15 @@ export function SuperAdminRoleApplications() {
             'Demandes en attente de revue. Une candidature ne confère aucun accès.',
           )}</p>
         </div>
-        <button type="button" onClick={load} disabled={loading}>
-          {tr('تحديث', 'Refresh', 'Actualiser')}
+        <button
+          type="button"
+          className="admin-family-primary"
+          onClick={load}
+          disabled={loading}
+        >
+          ↻ {loading
+            ? tr('جارٍ التحديث...', 'Refreshing...', 'Actualisation...')
+            : tr('تحديث', 'Refresh', 'Actualiser')}
         </button>
       </div>
       {loading && <p role="status">{tr('جارٍ تحميل الطلبات...', 'Loading applications...', 'Chargement des demandes...')}</p>}
