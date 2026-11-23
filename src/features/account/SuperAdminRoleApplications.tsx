@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { reviewRoleApplications, type PendingRoleApplication } from './roleApplicationsApi';
+import { decideRoleApplication, reviewRoleApplications, type PendingRoleApplication } from './roleApplicationsApi';
 
 export function SuperAdminRoleApplications() {
   const { i18n } = useTranslation();
@@ -10,8 +10,13 @@ export function SuperAdminRoleApplications() {
   const [items, setItems] = useState<PendingRoleApplication[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
+  const [decisionId, setDecisionId] = useState<number | null>(null);
+  const [note, setNote] = useState('');
+  const [saving, setSaving] = useState(false);
+  const [notice, setNotice] = useState('');
 
   const load = () => {
+    setNotice('');
     setLoading(true);
     setError('');
     void reviewRoleApplications()
@@ -22,6 +27,32 @@ export function SuperAdminRoleApplications() {
         'Impossible de charger les candidatures.',
       )))
       .finally(() => setLoading(false));
+  };
+
+  const decide = async (decision: 'approved' | 'rejected') => {
+    if (decisionId === null || saving) return;
+    setSaving(true);
+    setError('');
+    setNotice('');
+    try {
+      await decideRoleApplication(decisionId, decision, note.trim());
+      setItems((previous) => previous.filter((item) => item.id !== decisionId));
+      setDecisionId(null);
+      setNote('');
+      setNotice(tr(
+        'تم حفظ قرار المراجعة. لن تُمنح الصلاحيات تلقائيًا.',
+        'Review decision saved. Permissions are not granted automatically.',
+        'Décision enregistrée. Aucun droit n’est attribué automatiquement.',
+      ));
+    } catch {
+      setError(tr(
+        'تعذر حفظ القرار. تحقق من حالة الطلب وحاول مجددًا.',
+        'Could not save the decision. Check the application status and retry.',
+        'Impossible d’enregistrer la décision. Vérifiez le statut et réessayez.',
+      ));
+    } finally {
+      setSaving(false);
+    }
   };
 
   useEffect(() => {
@@ -65,6 +96,7 @@ export function SuperAdminRoleApplications() {
       </div>
       {loading && <p role="status">{tr('جارٍ تحميل الطلبات...', 'Loading applications...', 'Chargement des demandes...')}</p>}
       {error && <p role="alert">{error}</p>}
+      {notice && <p role="status">{notice}</p>}
       {!loading && !error && items.length === 0 && (
         <p>{tr('لا توجد طلبات معلقة.', 'No pending applications.', 'Aucune candidature en attente.')}</p>
       )}
@@ -83,6 +115,7 @@ export function SuperAdminRoleApplications() {
               <th>{tr('سبب التقديم', 'Motivation', 'Motivation')}</th>
               <th>{tr('تاريخ الطلب', 'Submitted', 'Date')}</th>
               <th>{tr('الحالة', 'Status', 'Statut')}</th>
+              <th>{tr('الإجراءات', 'Actions', 'Actions')}</th>
             </tr></thead>
             <tbody>{items.map((item) => (
               <tr key={item.id}>
@@ -99,10 +132,31 @@ export function SuperAdminRoleApplications() {
                 <td style={{ whiteSpace: 'pre-wrap', overflowWrap: 'anywhere' }}>{item.motivation}</td>
                 <td>{new Date(item.created_at).toLocaleString(ar ? 'ar-SA' : fr ? 'fr-FR' : 'en-GB')}</td>
                 <td>{tr('قيد المراجعة', 'Pending review', 'En attente')}</td>
+                <td><button type="button" className="admin-family-secondary" onClick={() => { setDecisionId(item.id); setNote(''); setError(''); }}>{tr('مراجعة الطلب', 'Review application', 'Examiner')}</button></td>
               </tr>
             ))}</tbody>
           </table>
         </div>
+      )}
+      {decisionId !== null && (
+        <section className="admin-family-panel" aria-label={tr('مراجعة الطلب', 'Review application', 'Examiner la candidature')} style={{ marginBlock: 16, padding: 16 }}>
+          <h3>{tr('قرار مراجعة الطلب', 'Application review decision', 'Décision de révision')} #{decisionId}</h3>
+          <p>{tr(
+            'الموافقة على الطلب لا تمنح صلاحيات المسؤول ولا تُفعّل مندوب التوصيل. يتم ذلك بشكل مستقل من الأقسام المخصصة.',
+            'Approving the request does not grant admin permissions or activate a courier. Complete those steps separately.',
+            'Approuver la demande ne donne aucun droit administrateur et n’active pas le livreur.',
+          )}</p>
+          <label style={{ display: 'grid', gap: 8, marginBlock: 12 }}>
+            {tr('ملاحظات المراجعة (اختياري)', 'Review note (optional)', 'Note de révision (facultative)')}
+            <textarea value={note} maxLength={1000} rows={3} onChange={(event) => setNote(event.target.value)} />
+          </label>
+          <div style={{ display: 'flex', gap: 10, flexWrap: 'wrap' }}>
+            <button type="button" className="admin-family-primary" disabled={saving} onClick={() => void decide('approved')}>{tr('موافقة', 'Approve', 'Approuver')}</button>
+            <button type="button" className="admin-family-secondary" disabled={saving || !note.trim()} onClick={() => void decide('rejected')}>{tr('رفض', 'Reject', 'Refuser')}</button>
+            <button type="button" className="admin-family-secondary" disabled={saving} onClick={() => setDecisionId(null)}>{tr('إلغاء', 'Cancel', 'Annuler')}</button>
+          </div>
+          {!note.trim() && <small>{tr('يرجى كتابة سبب الرفض قبل الرفض.', 'Enter a reason before rejecting.', 'Indiquez un motif avant de refuser.')}</small>}
+        </section>
       )}
       <p>{tr(
         'منح صلاحيات المسؤول يتم من إدارة المسؤولين، واعتماد المندوب من قسم اعتماد المندوبين بعد استكمال بياناته.',
