@@ -38,14 +38,19 @@ export function SuperAdminRoleApplications() {
 
   useEffect(() => {
     let active = true;
-    setLoading(true);
-    setError('');
-    void Promise.all([reviewRoleApplications(), adminSellerChoices(), superAdminDeliveryZones()])
+    // Optional lookup failures must never hide the applications themselves.
+    void Promise.allSettled([reviewRoleApplications(), adminSellerChoices(), superAdminDeliveryZones()])
       .then(([applications, sellerOptions, zoneOptions]) => {
         if (!active) return;
-        setItems(applications.data);
-        setSellers(sellerOptions.data.filter((item) => item.status === 'approved'));
-        setZones(zoneOptions.data);
+        if (applications.status === 'rejected') {
+          throw applications.reason;
+        }
+        setItems(applications.value.data);
+        setSellers(sellerOptions.status === 'fulfilled'
+          ? sellerOptions.value.data.filter((item) => item.status === 'approved')
+          : []);
+        setZones(zoneOptions.status === 'fulfilled' ? zoneOptions.value.data : []);
+        setError('');
       })
       .catch((cause: unknown) => {
         if (!active) return;
@@ -74,7 +79,10 @@ export function SuperAdminRoleApplications() {
 
   const selected = items.find((item) => item.id === decisionId);
   const visible = role ? items.filter((item) => item.requested_role === role) : items;
-  const refresh = () => setRevision((current) => current + 1);
+  const refresh = () => {
+    setLoading(true);
+    setRevision((current) => current + 1);
+  };
   const begin = (id: number) => {
     setDecisionId(id);
     setNote('');
@@ -113,7 +121,7 @@ export function SuperAdminRoleApplications() {
     }
   };
   const activate = async () => {
-    if (!selected || selected.status !== 'approved' || busy) return;
+    if (selected?.status !== 'approved' || busy) return;
     if (selected.requested_role === 'admin' && (!sellerId || (!orders && !inventory))) return;
     if (selected.requested_role === 'courier' && !zoneId) return;
     setBusy(true);
@@ -263,7 +271,7 @@ export function SuperAdminRoleApplications() {
                       <button
                         type="button"
                         className="admin-family-secondary"
-                        onClick={() => begin(item.id)}
+                        onClick={() => { begin(item.id); }}
                       >
                         {item.status === 'approved'
                           ? tr('تفعيل الصلاحية', 'Activate access', 'Activer')
