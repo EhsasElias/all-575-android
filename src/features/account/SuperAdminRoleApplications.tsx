@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { decideRoleApplication, reviewRoleApplications, reviewServiceZones, type ServiceZoneChoice, type PendingRoleApplication } from './roleApplicationsApi';
 
-export function SuperAdminRoleApplications() {
+export function SuperAdminRoleApplications({ onReviewed }: { onReviewed?: () => void }) {
   const { i18n } = useTranslation();
   const ar = i18n.language.startsWith('ar');
   const fr = i18n.language.startsWith('fr');
@@ -44,6 +44,7 @@ export function SuperAdminRoleApplications() {
     try {
       await decideRoleApplication(decisionId, decision, note.trim(), decision === 'approved' && selectedApplication?.requested_role === 'courier' ? Number(zoneId) : undefined);
       setItems((previous) => previous.filter((item) => item.id !== decisionId));
+      onReviewed?.();
       setDecisionId(null);
       setNote('');
       setZoneId('');
