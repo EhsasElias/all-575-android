@@ -43,6 +43,23 @@
   margin-block: 0 9px;
   letter-spacing: 0.03em;
 }
+.roleActions {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 6px;
+  margin-block: 4px 10px;
+}
+.roleActions .link {
+  min-width: 0;
+  justify-content: center;
+  text-align: center;
+  overflow-wrap: anywhere;
+  border: 1px solid var(--color-border, #d3ddd0);
+  background: var(--color-surface-mint, #eef4ec);
+}
+.roleActions .link:hover {
+  background: var(--color-surface, #fff);
+}
 .link,
 .selected {
   display: flex;
