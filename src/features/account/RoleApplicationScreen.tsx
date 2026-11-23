@@ -30,6 +30,12 @@ export function RoleApplicationScreen() {
   const [error, setError] = useState('');
   const [notice, setNotice] = useState('');
   const [motivation, setMotivation] = useState('');
+  const [contactPhone, setContactPhone] = useState('');
+  const [city, setCity] = useState('');
+  const [experienceYears, setExperienceYears] = useState('');
+  const [qualification, setQualification] = useState('');
+  const [serviceArea, setServiceArea] = useState('');
+  const [vehiclePlateNumber, setVehiclePlateNumber] = useState('');
   const [vehicleType, setVehicleType] = useState<'car' | 'motorcycle' | 'van' | 'bicycle'>('car');
 
   useEffect(() => {
@@ -75,7 +81,7 @@ export function RoleApplicationScreen() {
 
   const submit = async (event: SubmitEvent<HTMLFormElement>) => {
     event.preventDefault();
-    if (busy || existing || motivation.trim().length < 10) return;
+    if (busy || existing || motivation.trim().length < 10 || !/^05[0-9]{8}$/.test(contactPhone) || !city.trim() || !experienceYears || (requestedRole === 'admin' && !qualification.trim()) || (requestedRole === 'courier' && !serviceArea.trim())) return;
     setBusy(true);
     setError('');
     setNotice('');
@@ -83,7 +89,12 @@ export function RoleApplicationScreen() {
       const result = await applyForRole({
         requested_role: requestedRole,
         motivation: motivation.trim(),
-        ...(requestedRole === 'courier' ? { vehicle_type: vehicleType } : {}),
+        contact_phone: contactPhone,
+        city: city.trim(),
+        experience_years: Number(experienceYears),
+        ...(requestedRole === 'admin'
+          ? { qualification: qualification.trim() }
+          : { vehicle_type: vehicleType, service_area: serviceArea.trim(), ...(vehiclePlateNumber.trim() ? { vehicle_plate_number: vehiclePlateNumber.trim() } : {}) }),
       });
       setApplications((previous) => [...previous, result.data]);
       setNotice(
@@ -206,6 +217,26 @@ export function RoleApplicationScreen() {
                   'Les champs marqués * sont obligatoires.',
                 )}
               </p>
+              <div className={styles.fieldGrid}>
+                <label className={styles.field}>
+                  <span>{tr('رقم الجوال السعودي', 'Saudi mobile number', 'Numéro mobile saoudien')} <span className={styles.required}>*</span></span>
+                  <input dir="ltr" type="tel" inputMode="tel" autoComplete="tel" required maxLength={10} pattern="05[0-9]{8}" placeholder="05XXXXXXXX" value={contactPhone} onChange={(event) => setContactPhone(event.target.value)} />
+                </label>
+                <label className={styles.field}>
+                  <span>{tr('المدينة', 'City', 'Ville')} <span className={styles.required}>*</span></span>
+                  <input required maxLength={120} autoComplete="address-level2" value={city} onChange={(event) => setCity(event.target.value)} />
+                </label>
+                <label className={styles.field}>
+                  <span>{tr('سنوات الخبرة', 'Years of experience', "Années d'expérience")} <span className={styles.required}>*</span></span>
+                  <input dir="ltr" type="number" min="0" max="60" step="1" required value={experienceYears} onChange={(event) => setExperienceYears(event.target.value)} />
+                </label>
+                {!isCourier && (
+                  <label className={styles.field}>
+                    <span>{tr('المؤهل أو مجال الخبرة', 'Qualification or area of expertise', 'Qualification ou domaine de compétence')} <span className={styles.required}>*</span></span>
+                    <input required maxLength={180} value={qualification} onChange={(event) => setQualification(event.target.value)} />
+                  </label>
+                )}
+              </div>
               {isCourier && (
                 <div className={styles.fieldGrid}>
                   <label className={styles.field}>
@@ -225,6 +256,14 @@ export function RoleApplicationScreen() {
                       <option value="van">{tr('فان', 'Van', 'Fourgonnette')}</option>
                       <option value="bicycle">{tr('دراجة هوائية', 'Bicycle', 'Vélo')}</option>
                     </select>
+                  </label>
+                  <label className={styles.field}>
+                    <span>{tr('منطقة الخدمة المقترحة', 'Preferred delivery area', 'Zone de livraison souhaitée')} <span className={styles.required}>*</span></span>
+                    <input required maxLength={180} value={serviceArea} onChange={(event) => setServiceArea(event.target.value)} />
+                  </label>
+                  <label className={styles.field}>
+                    <span>{tr('رقم لوحة المركبة (اختياري)', 'Vehicle plate number (optional)', "Immatriculation (facultatif)")}</span>
+                    <input maxLength={32} value={vehiclePlateNumber} onChange={(event) => setVehiclePlateNumber(event.target.value)} />
                   </label>
                 </div>
               )}
@@ -261,7 +300,7 @@ export function RoleApplicationScreen() {
               {error && <p className={styles.error} role="alert">{error}</p>}
               {notice && <p className={styles.status} role="status">{notice}</p>}
               <div className={styles.actions}>
-                <button className={styles.primaryButton} type="submit" disabled={busy || motivation.trim().length < 10}>
+                <button className={styles.primaryButton} type="submit" disabled={busy || motivation.trim().length < 10 || !/^05[0-9]{8}$/.test(contactPhone) || !city.trim() || !experienceYears || (isCourier ? !serviceArea.trim() : !qualification.trim())}>
                   {busy
                     ? tr('جارٍ الإرسال...', 'Submitting...', 'Envoi...')
                     : tr('إرسال طلب الانضمام', 'Submit application', 'Soumettre la demande')}
