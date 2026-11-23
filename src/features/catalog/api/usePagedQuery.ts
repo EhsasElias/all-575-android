@@ -22,6 +22,15 @@ export type PagedList<T> = {
 
 const FIRST_PAGE: CursorQuery | null = null;
 
+/** Missing pagination metadata must never crash the whole storefront. */
+function nextLink(page: object): string | null {
+  const rawLinks: unknown = Reflect.get(page, 'links');
+  if (typeof rawLinks !== 'object' || rawLinks === null || !('next' in rawLinks)) {
+    return null;
+  }
+  return typeof rawLinks.next === 'string' ? rawLinks.next : null;
+}
+
 /** A cursor-paginated list. The next page is requested with the query string of `links.next`, as is. */
 export function usePagedQuery<T>({
   queryKey,
@@ -38,7 +47,7 @@ export function usePagedQuery<T>({
     initialPageParam: FIRST_PAGE,
     queryFn: ({ pageParam, signal }) =>
       http.get<Page<T>>(path, { query: { ...query, ...pageParam }, signal }),
-    getNextPageParam: (lastPage) => nextPageQuery(lastPage.links.next),
+    getNextPageParam: (lastPage) => nextPageQuery(nextLink(lastPage)),
   });
 
   const hasPages = result.data !== undefined;
