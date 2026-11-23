@@ -101,10 +101,16 @@ const superAdmin: SectionLink[] = [
     fr: 'Approbation des livreurs',
   },
   {
-    to: routePaths.superAdminDashboard + '#role-applications',
-    ar: 'طلبات انضمام المسؤولين والمندوبين',
-    en: 'Admin & courier applications',
-    fr: 'Candidatures administrateur et livreur',
+    to: routePaths.superAdminDashboard + '#admin-applications',
+    ar: 'اعتماد طلبات الإدارة',
+    en: 'Admin approvals',
+    fr: 'Approbation des administrateurs',
+  },
+  {
+    to: routePaths.superAdminDashboard + '#courier-applications',
+    ar: 'طلبات انضمام المندوبين',
+    en: 'Courier applications',
+    fr: 'Candidatures des livreurs',
   },
   ...review,
 ];
