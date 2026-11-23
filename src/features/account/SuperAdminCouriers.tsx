@@ -7,7 +7,7 @@ import {
   type CourierChoice,
 } from './courierOperationsApi';
 
-export function SuperAdminCouriers({ ar }: { ar: boolean }) {
+export function SuperAdminCouriers({ ar, reviewRevision = 0 }: { ar: boolean; reviewRevision?: number }) {
   const { i18n } = useTranslation();
   const fr = i18n.language.startsWith('fr');
   const tr = (a: string, en: keyof typeof courierAdminFrench) =>
@@ -30,7 +30,7 @@ export function SuperAdminCouriers({ ar }: { ar: boolean }) {
       active = false;
     };
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [revision]);
+  }, [revision, reviewRevision]);
   return (
     <section
       id="courier-approvals"
