@@ -72,11 +72,11 @@ describe('Home', () => {
     });
 
     await user.click(screen.getByRole('button', { name: 'Clear filters' }));
-    await waitFor(() => {
-      const last = queriesOf(api, 'GET /products').at(-1);
-      expect(last?.get('sort')).toBe('newest');
-      expect(last?.has('category')).toBe(false);
-    });
+    // React Query may instantly reuse the still-mounted newest page from the hero;
+    // verify the effective filter controls rather than assuming a redundant HTTP call.
+    expect(screen.getByRole('combobox', { name: 'Sort by' })).toHaveValue('newest');
+    expect(screen.getByRole('combobox', { name: 'Category' })).toHaveValue('');
+    expect(screen.queryByRole('button', { name: 'Clear filters' })).not.toBeInTheDocument();
   });
 
   it('links the search entry to /search', async () => {
