@@ -94,9 +94,12 @@ export function SuperAdminCouriers({ ar }: { ar: boolean }) {
           {ar ? 'تصفية حسب الحالة' : fr ? 'Filtrer par statut' : 'Filter by status'}
           <select
             value={statusFilter}
-            onChange={(event) =>
-              setStatusFilter(event.target.value as 'all' | 'pending' | 'approved' | 'rejected')
-            }
+            onChange={(event) => {
+              const value = event.target.value;
+              if (value === 'all' || value === 'pending' || value === 'approved' || value === 'rejected') {
+                setStatusFilter(value);
+              }
+            }}
             style={{ marginInlineStart: 8 }}
           >
             <option value="pending">{ar ? 'قيد المراجعة' : fr ? 'En attente' : 'Pending'}</option>
@@ -157,7 +160,7 @@ export function SuperAdminCouriers({ ar }: { ar: boolean }) {
                 <td>
                   <button
                     type="button"
-                    disabled={busy || decisionInFlight.current || c.approval_status === 'approved'}
+                    disabled={busy || c.approval_status === 'approved'}
                     onClick={() => {
                       if (decisionInFlight.current) return;
                       decisionInFlight.current = true;
@@ -185,7 +188,7 @@ export function SuperAdminCouriers({ ar }: { ar: boolean }) {
                   </button>
                   <button
                     type="button"
-                    disabled={busy || decisionInFlight.current || c.approval_status === 'rejected'}
+                    disabled={busy || c.approval_status === 'rejected'}
                     onClick={() => {
                       if (decisionInFlight.current) return;
                       decisionInFlight.current = true;
