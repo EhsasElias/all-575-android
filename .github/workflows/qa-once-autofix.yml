@@ -1,0 +1,32 @@
+name: QA format and safe autofix
+on:
+  push:
+    branches: [fix/dashboard-sidebar-navigation-20261123]
+    paths:
+      - '.github/workflows/qa-once-autofix.yml'
+permissions:
+  contents: write
+jobs:
+  format:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: true
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: npm
+      - run: npm ci
+      - name: Formatting only; do not relax lint rules
+        run: |
+          npx prettier --write src/app/layout/dashboardSectionLinks.ts src/features/account/PlatformAdminAssignments.tsx src/features/account/roleApprovalComponents.tsx src/features/account/SuperAdminCouriers.tsx src/features/account/SuperAdminRoleApplications.tsx src/features/account/sellerReviewFrench.ts src/features/catalog/api/usePagedQuery.ts src/features/catalog/home/HomeScreen.test.tsx src/features/catalog/delivery/DeliveryZone.flows.test.tsx
+      - name: Save corrections, remove temporary workflow
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add src/app/layout/dashboardSectionLinks.ts src/features/account/PlatformAdminAssignments.tsx src/features/account/roleApprovalComponents.tsx src/features/account/SuperAdminCouriers.tsx src/features/account/SuperAdminRoleApplications.tsx src/features/account/sellerReviewFrench.ts src/features/catalog/api/usePagedQuery.ts src/features/catalog/home/HomeScreen.test.tsx src/features/catalog/delivery/DeliveryZone.flows.test.tsx
+          git rm .github/workflows/qa-once-autofix.yml
+          git commit -m "Format QA approval, navigation, and catalogue regression fixes"
+          git push origin HEAD:fix/dashboard-sidebar-navigation-20261123
