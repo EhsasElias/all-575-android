@@ -68,6 +68,10 @@ export function SuperAdminRoleApplications() {
               <th>{tr('الاسم', 'Name', 'Nom')}</th>
               <th>{tr('البريد الإلكتروني', 'Email', 'E-mail')}</th>
               <th>{tr('نوع الطلب', 'Requested role', 'Rôle demandé')}</th>
+              <th>{tr('الجوال', 'Phone', 'Téléphone')}</th>
+              <th>{tr('المدينة', 'City', 'Ville')}</th>
+              <th>{tr('سنوات الخبرة', 'Experience', 'Expérience')}</th>
+              <th>{tr('المؤهل / المنطقة', 'Qualification / area', 'Qualification / zone')}</th>
               <th>{tr('وسيلة التوصيل', 'Vehicle', 'Véhicule')}</th>
               <th>{tr('سبب التقديم', 'Motivation', 'Motivation')}</th>
               <th>{tr('تاريخ الطلب', 'Submitted', 'Date')}</th>
@@ -80,7 +84,11 @@ export function SuperAdminRoleApplications() {
                 <td>{item.requested_role === 'admin'
                   ? tr('مسؤول', 'Admin', 'Administrateur')
                   : tr('مندوب توصيل', 'Courier', 'Livreur')}</td>
-                <td>{item.vehicle_type ?? '—'}</td>
+                <td dir="ltr">{item.contact_phone ?? '—'}</td>
+                <td>{item.city ?? '—'}</td>
+                <td>{item.experience_years ?? '—'}</td>
+                <td>{item.requested_role === 'admin' ? (item.qualification ?? '—') : (item.service_area ?? '—')}</td>
+                <td>{item.vehicle_type ?? '—'}{item.vehicle_plate_number ? ` · ${item.vehicle_plate_number}` : ''}</td>
                 <td style={{ whiteSpace: 'pre-wrap', overflowWrap: 'anywhere' }}>{item.motivation}</td>
                 <td>{new Date(item.created_at).toLocaleString(ar ? 'ar-SA' : fr ? 'fr-FR' : 'en-GB')}</td>
                 <td>{tr('قيد المراجعة', 'Pending review', 'En attente')}</td>
