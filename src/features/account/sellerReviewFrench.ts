@@ -133,7 +133,4 @@ export const sellerReviewFrench: Record<string, string> = {
     'Motif de correction ou de refus (au moins 10 caractères)',
   'This application has already been reviewed; decisions are available only for submitted requests.':
     'Cette candidature a déjà été examinée ; seules les demandes soumises peuvent recevoir une décision.',
-  'Access to the review queue was denied. Check your reviewer permissions.':
-    'Accès à la liste de validation refusé. Vérifiez vos autorisations.',
-  'Could not connect to the review service.': 'Connexion au service de validation impossible.',
 };
