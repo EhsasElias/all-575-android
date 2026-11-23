@@ -1,4 +1,7 @@
+import { useEffect, useState } from 'react';
 import { Link, useLocation } from 'react-router';
+import { useSession } from '@/shared/session';
+import { superAdminDashboard } from '@/features/account/superAdminApi';
 import { useTranslation } from 'react-i18next';
 import { routePaths } from '@/shared/lib';
 import styles from './AccountSidebar.module.css';
@@ -97,6 +100,12 @@ const superAdmin: SectionLink[] = [
     en: 'Courier approvals',
     fr: 'Approbation des livreurs',
   },
+  {
+    to: routePaths.superAdminDashboard + '#role-applications',
+    ar: 'طلبات انضمام المسؤولين والمندوبين',
+    en: 'Admin & courier applications',
+    fr: 'Candidatures administrateur et livreur',
+  },
   ...review,
 ];
 
@@ -154,9 +163,28 @@ export function DashboardSidebar({ onNavigate }: { onNavigate?: () => void }) {
   const fr = i18n.language.startsWith('fr');
   const tr = (a: string, en: string, french: string) => (ar ? a : fr ? french : en);
   const { pathname, search, hash } = useLocation();
+  const { status, user } = useSession();
+  const [superAccess, setSuperAccess] = useState<{ userId: string; allowed: boolean } | null>(null);
+  const userId = user?.id === undefined ? null : String(user.id);
+
+  // A Super Admin keeps their dashboard navigation when visiting the separate
+  // reviewer route. Dedicated reviewers retain their own Approvals navigation.
+  useEffect(() => {
+    if (pathname !== routePaths.sellerReview || status !== 'signed-in' || !userId) return;
+    let active = true;
+    void superAdminDashboard()
+      .then(() => { if (active) setSuperAccess({ userId, allowed: true }); })
+      .catch(() => { if (active) setSuperAccess({ userId, allowed: false }); });
+    return () => { active = false; };
+  }, [pathname, status, userId]);
+  const isSuperReviewer =
+    pathname === routePaths.sellerReview &&
+    status === 'signed-in' &&
+    userId !== null &&
+    superAccess?.userId === userId && superAccess.allowed;
 
   const workspace =
-    pathname === routePaths.superAdminDashboard
+    (pathname === routePaths.superAdminDashboard || isSuperReviewer)
       ? 'super'
       : pathname === routePaths.platformAdminDashboard
         ? 'admin'
