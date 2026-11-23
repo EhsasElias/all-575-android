@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState, type FormEvent } from 'react';
+import { useEffect, useMemo, useRef, useState, type FormEvent } from 'react';
 import { useTranslation } from 'react-i18next';
 import {
   adminAssignments,
@@ -28,6 +28,16 @@ export function PlatformAdminAssignments() {
   const [error, setError] = useState('');
   const [notice, setNotice] = useState('');
   const [revision, setRevision] = useState(0);
+  const [search, setSearch] = useState('');
+  const [statusFilter, setStatusFilter] = useState<'all' | 'active' | 'inactive'>('all');
+  const filteredItems = useMemo(() => items.filter((item) => {
+    if (statusFilter === 'active' && !item.is_active) return false;
+    if (statusFilter === 'inactive' && item.is_active) return false;
+    const query = search.trim().toLocaleLowerCase();
+    if (!query) return true;
+    return [item.name, item.email, item.seller_name_ar, item.seller_name_en, String(item.seller_id)]
+      .some((value) => String(value ?? '').toLocaleLowerCase().includes(query));
+  }), [items, search, statusFilter]);
 
   useEffect(() => {
     let active = true;
@@ -237,10 +247,35 @@ export function PlatformAdminAssignments() {
           <h3>
             {tr('الإسنادات الحالية', 'Existing Admin Assignments')} ({items.length})
           </h3>
+          <div className={styles.permissions} style={{ marginBlock: 12, flexWrap: 'wrap' }}>
+            <label>
+              {ar ? 'بحث في الحساب أو المتجر' : fr ? 'Rechercher un compte ou un vendeur' : 'Search account or seller'}
+              <input
+                type="search"
+                aria-label={ar ? 'بحث في إسنادات الإدارة' : fr ? 'Rechercher les administrateurs' : 'Search Admin assignments'}
+                value={search}
+                onChange={(event) => setSearch(event.target.value)}
+              />
+            </label>
+            <label>
+              {ar ? 'تصفية حسب الحالة' : fr ? 'Filtrer par statut' : 'Filter by status'}
+              <select value={statusFilter} onChange={(event) => setStatusFilter(event.target.value as 'all' | 'active' | 'inactive')}>
+                <option value="all">{ar ? 'الجميع' : fr ? 'Tous' : 'All'}</option>
+                <option value="active">{tr('نشط', 'Active')}</option>
+                <option value="inactive">{tr('موقوف', 'Inactive')}</option>
+              </select>
+            </label>
+          </div>
+          <p aria-live="polite">
+            {ar ? 'النتائج المعروضة' : fr ? 'Résultats affichés' : 'Displayed results'}: {filteredItems.length}
+          </p>
           {items.length === 0 && (
             <p>{tr('لا توجد حسابات إدارية معينة بعد.', 'No Admin assignments yet.')}</p>
           )}
-          {items.length > 0 && (
+          {items.length > 0 && filteredItems.length === 0 && (
+            <p>{ar ? 'لا توجد إسنادات تطابق الفلاتر.' : fr ? 'Aucune attribution correspondante.' : 'No assignments match these filters.'}</p>
+          )}
+          {filteredItems.length > 0 && (
             <div className={styles.tableScroll}>
               <table>
                 <thead>
@@ -253,7 +288,7 @@ export function PlatformAdminAssignments() {
                   </tr>
                 </thead>
                 <tbody>
-                  {items.map((item) => (
+                  {filteredItems.map((item) => (
                     <tr key={item.id}>
                       <td>
                         <strong>{item.name ?? item.email ?? `#${item.user_id}`}</strong>
