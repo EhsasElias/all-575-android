@@ -23,6 +23,7 @@ export function PlatformAdminAssignments() {
   const [sellerId, setSellerId] = useState('');
   const [orders, setOrders] = useState(true);
   const [stock, setStock] = useState(true);
+  const [reviewSellers, setReviewSellers] = useState(false);
   const [busy, setBusy] = useState(false);
   const submissionInFlight = useRef(false);
   const [error, setError] = useState('');
@@ -91,9 +92,11 @@ export function PlatformAdminAssignments() {
         seller_id: Number(sellerId),
         can_view_orders: orders,
         can_view_inventory: stock,
+        can_review_sellers: reviewSellers,
       });
       setEmail('');
       setSellerId('');
+      setReviewSellers(false);
       setNotice(tr('تم تعيين حساب الإدارة.', 'Admin account assigned.'));
       setRevision((x) => x + 1);
     } catch {
@@ -111,7 +114,7 @@ export function PlatformAdminAssignments() {
 
   const change = async (
     id: number,
-    input: { is_active?: boolean; can_view_orders?: boolean; can_view_inventory?: boolean },
+    input: { is_active?: boolean; can_view_orders?: boolean; can_view_inventory?: boolean; can_review_sellers?: boolean },
   ) => {
     if (submissionInFlight.current) return;
     submissionInFlight.current = true;
@@ -247,8 +250,18 @@ export function PlatformAdminAssignments() {
               />
               {tr('عرض المخزون', 'View inventory')}
             </label>
+            <label>
+              <input
+                type="checkbox"
+                checked={reviewSellers}
+                onChange={(event) => { setReviewSellers(event.target.checked); }}
+              />
+              {ar ? 'مراجعة طلبات البائعين والمنتجات (صلاحية على مستوى المنصة)' : fr
+                ? 'Examiner les vendeurs et les produits (accès global)'
+                : 'Review sellers and products (platform-wide permission)'}
+            </label>
           </div>
-          <button type="submit" className={styles.submit} disabled={busy || (!orders && !stock)}>
+          <button type="submit" className={styles.submit} disabled={busy || (!orders && !stock && !reviewSellers)}>
             {busy ? tr('جارٍ الحفظ...', 'Saving...') : tr('تعيين إداري', 'Assign Admin')}
           </button>
         </form>
@@ -357,6 +370,17 @@ export function PlatformAdminAssignments() {
                               }
                             />
                             {tr('المخزون', 'Inventory')}
+                          </label>
+                          <label>
+                            <input
+                              type="checkbox"
+                              disabled={busy}
+                              checked={item.can_review_sellers}
+                              onChange={(event) => {
+                                void change(item.id, { can_review_sellers: event.target.checked });
+                              }}
+                            />
+                            {ar ? 'مراجع المنصة' : fr ? 'Examinateur global' : 'Platform reviewer'}
                           </label>
                         </div>
                       </td>
