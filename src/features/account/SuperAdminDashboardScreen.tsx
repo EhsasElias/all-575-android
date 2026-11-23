@@ -1,6 +1,6 @@
 import { useEffect, useMemo, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { Link } from 'react-router';
+import { Link, useLocation } from 'react-router';
 import { routePaths } from '@/shared/lib';
 import { isApiError } from '@/shared/api';
 import { Page } from './components/Page';
@@ -40,6 +40,7 @@ function saveFile(blob: Blob, filename: string) {
 
 export function SuperAdminDashboardScreen() {
   const { i18n } = useTranslation();
+  const { hash } = useLocation();
   const ar = i18n.language.startsWith('ar');
   const fr = i18n.language.startsWith('fr');
   const tr = (arabic: string, english: keyof typeof superAdminFrench) =>
@@ -95,6 +96,14 @@ export function SuperAdminDashboardScreen() {
     };
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [revision]);
+
+  // The dashboard panels load asynchronously: scroll only once their anchors exist.
+  // Without this, clicking a sidebar hash updates the URL but leaves the statistics visible.
+  useEffect(() => {
+    if (!data || !hash) return;
+    const target = document.getElementById(decodeURIComponent(hash.slice(1)));
+    target?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+  }, [data, hash]);
 
   useEffect(() => {
     if (!selected) return;
