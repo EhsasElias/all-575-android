@@ -31,6 +31,10 @@ function getCameraDevices(): CameraDevices | null {
   return isCameraDevices(candidate) ? candidate : null;
 }
 
+function isStopped(lifecycle: { stopped: boolean }): boolean {
+  return lifecycle.stopped;
+}
+
 export function scannerText(
   ar: boolean,
   fr: boolean,
@@ -107,7 +111,7 @@ export function useProductCamera(onRead: (text: string, format?: string) => void
         lifecycle.stream = camera;
         video.srcObject = camera;
         await video.play();
-        if (lifecycle.stopped) return;
+        if (isStopped(lifecycle)) return;
         setReady(true);
 
         const scan = (timestamp: number): void => {
