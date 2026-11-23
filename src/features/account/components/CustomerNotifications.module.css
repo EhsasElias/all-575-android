@@ -30,7 +30,9 @@
   font-size: 0.82rem;
   margin: 0.3rem 0 0;
 }
-.headingActions { flex-wrap: wrap; }
+.headingActions {
+  flex-wrap: wrap;
+}
 .count {
   background: var(--color-brand);
   color: #fff;
@@ -43,15 +45,22 @@
   font-size: 0.8rem;
   font-weight: 700;
 }
-.refresh, .markAll, .markRead, .filterButton {
+.refresh,
+.markAll,
+.markRead,
+.filterButton {
   font: inherit;
   cursor: pointer;
   border-radius: 0.7rem;
   min-height: 2.5rem;
   padding: 0.5rem 0.9rem;
-  transition: background-color 150ms ease, border-color 150ms ease;
+  transition:
+    background-color 150ms ease,
+    border-color 150ms ease;
 }
-.refresh, .markRead, .filterButton {
+.refresh,
+.markRead,
+.filterButton {
   color: var(--color-brand-text);
   background: var(--color-surface);
   border: 1px solid var(--color-border);
@@ -61,7 +70,9 @@
   background: var(--color-brand);
   border: 1px solid var(--color-brand);
 }
-.refresh:disabled, .markAll:disabled, .markRead:disabled {
+.refresh:disabled,
+.markAll:disabled,
+.markRead:disabled {
   opacity: 0.55;
   cursor: not-allowed;
 }
@@ -126,7 +137,10 @@
   border: 1px solid var(--color-border);
   font-size: 1rem;
 }
-.noticeContent { flex: 1; min-width: 0; }
+.noticeContent {
+  flex: 1;
+  min-width: 0;
+}
 .noticeTitle {
   justify-content: space-between;
   align-items: flex-start;
@@ -184,10 +198,24 @@
   margin: 0;
 }
 @media (max-width: 34rem) {
-  .heading { align-items: flex-start; }
-  .headingActions { width: 100%; }
-  .notice { padding: 0.85rem; }
-  .noticeBody { gap: 0.65rem; }
-  .noticeIcon { flex-basis: 2rem; width: 2rem; height: 2rem; }
-  .noticeActions { justify-content: flex-start; }
+  .heading {
+    align-items: flex-start;
+  }
+  .headingActions {
+    width: 100%;
+  }
+  .notice {
+    padding: 0.85rem;
+  }
+  .noticeBody {
+    gap: 0.65rem;
+  }
+  .noticeIcon {
+    flex-basis: 2rem;
+    width: 2rem;
+    height: 2rem;
+  }
+  .noticeActions {
+    justify-content: flex-start;
+  }
 }

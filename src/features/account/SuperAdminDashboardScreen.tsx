@@ -6,6 +6,7 @@ import { isApiError } from '@/shared/api';
 import { Page } from './components/Page';
 import { PlatformAdminAssignments } from './PlatformAdminAssignments';
 import { SuperAdminCouriers } from './SuperAdminCouriers';
+import { SuperAdminRoleApplications } from './SuperAdminRoleApplications';
 import {
   exportSuperAdminMetric,
   superAdminDashboard,
@@ -870,6 +871,7 @@ export function SuperAdminDashboardScreen() {
             <div id="admin-accounts" className={(styles.permissions ?? '') + ' admin-family-panel'}>
               <PlatformAdminAssignments />
             </div>
+            <SuperAdminRoleApplications />
             <SuperAdminCouriers ar={ar} />
           </>
         )}

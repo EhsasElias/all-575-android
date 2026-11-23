@@ -44,7 +44,11 @@ export function scannerText(
   return ar ? arabic : fr ? scannerFrench[english] : english;
 }
 
-export function useProductCamera(onRead: (text: string, format?: string) => void, ar: boolean, fr: boolean) {
+export function useProductCamera(
+  onRead: (text: string, format?: string) => void,
+  ar: boolean,
+  fr: boolean,
+) {
   const videoRef = useRef<HTMLVideoElement>(null);
   const callback = useRef(onRead);
   const [message, setMessage] = useState('');

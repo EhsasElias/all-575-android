@@ -6,6 +6,25 @@ export const courierFrench = {
   'Action failed. Check job status and code.':
     'L’action a échoué. Vérifiez l’état de la mission et le code.',
   'Courier workspace': 'Espace livreur',
+  Delivery: 'Livraison',
+  Online: 'En ligne',
+  Offline: 'Hors ligne',
+  'Account status unavailable': 'Statut du compte indisponible',
+  'Manage offers, verify seller pickup, and confirm delivery with the customer code.':
+    'Gérez les offres, vérifiez le retrait auprès du vendeur et confirmez la livraison avec le code client.',
+  'Loading jobs...': 'Chargement des missions...',
+  'Your courier account is not approved yet. You cannot accept deliveries.':
+    'Votre compte livreur n’est pas encore approuvé. Vous ne pouvez pas accepter de livraisons.',
+  'Active jobs': 'Missions actives',
+  'Completed jobs': 'Missions terminées',
+  'Total jobs': 'Total des missions',
+  'Filter jobs': 'Filtrer les missions',
+  Active: 'Actives',
+  Completed: 'Terminées',
+  All: 'Toutes',
+  'No jobs match the selected filter.': 'Aucune mission ne correspond au filtre sélectionné.',
+  'Earnings are unavailable until settlements are enabled.':
+    'Les gains ne sont pas disponibles avant l’activation des règlements.',
   'Your assigned jobs, with verified seller handover.':
     'Vos missions attribuées, avec vérification de la remise par le vendeur.',
   'Availability updated.': 'Disponibilité mise à jour.',
@@ -37,7 +56,8 @@ export const courierFrench = {
   'Customer refused': 'Livraison refusée par le client',
   'Other reason': 'Autre motif',
   'Attempt details': 'Détails de la tentative',
-  'Failed delivery was reported to Admin.': 'L’échec de livraison a été signalé à l’administration.',
+  'Failed delivery was reported to Admin.':
+    'L’échec de livraison a été signalé à l’administration.',
   'Report failed delivery': 'Signaler un échec de livraison',
   'Delivery completed and verified.': 'Livraison terminée et vérifiée.',
   Offered: 'Proposée',
@@ -49,5 +69,4 @@ export const courierFrench = {
   'Completed jobs:': 'Missions terminées :',
   'Earnings: unavailable until settlements are enabled.':
     'Gains indisponibles avant l’activation des règlements.',
-
 } as const;

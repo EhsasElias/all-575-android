@@ -86,7 +86,9 @@ export function CustomerNotifications() {
 
   useEffect(() => {
     // Schedule the initial fetch outside the synchronous effect body.
-    const initialFetch = window.setTimeout(() => { void load(); }, 0);
+    const initialFetch = window.setTimeout(() => {
+      void load();
+    }, 0);
     const refresh = () => {
       if (document.visibilityState === 'visible') void load();
     };
@@ -99,7 +101,7 @@ export function CustomerNotifications() {
       window.removeEventListener('focus', refresh);
       document.removeEventListener('visibilitychange', refresh);
     };
-  // Re-fetch localized API messages whenever the interface language changes.
+    // Re-fetch localized API messages whenever the interface language changes.
   }, [load, language]);
 
   const markRead = async (id: number) => {
@@ -136,7 +138,9 @@ export function CustomerNotifications() {
         <div className={styles.titleLine}>
           <div>
             <h2>{t.title}</h2>
-            <p className={styles.subtitle}>{t.unread}: {inbox?.unread_count ?? 0}</p>
+            <p className={styles.subtitle}>
+              {t.unread}: {inbox?.unread_count ?? 0}
+            </p>
           </div>
           {(inbox?.unread_count ?? 0) > 0 && (
             <span className={styles.count} aria-label={t.unread}>
@@ -145,25 +149,45 @@ export function CustomerNotifications() {
           )}
         </div>
         <div className={styles.headingActions}>
-          <button type="button" className={styles.refresh} onClick={() => void load()} disabled={busy}>
+          <button
+            type="button"
+            className={styles.refresh}
+            onClick={() => void load()}
+            disabled={busy}
+          >
             {t.refresh}
           </button>
           {inbox && inbox.unread_count > 0 && (
-            <button type="button" className={styles.markAll} disabled={busy} onClick={() => void markAll()}>
+            <button
+              type="button"
+              className={styles.markAll}
+              disabled={busy}
+              onClick={() => void markAll()}
+            >
               {t.all}
             </button>
           )}
         </div>
       </header>
-      {error && <p role="alert" className={styles.error}>{t.failure}</p>}
-      {inbox === null && !error && <p role="status" className={styles.empty}>{t.loading}</p>}
+      {error && (
+        <p role="alert" className={styles.error}>
+          {t.failure}
+        </p>
+      )}
+      {inbox === null && !error && (
+        <p role="status" className={styles.empty}>
+          {t.loading}
+        </p>
+      )}
       {inbox && inbox.data.length > 0 && (
         <div className={styles.filterBar} role="group" aria-label={t.title}>
           <button
             type="button"
             className={styles.filterButton}
             aria-pressed={filter === 'all'}
-            onClick={() => { setFilter('all'); }}
+            onClick={() => {
+              setFilter('all');
+            }}
           >
             {t.allFilter} <span>{inbox.data.length}</span>
           </button>
@@ -171,7 +195,9 @@ export function CustomerNotifications() {
             type="button"
             className={styles.filterButton}
             aria-pressed={filter === 'unread'}
-            onClick={() => { setFilter('unread'); }}
+            onClick={() => {
+              setFilter('unread');
+            }}
           >
             {t.unreadFilter} <span>{inbox.unread_count}</span>
           </button>
@@ -196,7 +222,9 @@ export function CustomerNotifications() {
                         {notice.read_at ? t.readStatus : t.newStatus}
                       </span>
                     </div>
-                    <p className={styles.message} dir="auto">{notice.message}</p>
+                    <p className={styles.message} dir="auto">
+                      {notice.message}
+                    </p>
                     <time className={styles.date} dateTime={notice.created_at}>
                       {new Date(notice.created_at).toLocaleString(
                         language === 'ar' ? 'ar-SA' : language === 'fr' ? 'fr-FR' : 'en-GB',
