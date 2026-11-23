@@ -204,7 +204,7 @@ export function SellerStoreManagement({ memberships, onStoreUpdated }: Props) {
 
   const saveStore = async (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
-    if (!profile || (saving || savingRef.current)) return;
+    if (!profile || saving || savingRef.current) return;
     if (!storeAr.trim() || !storeEn.trim()) {
       setError(
         tr('أدخل اسمي المتجر بالعربية والإنجليزية.', 'Enter both Arabic and English store names.'),
@@ -245,7 +245,7 @@ export function SellerStoreManagement({ memberships, onStoreUpdated }: Props) {
 
   const saveBranch = async (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
-    if (editBranch === null || (saving || savingRef.current)) return;
+    if (editBranch === null || saving || savingRef.current) return;
     if (
       !branchDraft.name_ar.trim() ||
       !branchDraft.name_en.trim() ||
@@ -296,7 +296,7 @@ export function SellerStoreManagement({ memberships, onStoreUpdated }: Props) {
   };
 
   const deleteBranch = async (id: number) => {
-    if ((saving || savingRef.current)) return;
+    if (saving || savingRef.current) return;
     savingRef.current = true;
     setSaving(true);
     setError('');
@@ -328,7 +328,7 @@ export function SellerStoreManagement({ memberships, onStoreUpdated }: Props) {
 
   const createZone = async (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
-    if ((saving || savingRef.current)) return;
+    if (saving || savingRef.current) return;
     if (
       !zoneDraft.name_ar.trim() ||
       !zoneDraft.name_en.trim() ||
@@ -386,7 +386,7 @@ export function SellerStoreManagement({ memberships, onStoreUpdated }: Props) {
 
   const createBranch = async (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
-    if ((saving || savingRef.current)) return;
+    if (saving || savingRef.current) return;
     const zoneId = Number(newBranch.service_zone_id);
     const lat = Number(newBranch.lat);
     const lng = Number(newBranch.lng);

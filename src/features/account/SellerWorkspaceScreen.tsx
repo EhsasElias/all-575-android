@@ -1558,7 +1558,9 @@ export function SellerWorkspaceScreen() {
                                   <button
                                     type="button"
                                     className="seller-order-primary"
-                                    disabled={busy || completedOrderSteps.has(order.id + ':preparing')}
+                                    disabled={
+                                      busy || completedOrderSteps.has(order.id + ':preparing')
+                                    }
                                     onClick={() => void changeStatus(order.id, 'preparing')}
                                   >
                                     {tr('بدء التجهيز', 'Start preparing')}

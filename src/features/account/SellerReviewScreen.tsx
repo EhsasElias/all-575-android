@@ -709,21 +709,31 @@ export function SellerReviewScreen() {
                           <div style={{ ...fields, marginTop: 10 }}>
                             <button
                               type="button"
-                              disabled={busy || completedActions.has('seller-application:' + item.id)}
+                              disabled={
+                                busy || completedActions.has('seller-application:' + item.id)
+                              }
                               onClick={() => void saveApplicationDecision(item.id, 'approve')}
                             >
                               {tr('اعتماد البائع', 'Approve seller')}
                             </button>
                             <button
                               type="button"
-                              disabled={busy || reason.trim().length < 10 || completedActions.has('seller-application:' + item.id)}
+                              disabled={
+                                busy ||
+                                reason.trim().length < 10 ||
+                                completedActions.has('seller-application:' + item.id)
+                              }
                               onClick={() => void saveApplicationDecision(item.id, 'correction')}
                             >
                               {tr('طلب تصحيح', 'Request correction')}
                             </button>
                             <button
                               type="button"
-                              disabled={busy || reason.trim().length < 10 || completedActions.has('seller-application:' + item.id)}
+                              disabled={
+                                busy ||
+                                reason.trim().length < 10 ||
+                                completedActions.has('seller-application:' + item.id)
+                              }
                               onClick={() => void saveApplicationDecision(item.id, 'reject')}
                             >
                               {tr('رفض الطلب', 'Reject')}
@@ -833,7 +843,12 @@ export function SellerReviewScreen() {
                       </button>
                       <button
                         type="button"
-                        disabled={busy || selected !== item.id || reason.trim().length < 10 || completedActions.has('seller-product:' + item.id)}
+                        disabled={
+                          busy ||
+                          selected !== item.id ||
+                          reason.trim().length < 10 ||
+                          completedActions.has('seller-product:' + item.id)
+                        }
                         onClick={() => void saveProductDecision(item.id, 'reject')}
                       >
                         {tr('رفض المنتج', 'Reject')}
@@ -1046,7 +1061,11 @@ export function SellerReviewScreen() {
                           </button>
                           <button
                             type="button"
-                            disabled={busy || !categoryReviewNotes[item.id]?.trim() || completedActions.has('category-request:' + item.id)}
+                            disabled={
+                              busy ||
+                              !categoryReviewNotes[item.id]?.trim() ||
+                              completedActions.has('category-request:' + item.id)
+                            }
                             onClick={() => void categoryRequestDecision(item.id, 'reject')}
                           >
                             {tr('رفض الطلب', 'Reject')}

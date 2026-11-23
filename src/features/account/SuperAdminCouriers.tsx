@@ -7,7 +7,7 @@ import {
   type CourierChoice,
 } from './courierOperationsApi';
 
-export function SuperAdminCouriers({ ar }: { ar: boolean }) {
+export function SuperAdminCouriers({ ar, reviewRevision = 0 }: { ar: boolean; reviewRevision?: number }) {
   const { i18n } = useTranslation();
   const fr = i18n.language.startsWith('fr');
   const tr = (a: string, en: keyof typeof courierAdminFrench) =>
@@ -30,7 +30,7 @@ export function SuperAdminCouriers({ ar }: { ar: boolean }) {
       active = false;
     };
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [revision]);
+  }, [revision, reviewRevision]);
   return (
     <section
       id="courier-approvals"
@@ -74,7 +74,11 @@ export function SuperAdminCouriers({ ar }: { ar: boolean }) {
                       setError('');
                       void superAdminApproveCourier(c.id, true)
                         .then(() => {
-                          setItems((previous) => previous.map((item) => item.id === c.id ? { ...item, approval_status: 'approved' } : item));
+                          setItems((previous) =>
+                            previous.map((item) =>
+                              item.id === c.id ? { ...item, approval_status: 'approved' } : item,
+                            ),
+                          );
                           setRevision((v) => v + 1);
                         })
                         .catch(() => {
@@ -98,7 +102,11 @@ export function SuperAdminCouriers({ ar }: { ar: boolean }) {
                       setError('');
                       void superAdminApproveCourier(c.id, false)
                         .then(() => {
-                          setItems((previous) => previous.map((item) => item.id === c.id ? { ...item, approval_status: 'rejected' } : item));
+                          setItems((previous) =>
+                            previous.map((item) =>
+                              item.id === c.id ? { ...item, approval_status: 'rejected' } : item,
+                            ),
+                          );
                           setRevision((v) => v + 1);
                         })
                         .catch(() => {

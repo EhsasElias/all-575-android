@@ -124,10 +124,14 @@ export function AccountSidebar({ onNavigate }: { onNavigate?: () => void }) {
           {tr('لوحة العميل', 'Customer dashboard', 'Tableau de bord client')}
         </Link>
         <div className={styles.roleActions}>
-          <Link className={styles.link} to={routeTo.roleApplication('admin')} onClick={onNavigate}>
+          <Link className={pathname === routeTo.roleApplication('admin') ? styles.selectedRole : styles.roleLink} to={routeTo.roleApplication('admin')} onClick={onNavigate}>
             {tr('الانضمام كمسؤول', 'Become Admin', 'Devenir administrateur')}
           </Link>
-          <Link className={styles.link} to={routeTo.roleApplication('courier')} onClick={onNavigate}>
+          <Link
+            className={pathname === routeTo.roleApplication('courier') ? styles.selectedRole : styles.roleLink}
+            to={routeTo.roleApplication('courier')}
+            onClick={onNavigate}
+          >
             {tr('الانضمام كمندوب توصيل', 'Become Delivery', 'Devenir livreur')}
           </Link>
         </div>

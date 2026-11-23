@@ -32,7 +32,7 @@ describe('Home', () => {
       '/categories',
     );
 
-    const popular = screen.getByRole('region', { name: 'Popular' });
+    const popular = screen.getByRole('region', { name: 'All products' });
     expect(await within(popular).findByRole('link', { name: 'Biscuits' })).toHaveAttribute(
       'href',
       '/products/demo-food-1',
@@ -51,7 +51,32 @@ describe('Home', () => {
     );
     expect(queriesOf(api, 'GET /products')).toHaveLength(1);
     expect(queriesOf(api, 'GET /products')[0]?.get('per_page')).toBe('12');
+    expect(queriesOf(api, 'GET /products')[0]?.get('sort')).toBe('newest');
     expect(queriesOf(api, 'GET /products')[0]?.has('zone_id')).toBe(false);
+  });
+
+  it('filters the home catalogue and allows changing the sort order', async () => {
+    const api = installCatalogApi();
+    const user = userEvent.setup();
+    await renderHome();
+    await screen.findByRole('link', { name: 'Biscuits' });
+
+    await user.selectOptions(screen.getByRole('combobox', { name: 'Category' }), 'food');
+    await waitFor(() => {
+      expect(queriesOf(api, 'GET /products').at(-1)?.get('category')).toBe('food');
+    });
+
+    await user.selectOptions(screen.getByRole('combobox', { name: 'Sort by' }), 'price_asc');
+    await waitFor(() => {
+      expect(queriesOf(api, 'GET /products').at(-1)?.get('sort')).toBe('price_asc');
+    });
+
+    await user.click(screen.getByRole('button', { name: 'Clear filters' }));
+    await waitFor(() => {
+      const last = queriesOf(api, 'GET /products').at(-1);
+      expect(last?.get('sort')).toBe('newest');
+      expect(last?.has('category')).toBe(false);
+    });
   });
 
   it('links the search entry to /search', async () => {
@@ -72,7 +97,7 @@ describe('Home', () => {
     await renderHome();
     await screen.findByRole('link', { name: 'Item 1' });
 
-    const popular = screen.getByRole('region', { name: 'Popular' });
+    const popular = screen.getByRole('region', { name: 'All products' });
     const images = within(popular).getAllByRole('presentation');
     expect(images.map((image) => image.getAttribute('loading'))).toEqual([
       'eager',
@@ -120,7 +145,7 @@ describe('Home', () => {
     const user = userEvent.setup();
     await renderHome();
 
-    const popular = screen.getByRole('region', { name: 'Popular' });
+    const popular = screen.getByRole('region', { name: 'All products' });
     expect(await within(popular).findByRole('alert')).toHaveTextContent(
       'We could not load the products',
     );
@@ -150,7 +175,7 @@ describe('Home', () => {
       await vi.advanceTimersByTimeAsync(5000);
     });
 
-    const popular = screen.getByRole('region', { name: 'Popular' });
+    const popular = screen.getByRole('region', { name: 'All products' });
     await waitFor(() => {
       expect(within(popular).getByRole('alert')).toBeVisible();
     });
@@ -205,7 +230,7 @@ describe('Home in French', () => {
     expect(await within(categories).findByRole('link', { name: 'Food' })).toBeVisible();
     expect(within(categories).getByRole('link', { name: 'Tout voir' })).toBeVisible();
 
-    const popular = screen.getByRole('region', { name: 'Populaires' });
+    const popular = screen.getByRole('region', { name: 'Tous les produits' });
     expect(await within(popular).findByRole('link', { name: 'Biscuits' })).toBeVisible();
     expect(within(popular).getAllByText(/5,00\s+SAR/)).toHaveLength(3);
     expect(document.documentElement).toHaveAttribute('lang', 'fr');

@@ -6,6 +6,7 @@ import { isApiError } from '@/shared/api';
 import { Page } from './components/Page';
 import { PlatformAdminAssignments } from './PlatformAdminAssignments';
 import { SuperAdminCouriers } from './SuperAdminCouriers';
+import { SuperAdminRoleApplications } from './SuperAdminRoleApplications';
 import {
   exportSuperAdminMetric,
   superAdminDashboard,
@@ -48,6 +49,7 @@ export function SuperAdminDashboardScreen() {
   const [unauthorized, setUnauthorized] = useState(false);
   const [error, setError] = useState('');
   const [revision, setRevision] = useState(0);
+  const [courierReviewRevision, setCourierReviewRevision] = useState(0);
   const [selected, setSelected] = useState<SuperAdminMetricKey | null>(null);
   const [details, setDetails] = useState<SuperAdminMetricPage | null>(null);
   const [detailsPage, setDetailsPage] = useState(1);
@@ -870,7 +872,8 @@ export function SuperAdminDashboardScreen() {
             <div id="admin-accounts" className={(styles.permissions ?? '') + ' admin-family-panel'}>
               <PlatformAdminAssignments />
             </div>
-            <SuperAdminCouriers ar={ar} />
+            <SuperAdminRoleApplications onReviewed={() => setCourierReviewRevision((value) => value + 1)} />
+            <SuperAdminCouriers ar={ar} reviewRevision={courierReviewRevision} />
           </>
         )}
       </div>

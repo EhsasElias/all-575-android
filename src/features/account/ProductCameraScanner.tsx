@@ -15,7 +15,11 @@ export type ProductCameraScannerProps = {
 export function ProductCameraScanner({ onRead, onClose, ar }: ProductCameraScannerProps) {
   const { i18n } = useTranslation();
   const fr = i18n.language.startsWith('fr');
-  const { videoRef, ready, message, setMessage, unavailableMessage } = useProductCamera(onRead, ar, fr);
+  const { videoRef, ready, message, setMessage, unavailableMessage } = useProductCamera(
+    onRead,
+    ar,
+    fr,
+  );
   const [manual, setManual] = useState('');
   const [busyImage, setBusyImage] = useState(false);
 

@@ -94,7 +94,11 @@ export function usePaymentFlow(orderId: string) {
     retryOnce: (method: PayMethod) => {
       if (retryInFlight.current || retryCompletedPayment.current === paymentId) return;
       retryInFlight.current = true;
-      retry.mutate(method, { onSettled: () => { retryInFlight.current = false; } });
+      retry.mutate(method, {
+        onSettled: () => {
+          retryInFlight.current = false;
+        },
+      });
     },
   };
 }

@@ -4,6 +4,42 @@
  */
 
 export interface paths {
+    "/v1/seller/products/import/template.csv": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: {
+            parameters: {
+                query?: never;
+                header?: never;
+                path?: never;
+                cookie?: never;
+            };
+            requestBody?: never;
+            responses: {
+                200: {
+                    headers: {
+                        "Content-Disposition"?: "attachment; filename=\"seller-products-template.csv\"";
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "text/csv; charset=UTF-8": "﻿رمز SKU (إجباري),الباركود (اختياري),المتجر (اختياري),التصنيف (إجباري),اسم المنتج بالعربية (إجباري),اسم المنتج بالإنجليزية (إجباري),الوصف بالعربية (اختياري),الوصف بالإنجليزية (اختياري),السعر بالريال (1–100) (إجباري),فئة الضريبة (إجباري),اسم وحدة البيع بالعربية (اختياري),اسم وحدة البيع بالإنجليزية (اختياري),رابط صورة المنتج HTTPS (اختياري),صورة داخل Excel (اختياري),السبب النظامي للضريبة (إجباري للصفرية والمعفاة)\r\n";
+                    };
+                };
+                401: components["responses"]["AuthenticationException"];
+            };
+        };
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/v1/addresses": {
         parameters: {
             query?: never;
@@ -203,6 +239,234 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/v1/platform/admin/couriers": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["courierOperations.couriers"];
+        put?: never;
+        post: operations["courierOperations.register"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/v1/platform/super-admin/couriers/{courier}/approval": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch: operations["courierOperations.approve"];
+        trace?: never;
+    };
+    "/v1/platform/admin/orders/{suborder}/assign-courier": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post: operations["courierOperations.assign"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/v1/platform/admin/orders/{suborder}/pickup-code": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["courierOperations.pickupCode"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/v1/platform/admin/orders/{suborder}/courier-history": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["courierOperations.history"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/v1/platform/admin/incidents": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["courierOperations.incidentIndex"];
+        put?: never;
+        post: operations["courierOperations.incidentCreate"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/v1/platform/admin/incidents/{incident}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch: operations["courierOperations.incidentUpdate"];
+        trace?: never;
+    };
+    "/v1/platform/admin/daily-status": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["courierOperations.daily"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/v1/courier/profile": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["courierOperations.profile"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/v1/courier/jobs": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["courierOperations.jobs"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/v1/courier/availability": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch: operations["courierOperations.availability"];
+        trace?: never;
+    };
+    "/v1/courier/jobs/{assignment}/respond": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post: operations["courierOperations.respond"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/v1/courier/jobs/{assignment}/pickup": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post: operations["courierOperations.pickup"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/v1/courier/jobs/{assignment}/failed-delivery": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * Record a failed handover without falsely marking the parcel as delivered.
+         *     An unresolved incident blocks repeated reporting of the same failure
+         */
+        post: operations["courierOperations.failedDelivery"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/v1/me/cases": {
         parameters: {
             query?: never;
@@ -300,6 +564,54 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/v1/me/notifications": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["customerNotification.index"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/v1/me/notifications/read-all": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch: operations["customerNotification.readAll"];
+        trace?: never;
+    };
+    "/v1/me/notifications/{notification}/read": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch: operations["customerNotification.read"];
+        trace?: never;
+    };
     "/v1/me/requests": {
         parameters: {
             query?: never;
@@ -325,6 +637,123 @@ export interface paths {
         };
         /** The customer's own hand-over code, available only while that delivery is on its way */
         get: operations["deliveryCode.show"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/v1/me/suborders/{suborder}/delivery-code": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * The buyer requests a separate delivery secret after the parcel is picked up.
+         *     Never expose the secret in courier job lists or tracking responses
+         */
+        post: operations["deliveryVerification.issue"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/v1/courier/jobs/{assignment}/deliver": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** Verify proof under lock before making all delivery state changes */
+        post: operations["deliveryVerification.deliver"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/v1/auth/email/register": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post: operations["emailPasswordAuth.register"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/v1/auth/email/login": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post: operations["emailPasswordAuth.login"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/v1/auth/email/password-reset": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post: operations["emailPasswordAuth.resetPassword"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/v1/finance/approvals": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["financeApprovalReview.index"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/v1/finance/approvals/{approval}/audit": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["financeApprovalReview.audit"];
         put?: never;
         post?: never;
         delete?: never;
@@ -430,6 +859,102 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/v1/auth/passkeys/status": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["passkey.status"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/v1/auth/passkeys/options": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post: operations["passkey.loginOptions"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/v1/auth/passkeys/verify": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post: operations["passkey.login"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/v1/me/passkeys": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["passkey.index"];
+        put?: never;
+        post: operations["passkey.register"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/v1/me/passkeys/options": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post: operations["passkey.registrationOptions"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/v1/me/passkeys/{passkey}/revoke": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post: operations["passkey.destroy"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/v1/payments/{payment}": {
         parameters: {
             query?: never;
@@ -457,6 +982,102 @@ export interface paths {
         get?: never;
         put?: never;
         post: operations["payment.retry"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/v1/platform/super-admin/sellers": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["platformAdminAccess.sellers"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/v1/platform/super-admin/admins": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["platformAdminAccess.index"];
+        put?: never;
+        post: operations["platformAdminAccess.store"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/v1/platform/super-admin/admins/{access}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch: operations["platformAdminAccess.update"];
+        trace?: never;
+    };
+    "/v1/platform/admin/dashboard": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["platformAdminDashboard.show"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/v1/platform/admin/orders": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["platformAdminDashboard.orders"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/v1/platform/admin/inventory": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["platformAdminDashboard.inventory"];
+        put?: never;
+        post?: never;
         delete?: never;
         options?: never;
         head?: never;
@@ -560,6 +1181,38 @@ export interface paths {
         patch: operations["review.update"];
         trace?: never;
     };
+    "/v1/me/role-applications": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["roleApplication.mine"];
+        put?: never;
+        post: operations["roleApplication.submit"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/v1/platform/super-admin/role-applications": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["roleApplication.reviewQueue"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/v1/me/saved-products": {
         parameters: {
             query?: never;
@@ -622,6 +1275,928 @@ export interface paths {
         options?: never;
         head?: never;
         patch?: never;
+        trace?: never;
+    };
+    "/v1/seller/memberships": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Exchange an authenticated customer session for a seller-scoped session.
+         *     A verified account never becomes a seller merely by requesting this endpoint.
+         *     Memberships are assigned and activated by a separately authorized approval process
+         */
+        get: operations["sellerAccess.memberships"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/v1/seller/session": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post: operations["sellerAccess.issue"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/v1/seller/application": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["sellerApplication.show"];
+        put: operations["sellerApplication.save"];
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/v1/seller/application/submit": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post: operations["sellerApplication.submit"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/v1/seller/application/documents": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["sellerApplicationDocument.index"];
+        put?: never;
+        post: operations["sellerApplicationDocument.upload"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/v1/seller/service-zones": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["sellerBranchOnboarding.serviceZones"];
+        put?: never;
+        /**
+         * Demo-only zone creation. Zones affect public delivery availability, so ordinary
+         *     sellers cannot create global service zones without an administrator
+         */
+        post: operations["sellerBranchOnboarding.createServiceZone"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/v1/seller/branches": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["sellerCatalogWorkspace.branches"];
+        put?: never;
+        post: operations["sellerBranchOnboarding.create"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/v1/seller/branches/{branch}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post?: never;
+        delete: operations["sellerBranchProfile.destroy"];
+        options?: never;
+        head?: never;
+        patch: operations["sellerBranchProfile.update"];
+        trace?: never;
+    };
+    "/v1/seller/products/import/template.xlsx": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["v1.sellerCatalogExcelTemplate"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/v1/seller/products/import": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post: operations["v1.sellerCatalogImport"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/v1/seller/products": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["sellerCatalogWorkspace.products"];
+        put?: never;
+        post: operations["sellerProductDraft.store"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/v1/seller/stock": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["sellerCatalogWorkspace.stock"];
+        put?: never;
+        post: operations["v1.sellerStockCreation"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/v1/seller-review/categories": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["sellerCategoryManagement.categories"];
+        put?: never;
+        post: operations["sellerCategoryManagement.create"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/v1/seller-review/categories/{category}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post?: never;
+        delete: operations["sellerCategoryManagement.destroy"];
+        options?: never;
+        head?: never;
+        patch: operations["sellerCategoryManagement.update"];
+        trace?: never;
+    };
+    "/v1/seller-review/category-requests": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["sellerCategoryManagement.requests"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/v1/seller-review/category-requests/{categoryRequest}/decision": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post: operations["sellerCategoryManagement.decide"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/v1/seller/category-requests": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["sellerCategoryManagement.sellerRequests"];
+        put?: never;
+        post: operations["sellerCategoryManagement.requestCategory"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/v1/seller/finance/commission-preview": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["v1.sellerCommissionPreview"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/v1/seller/finance/commission-rates": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["v1.sellerCommissionRate"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/v1/seller/finance/summary": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["sellerFinance.summary"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/v1/seller/finance/ledger": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["v1.sellerFinanceLedger"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/v1/seller/insights": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["sellerInsights.show"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/v1/seller/insights/trend": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Daily sales trend, grouped by order placement date; only delivered merchandise */
+        get: operations["sellerInsights.trend"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/v1/seller/insights/export/{format}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["sellerInsights.export"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/v1/seller/products/code-lookup": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["v1.sellerProductCodeLookup"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/v1/seller/products/{product}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post?: never;
+        delete: operations["sellerProductDraft.destroy"];
+        options?: never;
+        head?: never;
+        patch: operations["sellerProductDraft.update"];
+        trace?: never;
+    };
+    "/v1/seller/products/{product}/submit": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post: operations["sellerProductDraft.submit"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/v1/seller/products/{product}/image": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post: operations["v1.sellerProductImage"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/v1/seller/products/{product}/variants": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post: operations["sellerProductVariant.store"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/v1/seller/finance/refund-allocations": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["v1.sellerRefundAllocation"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/v1/seller/returns": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["sellerReturn.index"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/v1/seller/returns/{case}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["sellerReturn.show"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/v1/seller/returns/{case}/response": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post: operations["sellerReturn.respond"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/v1/seller-review/overview": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["sellerReview.overview"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/v1/seller-review/applications": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["sellerReview.applications"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/v1/seller-review/applications/{application}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["sellerReview.application"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/v1/seller-review/applications/{application}/documents/{document}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["sellerReview.document"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/v1/seller-review/applications/{application}/decision": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post: operations["sellerReview.decideApplication"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/v1/seller-review/branches": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["sellerReview.branches"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/v1/seller-review/branches/{branch}/decision": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post: operations["sellerReview.decideBranch"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/v1/seller-review/products": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["sellerReview.products"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/v1/seller-review/products/{product}/decision": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post: operations["sellerReview.decideProduct"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/v1/seller/finance/settlement-preview": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["v1.sellerSettlementPreview"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/v1/seller/finance/settlement-readiness": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["v1.sellerSettlementReadiness"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/v1/seller/staff": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["sellerStaff.index"];
+        put?: never;
+        post: operations["sellerStaff.store"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/v1/seller/staff/{membership}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch: operations["sellerStaff.update"];
+        trace?: never;
+    };
+    "/v1/seller/staff/{membership}/deactivate": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch: operations["sellerStaff.deactivate"];
+        trace?: never;
+    };
+    "/v1/seller/stock/{stock}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch: operations["v1.sellerStockAdjustment"];
+        trace?: never;
+    };
+    "/v1/seller/stores/{seller}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["sellerStoreProfile.show"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch: operations["sellerStoreProfile.update"];
+        trace?: never;
+    };
+    "/v1/seller/dashboard": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["sellerWorkspace.dashboard"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/v1/seller/orders": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["sellerWorkspace.orders"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/v1/seller/reports/sales": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["sellerWorkspace.salesSummary"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/v1/seller/orders/{suborder}/packing-list": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["sellerWorkspace.packingList"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/v1/seller/orders/export.csv": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["sellerWorkspace.exportOrders"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/v1/seller/orders/export.xlsx": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["sellerWorkspace.exportOrdersExcel"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/v1/seller/orders/{suborder}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["sellerWorkspace.showOrder"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/v1/seller/orders/{suborder}/status": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch: operations["sellerWorkspace.advance"];
         trace?: never;
     };
     "/v1/me/sessions": {
@@ -704,6 +2279,22 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/v1/me/reports/spending.xlsx": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["spendingReport.excel"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/v1/store": {
         parameters: {
             query?: never;
@@ -713,6 +2304,86 @@ export interface paths {
         };
         /** Platform constants the app shows or sends back: the one price, the VAT rate and the current legal text versions */
         get: operations["store.show"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/v1/platform/super-admin/accounts/{user}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch: operations["superAdminAccount.update"];
+        trace?: never;
+    };
+    "/v1/platform/super-admin/sellers/{seller}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch: operations["superAdminAccount.updateSeller"];
+        trace?: never;
+    };
+    "/v1/platform/super-admin/dashboard": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["superAdminDashboard.show"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/v1/platform/super-admin/metrics/{metric}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["superAdminMetric.index"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/v1/platform/super-admin/metrics/{metric}/export/{format}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["superAdminMetric.export"];
         put?: never;
         post?: never;
         delete?: never;
@@ -828,6 +2499,21 @@ export interface components {
             items_count: number;
             subtotal: number;
             currency: string;
+        };
+        /** Category */
+        Category: {
+            id: number;
+            parent_id: number | null;
+            slug: string;
+            name_ar: string;
+            name_en: string;
+            image_path: string | null;
+            sort_order: number;
+            is_active: boolean;
+            /** Format: date-time */
+            created_at: string | null;
+            /** Format: date-time */
+            updated_at: string | null;
         };
         /** CategoryResource */
         CategoryResource: {
@@ -1098,6 +2784,23 @@ export interface components {
          * @enum {string}
          */
         OtpChannel: "phone" | "email";
+        /** Passkey */
+        Passkey: {
+            id: number;
+            user_id: number | string;
+            name: string;
+            credential_id: string;
+            credential: {
+                [key: string]: unknown;
+            };
+            /** Format: date-time */
+            last_used_at: string | null;
+            /** Format: date-time */
+            created_at: string | null;
+            /** Format: date-time */
+            updated_at: string | null;
+            authenticator: string | null;
+        };
         /**
          * PaymentMethod
          * @description Only enabled, supported checkout methods are accepted.
@@ -1230,6 +2933,22 @@ export interface components {
                 en: string;
             };
             logo_url: string | null;
+        };
+        /** ServiceZone */
+        ServiceZone: {
+            id: number;
+            name_ar: string;
+            name_en: string;
+            center_lat: number;
+            center_lng: number;
+            radius_meters: number;
+            delivery_fee_halalas: number;
+            free_delivery_threshold_halalas: number | null;
+            is_active: boolean;
+            /** Format: date-time */
+            created_at: string | null;
+            /** Format: date-time */
+            updated_at: string | null;
         };
         /** SessionResource */
         SessionResource: {
@@ -1377,6 +3096,18 @@ export interface components {
         };
         /** @description Unauthenticated */
         AuthenticationException: {
+            headers: {
+                [name: string]: unknown;
+            };
+            content: {
+                "application/json": {
+                    /** @description Error overview. */
+                    message: string;
+                };
+            };
+        };
+        /** @description Not found */
+        ModelNotFoundException: {
             headers: {
                 [name: string]: unknown;
             };
@@ -1842,6 +3573,700 @@ export interface operations {
             422: components["responses"]["ValidationException"];
         };
     };
+    "courierOperations.couriers": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        data: Record<string, never>[];
+                    };
+                };
+            };
+            401: components["responses"]["AuthenticationException"];
+            /** @description An error */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        /**
+                         * @description Error overview.
+                         * @example
+                         */
+                        message: string;
+                    };
+                };
+            };
+        };
+    };
+    "courierOperations.register": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": {
+                    user_id: number;
+                    service_zone_id: number;
+                    /** @enum {string} */
+                    vehicle_type: "motorcycle" | "car" | "van" | "bicycle";
+                };
+            };
+        };
+        responses: {
+            201: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        data: {
+                            id: number;
+                            /** @constant */
+                            approval_status: "pending";
+                        };
+                    };
+                };
+            };
+            401: components["responses"]["AuthenticationException"];
+            /** @description An error */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        /**
+                         * @description Error overview.
+                         * @example
+                         */
+                        message: string;
+                    };
+                };
+            };
+            /** @description An error */
+            409: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        /**
+                         * @description Error overview.
+                         * @example
+                         */
+                        message: string;
+                    };
+                };
+            };
+            422: components["responses"]["ValidationException"];
+        };
+    };
+    "courierOperations.approve": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                courier: number;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": {
+                    approved: boolean;
+                };
+            };
+        };
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        data: {
+                            /** @enum {string} */
+                            approval_status: "approved" | "rejected";
+                        };
+                    };
+                };
+            };
+            401: components["responses"]["AuthenticationException"];
+            /** @description An error */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        /**
+                         * @description Error overview.
+                         * @example
+                         */
+                        message: string;
+                    };
+                };
+            };
+            404: components["responses"]["ModelNotFoundException"];
+            422: components["responses"]["ValidationException"];
+        };
+    };
+    "courierOperations.assign": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                suborder: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": {
+                    courier_profile_id: number;
+                    reason?: string | null;
+                };
+            };
+        };
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        data: {
+                            assignment_id: number;
+                            /** @constant */
+                            status: "offered";
+                        };
+                    };
+                };
+            };
+            401: components["responses"]["AuthenticationException"];
+            /** @description An error */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        /**
+                         * @description Error overview.
+                         * @example
+                         */
+                        message: string;
+                    };
+                };
+            };
+            422: components["responses"]["ValidationException"];
+        };
+    };
+    "courierOperations.pickupCode": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                suborder: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        data: {
+                            pickup_code: string;
+                        };
+                    };
+                };
+            };
+            401: components["responses"]["AuthenticationException"];
+            /** @description An error */
+            409: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        /**
+                         * @description Error overview.
+                         * @example
+                         */
+                        message: string;
+                    };
+                };
+            };
+        };
+    };
+    "courierOperations.history": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                suborder: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        data: Record<string, never>[];
+                    };
+                };
+            };
+            401: components["responses"]["AuthenticationException"];
+        };
+    };
+    "courierOperations.incidentIndex": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        data: Record<string, never>[];
+                    };
+                };
+            };
+            401: components["responses"]["AuthenticationException"];
+            /** @description An error */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        /**
+                         * @description Error overview.
+                         * @example
+                         */
+                        message: string;
+                    };
+                };
+            };
+        };
+    };
+    "courierOperations.incidentCreate": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": {
+                    suborder_id: string;
+                    /** @enum {string} */
+                    type: "complaint" | "refund" | "delivery_issue";
+                    description: string;
+                    assigned_to?: number | null;
+                };
+            };
+        };
+        responses: {
+            201: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        data: {
+                            id: number;
+                        };
+                    };
+                };
+            };
+            401: components["responses"]["AuthenticationException"];
+            /** @description An error */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        /**
+                         * @description Error overview.
+                         * @example
+                         */
+                        message: string;
+                    };
+                };
+            };
+            422: components["responses"]["ValidationException"];
+        };
+    };
+    "courierOperations.incidentUpdate": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                incident: number;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": {
+                    /** @enum {string} */
+                    status: "open" | "investigating" | "resolved";
+                    resolution?: string | null;
+                };
+            };
+        };
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        data: {
+                            id: number;
+                            status: string;
+                        };
+                    };
+                };
+            };
+            401: components["responses"]["AuthenticationException"];
+            /** @description An error */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        /**
+                         * @description Error overview.
+                         * @example
+                         */
+                        message: string;
+                    };
+                };
+            };
+            404: components["responses"]["ModelNotFoundException"];
+            422: components["responses"]["ValidationException"];
+        };
+    };
+    "courierOperations.daily": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        data: {
+                            day: string;
+                            open_incidents: number;
+                            resolved_today: number;
+                            ready_orders: number;
+                            picked_up_today: number;
+                        };
+                    };
+                };
+            };
+            401: components["responses"]["AuthenticationException"];
+            /** @description An error */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        /**
+                         * @description Error overview.
+                         * @example
+                         */
+                        message: string;
+                    };
+                };
+            };
+        };
+    };
+    "courierOperations.profile": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        data: {
+                            id: string;
+                            service_zone_id: string;
+                            approval_status: string;
+                            vehicle_type: string;
+                            is_online: boolean;
+                        };
+                    };
+                };
+            };
+            401: components["responses"]["AuthenticationException"];
+        };
+    };
+    "courierOperations.jobs": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        data: Record<string, never>[];
+                    };
+                };
+            };
+            401: components["responses"]["AuthenticationException"];
+            /** @description An error */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        /**
+                         * @description Error overview.
+                         * @example
+                         */
+                        message: string;
+                    };
+                };
+            };
+        };
+    };
+    "courierOperations.availability": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": {
+                    is_online: boolean;
+                };
+            };
+        };
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        data: {
+                            is_online: string;
+                        };
+                    };
+                };
+            };
+            401: components["responses"]["AuthenticationException"];
+            /** @description An error */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        /**
+                         * @description Error overview.
+                         * @example
+                         */
+                        message: string;
+                    };
+                };
+            };
+            422: components["responses"]["ValidationException"];
+        };
+    };
+    "courierOperations.respond": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                assignment: number;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": {
+                    /** @enum {string} */
+                    decision: "accept" | "decline";
+                };
+            };
+        };
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": string;
+                };
+            };
+            401: components["responses"]["AuthenticationException"];
+            /** @description An error */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        /**
+                         * @description Error overview.
+                         * @example
+                         */
+                        message: string;
+                    };
+                };
+            };
+            422: components["responses"]["ValidationException"];
+        };
+    };
+    "courierOperations.pickup": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                assignment: number;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": {
+                    pickup_code: string;
+                    parcel_count: number;
+                };
+            };
+        };
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        data: {
+                            /** @enum {string} */
+                            status: "picked_up" | "invalid_code";
+                        };
+                    };
+                };
+            };
+            401: components["responses"]["AuthenticationException"];
+            422: components["responses"]["ValidationException"];
+        };
+    };
+    "courierOperations.failedDelivery": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                assignment: number;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": {
+                    /** @enum {string} */
+                    reason: "customer_absent" | "address_issue" | "customer_refused" | "other";
+                    description: string;
+                };
+            };
+        };
+        responses: {
+            201: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        data: {
+                            incident_id: number;
+                            /** @constant */
+                            status: "open";
+                        };
+                    };
+                };
+            };
+            401: components["responses"]["AuthenticationException"];
+            /** @description An error */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        /**
+                         * @description Error overview.
+                         * @example
+                         */
+                        message: string;
+                    };
+                };
+            };
+            422: components["responses"]["ValidationException"];
+        };
+    };
     "customerCase.index": {
         parameters: {
             query?: never;
@@ -2024,6 +4449,93 @@ export interface operations {
             401: components["responses"]["AuthenticationException"];
         };
     };
+    "customerNotification.index": {
+        parameters: {
+            query?: {
+                before_id?: string;
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        data: Record<string, never>[];
+                        unread_count: number;
+                    };
+                };
+            };
+            401: components["responses"]["AuthenticationException"];
+        };
+    };
+    "customerNotification.readAll": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        data: {
+                            read: boolean;
+                        };
+                    };
+                };
+            };
+            401: components["responses"]["AuthenticationException"];
+        };
+    };
+    "customerNotification.read": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                notification: number;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        data: {
+                            read: boolean;
+                            updated: boolean;
+                        };
+                    };
+                };
+            };
+            401: components["responses"]["AuthenticationException"];
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        /** @constant */
+                        message: "Notification not found";
+                    };
+                };
+            };
+        };
+    };
     "customerRequest.index": {
         parameters: {
             query?: never;
@@ -2122,6 +4634,244 @@ export interface operations {
                             code: string;
                             expires_at: string;
                         };
+                    };
+                };
+            };
+            401: components["responses"]["AuthenticationException"];
+        };
+    };
+    "deliveryVerification.issue": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                suborder: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            201: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        data: {
+                            delivery_code: string;
+                            /** @constant */
+                            expires_in_seconds: 600;
+                        };
+                    };
+                };
+            };
+            401: components["responses"]["AuthenticationException"];
+        };
+    };
+    "deliveryVerification.deliver": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                assignment: number;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": {
+                    delivery_code: string;
+                };
+            };
+        };
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        data: {
+                            /** @enum {string} */
+                            status: "delivered" | "invalid_code";
+                        };
+                    };
+                };
+            };
+            401: components["responses"]["AuthenticationException"];
+            /** @description An error */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        /**
+                         * @description Error overview.
+                         * @example
+                         */
+                        message: string;
+                    };
+                };
+            };
+            422: components["responses"]["ValidationException"];
+        };
+    };
+    "emailPasswordAuth.register": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": {
+                    /** Format: email */
+                    email: string;
+                    password: string;
+                    consents: {
+                        terms_version: string;
+                        privacy_version: string;
+                        marketing?: boolean;
+                    };
+                };
+            };
+        };
+        responses: {
+            202: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        data: {
+                            challenge_id: string;
+                            expires_in: number;
+                            resend_after: number;
+                        };
+                    };
+                };
+            };
+            422: components["responses"]["ValidationException"];
+        };
+    };
+    "emailPasswordAuth.login": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": {
+                    /** Format: email */
+                    email: string;
+                    password: string;
+                    device_name?: string | null;
+                };
+            };
+        };
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        data: {
+                            token: string;
+                            /** @constant */
+                            token_type: "Bearer";
+                            is_new_user: boolean;
+                            user: components["schemas"]["UserResource"];
+                        };
+                    };
+                };
+            };
+            422: components["responses"]["ValidationException"];
+        };
+    };
+    "emailPasswordAuth.resetPassword": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": {
+                    challenge_id: string;
+                    code: string;
+                    password: string;
+                    device_name?: string | null;
+                };
+            };
+        };
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        data: {
+                            token: string;
+                            user: components["schemas"]["UserResource"];
+                            is_new_user: boolean;
+                        };
+                    };
+                };
+            };
+            422: components["responses"]["ValidationException"];
+        };
+    };
+    "financeApprovalReview.index": {
+        parameters: {
+            query?: {
+                status?: "pending_second_approval" | "approved" | "rejected" | "executed";
+                limit?: number;
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        data: Record<string, never>[];
+                    };
+                };
+            };
+            401: components["responses"]["AuthenticationException"];
+            422: components["responses"]["ValidationException"];
+        };
+    };
+    "financeApprovalReview.audit": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                approval: number;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        data: Record<string, never>[];
                     };
                 };
             };
@@ -2241,6 +4991,12 @@ export interface operations {
                 q?: string | null;
                 from?: string | null;
                 to?: string | null;
+                product?: string | null;
+                seller?: string | null;
+                branch?: string | null;
+                payment_method?: "mada" | "card" | "apple_pay" | "cash_on_delivery" | "none" | null;
+                min_price?: number | null;
+                max_price?: number | null;
                 per_page?: number | null;
             };
             header?: never;
@@ -2330,6 +5086,241 @@ export interface operations {
             401: components["responses"]["AuthenticationException"];
         };
     };
+    "passkey.status": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        data: {
+                            enabled: boolean;
+                        };
+                    };
+                };
+            };
+        };
+    };
+    "passkey.loginOptions": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        data: {
+                            challenge_id: string;
+                            options: {
+                                [key: string]: unknown;
+                            };
+                        };
+                    };
+                };
+            };
+        };
+    };
+    "passkey.login": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": {
+                    challenge_id: string;
+                    credential: {
+                        id: string;
+                        rawId: string;
+                        response: string[];
+                        /** @enum {string} */
+                        type: "public-key";
+                    };
+                    device_name?: string | null;
+                };
+            };
+        };
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        data: {
+                            token: string;
+                            /** @constant */
+                            token_type: "Bearer";
+                            is_new_user: boolean;
+                            user: components["schemas"]["UserResource"];
+                        };
+                    };
+                };
+            };
+            /** @description An error */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        /**
+                         * @description Error overview.
+                         * @example
+                         */
+                        message: string;
+                    };
+                };
+            };
+            422: components["responses"]["ValidationException"];
+        };
+    };
+    "passkey.index": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        data: components["schemas"]["Passkey"][];
+                    };
+                };
+            };
+            401: components["responses"]["AuthenticationException"];
+        };
+    };
+    "passkey.register": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": {
+                    challenge_id: string;
+                    name: string;
+                    credential: {
+                        id: string;
+                        rawId: string;
+                        response: string[];
+                        /** @enum {string} */
+                        type: "public-key";
+                    };
+                };
+            };
+        };
+        responses: {
+            201: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        data: {
+                            id: number;
+                            name: string;
+                        };
+                    };
+                };
+            };
+            401: components["responses"]["AuthenticationException"];
+            422: components["responses"]["ValidationException"];
+        };
+    };
+    "passkey.registrationOptions": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": {
+                    password: string;
+                };
+            };
+        };
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        data: {
+                            challenge_id: string;
+                            options: {
+                                [key: string]: unknown;
+                            };
+                        };
+                    };
+                };
+            };
+            401: components["responses"]["AuthenticationException"];
+            422: components["responses"]["ValidationException"];
+        };
+    };
+    "passkey.destroy": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                passkey: number;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": {
+                    password: string;
+                };
+            };
+        };
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        data: {
+                            deleted: boolean;
+                        };
+                    };
+                };
+            };
+            401: components["responses"]["AuthenticationException"];
+            422: components["responses"]["ValidationException"];
+        };
+    };
     "payment.show": {
         parameters: {
             query?: never;
@@ -2385,6 +5376,255 @@ export interface operations {
             422: components["responses"]["ValidationException"];
         };
     };
+    "platformAdminAccess.sellers": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        data: Record<string, never>[];
+                    };
+                };
+            };
+            401: components["responses"]["AuthenticationException"];
+        };
+    };
+    "platformAdminAccess.index": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        data: Record<string, never>[];
+                    };
+                };
+            };
+            401: components["responses"]["AuthenticationException"];
+        };
+    };
+    "platformAdminAccess.store": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": {
+                    /** Format: email */
+                    email: string;
+                    seller_id: number;
+                    can_view_orders: boolean;
+                    can_view_inventory: boolean;
+                };
+            };
+        };
+        responses: {
+            201: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        data: Record<string, never>;
+                    };
+                };
+            };
+            401: components["responses"]["AuthenticationException"];
+            422: components["responses"]["ValidationException"];
+        };
+    };
+    "platformAdminAccess.update": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                access: number;
+            };
+            cookie?: never;
+        };
+        requestBody?: {
+            content: {
+                "application/json": {
+                    is_active?: boolean;
+                    can_view_orders?: boolean;
+                    can_view_inventory?: boolean;
+                };
+            };
+        };
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        data: Record<string, never> | null;
+                    };
+                };
+            };
+            401: components["responses"]["AuthenticationException"];
+            404: components["responses"]["ModelNotFoundException"];
+            422: components["responses"]["ValidationException"];
+        };
+    };
+    "platformAdminDashboard.show": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        data: {
+                            assigned_sellers: number;
+                            order_access_sellers: number;
+                            inventory_access_sellers: number;
+                            suborders: number;
+                            suborder_statuses: unknown[];
+                            stock_records: number;
+                            low_stock_records: number;
+                            generated_at: string;
+                        };
+                    };
+                };
+            };
+            401: components["responses"]["AuthenticationException"];
+            /** @description An error */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        /**
+                         * @description Error overview.
+                         * @example
+                         */
+                        message: string;
+                    };
+                };
+            };
+        };
+    };
+    "platformAdminDashboard.orders": {
+        parameters: {
+            query?: {
+                limit?: number;
+                status?: "awaiting_seller" | "preparing" | "ready" | "on_the_way" | "delivered" | "cancelled";
+                before_id?: string;
+                from?: string;
+                to?: string;
+                seller_id?: number;
+                branch_id?: number;
+                q?: string;
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        data: Record<string, never>[] | string;
+                    };
+                };
+            };
+            401: components["responses"]["AuthenticationException"];
+            /** @description An error */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        /**
+                         * @description Error overview.
+                         * @example
+                         */
+                        message: string;
+                    };
+                };
+            };
+            422: components["responses"]["ValidationException"];
+        };
+    };
+    "platformAdminDashboard.inventory": {
+        parameters: {
+            query?: {
+                limit?: number;
+                before_id?: number;
+                seller_id?: number;
+                branch_id?: number;
+                low_stock_only?: boolean;
+                q?: string;
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        data: Record<string, never>[] | string;
+                    };
+                };
+            };
+            401: components["responses"]["AuthenticationException"];
+            /** @description An error */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        /**
+                         * @description Error overview.
+                         * @example
+                         */
+                        message: string;
+                    };
+                };
+            };
+            422: components["responses"]["ValidationException"];
+        };
+    };
     "product.index": {
         parameters: {
             query?: {
@@ -2404,7 +5644,7 @@ export interface operations {
         };
         requestBody?: never;
         responses: {
-            /** @description Paginated set of `ProductListResource` */
+            /** @description Array of `ProductListResource` */
             200: {
                 headers: {
                     [name: string]: unknown;
@@ -2412,22 +5652,6 @@ export interface operations {
                 content: {
                     "application/json": {
                         data: components["schemas"]["ProductListResource"][];
-                        links: {
-                            first: string | null;
-                            last: string | null;
-                            prev: string | null;
-                            next: string | null;
-                        };
-                        meta: {
-                            /** @description Base path for paginator generated URLs. */
-                            path: string | null;
-                            /** @description Number of items shown per page. */
-                            per_page: number;
-                            /** @description The "cursor" that points to the next set of items. */
-                            next_cursor: string | null;
-                            /** @description The "cursor" that points to the previous set of items. */
-                            prev_cursor: string | null;
-                        };
                     };
                 };
             };
@@ -2511,6 +5735,7 @@ export interface operations {
                             delivery_fee: number;
                             total: number;
                             vat_included: number;
+                            vat_amount: number;
                             vat: {
                                 vat_class: string;
                                 rate_basis_points: number;
@@ -2633,6 +5858,113 @@ export interface operations {
             };
             401: components["responses"]["AuthenticationException"];
             422: components["responses"]["ValidationException"];
+        };
+    };
+    "roleApplication.mine": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        data: Record<string, never>[];
+                    };
+                };
+            };
+            401: components["responses"]["AuthenticationException"];
+        };
+    };
+    "roleApplication.submit": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": {
+                    /** @enum {string} */
+                    requested_role: "admin" | "courier";
+                    motivation: string;
+                    /** @enum {string|null} */
+                    vehicle_type?: "motorcycle" | "car" | "van" | "bicycle" | null;
+                };
+            };
+        };
+        responses: {
+            201: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        data: Record<string, never>;
+                    };
+                };
+            };
+            401: components["responses"]["AuthenticationException"];
+            /** @description An error */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        /**
+                         * @description Error overview.
+                         * @example
+                         */
+                        message: string;
+                    };
+                };
+            };
+            422: components["responses"]["ValidationException"];
+        };
+    };
+    "roleApplication.reviewQueue": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        data: Record<string, never>[];
+                    };
+                };
+            };
+            401: components["responses"]["AuthenticationException"];
+            /** @description An error */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        /**
+                         * @description Error overview.
+                         * @example
+                         */
+                        message: string;
+                    };
+                };
+            };
         };
     };
     "savedProduct.index": {
@@ -2807,6 +6139,2509 @@ export interface operations {
             };
         };
     };
+    "sellerAccess.memberships": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        data: Record<string, never>[];
+                    };
+                };
+            };
+            401: components["responses"]["AuthenticationException"];
+        };
+    };
+    "sellerAccess.issue": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": {
+                    device_name: string;
+                };
+            };
+        };
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        data: {
+                            token: string;
+                            /** @constant */
+                            token_type: "Bearer";
+                        };
+                    };
+                };
+            };
+            401: components["responses"]["AuthenticationException"];
+            /** @description An error */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        /**
+                         * @description Error overview.
+                         * @example
+                         */
+                        message: string;
+                    };
+                };
+            };
+            422: components["responses"]["ValidationException"];
+        };
+    };
+    "sellerApplication.show": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        data: Record<string, never> | null;
+                    };
+                };
+            };
+            401: components["responses"]["AuthenticationException"];
+        };
+    };
+    "sellerApplication.save": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": {
+                    legal_name: string;
+                    commercial_registration: string;
+                    national_unified_number?: string | null;
+                    vat_number?: string | null;
+                    contact_name: string;
+                    /** Format: email */
+                    contact_email: string;
+                    contact_phone: string;
+                    city: string;
+                    entity_type?: string | null;
+                    commercial_registration_status?: string | null;
+                    /** Format: date */
+                    commercial_registration_issue_date?: string | null;
+                    /** Format: date */
+                    commercial_registration_expiry_date?: string | null;
+                    chamber_of_commerce_number?: string | null;
+                    building_number?: string | null;
+                    postal_code?: string | null;
+                    additional_number?: string | null;
+                    street?: string | null;
+                    district?: string | null;
+                    iban?: string | null;
+                };
+            };
+        };
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        data: Record<string, never> | null;
+                    };
+                };
+            };
+            401: components["responses"]["AuthenticationException"];
+            /** @description An error */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        /**
+                         * @description Error overview.
+                         * @example
+                         */
+                        message: string;
+                    };
+                };
+            };
+            422: components["responses"]["ValidationException"];
+        };
+    };
+    "sellerApplication.submit": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        data: Record<string, never> | null;
+                    };
+                };
+            };
+            401: components["responses"]["AuthenticationException"];
+            /** @description An error */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        /**
+                         * @description Error overview.
+                         * @example
+                         */
+                        message: string;
+                    };
+                };
+            };
+        };
+    };
+    "sellerApplicationDocument.index": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        data: Record<string, never>[];
+                    } | {
+                        data: string[];
+                    };
+                };
+            };
+            401: components["responses"]["AuthenticationException"];
+        };
+    };
+    "sellerApplicationDocument.upload": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "multipart/form-data": {
+                    document_type: string;
+                    /**
+                     * Format: binary
+                     * @description Maximum file size: 10000 kilobytes.
+                     */
+                    file: string;
+                };
+            };
+        };
+        responses: {
+            201: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        data: {
+                            document_type: string;
+                            original_name: string;
+                            size_bytes: string;
+                        };
+                    };
+                };
+            };
+            401: components["responses"]["AuthenticationException"];
+            /** @description An error */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        /**
+                         * @description Error overview.
+                         * @example
+                         */
+                        message: string;
+                    };
+                };
+            };
+            /** @description An error */
+            409: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        /**
+                         * @description Error overview.
+                         * @example Submitted documents cannot be changed.
+                         */
+                        message: string;
+                    };
+                };
+            };
+            422: components["responses"]["ValidationException"];
+            /** @description An error */
+            500: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        /**
+                         * @description Error overview.
+                         * @example Unable to store document.
+                         */
+                        message: string;
+                    };
+                };
+            };
+        };
+    };
+    "sellerBranchOnboarding.serviceZones": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        data: components["schemas"]["ServiceZone"][];
+                    };
+                };
+            };
+            401: components["responses"]["AuthenticationException"];
+        };
+    };
+    "sellerBranchOnboarding.createServiceZone": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": {
+                    seller_id: number;
+                    name_ar: string;
+                    name_en: string;
+                    center_lat: number;
+                    center_lng: number;
+                    radius_meters: number;
+                };
+            };
+        };
+        responses: {
+            201: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        data: {
+                            id: number;
+                            name_ar: string;
+                            name_en: string;
+                            center_lat: number;
+                            center_lng: number;
+                            radius_meters: number;
+                        };
+                    };
+                };
+            };
+            401: components["responses"]["AuthenticationException"];
+            /**
+             * @description An error
+             *
+             *     An error
+             */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        /**
+                         * @description Error overview.
+                         * @example إنشاء مناطق جديدة متاح لحساب العرض التجريبي فقط.
+                         */
+                        message: string;
+                    } | {
+                        /**
+                         * @description Error overview.
+                         * @example
+                         */
+                        message: string;
+                    };
+                };
+            };
+            422: components["responses"]["ValidationException"];
+        };
+    };
+    "sellerCatalogWorkspace.branches": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        data: Record<string, never>[];
+                    };
+                };
+            };
+            401: components["responses"]["AuthenticationException"];
+        };
+    };
+    "sellerBranchOnboarding.create": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": {
+                    seller_id: number;
+                    service_zone_id: number;
+                    code: string;
+                    name_ar: string;
+                    name_en: string;
+                    lat: number;
+                    lng: number;
+                    service_zone_ids?: number[];
+                };
+            };
+        };
+        responses: {
+            201: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        data: {
+                            id: number;
+                            seller_id: number;
+                            code: string;
+                            is_active: boolean;
+                            service_zone_id: number;
+                            service_zone_ids: unknown[];
+                            review_required: boolean;
+                        };
+                    };
+                };
+            };
+            401: components["responses"]["AuthenticationException"];
+            404: components["responses"]["ModelNotFoundException"];
+            422: components["responses"]["ValidationException"];
+        };
+    };
+    "sellerBranchProfile.destroy": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                branch: number;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        data: {
+                            deleted: boolean;
+                        };
+                    };
+                };
+            };
+            401: components["responses"]["AuthenticationException"];
+            /** @description An error */
+            409: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        /**
+                         * @description Error overview.
+                         * @example لا يمكن حذف فرع مرتبط بسجلات أخرى.
+                         */
+                        message: string;
+                    };
+                };
+            };
+        };
+    };
+    "sellerBranchProfile.update": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                branch: number;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": {
+                    code?: string;
+                    name_ar: string;
+                    name_en: string;
+                    service_zone_id?: number;
+                    lat?: number;
+                    lng?: number;
+                    service_zone_ids?: number[];
+                };
+            };
+        };
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        data: {
+                            id: string;
+                            seller_id: string;
+                            code: string;
+                            name_ar: string;
+                            name_en: string;
+                            service_zone_id: number;
+                            service_zone_ids: unknown[];
+                            lat: number;
+                            lng: number;
+                            is_active: boolean;
+                        };
+                    };
+                };
+            };
+            401: components["responses"]["AuthenticationException"];
+            422: components["responses"]["ValidationException"];
+        };
+    };
+    "v1.sellerCatalogExcelTemplate": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    /** @example attachment; filename=seller-products-template.xlsx */
+                    "Content-Disposition": string;
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet": string;
+                };
+            };
+            401: components["responses"]["AuthenticationException"];
+            /** @description An error */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        /**
+                         * @description Error overview.
+                         * @example
+                         */
+                        message: string;
+                    };
+                };
+            };
+            /** @description An error */
+            500: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        /**
+                         * @description Error overview.
+                         * @example
+                         */
+                        message: string;
+                    };
+                };
+            };
+        };
+    };
+    "v1.sellerCatalogImport": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "multipart/form-data": {
+                    seller_id: number;
+                    dry_run?: boolean;
+                    submit_after_import?: boolean;
+                    /**
+                     * Format: binary
+                     * @description Maximum file size: 20480 kilobytes.
+                     */
+                    file: string;
+                };
+            };
+        };
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        data: {
+                            valid_rows: number;
+                            preview: unknown[];
+                            /** @constant */
+                            created_drafts: 0;
+                        };
+                    };
+                };
+            };
+            201: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        data: {
+                            created_drafts: number;
+                            /** @constant */
+                            published: 0;
+                            /** @constant */
+                            submitted_for_review: 0;
+                        };
+                    };
+                };
+            };
+            401: components["responses"]["AuthenticationException"];
+            404: components["responses"]["ModelNotFoundException"];
+            422: components["responses"]["ValidationException"];
+        };
+    };
+    "sellerCatalogWorkspace.products": {
+        parameters: {
+            query?: {
+                limit?: number;
+                seller_id?: number;
+                category_id?: number;
+                status?: string;
+                q?: string;
+                before_id?: number;
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        data: Record<string, never>[] | string;
+                    };
+                };
+            };
+            401: components["responses"]["AuthenticationException"];
+            422: components["responses"]["ValidationException"];
+        };
+    };
+    "sellerProductDraft.store": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            201: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        data: {
+                            id: number;
+                            seller_id: number;
+                            category_id: number;
+                            name_ar: string;
+                            name_en: string;
+                            price_halalas: number;
+                            vat_class: string;
+                            vat_justification: string | null;
+                            status: string;
+                        };
+                    };
+                };
+            };
+            401: components["responses"]["AuthenticationException"];
+        };
+    };
+    "sellerCatalogWorkspace.stock": {
+        parameters: {
+            query?: {
+                limit?: number;
+                branch_id?: number;
+                low_stock_below?: number;
+                q?: string;
+                before_id?: number;
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        data: Record<string, never>[] | string;
+                    };
+                };
+            };
+            401: components["responses"]["AuthenticationException"];
+            422: components["responses"]["ValidationException"];
+        };
+    };
+    "v1.sellerStockCreation": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": {
+                    branch_id: number;
+                    sku: string;
+                    on_hand: number;
+                };
+            };
+        };
+        responses: {
+            201: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        data: {
+                            id: number;
+                            branch_id: string;
+                            variant_id: string;
+                            on_hand: number;
+                            /** @constant */
+                            reserved: 0;
+                        };
+                    };
+                };
+            };
+            401: components["responses"]["AuthenticationException"];
+            404: components["responses"]["ModelNotFoundException"];
+            /** @description An error */
+            409: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        /**
+                         * @description Error overview.
+                         * @example Stock already exists for this SKU in the branch; use adjust stock instead.
+                         */
+                        message: string;
+                    };
+                };
+            };
+            422: components["responses"]["ValidationException"];
+        };
+    };
+    "sellerCategoryManagement.categories": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        data: components["schemas"]["Category"][];
+                    };
+                };
+            };
+            401: components["responses"]["AuthenticationException"];
+        };
+    };
+    "sellerCategoryManagement.create": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": {
+                    parent_id?: number | null;
+                    name_ar: string;
+                    name_en: string;
+                    sort_order?: number;
+                };
+            };
+        };
+        responses: {
+            201: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        data: components["schemas"]["Category"];
+                    };
+                };
+            };
+            401: components["responses"]["AuthenticationException"];
+            422: components["responses"]["ValidationException"];
+        };
+    };
+    "sellerCategoryManagement.destroy": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                category: number;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        /** @constant */
+                        message: "Category deleted.";
+                    };
+                };
+            };
+            401: components["responses"]["AuthenticationException"];
+        };
+    };
+    "sellerCategoryManagement.update": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                category: number;
+            };
+            cookie?: never;
+        };
+        requestBody?: {
+            content: {
+                "application/json": {
+                    parent_id?: number | null;
+                    name_ar?: string;
+                    name_en?: string;
+                    sort_order?: number;
+                    is_active?: boolean;
+                };
+            };
+        };
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        data: components["schemas"]["Category"];
+                    };
+                };
+            };
+            401: components["responses"]["AuthenticationException"];
+            422: components["responses"]["ValidationException"];
+        };
+    };
+    "sellerCategoryManagement.requests": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        data: Record<string, never>[];
+                    };
+                };
+            };
+            401: components["responses"]["AuthenticationException"];
+        };
+    };
+    "sellerCategoryManagement.decide": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                categoryRequest: number;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": {
+                    /** @enum {string} */
+                    decision: "approve" | "reject";
+                    review_note?: string | null;
+                };
+            };
+        };
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        data: {
+                            id: number;
+                            /** @enum {string} */
+                            status: "approved" | "rejected";
+                            category_id: number;
+                        };
+                    };
+                };
+            };
+            401: components["responses"]["AuthenticationException"];
+            422: components["responses"]["ValidationException"];
+        };
+    };
+    "sellerCategoryManagement.sellerRequests": {
+        parameters: {
+            query: {
+                seller_id: number;
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        data: Record<string, never>[];
+                    };
+                };
+            };
+            401: components["responses"]["AuthenticationException"];
+            422: components["responses"]["ValidationException"];
+        };
+    };
+    "sellerCategoryManagement.requestCategory": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": {
+                    seller_id: number;
+                    parent_id?: number | null;
+                    name_ar: string;
+                    name_en: string;
+                    reason?: string | null;
+                };
+            };
+        };
+        responses: {
+            201: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        data: {
+                            id: number;
+                            /** @constant */
+                            status: "pending";
+                        };
+                    };
+                };
+            };
+            401: components["responses"]["AuthenticationException"];
+            422: components["responses"]["ValidationException"];
+        };
+    };
+    "v1.sellerCommissionPreview": {
+        parameters: {
+            query: {
+                seller_id: number;
+                from: string;
+                to: string;
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        data: {
+                            seller_id: number;
+                            /** @constant */
+                            currency: "SAR";
+                            /** @constant */
+                            covered_merchandise_halalas: 0;
+                            /** @enum {integer|null} */
+                            illustrative_commission_halalas: 0 | null;
+                            /** @constant */
+                            orders_without_approved_rate: 0;
+                            payout_calculated: boolean;
+                            settlement_approved: boolean;
+                        };
+                    };
+                };
+            };
+            401: components["responses"]["AuthenticationException"];
+            404: components["responses"]["ModelNotFoundException"];
+            /** @description An error */
+            409: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        /**
+                         * @description Error overview.
+                         * @example Invalid order amount.
+                         */
+                        message: string;
+                    };
+                };
+            };
+            422: components["responses"]["ValidationException"];
+        };
+    };
+    "v1.sellerCommissionRate": {
+        parameters: {
+            query: {
+                seller_id: number;
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        data: {
+                            seller_id: number;
+                            current_rate_basis_points: string | null;
+                            approved_history: Record<string, never>[];
+                            payout_calculated: boolean;
+                        };
+                    };
+                };
+            };
+            401: components["responses"]["AuthenticationException"];
+            404: components["responses"]["ModelNotFoundException"];
+            422: components["responses"]["ValidationException"];
+        };
+    };
+    "sellerFinance.summary": {
+        parameters: {
+            query: {
+                seller_id: number;
+                from: string;
+                to: string;
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        data: {
+                            seller_id: number;
+                            /** @constant */
+                            currency: "SAR";
+                            delivered_orders: number;
+                            subtotal_halalas: number;
+                            discount_halalas: number;
+                            merchandise_total_halalas: number;
+                            payout_calculated: boolean;
+                        };
+                    };
+                };
+            };
+            401: components["responses"]["AuthenticationException"];
+            404: components["responses"]["ModelNotFoundException"];
+            422: components["responses"]["ValidationException"];
+        };
+    };
+    "v1.sellerFinanceLedger": {
+        parameters: {
+            query: {
+                seller_id: number;
+                from: string;
+                to: string;
+                limit?: number;
+                before_id?: string;
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        data: {
+                            suborder_id: string;
+                            order_number: string;
+                            branch_id: string;
+                            placed_at: string;
+                            /** @constant */
+                            currency: "SAR";
+                            merchandise_halalas: number;
+                        }[];
+                        payout_calculated: boolean;
+                    };
+                };
+            };
+            401: components["responses"]["AuthenticationException"];
+            404: components["responses"]["ModelNotFoundException"];
+            422: components["responses"]["ValidationException"];
+        };
+    };
+    "sellerInsights.show": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        data: {
+                            metric: unknown;
+                            from: unknown;
+                            to: unknown;
+                            columns: string;
+                            rows: string;
+                            returned_rows: number;
+                            /** @constant */
+                            max_rows: 200;
+                            /** @constant */
+                            note: "Preview is capped at 200 rows; export includes up to 5000. Merchandise is not profit or payout.";
+                        };
+                    };
+                };
+            };
+            401: components["responses"]["AuthenticationException"];
+        };
+    };
+    "sellerInsights.trend": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        data: {
+                            day: string;
+                            orders: number;
+                            merchandise_halalas: number;
+                        }[];
+                        /** @constant */
+                        note: "Delivered orders grouped by original placement date, not payout date.";
+                    };
+                };
+            };
+            401: components["responses"]["AuthenticationException"];
+        };
+    };
+    "sellerInsights.export": {
+        parameters: {
+            query?: {
+                lang?: string;
+            };
+            header?: never;
+            path: {
+                format: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    "Transfer-Encoding"?: "chunked";
+                    /** @example attachment */
+                    "Content-Disposition"?: string;
+                    [name: string]: unknown;
+                };
+                content: {
+                    "text/csv; charset=UTF-8": string;
+                    "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet": string;
+                };
+            };
+            401: components["responses"]["AuthenticationException"];
+            404: components["responses"]["ModelNotFoundException"];
+        };
+    };
+    "v1.sellerProductCodeLookup": {
+        parameters: {
+            query: {
+                seller_id: number;
+                code: string;
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        data: Record<string, never> | null;
+                    };
+                };
+            };
+            401: components["responses"]["AuthenticationException"];
+            404: components["responses"]["ModelNotFoundException"];
+            422: components["responses"]["ValidationException"];
+        };
+    };
+    "sellerProductDraft.destroy": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                product: number;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        /** @constant */
+                        message: "Draft product deleted.";
+                    };
+                };
+            };
+            401: components["responses"]["AuthenticationException"];
+        };
+    };
+    "sellerProductDraft.update": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                product: number;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        data: {
+                            id: number;
+                            seller_id: number;
+                            category_id: number;
+                            name_ar: string;
+                            name_en: string;
+                            price_halalas: number;
+                            vat_class: string;
+                            vat_justification: string | null;
+                            status: string;
+                        };
+                    };
+                };
+            };
+            401: components["responses"]["AuthenticationException"];
+        };
+    };
+    "sellerProductDraft.submit": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                product: number;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        data: {
+                            id: number;
+                            seller_id: number;
+                            category_id: number;
+                            name_ar: string;
+                            name_en: string;
+                            price_halalas: number;
+                            vat_class: string;
+                            vat_justification: string | null;
+                            status: string;
+                        };
+                    };
+                };
+            };
+            401: components["responses"]["AuthenticationException"];
+        };
+    };
+    "v1.sellerProductImage": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                product: number;
+            };
+            cookie?: never;
+        };
+        requestBody?: {
+            content: {
+                "multipart/form-data": {
+                    /**
+                     * Format: binary
+                     * @description Maximum file size: 5000 kilobytes.
+                     */
+                    image?: string | null;
+                    /** Format: uri */
+                    image_url?: string | null;
+                };
+            };
+        };
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        data: {
+                            product_id: number;
+                            image_path: string;
+                        };
+                    };
+                };
+            };
+            401: components["responses"]["AuthenticationException"];
+            404: components["responses"]["ModelNotFoundException"];
+            /** @description An error */
+            409: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        /**
+                         * @description Error overview.
+                         * @example Only draft or rejected products can change images.
+                         */
+                        message: string;
+                    };
+                };
+            };
+            422: components["responses"]["ValidationException"];
+        };
+    };
+    "sellerProductVariant.store": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                product: number;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": {
+                    sku: string;
+                    barcode?: string | null;
+                    name_ar?: string | null;
+                    name_en?: string | null;
+                };
+            };
+        };
+        responses: {
+            201: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        data: {
+                            id: number;
+                            product_id: number;
+                            sku: string;
+                            barcode: string | null;
+                        };
+                    };
+                };
+            };
+            401: components["responses"]["AuthenticationException"];
+            422: components["responses"]["ValidationException"];
+        };
+    };
+    "v1.sellerRefundAllocation": {
+        parameters: {
+            query: {
+                seller_id: number;
+                limit?: number;
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        data: Record<string, never>[];
+                        /** @constant */
+                        currency: "SAR";
+                        payout_calculated: boolean;
+                    };
+                };
+            };
+            401: components["responses"]["AuthenticationException"];
+            404: components["responses"]["ModelNotFoundException"];
+            422: components["responses"]["ValidationException"];
+        };
+    };
+    "sellerReturn.index": {
+        parameters: {
+            query?: {
+                seller_id?: number;
+                branch_id?: number;
+                status?: "submitted" | "in_review" | "resolved" | "rejected";
+                limit?: number;
+                before_id?: string;
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        data: Record<string, never>[];
+                    };
+                };
+            };
+            401: components["responses"]["AuthenticationException"];
+            422: components["responses"]["ValidationException"];
+        };
+    };
+    "sellerReturn.show": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                case: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        data: Record<string, never>;
+                    };
+                };
+            };
+            401: components["responses"]["AuthenticationException"];
+        };
+    };
+    "sellerReturn.respond": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                case: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": {
+                    /** @enum {string} */
+                    position: "accept" | "dispute";
+                    explanation: string;
+                };
+            };
+        };
+        responses: {
+            201: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        data: {
+                            id: number;
+                            case_id: string;
+                            position: string;
+                        };
+                    };
+                };
+            };
+            401: components["responses"]["AuthenticationException"];
+            422: components["responses"]["ValidationException"];
+        };
+    };
+    "sellerReview.overview": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        data: {
+                            pending_applications: number;
+                            pending_branches: number;
+                            pending_products: number;
+                            pending_categories: number;
+                            recent_decisions: Record<string, never>[];
+                        };
+                    };
+                };
+            };
+            401: components["responses"]["AuthenticationException"];
+        };
+    };
+    "sellerReview.applications": {
+        parameters: {
+            query?: {
+                status?: "submitted" | "correction" | "approved" | "rejected";
+                limit?: number;
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        data: Record<string, never>[];
+                    };
+                };
+            };
+            401: components["responses"]["AuthenticationException"];
+            422: components["responses"]["ValidationException"];
+        };
+    };
+    "sellerReview.application": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                application: number;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        data: {
+                            application: Record<string, never>;
+                            documents: Record<string, never>[];
+                        };
+                    };
+                };
+            };
+            401: components["responses"]["AuthenticationException"];
+        };
+    };
+    "sellerReview.document": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                application: number;
+                document: number;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    /** @example attachment; filename=.jpg */
+                    "Content-Disposition": string;
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/octet-stream": string;
+                };
+            };
+            401: components["responses"]["AuthenticationException"];
+            404: components["responses"]["ModelNotFoundException"];
+        };
+    };
+    "sellerReview.decideApplication": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                application: number;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": {
+                    /** @enum {string} */
+                    decision: "approve" | "correction" | "reject";
+                    reason?: string | null;
+                };
+            };
+        };
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        data: {
+                            id: number;
+                            /** @enum {string} */
+                            status: "approved" | "correction" | "rejected";
+                            seller_id: number;
+                        };
+                    };
+                };
+            };
+            401: components["responses"]["AuthenticationException"];
+            422: components["responses"]["ValidationException"];
+        };
+    };
+    "sellerReview.branches": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        data: Record<string, never>[];
+                    };
+                };
+            };
+            401: components["responses"]["AuthenticationException"];
+        };
+    };
+    "sellerReview.decideBranch": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                branch: number;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": {
+                    /** @enum {string} */
+                    decision: "activate";
+                };
+            };
+        };
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        data: {
+                            id: number;
+                            is_active: boolean;
+                        };
+                    };
+                };
+            };
+            401: components["responses"]["AuthenticationException"];
+            422: components["responses"]["ValidationException"];
+        };
+    };
+    "sellerReview.products": {
+        parameters: {
+            query?: {
+                limit?: number;
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        data: Record<string, never>[];
+                    };
+                };
+            };
+            401: components["responses"]["AuthenticationException"];
+            422: components["responses"]["ValidationException"];
+        };
+    };
+    "sellerReview.decideProduct": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                product: number;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": {
+                    /** @enum {string} */
+                    decision: "publish" | "reject";
+                    reason?: string | null;
+                };
+            };
+        };
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        data: {
+                            id: number;
+                            status: string;
+                        };
+                    };
+                };
+            };
+            401: components["responses"]["AuthenticationException"];
+            422: components["responses"]["ValidationException"];
+        };
+    };
+    "v1.sellerSettlementPreview": {
+        parameters: {
+            query: {
+                seller_id: number;
+                from: string;
+                to: string;
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        data: {
+                            seller_id: number;
+                            /** @constant */
+                            currency: "SAR";
+                            /** @constant */
+                            delivered_merchandise_halalas: 0;
+                            /** @enum {integer|null} */
+                            estimated_commission_halalas: 0 | null;
+                            /** @constant */
+                            orders_without_approved_rate: 0;
+                            order_level_refunds_pending: number;
+                            order_level_refunds_succeeded: number;
+                            seller_refund_allocation_available: boolean;
+                            payable_halalas: null;
+                            can_approve_or_transfer: boolean;
+                        };
+                    };
+                };
+            };
+            401: components["responses"]["AuthenticationException"];
+            404: components["responses"]["ModelNotFoundException"];
+            /** @description An error */
+            409: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        /**
+                         * @description Error overview.
+                         * @example Invalid merchandise amount.
+                         */
+                        message: string;
+                    };
+                };
+            };
+            422: components["responses"]["ValidationException"];
+        };
+    };
+    "v1.sellerSettlementReadiness": {
+        parameters: {
+            query: {
+                seller_id: number;
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        data: {
+                            seller_id: number;
+                            /** @constant */
+                            currency: "SAR";
+                            /** @constant */
+                            state: "awaiting_finance_configuration";
+                            commission_configured: boolean;
+                            refund_allocation_verified: boolean;
+                            finance_approval_verified: boolean;
+                            payable_halalas: null;
+                            transfer_enabled: boolean;
+                        };
+                    };
+                };
+            };
+            401: components["responses"]["AuthenticationException"];
+            404: components["responses"]["ModelNotFoundException"];
+            422: components["responses"]["ValidationException"];
+        };
+    };
+    "sellerStaff.index": {
+        parameters: {
+            query: {
+                seller_id: number;
+                limit?: number;
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        data: Record<string, never>[];
+                    };
+                };
+            };
+            401: components["responses"]["AuthenticationException"];
+            422: components["responses"]["ValidationException"];
+        };
+    };
+    "sellerStaff.store": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": {
+                    seller_id: number;
+                    user_id: number;
+                    /** @enum {string} */
+                    role: "branch_manager" | "picker";
+                    branch_id: number;
+                };
+            };
+        };
+        responses: {
+            201: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        data: {
+                            id: number;
+                            user_id: number;
+                            employee_number: string;
+                            seller_id: number;
+                            branch_id: number;
+                            role: string;
+                            is_active: boolean;
+                        };
+                    };
+                };
+            };
+            401: components["responses"]["AuthenticationException"];
+            422: components["responses"]["ValidationException"];
+        };
+    };
+    "sellerStaff.update": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                membership: number;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": {
+                    /** @enum {string} */
+                    role: "branch_manager" | "picker";
+                    branch_id: number;
+                    is_active: boolean;
+                };
+            };
+        };
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        data: {
+                            id: number;
+                            user_id: number;
+                            employee_number: string;
+                            seller_id: number;
+                            role: string;
+                            branch_id: number;
+                            is_active: boolean;
+                        };
+                    };
+                };
+            };
+            401: components["responses"]["AuthenticationException"];
+            422: components["responses"]["ValidationException"];
+        };
+    };
+    "sellerStaff.deactivate": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                membership: number;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        data: {
+                            id: string;
+                            employee_number: string;
+                            is_active: boolean;
+                        };
+                    };
+                };
+            };
+            401: components["responses"]["AuthenticationException"];
+        };
+    };
+    "v1.sellerStockAdjustment": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                stock: number;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": {
+                    on_hand: number;
+                };
+            };
+        };
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        data: {
+                            id: string;
+                            on_hand: string;
+                            reserved: string;
+                            available: number;
+                        };
+                    };
+                };
+            };
+            401: components["responses"]["AuthenticationException"];
+            422: components["responses"]["ValidationException"];
+        };
+    };
+    "sellerStoreProfile.show": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                seller: number;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        data: Record<string, never>;
+                    };
+                };
+            };
+            401: components["responses"]["AuthenticationException"];
+        };
+    };
+    "sellerStoreProfile.update": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                seller: number;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": {
+                    name_ar: string;
+                    name_en: string;
+                };
+            };
+        };
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        data: Record<string, never>;
+                    };
+                };
+            };
+            401: components["responses"]["AuthenticationException"];
+            422: components["responses"]["ValidationException"];
+        };
+    };
+    "sellerWorkspace.dashboard": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        data: {
+                            awaiting_seller: number;
+                            preparing: number;
+                            ready: number;
+                            on_the_way: number;
+                            delivered: number;
+                            delivered_merchandise_halalas: number;
+                            /** @constant */
+                            currency: "SAR";
+                        };
+                    };
+                };
+            };
+            401: components["responses"]["AuthenticationException"];
+        };
+    };
+    "sellerWorkspace.orders": {
+        parameters: {
+            query?: {
+                limit?: number;
+                before_id?: string;
+                status?: "awaiting_payment" | "awaiting_seller" | "preparing" | "ready" | "on_the_way" | "delivered" | "cancelled";
+                branch_id?: number;
+                from?: string;
+                to?: string;
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        data: {
+                            id: string;
+                            order_number: string;
+                            status: string;
+                            branch_id: number;
+                            /** Format: date-time */
+                            placed_at: string;
+                            /** Format: date-time */
+                            delivery_slot: string | null;
+                            items: {
+                                id: number;
+                                name: {
+                                    ar: string;
+                                    en: string;
+                                };
+                                quantity: number;
+                            }[];
+                        }[];
+                    };
+                };
+            };
+            401: components["responses"]["AuthenticationException"];
+            422: components["responses"]["ValidationException"];
+        };
+    };
+    "sellerWorkspace.salesSummary": {
+        parameters: {
+            query: {
+                from: string;
+                to: string;
+                branch_id?: number;
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        data: {
+                            from: string;
+                            to: string;
+                            /** @constant */
+                            currency: "SAR";
+                            delivered_suborders: number;
+                            subtotal_halalas: number;
+                            discount_halalas: number;
+                            net_merchandise_halalas: number;
+                            /** @constant */
+                            note: "Merchandise totals only. This is not a commission or seller payout statement.";
+                        };
+                    };
+                };
+            };
+            401: components["responses"]["AuthenticationException"];
+            422: components["responses"]["ValidationException"];
+        };
+    };
+    "sellerWorkspace.packingList": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                suborder: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        data: {
+                            order_number: string;
+                            suborder_id: string;
+                            branch_id: number;
+                            status: string;
+                            /** Format: date-time */
+                            created_at: string;
+                            items: {
+                                product: {
+                                    ar: string;
+                                    en: string;
+                                };
+                                variant: {
+                                    ar: string | null;
+                                    en: string | null;
+                                };
+                                quantity: number;
+                                variant_id: number;
+                            }[];
+                        };
+                    };
+                };
+            };
+            401: components["responses"]["AuthenticationException"];
+        };
+    };
+    "sellerWorkspace.exportOrders": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    "Transfer-Encoding": "chunked";
+                    [name: string]: unknown;
+                };
+                content: {
+                    "text/csv; charset=UTF-8": string;
+                };
+            };
+            401: components["responses"]["AuthenticationException"];
+        };
+    };
+    "sellerWorkspace.exportOrdersExcel": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    /** @example attachment */
+                    "Content-Disposition": string;
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet": string;
+                };
+            };
+            401: components["responses"]["AuthenticationException"];
+        };
+    };
+    "sellerWorkspace.showOrder": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                suborder: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        data: {
+                            id: string;
+                            order_number: string;
+                            status: string;
+                            branch_id: number;
+                            /** Format: date-time */
+                            placed_at: string;
+                            /** Format: date-time */
+                            delivery_slot: string | null;
+                            items: {
+                                id: number;
+                                name: {
+                                    ar: string;
+                                    en: string;
+                                };
+                                quantity: number;
+                            }[];
+                        };
+                    };
+                };
+            };
+            401: components["responses"]["AuthenticationException"];
+        };
+    };
+    "sellerWorkspace.advance": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                suborder: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": {
+                    /** @enum {string} */
+                    status: "preparing" | "ready";
+                };
+            };
+        };
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        data: {
+                            id: string;
+                            status: string;
+                        };
+                    };
+                };
+            };
+            401: components["responses"]["AuthenticationException"];
+            /** @description An error */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        /**
+                         * @description Error overview.
+                         * @example
+                         */
+                        message: string;
+                    };
+                };
+            };
+            422: components["responses"]["ValidationException"];
+        };
+    };
     "session.index": {
         parameters: {
             query?: never;
@@ -2962,6 +8797,35 @@ export interface operations {
             422: components["responses"]["ValidationException"];
         };
     };
+    "spendingReport.excel": {
+        parameters: {
+            query?: {
+                category?: string | null;
+                seller?: string | null;
+                status?: "confirmed" | "completed" | "cancelled" | null;
+                from?: string | null;
+                to?: string | null;
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    /** @example attachment */
+                    "Content-Disposition": string;
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet": string;
+                };
+            };
+            401: components["responses"]["AuthenticationException"];
+            422: components["responses"]["ValidationException"];
+        };
+    };
     "store.show": {
         parameters: {
             query?: never;
@@ -2991,6 +8855,187 @@ export interface operations {
                     };
                 };
             };
+        };
+    };
+    "superAdminAccount.update": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                user: number;
+            };
+            cookie?: never;
+        };
+        requestBody?: {
+            content: {
+                "application/json": {
+                    name?: string;
+                    is_active?: boolean;
+                };
+            };
+        };
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        data: Record<string, never>;
+                    };
+                };
+            };
+            401: components["responses"]["AuthenticationException"];
+            422: components["responses"]["ValidationException"];
+        };
+    };
+    "superAdminAccount.updateSeller": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                seller: number;
+            };
+            cookie?: never;
+        };
+        requestBody?: {
+            content: {
+                "application/json": {
+                    name_ar?: string;
+                    name_en?: string;
+                    is_active?: boolean;
+                };
+            };
+        };
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        data: Record<string, never>;
+                    };
+                };
+            };
+            401: components["responses"]["AuthenticationException"];
+            422: components["responses"]["ValidationException"];
+        };
+    };
+    "superAdminDashboard.show": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        data: {
+                            customers: number;
+                            sellers: number;
+                            active_sellers: number;
+                            products: number;
+                            published_products: number;
+                            orders: number;
+                            order_statuses: unknown[];
+                            suborder_statuses: unknown[];
+                            pending_seller_applications: number;
+                            pending_product_reviews: number;
+                            pending_category_requests: number;
+                            sales: {
+                                paid_orders: number;
+                                paid_total_halalas: number;
+                                /** @constant */
+                                currency: "SAR";
+                            };
+                            generated_at: string;
+                        };
+                    };
+                };
+            };
+            401: components["responses"]["AuthenticationException"];
+            /** @description An error */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        /**
+                         * @description Error overview.
+                         * @example
+                         */
+                        message: string;
+                    };
+                };
+            };
+        };
+    };
+    "superAdminMetric.index": {
+        parameters: {
+            query?: {
+                page?: number;
+                per_page?: number;
+            };
+            header?: never;
+            path: {
+                metric: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        data: string[];
+                        columns: unknown[];
+                        total: number;
+                        page: number;
+                        last_page: number;
+                    };
+                };
+            };
+            401: components["responses"]["AuthenticationException"];
+            422: components["responses"]["ValidationException"];
+        };
+    };
+    "superAdminMetric.export": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                metric: string;
+                format: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    "Transfer-Encoding"?: "chunked";
+                    /** @example attachment */
+                    "Content-Disposition"?: string;
+                    [name: string]: unknown;
+                };
+                content: {
+                    "text/csv; charset=UTF-8": string;
+                    "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet": string;
+                };
+            };
+            401: components["responses"]["AuthenticationException"];
+            404: components["responses"]["ModelNotFoundException"];
         };
     };
     "welcome.index": {
