@@ -23,13 +23,20 @@ export function CourierWorkspaceScreen() {
   const tr = (a: string, en: keyof typeof courierFrench) => (ar ? a : fr ? courierFrench[en] : en);
   const courierStatus = (status: string): string => {
     switch (status) {
-      case 'offered': return tr('معروضة', 'Offered');
-      case 'accepted': return tr('مقبولة', 'Accepted');
-      case 'picked_up': return tr('تم الاستلام', 'Picked up');
-      case 'delivered': return tr('تم التسليم', 'Delivered');
-      case 'declined': return tr('مرفوضة', 'Declined');
-      case 'expired': return tr('منتهية', 'Expired');
-      default: return status;
+      case 'offered':
+        return tr('معروضة', 'Offered');
+      case 'accepted':
+        return tr('مقبولة', 'Accepted');
+      case 'picked_up':
+        return tr('تم الاستلام', 'Picked up');
+      case 'delivered':
+        return tr('تم التسليم', 'Delivered');
+      case 'declined':
+        return tr('مرفوضة', 'Declined');
+      case 'expired':
+        return tr('منتهية', 'Expired');
+      default:
+        return status;
     }
   };
   const [jobs, setJobs] = useState<CourierJob[]>([]);
@@ -40,7 +47,9 @@ export function CourierWorkspaceScreen() {
   const [code, setCode] = useState<Record<number, string>>({});
   const [parcels, setParcels] = useState<Record<number, string>>({});
   const [deliveryCode, setDeliveryCode] = useState<Record<number, string>>({});
-  const [failureReason, setFailureReason] = useState<Record<number, 'customer_absent' | 'address_issue' | 'customer_refused' | 'other'>>({});
+  const [failureReason, setFailureReason] = useState<
+    Record<number, 'customer_absent' | 'address_issue' | 'customer_refused' | 'other'>
+  >({});
   const [failureDetails, setFailureDetails] = useState<Record<number, string>>({});
   const [revision, setRevision] = useState(0);
   const [online, setOnline] = useState(false);
@@ -89,7 +98,7 @@ export function CourierWorkspaceScreen() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [revision]);
   const act = async (fn: () => Promise<unknown>, msg: string) => {
-    if ((busy || busyRef.current)) return;
+    if (busy || busyRef.current) return;
     busyRef.current = true;
     setBusy(true);
     setError('');
@@ -158,7 +167,10 @@ export function CourierWorkspaceScreen() {
           {tr('المهام المكتملة:', 'Completed jobs:')}{' '}
           {jobs.filter((job) => job.status === 'delivered').length}
           {' · '}
-          {tr('الأرباح: غير متاحة حتى تفعيل نظام التسويات.', 'Earnings: unavailable until settlements are enabled.')}
+          {tr(
+            'الأرباح: غير متاحة حتى تفعيل نظام التسويات.',
+            'Earnings: unavailable until settlements are enabled.',
+          )}
         </p>
         {jobs.map((job) => (
           <section
@@ -170,7 +182,8 @@ export function CourierWorkspaceScreen() {
               {tr('الطلب', 'Order')} {job.order_number}
             </h2>
             <p>
-              {tr('الفرع', 'Branch')} #{job.branch_id} · {tr('الحالة', 'Status')}: {courierStatus(job.status)}
+              {tr('الفرع', 'Branch')} #{job.branch_id} · {tr('الحالة', 'Status')}:{' '}
+              {courierStatus(job.status)}
             </p>
             {job.pickup_lat !== null && job.pickup_lng !== null && (
               <p>
@@ -214,7 +227,12 @@ export function CourierWorkspaceScreen() {
             )}
             {job.status === 'picked_up' && (
               <div style={{ display: 'grid', gap: 12, marginBlock: 12 }}>
-                <p>{tr('اطلب رمز التسليم من العميل عند الوصول، ولا تشارك رمز استلام البائع.', 'Ask the customer for the separate delivery code at the door.')}</p>
+                <p>
+                  {tr(
+                    'اطلب رمز التسليم من العميل عند الوصول، ولا تشارك رمز استلام البائع.',
+                    'Ask the customer for the separate delivery code at the door.',
+                  )}
+                </p>
                 <label>
                   {tr('رمز تأكيد التسليم من العميل', 'Customer delivery code')}
                   <input
@@ -224,22 +242,26 @@ export function CourierWorkspaceScreen() {
                     pattern="[0-9]{6}"
                     maxLength={6}
                     value={deliveryCode[job.id] ?? ''}
-                    onChange={(e) => setDeliveryCode((prev) => ({
-                      ...prev,
-                      [job.id]: e.target.value.replace(/[^0-9]/g, '').slice(0, 6),
-                    }))}
+                    onChange={(e) =>
+                      setDeliveryCode((prev) => ({
+                        ...prev,
+                        [job.id]: e.target.value.replace(/[^0-9]/g, '').slice(0, 6),
+                      }))
+                    }
                   />
                 </label>
                 <button
                   type="button"
                   disabled={busy || !/^[0-9]{6}$/.test(deliveryCode[job.id] ?? '')}
-                  onClick={() => void act(
-                    async () => {
-                      await courierDeliver(job.id, deliveryCode[job.id] ?? '');
-                      setDeliveryCode((prev) => ({ ...prev, [job.id]: '' }));
-                    },
-                    tr('تم توثيق التسليم للعميل.', 'Delivery verified with customer.'),
-                  )}
+                  onClick={() =>
+                    void act(
+                      async () => {
+                        await courierDeliver(job.id, deliveryCode[job.id] ?? '');
+                        setDeliveryCode((prev) => ({ ...prev, [job.id]: '' }));
+                      },
+                      tr('تم توثيق التسليم للعميل.', 'Delivery verified with customer.'),
+                    )
+                  }
                 >
                   {tr('تأكيد التسليم', 'Confirm delivery')}
                 </button>
@@ -247,14 +269,21 @@ export function CourierWorkspaceScreen() {
                   {tr('سبب تعذر التسليم', 'Failed delivery reason')}
                   <select
                     value={failureReason[job.id] ?? 'customer_absent'}
-                    onChange={(e) => setFailureReason((prev) => ({
-                      ...prev,
-                      [job.id]: e.target.value as 'customer_absent' | 'address_issue' | 'customer_refused' | 'other',
-                    }))}
+                    onChange={(e) =>
+                      setFailureReason((prev) => ({
+                        ...prev,
+                        [job.id]: e.target.value as
+                          'customer_absent' | 'address_issue' | 'customer_refused' | 'other',
+                      }))
+                    }
                   >
-                    <option value="customer_absent">{tr('العميل غير متواجد', 'Customer absent')}</option>
+                    <option value="customer_absent">
+                      {tr('العميل غير متواجد', 'Customer absent')}
+                    </option>
                     <option value="address_issue">{tr('مشكلة في العنوان', 'Address issue')}</option>
-                    <option value="customer_refused">{tr('رفض العميل الاستلام', 'Customer refused')}</option>
+                    <option value="customer_refused">
+                      {tr('رفض العميل الاستلام', 'Customer refused')}
+                    </option>
                     <option value="other">{tr('سبب آخر', 'Other reason')}</option>
                   </select>
                 </label>
@@ -263,27 +292,37 @@ export function CourierWorkspaceScreen() {
                   <textarea
                     value={failureDetails[job.id] ?? ''}
                     maxLength={1000}
-                    onChange={(e) => setFailureDetails((prev) => ({ ...prev, [job.id]: e.target.value }))}
+                    onChange={(e) =>
+                      setFailureDetails((prev) => ({ ...prev, [job.id]: e.target.value }))
+                    }
                   />
                 </label>
                 <button
                   type="button"
                   disabled={busy || (failureDetails[job.id] ?? '').trim().length < 10}
-                  onClick={() => void act(
-                    () => courierFailedDelivery(
-                      job.id,
-                      failureReason[job.id] ?? 'customer_absent',
-                      (failureDetails[job.id] ?? '').trim(),
-                    ),
-                    tr('تم تسجيل تعذر التسليم لدى الإدارة.', 'Failed delivery was reported to Admin.'),
-                  )}
+                  onClick={() =>
+                    void act(
+                      () =>
+                        courierFailedDelivery(
+                          job.id,
+                          failureReason[job.id] ?? 'customer_absent',
+                          (failureDetails[job.id] ?? '').trim(),
+                        ),
+                      tr(
+                        'تم تسجيل تعذر التسليم لدى الإدارة.',
+                        'Failed delivery was reported to Admin.',
+                      ),
+                    )
+                  }
                 >
                   {tr('إبلاغ تعذر التسليم', 'Report failed delivery')}
                 </button>
               </div>
             )}
             {job.status === 'delivered' && (
-              <p role="status">{tr('تم تسليم الطلب وتوثيقه.', 'Delivery completed and verified.')}</p>
+              <p role="status">
+                {tr('تم تسليم الطلب وتوثيقه.', 'Delivery completed and verified.')}
+              </p>
             )}
             {job.status === 'accepted' && (
               <div style={{ display: 'flex', flexWrap: 'wrap', gap: 10 }}>

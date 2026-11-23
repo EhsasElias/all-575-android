@@ -607,13 +607,23 @@ export function SellerProductManagement({ products, memberships, onUpdated }: Pr
   };
 
   const submit = (productId: number) => {
-    if (busy || terminalActionInFlight.current || completedProductActions.has('publish:' + productId)) return;
+    if (
+      busy ||
+      terminalActionInFlight.current ||
+      completedProductActions.has('publish:' + productId)
+    )
+      return;
     setFormError('');
     setConfirmation({ kind: 'publish', productId });
   };
 
   const publish = async (productId: number) => {
-    if (busy || terminalActionInFlight.current || completedProductActions.has('publish:' + productId)) return;
+    if (
+      busy ||
+      terminalActionInFlight.current ||
+      completedProductActions.has('publish:' + productId)
+    )
+      return;
     terminalActionInFlight.current = true;
     setConfirmation(null);
     setBusy(true);
@@ -653,7 +663,12 @@ export function SellerProductManagement({ products, memberships, onUpdated }: Pr
   };
 
   const deleteDraft = async (productId: number) => {
-    if (busy || terminalActionInFlight.current || completedProductActions.has('delete:' + productId)) return;
+    if (
+      busy ||
+      terminalActionInFlight.current ||
+      completedProductActions.has('delete:' + productId)
+    )
+      return;
     terminalActionInFlight.current = true;
     setConfirmation(null);
     setBusy(true);

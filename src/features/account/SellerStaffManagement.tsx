@@ -162,7 +162,14 @@ export function SellerStaffManagement({ memberships }: Props) {
 
   const deactivate = async () => {
     const member = confirmDeactivate;
-    if (!member || busy || submissionInFlight.current || member.role === 'owner' || !member.is_active) return;
+    if (
+      !member ||
+      busy ||
+      submissionInFlight.current ||
+      member.role === 'owner' ||
+      !member.is_active
+    )
+      return;
     submissionInFlight.current = true;
     setBusy(true);
     setError('');

@@ -37,7 +37,8 @@ export const courierFrench = {
   'Customer refused': 'Livraison refusée par le client',
   'Other reason': 'Autre motif',
   'Attempt details': 'Détails de la tentative',
-  'Failed delivery was reported to Admin.': 'L’échec de livraison a été signalé à l’administration.',
+  'Failed delivery was reported to Admin.':
+    'L’échec de livraison a été signalé à l’administration.',
   'Report failed delivery': 'Signaler un échec de livraison',
   'Delivery completed and verified.': 'Livraison terminée et vérifiée.',
   Offered: 'Proposée',
@@ -49,5 +50,4 @@ export const courierFrench = {
   'Completed jobs:': 'Missions terminées :',
   'Earnings: unavailable until settlements are enabled.':
     'Gains indisponibles avant l’activation des règlements.',
-
 } as const;

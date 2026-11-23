@@ -168,9 +168,11 @@ export function createHttpClient(config: HttpClientConfig): HttpClient {
     })();
     if (key !== null) {
       inFlightMutations.set(key, operation);
-      void operation.finally(() => {
-        if (inFlightMutations.get(key) === operation) inFlightMutations.delete(key);
-      }).catch(() => undefined);
+      void operation
+        .finally(() => {
+          if (inFlightMutations.get(key) === operation) inFlightMutations.delete(key);
+        })
+        .catch(() => undefined);
     }
     return operation;
   }
