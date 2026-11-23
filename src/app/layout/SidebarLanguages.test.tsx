@@ -56,9 +56,7 @@ describe('every account and dashboard navigation language', () => {
       language: 'en',
     });
     const menu = await screen.findByRole('navigation', { name: 'Dashboard navigation' });
-    await waitFor(() =>
-      expect(within(menu).getByText('Super Admin')).toBeInTheDocument(),
-    );
+    await waitFor(() => expect(within(menu).getByText('Super Admin')).toBeInTheDocument());
     expect(within(menu).getByRole('link', { name: 'Admin approvals' })).toHaveAttribute(
       'href',
       '/account/super-admin#admin-applications',
@@ -79,7 +77,17 @@ describe('every account and dashboard navigation language', () => {
       'GET /me': { body: { data: customer } },
       'GET /store': { body: { data: testStore } },
       'GET /platform/super-admin/dashboard': { status: 403, body: { message: 'Forbidden' } },
-      'GET /seller-review/overview': { body: { data: { pending_applications: 0, pending_branches: 0, pending_products: 0, pending_categories: 0, recent_decisions: [] } } },
+      'GET /seller-review/overview': {
+        body: {
+          data: {
+            pending_applications: 0,
+            pending_branches: 0,
+            pending_products: 0,
+            pending_categories: 0,
+            recent_decisions: [],
+          },
+        },
+      },
     });
     await renderApp({
       route: '/account/seller-review?tab=applications',
@@ -88,9 +96,7 @@ describe('every account and dashboard navigation language', () => {
       language: 'en',
     });
     const menu = await screen.findByRole('navigation', { name: 'Dashboard navigation' });
-    await waitFor(() =>
-      expect(within(menu).getByText('Approvals')).toBeInTheDocument(),
-    );
+    await waitFor(() => expect(within(menu).getByText('Approvals')).toBeInTheDocument());
     expect(within(menu).queryByRole('link', { name: 'Admin approvals' })).not.toBeInTheDocument();
   });
 
