@@ -152,9 +152,17 @@ export function SellerReviewScreen() {
       })
       .catch((cause) => {
         if (!active) return;
-        if (isApiError(cause) && (cause.status === 403 || cause.status === 401))
+        if (isApiError(cause) && (cause.status === 403 || cause.status === 401)) {
           setUnauthorized(true);
-        else setError(tr('تعذر جلب قائمة المراجعة.', 'Could not load review queue.'));
+          setError(tr(
+            'لا توجد صلاحية لتحميل قائمة المراجعة. تحقق من حساب المراجع وصلاحياته.',
+            'Access to the review queue was denied. Check your reviewer permissions.',
+          ));
+        } else if (isApiError(cause)) {
+          setError(tr('تعذر جلب قائمة المراجعة.', 'Could not load review queue.') + ` (HTTP ${cause.status})`);
+        } else {
+          setError(tr('تعذر الاتصال بخدمة المراجعة.', 'Could not connect to the review service.'));
+        }
       })
       .finally(() => {
         if (active) setLoading(false);
