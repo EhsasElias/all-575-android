@@ -89,7 +89,9 @@ describe('Home', () => {
     await renderHome();
     const products = screen.getByRole('region', { name: 'All products' });
     expect(await within(products).findByRole('link', { name: 'Biscuits' })).toBeVisible();
-    expect(screen.queryByRole('heading', { name: 'This page did not load' })).not.toBeInTheDocument();
+    expect(
+      screen.queryByRole('heading', { name: 'This page did not load' }),
+    ).not.toBeInTheDocument();
   });
 
   it('links the search entry to /search', async () => {

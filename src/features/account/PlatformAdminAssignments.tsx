@@ -114,7 +114,12 @@ export function PlatformAdminAssignments() {
 
   const change = async (
     id: number,
-    input: { is_active?: boolean; can_view_orders?: boolean; can_view_inventory?: boolean; can_review_sellers?: boolean },
+    input: {
+      is_active?: boolean;
+      can_view_orders?: boolean;
+      can_view_inventory?: boolean;
+      can_review_sellers?: boolean;
+    },
   ) => {
     if (submissionInFlight.current) return;
     submissionInFlight.current = true;
@@ -254,14 +259,22 @@ export function PlatformAdminAssignments() {
               <input
                 type="checkbox"
                 checked={reviewSellers}
-                onChange={(event) => { setReviewSellers(event.target.checked); }}
+                onChange={(event) => {
+                  setReviewSellers(event.target.checked);
+                }}
               />
-              {ar ? 'مراجعة طلبات البائعين والمنتجات (صلاحية على مستوى المنصة)' : fr
-                ? 'Examiner les vendeurs et les produits (accès global)'
-                : 'Review sellers and products (platform-wide permission)'}
+              {ar
+                ? 'مراجعة طلبات البائعين والمنتجات (صلاحية على مستوى المنصة)'
+                : fr
+                  ? 'Examiner les vendeurs et les produits (accès global)'
+                  : 'Review sellers and products (platform-wide permission)'}
             </label>
           </div>
-          <button type="submit" className={styles.submit} disabled={busy || (!orders && !stock && !reviewSellers)}>
+          <button
+            type="submit"
+            className={styles.submit}
+            disabled={busy || (!orders && !stock && !reviewSellers)}
+          >
             {busy ? tr('جارٍ الحفظ...', 'Saving...') : tr('تعيين إداري', 'Assign Admin')}
           </button>
         </form>
