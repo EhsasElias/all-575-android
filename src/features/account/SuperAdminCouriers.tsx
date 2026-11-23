@@ -71,7 +71,7 @@ export function SuperAdminCouriers({ ar }: { ar: boolean }) {
             setRevision((current) => current + 1);
           }}
         >
-          ↻ {tr('تحديث', 'Refresh')}
+          ↻ {ar ? 'تحديث' : fr ? 'Actualiser' : 'Refresh'}
         </button>
       </header>
       <p>
