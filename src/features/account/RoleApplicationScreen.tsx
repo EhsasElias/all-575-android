@@ -27,6 +27,7 @@ export function RoleApplicationScreen() {
   const [applications, setApplications] = useState<RoleApplication[]>([]);
   const [loading, setLoading] = useState(true);
   const [busy, setBusy] = useState(false);
+  const [attemptedSubmit, setAttemptedSubmit] = useState(false);
   const [error, setError] = useState('');
   const [notice, setNotice] = useState('');
   const [motivation, setMotivation] = useState('');
@@ -78,10 +79,24 @@ export function RoleApplicationScreen() {
   }
 
   const existing = applications.find((item) => item.requested_role === requestedRole);
+  const isCourier = requestedRole === 'courier';
+  const phoneInvalid = !/^05[0-9]{8}$/.test(contactPhone);
+  const cityInvalid = !city.trim();
+  const years = Number(experienceYears);
+  const experienceInvalid = experienceYears.trim() === '' || !Number.isInteger(years) || years < 0 || years > 60;
+  const qualificationInvalid = !isCourier && !qualification.trim();
+  const serviceAreaInvalid = isCourier && !serviceArea.trim();
+  const motivationInvalid = motivation.trim().length < 10;
+  const hasValidationErrors = phoneInvalid || cityInvalid || experienceInvalid || qualificationInvalid || serviceAreaInvalid || motivationInvalid;
 
   const submit = async (event: SubmitEvent<HTMLFormElement>) => {
     event.preventDefault();
-    if (busy || existing || motivation.trim().length < 10 || !/^05[0-9]{8}$/.test(contactPhone) || !city.trim() || !experienceYears || (requestedRole === 'admin' && !qualification.trim()) || (requestedRole === 'courier' && !serviceArea.trim())) return;
+    if (busy || existing) return;
+    setAttemptedSubmit(true);
+    if (hasValidationErrors) {
+      setError(tr('يرجى تصحيح الحقول الموضحة أدناه قبل إرسال الطلب.', 'Please correct the highlighted fields before submitting.', 'Veuillez corriger les champs indiqués avant l’envoi.'));
+      return;
+    }
     setBusy(true);
     setError('');
     setNotice('');
@@ -140,7 +155,6 @@ export function RoleApplicationScreen() {
     }
   };
 
-  const isCourier = requestedRole === 'courier';
   const title = isCourier
     ? tr('طلب الانضمام كمندوب توصيل', 'Delivery courier application', 'Candidature livreur')
     : tr('طلب الانضمام كمسؤول', 'Admin application', 'Candidature administrateur');
@@ -204,7 +218,7 @@ export function RoleApplicationScreen() {
             </p>
           </div>
         ) : (
-          <form className={styles.form} onSubmit={(event) => void submit(event)}>
+          <form className={styles.form} noValidate onSubmit={(event) => void submit(event)}>
             <fieldset className={styles.group} disabled={busy}>
               <legend className={styles.legend}>
                 <span className={styles.stepNumber}>1</span>
@@ -220,20 +234,24 @@ export function RoleApplicationScreen() {
               <div className={styles.fieldGrid}>
                 <label className={styles.field}>
                   <span>{tr('رقم الجوال السعودي', 'Saudi mobile number', 'Numéro mobile saoudien')} <span className={styles.required}>*</span></span>
-                  <input dir="ltr" type="tel" inputMode="tel" autoComplete="tel" required maxLength={10} pattern="05[0-9]{8}" placeholder="05XXXXXXXX" value={contactPhone} onChange={(event) => setContactPhone(event.target.value)} />
+                  <input dir="ltr" type="tel" inputMode="tel" autoComplete="tel" required maxLength={10} pattern="05[0-9]{8}" placeholder="05XXXXXXXX" aria-invalid={attemptedSubmit && phoneInvalid} value={contactPhone} onChange={(event) => setContactPhone(event.target.value)} />
+                  {attemptedSubmit && phoneInvalid && <small className={styles.fieldError}>{tr("أدخل رقم جوال سعودي صحيحًا يبدأ بـ 05 ويتكون من 10 أرقام.", "Enter a valid 10-digit Saudi mobile number starting with 05.", "Saisissez un numéro saoudien valide de 10 chiffres commençant par 05.")}</small>}
                 </label>
                 <label className={styles.field}>
                   <span>{tr('المدينة', 'City', 'Ville')} <span className={styles.required}>*</span></span>
-                  <input required maxLength={120} autoComplete="address-level2" value={city} onChange={(event) => setCity(event.target.value)} />
+                  <input required maxLength={120} autoComplete="address-level2" aria-invalid={attemptedSubmit && cityInvalid} value={city} onChange={(event) => setCity(event.target.value)} />
+                  {attemptedSubmit && cityInvalid && <small className={styles.fieldError}>{tr("يرجى إدخال المدينة.", "Enter your city.", "Indiquez votre ville.")}</small>}
                 </label>
                 <label className={styles.field}>
                   <span>{tr('سنوات الخبرة', 'Years of experience', "Années d'expérience")} <span className={styles.required}>*</span></span>
-                  <input dir="ltr" type="number" min="0" max="60" step="1" required value={experienceYears} onChange={(event) => setExperienceYears(event.target.value)} />
+                  <input dir="ltr" type="number" min="0" max="60" step="1" required aria-invalid={attemptedSubmit && experienceInvalid} value={experienceYears} onChange={(event) => setExperienceYears(event.target.value)} />
+                  {attemptedSubmit && experienceInvalid && <small className={styles.fieldError}>{tr("أدخل سنوات خبرة صحيحة من 0 إلى 60.", "Enter a whole number of years from 0 to 60.", "Indiquez un nombre entier d’années entre 0 et 60.")}</small>}
                 </label>
                 {!isCourier && (
                   <label className={styles.field}>
                     <span>{tr('المؤهل أو مجال الخبرة', 'Qualification or area of expertise', 'Qualification ou domaine de compétence')} <span className={styles.required}>*</span></span>
-                    <input required maxLength={180} value={qualification} onChange={(event) => setQualification(event.target.value)} />
+                    <input required maxLength={180} aria-invalid={attemptedSubmit && qualificationInvalid} value={qualification} onChange={(event) => setQualification(event.target.value)} />
+                    {attemptedSubmit && qualificationInvalid && <small className={styles.fieldError}>{tr("يرجى إدخال المؤهل أو مجال الخبرة.", "Enter your qualification or area of expertise.", "Indiquez votre qualification ou domaine de compétence.")}</small>}
                   </label>
                 )}
               </div>
@@ -259,7 +277,8 @@ export function RoleApplicationScreen() {
                   </label>
                   <label className={styles.field}>
                     <span>{tr('منطقة الخدمة المقترحة', 'Preferred delivery area', 'Zone de livraison souhaitée')} <span className={styles.required}>*</span></span>
-                    <input required maxLength={180} value={serviceArea} onChange={(event) => setServiceArea(event.target.value)} />
+                    <input required maxLength={180} aria-invalid={attemptedSubmit && serviceAreaInvalid} value={serviceArea} onChange={(event) => setServiceArea(event.target.value)} />
+                    {attemptedSubmit && serviceAreaInvalid && <small className={styles.fieldError}>{tr("يرجى إدخال منطقة الخدمة.", "Enter your delivery area.", "Indiquez votre zone de livraison.")}</small>}
                   </label>
                   <label className={styles.field}>
                     <span>{tr('رقم لوحة المركبة (اختياري)', 'Vehicle plate number (optional)', "Immatriculation (facultatif)")}</span>
@@ -274,6 +293,7 @@ export function RoleApplicationScreen() {
                   minLength={10}
                   maxLength={1000}
                   rows={5}
+                  aria-invalid={(attemptedSubmit || motivation.length > 0) && motivationInvalid}
                   value={motivation}
                   onChange={(event) => setMotivation(event.target.value)}
                   placeholder={tr(
@@ -283,6 +303,7 @@ export function RoleApplicationScreen() {
                   )}
                 />
                 <small>{motivation.trim().length} / 1000</small>
+                {(attemptedSubmit || motivation.length > 0) && motivationInvalid && <small className={styles.fieldError}>{tr("يجب كتابة 10 أحرف على الأقل.", "Write at least 10 characters.", "Veuillez saisir au moins 10 caractères.")}</small>}
               </label>
             </fieldset>
             <section className={styles.group}>
@@ -300,7 +321,7 @@ export function RoleApplicationScreen() {
               {error && <p className={styles.error} role="alert">{error}</p>}
               {notice && <p className={styles.status} role="status">{notice}</p>}
               <div className={styles.actions}>
-                <button className={styles.primaryButton} type="submit" disabled={busy || motivation.trim().length < 10 || !/^05[0-9]{8}$/.test(contactPhone) || !city.trim() || !experienceYears || (isCourier ? !serviceArea.trim() : !qualification.trim())}>
+                <button className={styles.primaryButton} type="submit" disabled={busy}>
                   {busy
                     ? tr('جارٍ الإرسال...', 'Submitting...', 'Envoi...')
                     : tr('إرسال طلب الانضمام', 'Submit application', 'Soumettre la demande')}
