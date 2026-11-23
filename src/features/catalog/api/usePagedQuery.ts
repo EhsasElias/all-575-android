@@ -22,6 +22,14 @@ export type PagedList<T> = {
 
 const FIRST_PAGE: CursorQuery | null = null;
 
+/** Treat remotely returned pagination as untrusted at runtime, despite its TS contract. */
+function nextLink(page: unknown): string | null {
+  if (typeof page !== 'object' || page === null || !('links' in page)) return null;
+  const links = page.links;
+  if (typeof links !== 'object' || links === null || !('next' in links)) return null;
+  return typeof links.next === 'string' ? links.next : null;
+}
+
 /** Missing pagination metadata must never crash the whole storefront. */
 function nextLink(page: object): string | null {
   const rawLinks: unknown = Reflect.get(page, 'links');
