@@ -7,6 +7,12 @@ export type RoleApplication = {
   status: string;
   vehicle_type: string | null;
   motivation?: string;
+  contact_phone?: string | null;
+  city?: string | null;
+  experience_years?: number | null;
+  qualification?: string | null;
+  service_area?: string | null;
+  vehicle_plate_number?: string | null;
   created_at: string;
 };
 
@@ -17,6 +23,12 @@ export const applyForRole = (input: {
   requested_role: RequestedRole;
   motivation: string;
   vehicle_type?: 'car' | 'motorcycle' | 'van' | 'bicycle';
+  contact_phone?: string;
+  city?: string;
+  experience_years?: number;
+  qualification?: string;
+  service_area?: string;
+  vehicle_plate_number?: string;
 }) => http.post<{ data: RoleApplication }>('/me/role-applications', input);
 
 export type PendingRoleApplication = RoleApplication & {
