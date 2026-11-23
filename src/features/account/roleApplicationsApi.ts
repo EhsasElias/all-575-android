@@ -7,6 +7,12 @@ export type RoleApplication = {
   status: string;
   vehicle_type: string | null;
   motivation?: string;
+  contact_phone?: string | null;
+  city?: string | null;
+  experience_years?: number | null;
+  qualification?: string | null;
+  service_area?: string | null;
+  vehicle_plate_number?: string | null;
   created_at: string;
 };
 
