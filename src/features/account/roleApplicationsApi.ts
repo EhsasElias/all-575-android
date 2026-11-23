@@ -18,3 +18,13 @@ export const applyForRole = (input: {
   motivation: string;
   vehicle_type?: 'car' | 'motorcycle' | 'van' | 'bicycle';
 }) => http.post<{ data: RoleApplication }>('/me/role-applications', input);
+
+export type PendingRoleApplication = RoleApplication & {
+  user_id: number;
+  name: string;
+  email: string;
+  motivation: string;
+};
+
+export const reviewRoleApplications = () =>
+  http.get<{ data: PendingRoleApplication[] }>('/platform/super-admin/role-applications');
