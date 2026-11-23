@@ -84,6 +84,14 @@ describe('Home', () => {
     expect(screen.queryByRole('button', { name: 'Clear filters' })).not.toBeInTheDocument();
   });
 
+  it('keeps the home screen usable if a product response has no pagination links', async () => {
+    installCatalogApi({ 'GET /products': { body: { data: [biscuits] } } });
+    await renderHome();
+    const products = screen.getByRole('region', { name: 'All products' });
+    expect(await within(products).findByRole('link', { name: 'Biscuits' })).toBeVisible();
+    expect(screen.queryByRole('heading', { name: 'This page did not load' })).not.toBeInTheDocument();
+  });
+
   it('links the search entry to /search', async () => {
     installCatalogApi();
     const user = userEvent.setup();
