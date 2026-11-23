@@ -1,5 +1,5 @@
 import { useInfiniteQuery } from '@tanstack/react-query';
-import { http, type Page } from '@/shared/api';
+import { http, isApiError, type Page } from '@/shared/api';
 import { nextPageQuery, type CursorQuery } from './pagination';
 
 type PagedQueryOptions = {
@@ -22,6 +22,14 @@ export type PagedList<T> = {
 
 const FIRST_PAGE: CursorQuery | null = null;
 
+/** Treat remotely returned pagination as untrusted at runtime, despite its TS contract. */
+function nextLink(page: unknown): string | null {
+  if (typeof page !== 'object' || page === null || !('links' in page)) return null;
+  const links = page.links;
+  if (typeof links !== 'object' || links === null || !('next' in links)) return null;
+  return typeof links.next === 'string' ? links.next : null;
+}
+
 /** A cursor-paginated list. The next page is requested with the query string of `links.next`, as is. */
 export function usePagedQuery<T>({
   queryKey,
@@ -32,10 +40,14 @@ export function usePagedQuery<T>({
   const result = useInfiniteQuery({
     queryKey,
     enabled,
+    // A rejected 4xx request is deterministic; do not silently retry and hide the error state.
+    retry: (count, cause) =>
+      count < 2 &&
+      !(isApiError(cause) && cause.status !== null && cause.status >= 400 && cause.status < 500),
     initialPageParam: FIRST_PAGE,
     queryFn: ({ pageParam, signal }) =>
       http.get<Page<T>>(path, { query: { ...query, ...pageParam }, signal }),
-    getNextPageParam: (lastPage) => nextPageQuery(lastPage.links.next),
+    getNextPageParam: (lastPage) => nextPageQuery(nextLink(lastPage)),
   });
 
   const hasPages = result.data !== undefined;

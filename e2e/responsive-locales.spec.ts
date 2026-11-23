@@ -34,7 +34,12 @@ for (const language of languages) {
         terms_version: '2026-10-29',
         privacy_version: '2026-10-29',
       };
-      await route.fulfill({ json: { data: path.endsWith('/store') ? store : [] } });
+      const body = path.endsWith('/store')
+        ? { data: store }
+        : path.endsWith('/products')
+          ? { data: [], links: { next: null }, meta: { next_cursor: null } }
+          : { data: [] };
+      await route.fulfill({ json: body });
     });
 
     await openApp(page, '/home');

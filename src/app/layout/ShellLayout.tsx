@@ -28,7 +28,12 @@ export function ShellLayout() {
   const fr = i18n.language.startsWith('fr');
   const { status } = useSession();
   const { pathname, search, hash } = useLocation();
-  const dashboardRoute = status === 'signed-in' && workspacePages.includes(pathname);
+  const workspaceContext = new URLSearchParams(search).get('workspace');
+  const dashboardNotification =
+    pathname === routePaths.notifications &&
+    ['super', 'admin', 'review', 'seller', 'courier', 'customer'].includes(workspaceContext ?? '');
+  const dashboardRoute =
+    status === 'signed-in' && (workspacePages.includes(pathname) || dashboardNotification);
   const accountRoute =
     status === 'signed-in' &&
     (dashboardRoute ||

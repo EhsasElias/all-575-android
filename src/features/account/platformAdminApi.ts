@@ -41,6 +41,7 @@ export const addAdminAssignment = (data: {
   seller_id: number;
   can_view_orders: boolean;
   can_view_inventory: boolean;
+  can_review_sellers?: boolean;
 }) => http.post<{ data: PlatformAdminAccess }>('/platform/super-admin/admins', data);
 
 export const updateAdminAssignment = (
@@ -49,6 +50,7 @@ export const updateAdminAssignment = (
     is_active?: boolean;
     can_view_orders?: boolean;
     can_view_inventory?: boolean;
+    can_review_sellers?: boolean;
   },
 ) => http.patch<{ data: PlatformAdminAccess }>('/platform/super-admin/admins/' + String(id), data);
 

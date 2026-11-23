@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState, type FormEvent } from 'react';
+import { useEffect, useMemo, useRef, useState, type FormEvent } from 'react';
 import { useTranslation } from 'react-i18next';
 import {
   adminAssignments,
@@ -23,11 +23,31 @@ export function PlatformAdminAssignments() {
   const [sellerId, setSellerId] = useState('');
   const [orders, setOrders] = useState(true);
   const [stock, setStock] = useState(true);
+  const [reviewSellers, setReviewSellers] = useState(false);
   const [busy, setBusy] = useState(false);
   const submissionInFlight = useRef(false);
   const [error, setError] = useState('');
   const [notice, setNotice] = useState('');
   const [revision, setRevision] = useState(0);
+  const [search, setSearch] = useState('');
+  const [statusFilter, setStatusFilter] = useState<'all' | 'active' | 'inactive'>('all');
+  const filteredItems = useMemo(
+    () =>
+      items.filter((item) => {
+        if (statusFilter === 'active' && !item.is_active) return false;
+        if (statusFilter === 'inactive' && item.is_active) return false;
+        const query = search.trim().toLocaleLowerCase();
+        if (!query) return true;
+        return [
+          item.name,
+          item.email,
+          item.seller_name_ar,
+          item.seller_name_en,
+          String(item.seller_id),
+        ].some((value) => (value ?? '').toLocaleLowerCase().includes(query));
+      }),
+    [items, search, statusFilter],
+  );
 
   useEffect(() => {
     let active = true;
@@ -72,9 +92,11 @@ export function PlatformAdminAssignments() {
         seller_id: Number(sellerId),
         can_view_orders: orders,
         can_view_inventory: stock,
+        can_review_sellers: reviewSellers,
       });
       setEmail('');
       setSellerId('');
+      setReviewSellers(false);
       setNotice(tr('تم تعيين حساب الإدارة.', 'Admin account assigned.'));
       setRevision((x) => x + 1);
     } catch {
@@ -92,7 +114,12 @@ export function PlatformAdminAssignments() {
 
   const change = async (
     id: number,
-    input: { is_active?: boolean; can_view_orders?: boolean; can_view_inventory?: boolean },
+    input: {
+      is_active?: boolean;
+      can_view_orders?: boolean;
+      can_view_inventory?: boolean;
+      can_review_sellers?: boolean;
+    },
   ) => {
     if (submissionInFlight.current) return;
     submissionInFlight.current = true;
@@ -228,8 +255,26 @@ export function PlatformAdminAssignments() {
               />
               {tr('عرض المخزون', 'View inventory')}
             </label>
+            <label>
+              <input
+                type="checkbox"
+                checked={reviewSellers}
+                onChange={(event) => {
+                  setReviewSellers(event.target.checked);
+                }}
+              />
+              {ar
+                ? 'مراجعة طلبات البائعين والمنتجات (صلاحية على مستوى المنصة)'
+                : fr
+                  ? 'Examiner les vendeurs et les produits (accès global)'
+                  : 'Review sellers and products (platform-wide permission)'}
+            </label>
           </div>
-          <button type="submit" className={styles.submit} disabled={busy || (!orders && !stock)}>
+          <button
+            type="submit"
+            className={styles.submit}
+            disabled={busy || (!orders && !stock && !reviewSellers)}
+          >
             {busy ? tr('جارٍ الحفظ...', 'Saving...') : tr('تعيين إداري', 'Assign Admin')}
           </button>
         </form>
@@ -237,10 +282,62 @@ export function PlatformAdminAssignments() {
           <h3>
             {tr('الإسنادات الحالية', 'Existing Admin Assignments')} ({items.length})
           </h3>
+          <div className={styles.permissions} style={{ marginBlock: 12, flexWrap: 'wrap' }}>
+            <label>
+              {ar
+                ? 'بحث في الحساب أو المتجر'
+                : fr
+                  ? 'Rechercher un compte ou un vendeur'
+                  : 'Search account or seller'}
+              <input
+                type="search"
+                aria-label={
+                  ar
+                    ? 'بحث في إسنادات الإدارة'
+                    : fr
+                      ? 'Rechercher les administrateurs'
+                      : 'Search Admin assignments'
+                }
+                value={search}
+                onChange={(event) => {
+                  setSearch(event.target.value);
+                }}
+              />
+            </label>
+            <label>
+              {ar ? 'تصفية حسب الحالة' : fr ? 'Filtrer par statut' : 'Filter by status'}
+              <select
+                value={statusFilter}
+                onChange={(event) => {
+                  const value = event.target.value;
+                  if (value === 'all' || value === 'active' || value === 'inactive') {
+                    setStatusFilter(value);
+                  }
+                }}
+              >
+                <option value="all">{ar ? 'الجميع' : fr ? 'Tous' : 'All'}</option>
+                <option value="active">{tr('نشط', 'Active')}</option>
+                <option value="inactive">{tr('موقوف', 'Inactive')}</option>
+              </select>
+            </label>
+          </div>
+          <p aria-live="polite">
+            {ar ? 'النتائج المعروضة' : fr ? 'Résultats affichés' : 'Displayed results'}:{' '}
+            {filteredItems.length}
+          </p>
           {items.length === 0 && (
             <p>{tr('لا توجد حسابات إدارية معينة بعد.', 'No Admin assignments yet.')}</p>
           )}
-          {items.length > 0 && (
+          {items.length > 0 && filteredItems.length === 0 && (
+            <p>
+              {ar
+                ? 'لا توجد إسنادات تطابق الفلاتر.'
+                : fr
+                  ? 'Aucune attribution correspondante.'
+                  : 'No assignments match these filters.'}
+            </p>
+          )}
+          {filteredItems.length > 0 && (
             <div className={styles.tableScroll}>
               <table>
                 <thead>
@@ -253,7 +350,7 @@ export function PlatformAdminAssignments() {
                   </tr>
                 </thead>
                 <tbody>
-                  {items.map((item) => (
+                  {filteredItems.map((item) => (
                     <tr key={item.id}>
                       <td>
                         <strong>{item.name ?? item.email ?? `#${item.user_id}`}</strong>
@@ -286,6 +383,17 @@ export function PlatformAdminAssignments() {
                               }
                             />
                             {tr('المخزون', 'Inventory')}
+                          </label>
+                          <label>
+                            <input
+                              type="checkbox"
+                              disabled={busy}
+                              checked={item.can_review_sellers}
+                              onChange={(event) => {
+                                void change(item.id, { can_review_sellers: event.target.checked });
+                              }}
+                            />
+                            {ar ? 'مراجع المنصة' : fr ? 'Examinateur global' : 'Platform reviewer'}
                           </label>
                         </div>
                       </td>

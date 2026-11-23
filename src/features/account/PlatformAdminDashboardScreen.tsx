@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
+import { useLocation } from 'react-router';
 import { isApiError } from '@/shared/api';
 import { Page } from './components/Page';
 import {
@@ -19,6 +20,7 @@ import './adminWorkspaceFamily.css';
 
 export function PlatformAdminDashboardScreen() {
   const { i18n } = useTranslation();
+  const { hash } = useLocation();
   const ar = i18n.language.startsWith('ar');
   const fr = i18n.language.startsWith('fr');
   const tr = (a: string, en: keyof typeof platformAdminFrench) =>
@@ -77,6 +79,15 @@ export function PlatformAdminDashboardScreen() {
     };
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [revision]);
+
+  // Scroll after data-driven sections mount, not before the dashboard renders.
+  useEffect(() => {
+    if (!data || !hash) return;
+    document.getElementById(decodeURIComponent(hash.slice(1)))?.scrollIntoView({
+      behavior: 'smooth',
+      block: 'start',
+    });
+  }, [data, hash]);
 
   useEffect(() => {
     let active = true;

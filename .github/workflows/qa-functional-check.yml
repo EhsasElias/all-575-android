@@ -1,0 +1,24 @@
+name: QA functional checks (independent of legacy lint)
+on:
+  pull_request:
+    branches: [fix/qa-release-20261123]
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  typecheck:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: npm
+      - run: npm ci
+      - name: TypeScript compiler
+        run: npm run typecheck
+      - name: Focused role sidebar and application tests
+        run: npx vitest run src/app/layout/SidebarLanguages.test.tsx src/features/account/AccountScreen.test.tsx
+      - name: All frontend unit tests
+        run: npm test -- --run

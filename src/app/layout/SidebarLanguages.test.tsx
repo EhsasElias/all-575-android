@@ -1,4 +1,4 @@
-import { screen, within } from '@testing-library/react';
+import { screen, waitFor, within } from '@testing-library/react';
 import { describe, expect, it } from 'vitest';
 import { installFakeApi } from '@/test/fakeApi';
 import { renderApp } from '@/test/render';
@@ -42,6 +42,64 @@ function mockCustomer() {
 }
 
 describe('every account and dashboard navigation language', () => {
+  it('keeps the Super Admin sidebar on seller review screens', async () => {
+    installFakeApi({
+      'GET /me': { body: { data: customer } },
+      'GET /store': { body: { data: testStore } },
+      'GET /platform/super-admin/dashboard': { body: { data: {} } },
+      'GET /seller-review/overview': { status: 403, body: { message: 'Forbidden' } },
+    });
+    await renderApp({
+      route: '/account/seller-review?tab=applications',
+      signedIn: true,
+      seenWelcome: true,
+      language: 'en',
+    });
+    const menu = await screen.findByRole('navigation', { name: 'Dashboard navigation' });
+    await waitFor(() => expect(within(menu).getByText('Super Admin')).toBeInTheDocument());
+    expect(within(menu).getByRole('link', { name: 'Admin approvals' })).toHaveAttribute(
+      'href',
+      '/account/super-admin#admin-applications',
+    );
+    expect(within(menu).getByRole('link', { name: 'Courier approvals' })).toHaveAttribute(
+      'href',
+      '/account/super-admin#courier-approvals',
+    );
+    expect(within(menu).getByRole('link', { name: 'Seller applications' })).toHaveAttribute(
+      'href',
+      '/account/seller-review?tab=applications',
+    );
+    expect(within(menu).queryByText('Approvals')).not.toBeInTheDocument();
+  });
+
+  it('preserves the independent reviewer sidebar without Super Admin access', async () => {
+    installFakeApi({
+      'GET /me': { body: { data: customer } },
+      'GET /store': { body: { data: testStore } },
+      'GET /platform/super-admin/dashboard': { status: 403, body: { message: 'Forbidden' } },
+      'GET /seller-review/overview': {
+        body: {
+          data: {
+            pending_applications: 0,
+            pending_branches: 0,
+            pending_products: 0,
+            pending_categories: 0,
+            recent_decisions: [],
+          },
+        },
+      },
+    });
+    await renderApp({
+      route: '/account/seller-review?tab=applications',
+      signedIn: true,
+      seenWelcome: true,
+      language: 'en',
+    });
+    const menu = await screen.findByRole('navigation', { name: 'Dashboard navigation' });
+    await waitFor(() => expect(within(menu).getByText('Approvals')).toBeInTheDocument());
+    expect(within(menu).queryByRole('link', { name: 'Admin approvals' })).not.toBeInTheDocument();
+  });
+
   for (const language of ['ar', 'en', 'fr'] as const) {
     it(`renders account links in ${language}`, async () => {
       mockCustomer();

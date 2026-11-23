@@ -66,7 +66,9 @@
   font-weight: 700;
   overflow-wrap: anywhere;
 }
-.roleLink:hover { background: var(--color-surface, #fff); }
+.roleLink:hover {
+  background: var(--color-surface, #fff);
+}
 .selectedRole {
   background: #22795c;
   color: #fff;
