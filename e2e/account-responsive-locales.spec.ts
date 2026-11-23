@@ -88,7 +88,12 @@ async function fakeCustomerApi(page: import('@playwright/test').Page) {
       });
       return;
     }
-    await route.fulfill({ json: { data: pathname.endsWith('/store') ? store : [] } });
+    const body = pathname.endsWith('/store')
+      ? { data: store }
+      : pathname.endsWith('/products')
+        ? { data: [], links: { next: null }, meta: { next_cursor: null } }
+        : { data: [] };
+    await route.fulfill({ json: body });
   });
 }
 
