@@ -1,4 +1,5 @@
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
+import { isApiError } from '@/shared/api';
 import { useTranslation } from 'react-i18next';
 import { courierAdminFrench } from './courierAdminFrench';
 import {
@@ -17,14 +18,19 @@ export function SuperAdminCouriers({ ar }: { ar: boolean }) {
   const [busy, setBusy] = useState(false);
   const decisionInFlight = useRef(false);
   const [revision, setRevision] = useState(0);
+  const [statusFilter, setStatusFilter] = useState<'all' | 'pending' | 'approved' | 'rejected'>('pending');
+  const visible = useMemo(() =>
+    statusFilter === 'all' ? items : items.filter((item) => item.approval_status === statusFilter),
+  [items, statusFilter]);
   useEffect(() => {
     let active = true;
     void adminCouriers()
       .then((r) => {
         if (active) setItems(r.data);
       })
-      .catch(() => {
-        if (active) setError(tr('تعذر تحميل حسابات المندوبين.', 'Unable to load couriers.'));
+      .catch((cause: unknown) => {
+        if (active) setError(tr('تعذر تحميل حسابات المندوبين.', 'Unable to load couriers.') +
+          (isApiError(cause) ? ` (HTTP ${cause.status})` : ''));
       });
     return () => {
       active = false;
@@ -37,7 +43,12 @@ export function SuperAdminCouriers({ ar }: { ar: boolean }) {
       className="admin-family-panel"
       style={{ marginBlock: 18, padding: 16 }}
     >
-      <h2>{tr('اعتماد مندوبي التوصيل', 'Courier approvals')}</h2>
+      <header style={{ display: 'flex', alignItems: 'center', flexWrap: 'wrap', justifyContent: 'space-between', gap: 12 }}>
+        <h2>{tr('اعتماد مندوبي التوصيل', 'Courier approvals')}</h2>
+        <button type="button" className="admin-family-primary" disabled={busy} onClick={() => { setError(''); setRevision((current) => current + 1); }}>
+          ↻ {tr('تحديث', 'Refresh')}
+        </button>
+      </header>
       <p>
         {tr(
           'تتم الموافقة من المدير العام فقط. المندوب غير المعتمد لا يستقبل مهام.',
@@ -45,6 +56,21 @@ export function SuperAdminCouriers({ ar }: { ar: boolean }) {
         )}
       </p>
       {error && <p role="alert">{error}</p>}
+      <div style={{ display: 'flex', alignItems: 'center', gap: 12, flexWrap: 'wrap', marginBlock: 14 }}>
+        <label>
+          {ar ? 'تصفية حسب الحالة' : fr ? 'Filtrer par statut' : 'Filter by status'}
+          <select value={statusFilter} onChange={(event) => setStatusFilter(event.target.value as 'all' | 'pending' | 'approved' | 'rejected')} style={{ marginInlineStart: 8 }}>
+            <option value="pending">{ar ? 'قيد المراجعة' : fr ? 'En attente' : 'Pending'}</option>
+            <option value="approved">{ar ? 'معتمد' : fr ? 'Approuvé' : 'Approved'}</option>
+            <option value="rejected">{ar ? 'مرفوض' : fr ? 'Refusé' : 'Rejected'}</option>
+            <option value="all">{ar ? 'الجميع' : fr ? 'Tous' : 'All'}</option>
+          </select>
+        </label>
+        <span aria-live="polite">{ar ? 'النتائج' : fr ? 'Résultats' : 'Results'}: {visible.length}</span>
+      </div>
+      {visible.length === 0 && !error && (
+        <p>{ar ? 'لا توجد ملفات مندوبي توصيل بهذه الحالة.' : fr ? 'Aucun livreur avec ce statut.' : 'No courier profiles with this status.'}</p>
+      )}
       <div className="admin-family-table" style={{ overflowX: 'auto' }}>
         <table>
           <thead>
@@ -57,12 +83,16 @@ export function SuperAdminCouriers({ ar }: { ar: boolean }) {
             </tr>
           </thead>
           <tbody>
-            {items.map((c) => (
+            {visible.map((c) => (
               <tr key={c.id}>
                 <td>{c.name}</td>
                 <td>#{c.service_zone_id}</td>
                 <td>{c.vehicle_type}</td>
-                <td>{c.approval_status}</td>
+                <td>{c.approval_status === 'approved'
+                  ? (ar ? 'معتمد' : fr ? 'Approuvé' : 'Approved')
+                  : c.approval_status === 'rejected'
+                    ? (ar ? 'مرفوض' : fr ? 'Refusé' : 'Rejected')
+                    : (ar ? 'قيد المراجعة' : fr ? 'En attente' : 'Pending')}</td>
                 <td>
                   <button
                     type="button"
