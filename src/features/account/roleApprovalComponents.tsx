@@ -123,7 +123,7 @@ export function RoleApplicationDecision({
                   rows={3}
                   maxLength={1000}
                   value={note}
-                  onChange={(event) => setNote(event.target.value)}
+                  onChange={(event) => { setNote(event.target.value); }}
                 />
               </label>
               <div style={{ display: 'flex', flexWrap: 'wrap', gap: 10 }}>
@@ -131,7 +131,7 @@ export function RoleApplicationDecision({
                   type="button"
                   className="admin-family-primary"
                   disabled={busy}
-                  onClick={() => void decide('approved')}
+                  onClick={() => { void decide('approved'); }}
                 >
                   {tr('موافقة', 'Approve', 'Approuver')}
                 </button>
@@ -139,7 +139,7 @@ export function RoleApplicationDecision({
                   type="button"
                   className="admin-family-secondary"
                   disabled={busy || !note.trim()}
-                  onClick={() => void decide('rejected')}
+                  onClick={() => { void decide('rejected'); }}
                 >
                   {tr('رفض', 'Reject', 'Refuser')}
                 </button>
@@ -153,7 +153,7 @@ export function RoleApplicationDecision({
                     {tr('المتجر الذي سيُسند إليه المسؤول', 'Assigned seller', 'Vendeur attribué')}
                     <select
                       value={sellerId}
-                      onChange={(event) => setSellerId(event.target.value)}
+                      onChange={(event) => { setSellerId(event.target.value); }}
                       required
                     >
                       <option value="">
@@ -170,7 +170,7 @@ export function RoleApplicationDecision({
                     <input
                       type="checkbox"
                       checked={orders}
-                      onChange={(event) => setOrders(event.target.checked)}
+                      onChange={(event) => { setOrders(event.target.checked); }}
                     />{' '}
                     {tr('عرض الطلبات', 'View orders', 'Voir les commandes')}
                   </label>
@@ -178,7 +178,7 @@ export function RoleApplicationDecision({
                     <input
                       type="checkbox"
                       checked={inventory}
-                      onChange={(event) => setInventory(event.target.checked)}
+                      onChange={(event) => { setInventory(event.target.checked); }}
                     />{' '}
                     {tr('عرض المخزون', 'View inventory', 'Voir le stock')}
                   </label>
@@ -188,7 +188,7 @@ export function RoleApplicationDecision({
                   {tr('منطقة التوصيل', 'Delivery zone', 'Zone de livraison')}
                   <select
                     value={zoneId}
-                    onChange={(event) => setZoneId(event.target.value)}
+                    onChange={(event) => { setZoneId(event.target.value); }}
                     required
                   >
                     <option value="">
@@ -218,7 +218,7 @@ export function RoleApplicationDecision({
                     ? !sellerId || (!orders && !inventory)
                     : !zoneId)
                 }
-                onClick={() => void activate()}
+                onClick={() => { void activate(); }}
               >
                 {tr('تفعيل الحساب', 'Activate account', 'Activer le compte')}
               </button>
