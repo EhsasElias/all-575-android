@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 import { Link, useLocation } from 'react-router';
 import { useTranslation } from 'react-i18next';
-import { routePaths } from '@/shared/lib';
+import { routePaths, routeTo } from '@/shared/lib';
 import { useSession } from '@/shared/session';
 import { memberships } from '@/features/account/sellerWorkspaceApi';
 import { superAdminDashboard } from '@/features/account/superAdminApi';
@@ -123,6 +123,14 @@ export function AccountSidebar({ onNavigate }: { onNavigate?: () => void }) {
         <Link className={styles.link} to={routePaths.dashboard} onClick={onNavigate}>
           {tr('لوحة العميل', 'Customer dashboard', 'Tableau de bord client')}
         </Link>
+        <div className={styles.roleActions}>
+          <Link className={styles.link} to={routeTo.roleApplication('admin')} onClick={onNavigate}>
+            {tr('الانضمام كمسؤول', 'Become Admin', 'Devenir administrateur')}
+          </Link>
+          <Link className={styles.link} to={routeTo.roleApplication('courier')} onClick={onNavigate}>
+            {tr('الانضمام كمندوب توصيل', 'Become Delivery', 'Devenir livreur')}
+          </Link>
+        </div>
         {workspaces.includes('seller') && (
           <Link className={styles.link} to={routePaths.sellerWorkspace} onClick={onNavigate}>
             {tr('لوحة البائع', 'Seller dashboard', 'Tableau de bord vendeur')}

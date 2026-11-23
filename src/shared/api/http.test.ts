@@ -143,7 +143,7 @@ describe('requests', () => {
 
   it('allows distinct writes and retries after a completed write', async () => {
     const { http, fetchFn } = setup();
-    fetchFn.mockResolvedValue(jsonResponse({ ok: true }));
+    fetchFn.mockImplementation(() => Promise.resolve(jsonResponse({ ok: true })));
     await Promise.all([
       http.post('/cart/items', { productId: 1 }),
       http.post('/cart/items', { productId: 2 }),
@@ -155,7 +155,7 @@ describe('requests', () => {
 
   it('does not coalesce GET requests', async () => {
     const { http, fetchFn } = setup();
-    fetchFn.mockResolvedValue(jsonResponse({}));
+    fetchFn.mockImplementation(() => Promise.resolve(jsonResponse({})));
     await Promise.all([http.get('/products'), http.get('/products')]);
     expect(fetchFn).toHaveBeenCalledTimes(2);
   });

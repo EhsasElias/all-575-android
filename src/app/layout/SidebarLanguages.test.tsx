@@ -11,6 +11,8 @@ const labels = {
     requests: 'طلباتي الخاصة',
     dashboard: 'قائمة لوحة التحكم',
     overview: 'ملخص العميل',
+    becomeAdmin: 'الانضمام كمسؤول',
+    becomeDelivery: 'الانضمام كمندوب توصيل',
   },
   en: {
     account: 'Account navigation',
@@ -18,6 +20,8 @@ const labels = {
     requests: 'Requests',
     dashboard: 'Dashboard navigation',
     overview: 'Customer overview',
+    becomeAdmin: 'Become Admin',
+    becomeDelivery: 'Become Delivery',
   },
   fr: {
     account: 'Navigation du compte',
@@ -25,6 +29,8 @@ const labels = {
     requests: 'Demandes',
     dashboard: 'Navigation du tableau de bord',
     overview: 'Tableau de bord client',
+    becomeAdmin: 'Devenir administrateur',
+    becomeDelivery: 'Devenir livreur',
   },
 } as const;
 
@@ -49,6 +55,14 @@ describe('every account and dashboard navigation language', () => {
       expect(within(navigation).getByRole('link', { name: text.requests })).toHaveAttribute(
         'href',
         '/account/requests',
+      );
+      expect(within(navigation).getByRole('link', { name: text.becomeAdmin })).toHaveAttribute(
+        'href',
+        '/account/apply/admin',
+      );
+      expect(within(navigation).getByRole('link', { name: text.becomeDelivery })).toHaveAttribute(
+        'href',
+        '/account/apply/courier',
       );
       expect(document.documentElement).toHaveAttribute('dir', language === 'ar' ? 'rtl' : 'ltr');
     });

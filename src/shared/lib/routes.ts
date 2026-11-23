@@ -25,6 +25,7 @@ export const routePaths = {
   sellerApplication: '/account/seller-application',
   sellerWorkspace: '/account/seller-workspace',
   courierWorkspace: '/account/courier',
+  roleApplication: '/account/apply/:role',
   sellerReview: '/account/seller-review',
   superAdminDashboard: '/account/super-admin',
   platformAdminDashboard: '/account/admin',
@@ -48,6 +49,7 @@ export const routePaths = {
 const segment = (value: string | number): string => encodeURIComponent(String(value));
 
 export const routeTo = {
+  roleApplication: (role: 'admin' | 'courier') => `/account/apply/${role}`,
   customerCase: (id: string) => `/account/support/${segment(id)}`,
   orderHelp: (id: string) => `/orders/${segment(id)}/help`,
   categoryProducts: (slug: string) => `/categories/${segment(slug)}`,

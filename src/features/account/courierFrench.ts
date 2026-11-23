@@ -26,4 +26,28 @@ export const courierFrench = {
   'Pickup verified; order is on the way.':
     'Retrait vérifié ; la commande est en cours de livraison.',
   'Confirm pickup': 'Confirmer le retrait',
+  'Ask the customer for the separate delivery code at the door.':
+    'Demandez au client son code de livraison distinct à la porte.',
+  'Customer delivery code': 'Code de livraison du client',
+  'Delivery verified with customer.': 'Livraison vérifiée avec le client.',
+  'Confirm delivery': 'Confirmer la livraison',
+  'Failed delivery reason': 'Motif de l’échec de livraison',
+  'Customer absent': 'Client absent',
+  'Address issue': 'Problème d’adresse',
+  'Customer refused': 'Livraison refusée par le client',
+  'Other reason': 'Autre motif',
+  'Attempt details': 'Détails de la tentative',
+  'Failed delivery was reported to Admin.': 'L’échec de livraison a été signalé à l’administration.',
+  'Report failed delivery': 'Signaler un échec de livraison',
+  'Delivery completed and verified.': 'Livraison terminée et vérifiée.',
+  Offered: 'Proposée',
+  Accepted: 'Acceptée',
+  'Picked up': 'Récupérée',
+  Delivered: 'Livrée',
+  Declined: 'Refusée',
+  Expired: 'Expirée',
+  'Completed jobs:': 'Missions terminées :',
+  'Earnings: unavailable until settlements are enabled.':
+    'Gains indisponibles avant l’activation des règlements.',
+
 } as const;

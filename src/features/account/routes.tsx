@@ -14,6 +14,7 @@ import { SellerReviewScreen } from './SellerReviewScreen';
 import { SuperAdminDashboardScreen } from './SuperAdminDashboardScreen';
 import { PlatformAdminDashboardScreen } from './PlatformAdminDashboardScreen';
 import { CourierWorkspaceScreen } from './CourierWorkspaceScreen';
+import { RoleApplicationScreen } from './RoleApplicationScreen';
 
 /** The account screen itself handles guests, and the legal texts are public. */
 export const accountRoutes: RouteObject[] = [
@@ -32,6 +33,11 @@ export const accountRoutes: RouteObject[] = [
 
 /** Routes that need a signed-in customer: the router wraps them in RequireAuth. */
 export const protectedAccountRoutes: RouteObject[] = [
+  {
+    path: routePaths.roleApplication,
+    element: <RoleApplicationScreen />,
+    handle: titled((t) => t('nav.account')),
+  },
   {
     path: routePaths.courierWorkspace,
     element: <CourierWorkspaceScreen />,
