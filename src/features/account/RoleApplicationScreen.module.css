@@ -104,6 +104,8 @@
 }
 .field textarea { min-height: 8rem; resize: vertical; }
 .field small { justify-self: end; font-weight: 400; color: var(--color-text-muted, #607167); }
+.field .fieldError { justify-self: start; color: var(--color-danger, #bd3434); font-weight: 600; line-height: 1.5; }
+.field :is(input, textarea, select)[aria-invalid='true'] { border-color: var(--color-danger, #bd3434); }
 .field :is(input,select,textarea):focus-visible,
 .actions :is(button,a):focus-visible {
   outline: 2px solid var(--color-brand, #22795c);
