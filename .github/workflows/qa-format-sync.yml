@@ -26,6 +26,7 @@ jobs:
             src/app/layout/AccountSidebar.module.css \
             src/app/layout/AccountSidebar.tsx \
             src/app/layout/DashboardSidebar.tsx \
+            src/app/layout/SidebarLanguages.test.tsx \
             src/features/account/CourierWorkspaceScreen.module.css \
             src/features/account/CourierWorkspaceScreen.tsx \
             src/features/account/roleApplicationsApi.ts \
@@ -33,6 +34,7 @@ jobs:
             src/features/account/RoleApplicationScreen.tsx \
             src/features/account/SellerReviewScreen.tsx \
             src/features/account/SuperAdminRoleApplications.tsx \
+            src/features/account/SuperAdminCouriers.tsx \
             src/features/account/PlatformAdminAssignments.tsx \
             src/features/catalog/home/HomeSection.module.css \
             src/features/catalog/home/PopularProducts.tsx
@@ -40,7 +42,7 @@ jobs:
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git add src/app/layout/AccountSidebar.module.css src/app/layout/AccountSidebar.tsx src/app/layout/DashboardSidebar.tsx src/features/account/CourierWorkspaceScreen.module.css src/features/account/CourierWorkspaceScreen.tsx src/features/account/roleApplicationsApi.ts src/features/account/RoleApplicationScreen.module.css src/features/account/RoleApplicationScreen.tsx src/features/account/SellerReviewScreen.tsx src/features/account/SuperAdminRoleApplications.tsx src/features/account/PlatformAdminAssignments.tsx src/features/catalog/home/HomeSection.module.css src/features/catalog/home/PopularProducts.tsx
+          git add src/app/layout/AccountSidebar.module.css src/app/layout/AccountSidebar.tsx src/app/layout/DashboardSidebar.tsx src/app/layout/SidebarLanguages.test.tsx src/features/account/CourierWorkspaceScreen.module.css src/features/account/CourierWorkspaceScreen.tsx src/features/account/roleApplicationsApi.ts src/features/account/RoleApplicationScreen.module.css src/features/account/RoleApplicationScreen.tsx src/features/account/SellerReviewScreen.tsx src/features/account/SuperAdminRoleApplications.tsx src/features/account/SuperAdminCouriers.tsx src/features/account/PlatformAdminAssignments.tsx src/features/catalog/home/HomeSection.module.css src/features/catalog/home/PopularProducts.tsx
           if ! git diff --cached --quiet; then
             git commit -m "Format QA frontend files without changing behavior"
             git push origin HEAD:fix/dashboard-sidebar-navigation-20261123
