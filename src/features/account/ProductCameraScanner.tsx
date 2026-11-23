@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { scannerText, useProductCamera } from './useProductCamera';
+import { getDetectorClass, scannerText, useProductCamera } from './useProductCamera';
 
 export type ProductCameraScannerProps = {
   onRead: (text: string, format?: string) => void;
@@ -21,7 +21,7 @@ export function ProductCameraScanner({ onRead, onClose, ar }: ProductCameraScann
 
   const fromPhoto = async (file: File | undefined) => {
     if (!file || busyImage) return;
-    const PhotoDetector = typeof window === 'undefined' ? undefined : window.BarcodeDetector;
+    const PhotoDetector = getDetectorClass();
     if (!PhotoDetector) {
       setMessage(
         scannerText(
