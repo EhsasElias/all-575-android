@@ -30,15 +30,6 @@ function nextLink(page: unknown): string | null {
   return typeof links.next === 'string' ? links.next : null;
 }
 
-/** Missing pagination metadata must never crash the whole storefront. */
-function nextLink(page: object): string | null {
-  const rawLinks: unknown = Reflect.get(page, 'links');
-  if (typeof rawLinks !== 'object' || rawLinks === null || !('next' in rawLinks)) {
-    return null;
-  }
-  return typeof rawLinks.next === 'string' ? rawLinks.next : null;
-}
-
 /** A cursor-paginated list. The next page is requested with the query string of `links.next`, as is. */
 export function usePagedQuery<T>({
   queryKey,
