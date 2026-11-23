@@ -43,11 +43,7 @@ export function PlatformAdminAssignments() {
           item.seller_name_ar,
           item.seller_name_en,
           String(item.seller_id),
-        ].some((value) =>
-          (value ?? '')
-            .toLocaleLowerCase()
-            .includes(query),
-        );
+        ].some((value) => (value ?? '').toLocaleLowerCase().includes(query));
       }),
     [items, search, statusFilter],
   );
@@ -277,7 +273,9 @@ export function PlatformAdminAssignments() {
                       : 'Search Admin assignments'
                 }
                 value={search}
-                onChange={(event) => { setSearch(event.target.value); }}
+                onChange={(event) => {
+                  setSearch(event.target.value);
+                }}
               />
             </label>
             <label>

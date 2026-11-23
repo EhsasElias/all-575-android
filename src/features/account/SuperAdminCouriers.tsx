@@ -96,7 +96,12 @@ export function SuperAdminCouriers({ ar }: { ar: boolean }) {
             value={statusFilter}
             onChange={(event) => {
               const value = event.target.value;
-              if (value === 'all' || value === 'pending' || value === 'approved' || value === 'rejected') {
+              if (
+                value === 'all' ||
+                value === 'pending' ||
+                value === 'approved' ||
+                value === 'rejected'
+              ) {
                 setStatusFilter(value);
               }
             }}

@@ -40,16 +40,22 @@ export function SuperAdminRoleApplications() {
   useEffect(() => {
     let active = true;
     // Optional lookup failures must never hide the applications themselves.
-    void Promise.allSettled([reviewRoleApplications(), adminSellerChoices(), superAdminDeliveryZones()])
+    void Promise.allSettled([
+      reviewRoleApplications(),
+      adminSellerChoices(),
+      superAdminDeliveryZones(),
+    ])
       .then(([applications, sellerOptions, zoneOptions]) => {
         if (!active) return;
         if (applications.status === 'rejected') {
           throw applications.reason;
         }
         setItems(applications.value.data);
-        setSellers(sellerOptions.status === 'fulfilled'
-          ? sellerOptions.value.data.filter((item) => item.status === 'approved')
-          : []);
+        setSellers(
+          sellerOptions.status === 'fulfilled'
+            ? sellerOptions.value.data.filter((item) => item.status === 'approved')
+            : [],
+        );
         setZones(zoneOptions.status === 'fulfilled' ? zoneOptions.value.data : []);
         setError('');
       })
@@ -221,11 +227,27 @@ export function SuperAdminRoleApplications() {
       )}
       {selected && !selected.activated && (
         <RoleApplicationDecision
-          selected={selected} tr={tr} ar={ar} note={note} setNote={setNote}
-          busy={busy} decide={decide} activate={activate} sellers={sellers} zones={zones}
-          sellerId={sellerId} setSellerId={setSellerId} zoneId={zoneId} setZoneId={setZoneId}
-          orders={orders} setOrders={setOrders} inventory={inventory} setInventory={setInventory}
-          close={() => { setDecisionId(null); }}
+          selected={selected}
+          tr={tr}
+          ar={ar}
+          note={note}
+          setNote={setNote}
+          busy={busy}
+          decide={decide}
+          activate={activate}
+          sellers={sellers}
+          zones={zones}
+          sellerId={sellerId}
+          setSellerId={setSellerId}
+          zoneId={zoneId}
+          setZoneId={setZoneId}
+          orders={orders}
+          setOrders={setOrders}
+          inventory={inventory}
+          setInventory={setInventory}
+          close={() => {
+            setDecisionId(null);
+          }}
         />
       )}
     </section>

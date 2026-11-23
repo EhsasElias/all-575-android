@@ -156,4 +156,3 @@ export const customer: SectionLink[] = [
   { to: routePaths.customerRequests, ar: 'الطلبات الخاصة', en: 'Requests', fr: 'Demandes' },
   { to: routePaths.customerCases, ar: 'الدعم', en: 'Support', fr: 'Assistance' },
 ];
-
