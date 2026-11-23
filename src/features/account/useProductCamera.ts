@@ -6,14 +6,14 @@ type Detector = { detect(source: ImageBitmapSource): Promise<BarcodeHit[]> };
 type DetectorClass = new (options?: { formats: string[] }) => Detector;
 type CameraDevices = Pick<MediaDevices, 'getUserMedia'>;
 
-declare global {
-  interface Window {
-    BarcodeDetector?: DetectorClass;
-  }
+function isDetectorClass(value: unknown): value is DetectorClass {
+  return typeof value === 'function';
 }
 
-function getDetectorClass(): DetectorClass | undefined {
-  return typeof window === 'undefined' ? undefined : window.BarcodeDetector;
+export function getDetectorClass(): DetectorClass | undefined {
+  if (typeof window === 'undefined') return undefined;
+  const candidate: unknown = Reflect.get(window, 'BarcodeDetector');
+  return isDetectorClass(candidate) ? candidate : undefined;
 }
 
 function isCameraDevices(value: unknown): value is CameraDevices {
@@ -75,15 +75,17 @@ export function useProductCamera(onRead: (text: string, format?: string) => void
     const video = videoRef.current;
     if (!video) return;
 
-    let stopped = false;
-    let stream: MediaStream | null = null;
+    const lifecycle: { stopped: boolean; stream: MediaStream | null } = {
+      stopped: false,
+      stream: null,
+    };
     let frame = 0;
     let lastScan = 0;
 
     const stopCamera = () => {
-      stopped = true;
+      lifecycle.stopped = true;
       cancelAnimationFrame(frame);
-      stream?.getTracks().forEach((track) => {
+      lifecycle.stream?.getTracks().forEach((track) => {
         track.stop();
       });
       video.srcObject = null;
@@ -96,20 +98,20 @@ export function useProductCamera(onRead: (text: string, format?: string) => void
           audio: false,
           video: { facingMode: { ideal: 'environment' }, width: { ideal: 1280 } },
         });
-        if (stopped) {
+        if (lifecycle.stopped) {
           camera.getTracks().forEach((track) => {
             track.stop();
           });
           return;
         }
-        stream = camera;
+        lifecycle.stream = camera;
         video.srcObject = camera;
         await video.play();
-        if (stopped) return;
+        if (lifecycle.stopped) return;
         setReady(true);
 
         const scan = (timestamp: number): void => {
-          if (stopped) return;
+          if (lifecycle.stopped) return;
           if (video.readyState < 2 || timestamp - lastScan <= 250) {
             frame = requestAnimationFrame(scan);
             return;
@@ -119,7 +121,7 @@ export function useProductCamera(onRead: (text: string, format?: string) => void
             .detect(video)
             .then((hits) => {
               const hit = hits.find((item) => item.rawValue.trim());
-              if (hit && !stopped) {
+              if (hit && !lifecycle.stopped) {
                 stopCamera();
                 callback.current(hit.rawValue, hit.format);
               }
@@ -128,13 +130,13 @@ export function useProductCamera(onRead: (text: string, format?: string) => void
               // An individual frame can be undecodable; retry another frame.
             })
             .finally(() => {
-              if (!stopped) frame = requestAnimationFrame(scan);
+              if (!lifecycle.stopped) frame = requestAnimationFrame(scan);
             });
         };
 
         frame = requestAnimationFrame(scan);
       } catch {
-        if (!stopped) {
+        if (!lifecycle.stopped) {
           stopCamera();
           setMessage(
             scannerText(
