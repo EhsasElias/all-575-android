@@ -1,0 +1,27 @@
+name: QA final source formatting
+on:
+  push:
+    branches: [fix/dashboard-sidebar-navigation-20261123]
+    paths: ['.github/workflows/qa-final-format.yml']
+permissions:
+  contents: write
+jobs:
+  format:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: true
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: npm
+      - run: npm ci
+      - run: npx prettier --write src/features/account/PlatformAdminAssignments.tsx src/features/catalog/api/usePagedQuery.ts src/features/catalog/home/HomeScreen.test.tsx src/features/catalog/delivery/DeliveryZone.flows.test.tsx src/features/account/sellerReviewFrench.ts
+      - run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add src/features/account/PlatformAdminAssignments.tsx src/features/catalog/api/usePagedQuery.ts src/features/catalog/home/HomeScreen.test.tsx src/features/catalog/delivery/DeliveryZone.flows.test.tsx src/features/account/sellerReviewFrench.ts
+          git rm .github/workflows/qa-final-format.yml
+          git commit -m "Format final approval and catalogue QA corrections"
+          git push origin HEAD:fix/dashboard-sidebar-navigation-20261123
