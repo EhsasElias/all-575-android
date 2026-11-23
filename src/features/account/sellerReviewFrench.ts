@@ -8,6 +8,8 @@ export const sellerReviewFrench: Record<string, string> = {
   Approved: 'Approuvé',
   Published: 'Publié',
   Rejected: 'Rejeté',
+  'Access to the review queue was denied. Check your reviewer permissions.': 'Accès à la file de validation refusé. Vérifiez vos autorisations.',
+  'Could not connect to the review service.': 'Connexion au service de validation impossible.',
   'Could not load review queue.': 'Impossible de charger la file de validation.',
   'Could not load categories and requests.':
     'Impossible de charger les catégories et les demandes.',
