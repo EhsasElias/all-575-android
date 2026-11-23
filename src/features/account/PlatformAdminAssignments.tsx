@@ -44,7 +44,7 @@ export function PlatformAdminAssignments() {
           item.seller_name_en,
           String(item.seller_id),
         ].some((value) =>
-          String(value ?? '')
+          (value ?? '')
             .toLocaleLowerCase()
             .includes(query),
         );
@@ -277,16 +277,19 @@ export function PlatformAdminAssignments() {
                       : 'Search Admin assignments'
                 }
                 value={search}
-                onChange={(event) => setSearch(event.target.value)}
+                onChange={(event) => { setSearch(event.target.value); }}
               />
             </label>
             <label>
               {ar ? 'تصفية حسب الحالة' : fr ? 'Filtrer par statut' : 'Filter by status'}
               <select
                 value={statusFilter}
-                onChange={(event) =>
-                  setStatusFilter(event.target.value as 'all' | 'active' | 'inactive')
-                }
+                onChange={(event) => {
+                  const value = event.target.value;
+                  if (value === 'all' || value === 'active' || value === 'inactive') {
+                    setStatusFilter(value);
+                  }
+                }}
               >
                 <option value="all">{ar ? 'الجميع' : fr ? 'Tous' : 'All'}</option>
                 <option value="active">{tr('نشط', 'Active')}</option>
