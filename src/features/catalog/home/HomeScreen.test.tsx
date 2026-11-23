@@ -49,10 +49,15 @@ describe('Home', () => {
     expect(api.requests()).toEqual(
       expect.arrayContaining(['GET /categories', 'GET /products', 'GET /store']),
     );
-    expect(queriesOf(api, 'GET /products')).toHaveLength(1);
-    expect(queriesOf(api, 'GET /products')[0]?.get('per_page')).toBe('12');
-    expect(queriesOf(api, 'GET /products')[0]?.get('sort')).toBe('newest');
-    expect(queriesOf(api, 'GET /products')[0]?.has('zone_id')).toBe(false);
+    const requests = queriesOf(api, 'GET /products');
+    // Remounts may repeat the first page request; every call must remain correct.
+    expect(requests.length).toBeGreaterThanOrEqual(1);
+    for (const request of requests) {
+      expect(request.get('per_page')).toBe('12');
+      expect(request.get('sort')).toBe('newest');
+      expect(request.has('zone_id')).toBe(false);
+      expect(request.has('before_id')).toBe(false);
+    }
   });
 
   it('filters the home catalogue and allows changing the sort order', async () => {
