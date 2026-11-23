@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { decideRoleApplication, reviewRoleApplications, type PendingRoleApplication } from './roleApplicationsApi';
+import { decideRoleApplication, reviewRoleApplications, reviewServiceZones, type ServiceZoneChoice, type PendingRoleApplication } from './roleApplicationsApi';
 
 export function SuperAdminRoleApplications() {
   const { i18n } = useTranslation();
@@ -12,6 +12,9 @@ export function SuperAdminRoleApplications() {
   const [error, setError] = useState('');
   const [decisionId, setDecisionId] = useState<number | null>(null);
   const [note, setNote] = useState('');
+  const [zoneId, setZoneId] = useState('');
+  const [zones, setZones] = useState<ServiceZoneChoice[]>([]);
+  const selectedApplication = items.find((item) => item.id === decisionId);
   const [saving, setSaving] = useState(false);
   const [notice, setNotice] = useState('');
 
@@ -31,14 +34,19 @@ export function SuperAdminRoleApplications() {
 
   const decide = async (decision: 'approved' | 'rejected') => {
     if (decisionId === null || saving) return;
+    if (decision === 'approved' && selectedApplication?.requested_role === 'courier' && !zoneId) {
+      setError(tr('اختر منطقة التوصيل قبل الموافقة.', 'Select a service zone before approval.', 'Sélectionnez une zone de livraison.'));
+      return;
+    }
     setSaving(true);
     setError('');
     setNotice('');
     try {
-      await decideRoleApplication(decisionId, decision, note.trim());
+      await decideRoleApplication(decisionId, decision, note.trim(), decision === 'approved' && selectedApplication?.requested_role === 'courier' ? Number(zoneId) : undefined);
       setItems((previous) => previous.filter((item) => item.id !== decisionId));
       setDecisionId(null);
       setNote('');
+      setZoneId('');
       setNotice(tr(
         'تم حفظ قرار المراجعة. لن تُمنح الصلاحيات تلقائيًا.',
         'Review decision saved. Permissions are not granted automatically.',
@@ -57,6 +65,9 @@ export function SuperAdminRoleApplications() {
 
   useEffect(() => {
     let active = true;
+    void reviewServiceZones()
+      .then((result) => { if (active) setZones(result.data); })
+      .catch(() => { if (active) setError(tr('تعذر تحميل مناطق التوصيل.', 'Could not load service zones.', 'Impossible de charger les zones.')); });
     void reviewRoleApplications()
       .then((result) => { if (active) setItems(result.data); })
       .catch(() => {
@@ -132,7 +143,7 @@ export function SuperAdminRoleApplications() {
                 <td style={{ whiteSpace: 'pre-wrap', overflowWrap: 'anywhere' }}>{item.motivation}</td>
                 <td>{new Date(item.created_at).toLocaleString(ar ? 'ar-SA' : fr ? 'fr-FR' : 'en-GB')}</td>
                 <td>{tr('قيد المراجعة', 'Pending review', 'En attente')}</td>
-                <td><button type="button" className="admin-family-secondary" onClick={() => { setDecisionId(item.id); setNote(''); setError(''); }}>{tr('مراجعة الطلب', 'Review application', 'Examiner')}</button></td>
+                <td><button type="button" className="admin-family-secondary" onClick={() => { setDecisionId(item.id); setNote(''); setZoneId(''); setError(''); }}>{tr('مراجعة الطلب', 'Review application', 'Examiner')}</button></td>
               </tr>
             ))}</tbody>
           </table>
@@ -146,6 +157,19 @@ export function SuperAdminRoleApplications() {
             'Approving the request does not grant admin permissions or activate a courier. Complete those steps separately.',
             'Approuver la demande ne donne aucun droit administrateur et n’active pas le livreur.',
           )}</p>
+          {selectedApplication?.requested_role === 'courier' && (
+            <label style={{ display: 'grid', gap: 8, marginBlock: 12 }}>
+              {tr('منطقة التوصيل (مطلوبة للموافقة)', 'Service zone (required for approval)', 'Zone de livraison (obligatoire)')}
+              <select value={zoneId} onChange={(event) => setZoneId(event.target.value)}>
+                <option value="">{tr('اختر المنطقة', 'Select zone', 'Choisir une zone')}</option>
+                {zones.map((zone) => (
+                  <option key={zone.id} value={zone.id}>
+                    {ar ? zone.name_ar : zone.name_en}
+                  </option>
+                ))}
+              </select>
+            </label>
+          )}
           <label style={{ display: 'grid', gap: 8, marginBlock: 12 }}>
             {tr('ملاحظات المراجعة (اختياري)', 'Review note (optional)', 'Note de révision (facultative)')}
             <textarea value={note} maxLength={1000} rows={3} onChange={(event) => setNote(event.target.value)} />
