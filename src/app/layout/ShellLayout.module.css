@@ -26,6 +26,16 @@
   max-inline-size: min(100%, 1500px);
 }
 
+/* Full storefront homepage on desktop; other customer forms retain their
+   intentionally narrow reading column. */
+@media (min-width: 64rem) {
+  .homeMain {
+    max-inline-size: min(100%, 1180px);
+    padding-inline: clamp(1.25rem, 3vw, 2.75rem);
+  }
+}
+
+
 /* Dedicated dashboard sidebar, independent from the storefront navigation. */
 .accountShell {
   display: grid;
