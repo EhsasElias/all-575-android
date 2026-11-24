@@ -127,6 +127,22 @@ export function HomeDiscovery({ categories, products }: Props) {
 
   return (
     <div className={styles.discovery}>
+      <section className={styles.promoHero} aria-labelledby="home-promo-title">
+        <div className={styles.promoCopy}>
+          <span className={styles.eyebrow}>{tr('كل احتياجاتك في مكان واحد', 'EVERYDAY ESSENTIALS', 'LES ESSENTIELS DU QUOTIDIEN')}</span>
+          <h2 id="home-promo-title">{tr('تسوّق يومك بكل سهولة', 'Make every day easier', 'Facilitez votre quotidien')}</h2>
+          <p>{tr('العناية والجمال والمنزل والمواد الطازجة', 'Beauty, home care and fresh everyday picks', 'Beauté, maison et produits frais')}</p>
+          <Link className={styles.promoAction} to={routePaths.search}>
+            {tr('تسوّق الآن', 'Shop now', 'Découvrir')} <span aria-hidden="true">↗</span>
+          </Link>
+        </div>
+        <div className={styles.promoArtwork} aria-hidden="true">
+          <div className={styles.promoImagePrimary}><CategoryPhoto item={categoryCards[0]} eager /></div>
+          <div className={styles.promoImageSecondary}><CategoryPhoto item={categoryCards[7]} eager /></div>
+          <span className={styles.promoSparkle}>✦</span>
+        </div>
+      </section>
+
       <section className={styles.section} aria-labelledby="home-discover-categories">
         <h2 id="home-discover-categories">{tr('ماذا تريد أن تتسوق؟', 'What would you like to order?', 'Que souhaitez-vous commander ?')}</h2>
         <div className={styles.categoryGrid}>
@@ -147,16 +163,28 @@ export function HomeDiscovery({ categories, products }: Props) {
       <section className={styles.section} aria-labelledby="home-daily-offers">
         <h2 id="home-daily-offers">{tr('عروض اليوم', 'Daily offers', 'Offres du jour')}</h2>
         <div className={styles.offerRail}>
-          {dailyCards.map(({ item, category }) => (
+          {dailyCards.map(({ item, category }, index) => (
             <Link key={item.key} className={styles.offerCard} to={target(category, item.search)}>
-              <CategoryPhoto item={item} />
-              <strong>{label(item, language)}</strong>
+              <span className={styles.offerCardVisual}>
+                <span className={styles.offerEyebrow}>{tr('اكتشف المزيد', 'DISCOVER MORE', 'À DÉCOUVRIR')}</span>
+                <strong className={styles.offerTitle}>{label(item, language)}</strong>
+                <span className={styles.offerPhoto}><CategoryPhoto item={item} /></span>
+                <span className={styles.offerExplore} aria-hidden="true">{index % 2 === 0 ? '✦' : '↗'}</span>
+              </span>
             </Link>
           ))}
         </div>
       </section>
 
       <section className={styles.section} aria-labelledby="home-grocery">
+        <Link className={styles.groceryPromo} to={target(grocery?.category, 'vegetables')}>
+          <span className={styles.groceryPromoIcon} aria-hidden="true">✦</span>
+          <span className={styles.groceryPromoText}>
+            <strong>{tr('طازج كل يوم', 'Fresh picks for every day', 'Des produits frais chaque jour')}</strong>
+            <small>{tr('اكتشف قسم الخضار والفواكه', 'Explore fruit, vegetables & more', 'Découvrez fruits et légumes')}</small>
+          </span>
+          <span className={styles.groceryPromoArrow} aria-hidden="true">→</span>
+        </Link>
         <div className={styles.headingRow}>
           <h2 id="home-grocery">{tr('البقالة والخضار والفواكه', 'Grocery & fresh', 'Épicerie et produits frais')}</h2>
           <Link className={styles.more} to={target(grocery?.category, 'vegetables')}>
@@ -184,6 +212,10 @@ export function HomeDiscovery({ categories, products }: Props) {
       </section>
 
       <section className={styles.section} aria-labelledby="home-picked-for-you">
+        <div className={styles.pickedIntro}>
+          <span className={styles.pickedIcon} aria-hidden="true">✦</span>
+          <span>{tr('منتجات مختارة لتسهيل يومك', 'Everyday finds, all in one place', 'Des produits pour vous simplifier la vie')}</span>
+        </div>
         <div className={styles.headingRow}>
           <h2 id="home-picked-for-you">{tr('اخترنا لك', 'Picked For You', 'Sélection pour vous')}</h2>
           <Link to={routePaths.search} className={styles.more}>
