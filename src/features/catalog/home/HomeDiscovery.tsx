@@ -127,22 +127,6 @@ export function HomeDiscovery({ categories, products }: Props) {
 
   return (
     <div className={styles.discovery}>
-      <section className={styles.promoHero} aria-labelledby="home-promo-title">
-        <div className={styles.promoCopy}>
-          <span className={styles.eyebrow}>{tr('كل احتياجاتك في مكان واحد', 'EVERYDAY ESSENTIALS', 'LES ESSENTIELS DU QUOTIDIEN')}</span>
-          <h2 id="home-promo-title">{tr('تسوّق يومك بكل سهولة', 'Make every day easier', 'Facilitez votre quotidien')}</h2>
-          <p>{tr('العناية والجمال والمنزل والمواد الطازجة', 'Beauty, home care and fresh everyday picks', 'Beauté, maison et produits frais')}</p>
-          <Link className={styles.promoAction} to={routePaths.search}>
-            {tr('تسوّق الآن', 'Shop now', 'Découvrir')} <span aria-hidden="true">↗</span>
-          </Link>
-        </div>
-        <div className={styles.promoArtwork} aria-hidden="true">
-          <div className={styles.promoImagePrimary}><CategoryPhoto item={categoryCards[0]} eager /></div>
-          <div className={styles.promoImageSecondary}><CategoryPhoto item={categoryCards[7]} eager /></div>
-          <span className={styles.promoSparkle}>✦</span>
-        </div>
-      </section>
-
       <section className={styles.section} aria-labelledby="home-discover-categories">
         <h2 id="home-discover-categories">{tr('ماذا تريد أن تتسوق؟', 'What would you like to order?', 'Que souhaitez-vous commander ?')}</h2>
         <div className={styles.categoryGrid}>
