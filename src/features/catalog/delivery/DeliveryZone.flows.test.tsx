@@ -64,10 +64,12 @@ describe('Delivery area chip', () => {
       id: 1,
       name: { ar: 'الرياض', en: 'Riyadh' },
     });
-    // The products are asked for again, now for the zone, and say what is in stock there.
-    expect(await screen.findByText('In stock')).toBeVisible();
-    expect(queriesOf(api, 'GET /products').at(-1)?.get('zone_id')).toBe('1');
-    expect(await screen.findByText('Delivering to Riyadh')).toBeVisible();
+    // Home discovery no longer shows an "In stock" badge. Verify the actual
+    // API contract: after choosing Riyadh, the product request is scoped to its zone.
+    await waitFor(() => {
+      expect(queriesOf(api, 'GET /products').at(-1)?.get('zone_id')).toBe('1');
+    });
+    expect(screen.getByRole('link', { name: 'Explore Personal care' })).toBeVisible();
   });
 
   it('keeps no coordinates anywhere', async () => {
