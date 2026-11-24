@@ -36,10 +36,25 @@ const categoryCards: readonly HomeCategory[] = [
   { key: 'groceries', image: '/images/categories/groceries-fresh.webp', ar: 'الخضار والفواكه', en: 'Groceries & fresh produce', fr: 'Fruits et légumes', search: 'vegetables', keys: ['grocery', 'vegetable', 'fruit', 'produce', 'خضار', 'فواكه', 'بقالة'] },
 ];
 
-function matchCategory(categories: readonly Category[], keys: readonly string[]) {
+const categorySlugs: Readonly<Record<string, string>> = {
+  personal: 'personal-care',
+  makeup: 'makeup',
+  perfume: 'perfumes',
+  stationery: 'stationery',
+  school: 'school-supplies',
+  detergents: 'cleaning-products',
+  tools: 'cleaning-tools',
+  kitchen: 'kitchenware',
+  groceries: 'groceries-fresh',
+};
+
+function matchCategory(categories: readonly Category[], item: HomeCategory) {
+  const exactSlug = categorySlugs[item.key];
+  const exact = categories.find((category) => category.slug === exactSlug);
+  if (exact) return exact;
   return categories.find((category) => {
     const values = [category.slug, category.name.ar, category.name.en].filter(Boolean).join(' ').toLowerCase();
-    return keys.some((key) => values.includes(key));
+    return item.keys.some((key) => values.includes(key));
   });
 }
 
@@ -101,7 +116,7 @@ export function HomeDiscovery({ categories, products }: Props) {
   const tr = (ar: string, en: string, fr: string) => language === 'ar' ? ar : language === 'fr' ? fr : en;
   const featured = categoryCards.map((item) => ({
     item,
-    category: matchCategory(categories, item.keys),
+    category: matchCategory(categories, item),
   }));
   const grocery = featured.find((item) => item.item.key === 'groceries');
   const groceryOptions = categories.filter((category) => {
