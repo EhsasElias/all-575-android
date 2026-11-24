@@ -1,4 +1,3 @@
-import { useEffect, useState } from 'react';
 import { Link } from 'react-router';
 import { formatMoney, useLanguage } from '@/shared/i18n';
 import { routePaths, routeTo } from '@/shared/lib';
@@ -12,19 +11,17 @@ type Props = {
   products: readonly ProductSummary[];
 };
 
-const CATEGORY_ATLAS = '/images/categories/home-category-atlas.webp';
-
-// Photo order matches the user-supplied 3x3 category atlas.
+// Each category uses its own photo from the user-supplied images.
 const featuredCategories = [
-  { key: 'personal', icon: '🧴', ar: 'العناية الشخصية', en: 'Personal care', fr: 'Soins personnels', search: 'shampoo', keys: ['personal care', 'hygiene', 'shampoo', 'شامبو', 'العناية الشخصية'] },
-  { key: 'makeup', icon: '💄', ar: 'مستحضرات التجميل', en: 'Makeup', fr: 'Maquillage', search: 'makeup', keys: ['makeup', 'cosmetic', 'مكياج', 'مستحضرات التجميل'] },
-  { key: 'perfume', icon: '🌸', ar: 'العطور', en: 'Perfumes', fr: 'Parfums', search: 'perfume', keys: ['perfume', 'fragrance', 'عطور', 'عطر'] },
-  { key: 'stationery', icon: '✏️', ar: 'الأدوات المكتبية', en: 'Stationery', fr: 'Papeterie', search: 'stationery', keys: ['stationery', 'office supplies', 'مكتبية', 'قرطاسية'] },
-  { key: 'school', icon: '🎒', ar: 'المستلزمات المدرسية', en: 'School supplies', fr: 'Fournitures scolaires', search: 'school', keys: ['school supplies', 'school', 'مدرسية', 'لوازم مدرسية'] },
-  { key: 'detergents', icon: '🧼', ar: 'المنظفات', en: 'Cleaning products', fr: 'Produits nettoyants', search: 'cleaning', keys: ['cleaning products', 'detergent', 'منظفات', 'مواد تنظيف'] },
-  { key: 'tools', icon: '🧹', ar: 'أدوات التنظيف', en: 'Cleaning tools', fr: 'Matériel de nettoyage', search: 'cleaning tools', keys: ['cleaning tools', 'أدوات تنظيف', 'مماسح', 'مكانس'] },
-  { key: 'kitchen', icon: '🍽️', ar: 'أدوات المطبخ', en: 'Kitchenware', fr: 'Ustensiles de cuisine', search: 'kitchen', keys: ['kitchen', 'cookware', 'مطبخ', 'أواني'] },
-  { key: 'groceries', icon: '🥬', ar: 'الخضار والفواكه', en: 'Groceries & fresh produce', fr: 'Fruits et légumes', search: 'vegetables', keys: ['grocery', 'vegetable', 'fruit', 'produce', 'خضار', 'فواكه', 'بقالة'] },
+  { key: 'personal', image: '/images/categories/personal-care.webp', icon: '🧴', ar: 'العناية الشخصية', en: 'Personal care', fr: 'Soins personnels', search: 'shampoo', keys: ['personal care', 'hygiene', 'shampoo', 'شامبو', 'العناية الشخصية'] },
+  { key: 'makeup', image: '/images/categories/makeup.webp', icon: '💄', ar: 'مستحضرات التجميل', en: 'Makeup', fr: 'Maquillage', search: 'makeup', keys: ['makeup', 'cosmetic', 'مكياج', 'مستحضرات التجميل'] },
+  { key: 'perfume', image: '/images/categories/perfumes.webp', icon: '🌸', ar: 'العطور', en: 'Perfumes', fr: 'Parfums', search: 'perfume', keys: ['perfume', 'fragrance', 'عطور', 'عطر'] },
+  { key: 'stationery', image: '/images/categories/stationery.webp', icon: '✏️', ar: 'الأدوات المكتبية', en: 'Stationery', fr: 'Papeterie', search: 'stationery', keys: ['stationery', 'office supplies', 'مكتبية', 'قرطاسية'] },
+  { key: 'school', image: '/images/categories/school-supplies.webp', icon: '🎒', ar: 'المستلزمات المدرسية', en: 'School supplies', fr: 'Fournitures scolaires', search: 'school', keys: ['school supplies', 'school', 'مدرسية', 'لوازم مدرسية'] },
+  { key: 'detergents', image: '/images/categories/cleaning-products.webp', icon: '🧼', ar: 'المنظفات', en: 'Cleaning products', fr: 'Produits nettoyants', search: 'cleaning', keys: ['cleaning products', 'detergent', 'منظفات', 'مواد تنظيف'] },
+  { key: 'tools', image: '/images/categories/cleaning-tools.webp', icon: '🧹', ar: 'أدوات التنظيف', en: 'Cleaning tools', fr: 'Matériel de nettoyage', search: 'cleaning tools', keys: ['cleaning tools', 'أدوات تنظيف', 'مماسح', 'مكانس'] },
+  { key: 'kitchen', image: '/images/categories/kitchenware.webp', icon: '🍽️', ar: 'أدوات المطبخ', en: 'Kitchenware', fr: 'Ustensiles de cuisine', search: 'kitchen', keys: ['kitchen', 'cookware', 'مطبخ', 'أواني'] },
+  { key: 'groceries', image: '/images/categories/groceries-fresh.webp', icon: '🥬', ar: 'الخضار والفواكه', en: 'Groceries & fresh produce', fr: 'Fruits et légumes', search: 'vegetables', keys: ['grocery', 'vegetable', 'fruit', 'produce', 'خضار', 'فواكه', 'بقالة'] },
 ] as const;
 
 function matchCategory(categories: readonly Category[], keys: readonly string[]) {
@@ -44,16 +41,6 @@ export function HomeDiscovery({ categories, products }: Props) {
   const tr = (arabic: string, english: string, french: string) =>
     ar ? arabic : fr ? french : english;
   const highlights = products.slice(0, MAX_HIGHLIGHTS);
-  const [atlasLoaded, setAtlasLoaded] = useState(false);
-
-  useEffect(() => {
-    const image = new Image();
-    image.onload = () => setAtlasLoaded(true);
-    image.onerror = () => setAtlasLoaded(false);
-    image.src = CATEGORY_ATLAS;
-    return () => { image.onload = null; image.onerror = null; };
-  }, []);
-
   return (
     <div className={styles.discovery}>
       {featuredCategories.length > 0 && (
@@ -90,16 +77,15 @@ export function HomeDiscovery({ categories, products }: Props) {
                     ) : (
                       <span className={styles.categoryFallback} aria-hidden="true">{item.icon}</span>
                     )}
-                    {atlasLoaded && (
-                      <span
-                        className={styles.categoryPhoto}
-                        aria-hidden="true"
-                        style={{
-                          backgroundImage: `url(${CATEGORY_ATLAS})`,
-                          backgroundPosition: `${(index % 3) * 50}% ${Math.floor(index / 3) * 50}%`,
-                        }}
-                      />
-                    )}
+                    <img
+                      src={item.image}
+                      alt=""
+                      loading={index < 3 ? 'eager' : 'lazy'}
+                      width={160}
+                      height={160}
+                      className={styles.categoryPhoto}
+                      onError={(event) => { event.currentTarget.hidden = true; }}
+                    />
                   </span>
                   <span className={styles.categoryName}>{label}</span>
                   <span className={styles.categoryArrow} aria-hidden="true">↗</span>
