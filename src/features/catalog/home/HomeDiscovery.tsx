@@ -16,15 +16,15 @@ const CATEGORY_ATLAS = '/images/categories/home-category-atlas.webp';
 
 // Photo order matches the user-supplied 3x3 category atlas.
 const featuredCategories = [
-  { key: 'personal', ar: 'العناية الشخصية', en: 'Personal care', fr: 'Soins personnels', search: 'shampoo', keys: ['personal care', 'hygiene', 'shampoo', 'شامبو', 'العناية الشخصية'] },
-  { key: 'makeup', ar: 'مستحضرات التجميل', en: 'Makeup', fr: 'Maquillage', search: 'makeup', keys: ['makeup', 'cosmetic', 'مكياج', 'مستحضرات التجميل'] },
-  { key: 'perfume', ar: 'العطور', en: 'Perfumes', fr: 'Parfums', search: 'perfume', keys: ['perfume', 'fragrance', 'عطور', 'عطر'] },
-  { key: 'stationery', ar: 'الأدوات المكتبية', en: 'Stationery', fr: 'Papeterie', search: 'stationery', keys: ['stationery', 'office supplies', 'مكتبية', 'قرطاسية'] },
-  { key: 'school', ar: 'المستلزمات المدرسية', en: 'School supplies', fr: 'Fournitures scolaires', search: 'school', keys: ['school supplies', 'school', 'مدرسية', 'لوازم مدرسية'] },
-  { key: 'detergents', ar: 'المنظفات', en: 'Cleaning products', fr: 'Produits nettoyants', search: 'cleaning', keys: ['cleaning products', 'detergent', 'منظفات', 'مواد تنظيف'] },
-  { key: 'tools', ar: 'أدوات التنظيف', en: 'Cleaning tools', fr: 'Matériel de nettoyage', search: 'cleaning tools', keys: ['cleaning tools', 'أدوات تنظيف', 'مماسح', 'مكانس'] },
-  { key: 'kitchen', ar: 'أدوات المطبخ', en: 'Kitchenware', fr: 'Ustensiles de cuisine', search: 'kitchen', keys: ['kitchen', 'cookware', 'مطبخ', 'أواني'] },
-  { key: 'groceries', ar: 'الخضار والفواكه', en: 'Groceries & fresh produce', fr: 'Fruits et légumes', search: 'vegetables', keys: ['grocery', 'vegetable', 'fruit', 'produce', 'خضار', 'فواكه', 'بقالة'] },
+  { key: 'personal', icon: '🧴', ar: 'العناية الشخصية', en: 'Personal care', fr: 'Soins personnels', search: 'shampoo', keys: ['personal care', 'hygiene', 'shampoo', 'شامبو', 'العناية الشخصية'] },
+  { key: 'makeup', icon: '💄', ar: 'مستحضرات التجميل', en: 'Makeup', fr: 'Maquillage', search: 'makeup', keys: ['makeup', 'cosmetic', 'مكياج', 'مستحضرات التجميل'] },
+  { key: 'perfume', icon: '🌸', ar: 'العطور', en: 'Perfumes', fr: 'Parfums', search: 'perfume', keys: ['perfume', 'fragrance', 'عطور', 'عطر'] },
+  { key: 'stationery', icon: '✏️', ar: 'الأدوات المكتبية', en: 'Stationery', fr: 'Papeterie', search: 'stationery', keys: ['stationery', 'office supplies', 'مكتبية', 'قرطاسية'] },
+  { key: 'school', icon: '🎒', ar: 'المستلزمات المدرسية', en: 'School supplies', fr: 'Fournitures scolaires', search: 'school', keys: ['school supplies', 'school', 'مدرسية', 'لوازم مدرسية'] },
+  { key: 'detergents', icon: '🧼', ar: 'المنظفات', en: 'Cleaning products', fr: 'Produits nettoyants', search: 'cleaning', keys: ['cleaning products', 'detergent', 'منظفات', 'مواد تنظيف'] },
+  { key: 'tools', icon: '🧹', ar: 'أدوات التنظيف', en: 'Cleaning tools', fr: 'Matériel de nettoyage', search: 'cleaning tools', keys: ['cleaning tools', 'أدوات تنظيف', 'مماسح', 'مكانس'] },
+  { key: 'kitchen', icon: '🍽️', ar: 'أدوات المطبخ', en: 'Kitchenware', fr: 'Ustensiles de cuisine', search: 'kitchen', keys: ['kitchen', 'cookware', 'مطبخ', 'أواني'] },
+  { key: 'groceries', icon: '🥬', ar: 'الخضار والفواكه', en: 'Groceries & fresh produce', fr: 'Fruits et légumes', search: 'vegetables', keys: ['grocery', 'vegetable', 'fruit', 'produce', 'خضار', 'فواكه', 'بقالة'] },
 ] as const;
 
 function matchCategory(categories: readonly Category[], keys: readonly string[]) {
@@ -85,7 +85,11 @@ export function HomeDiscovery({ categories, products }: Props) {
                   aria-label={tr('استكشف ', 'Explore ', 'Explorer ') + label}
                 >
                   <span className={styles.categoryImage}>
-                    {category && <CatalogImage src={category.image_url} alt="" size={144} eager={index < 2} />}
+                    {category ? (
+                      <CatalogImage src={category.image_url} alt="" size={144} eager={index < 2} />
+                    ) : (
+                      <span className={styles.categoryFallback} aria-hidden="true">{item.icon}</span>
+                    )}
                     {atlasLoaded && (
                       <span
                         className={styles.categoryPhoto}
