@@ -239,7 +239,16 @@
 @media (min-width: 48rem) {
   .offerRail { grid-auto-columns: minmax(12.5rem, 24%); }
   .offerCardVisual { height: 16rem; }
-  .categoryGrid { grid-template-columns: repeat(9, minmax(0, 1fr)); gap: .8rem; }
+}
+@media (min-width: 64rem) {
+  .categoryGrid { grid-template-columns: repeat(9, minmax(0, 1fr)); gap: clamp(.65rem, 1.1vw, 1.2rem); }
+  .categoryCard { gap: .7rem; }
+  .categoryName { font-size: .9rem; line-height: 1.25; overflow-wrap: normal; }
+  .categoryImage { max-width: none; }
+  .offerRail { grid-auto-columns: minmax(13.5rem, 24%); gap: 1rem; }
+  .offerCardVisual { height: 17rem; }
+  .productRail { grid-auto-columns: minmax(12rem, 22%); }
+  .groceryGrid { grid-auto-columns: minmax(12rem, 23%); }
 }
 @media (prefers-reduced-motion: no-preference) {
   .groceryPromo { transition: transform .18s ease, filter .18s ease; }
