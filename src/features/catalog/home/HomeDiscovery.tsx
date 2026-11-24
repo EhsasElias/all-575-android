@@ -43,8 +43,7 @@ export function HomeDiscovery({ categories, products }: Props) {
   const highlights = products.slice(0, MAX_HIGHLIGHTS);
   return (
     <div className={styles.discovery}>
-      {featuredCategories.length > 0 && (
-        <section className={styles.section} aria-labelledby="home-discover-categories">
+      <section className={styles.section} aria-labelledby="home-discover-categories">
           <div className={styles.headingRow}>
             <div>
               <p className={styles.eyebrow}>{tr('تسوّق بسهولة', 'SHOP YOUR WAY', 'ACHETEZ À VOTRE FAÇON')}</p>
@@ -93,8 +92,7 @@ export function HomeDiscovery({ categories, products }: Props) {
               );
             })}
           </div>
-        </section>
-      )}
+      </section>
 
       {highlights.length > 0 && (
         <section className={styles.section} aria-labelledby="home-daily-picks">
