@@ -9,6 +9,7 @@ import { ProductResults } from '../components/ProductResults';
 import { useDeliveryZone } from '../delivery/useDeliveryZone';
 import { pickText } from '../lib/localized';
 import styles from './HomeSection.module.css';
+import { HomeDiscovery } from './HomeDiscovery';
 
 const PAGE_SIZE = 12;
 type SortChoice = 'newest' | 'price_asc' | 'price_desc' | 'best_selling';
@@ -34,7 +35,9 @@ export function PopularProducts() {
   });
 
   return (
-    <section aria-labelledby="home-products" className={styles.section}>
+    <>
+      <HomeDiscovery categories={categories.data ?? []} products={list.items} />
+      <section aria-labelledby="home-products" className={styles.section}>
       <div className={styles.sectionHeader}>
         <div>
           <h2 id="home-products" className={styles.sectionTitle}>
@@ -87,6 +90,7 @@ export function PopularProducts() {
           />
         }
       />
-    </section>
+      </section>
+    </>
   );
 }
