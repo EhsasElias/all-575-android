@@ -9,9 +9,14 @@ import { ProductResults } from '../components/ProductResults';
 import { useDeliveryZone } from '../delivery/useDeliveryZone';
 import { pickText } from '../lib/localized';
 import styles from './HomeSection.module.css';
+import { HomeDiscovery } from './HomeDiscovery';
 
 const PAGE_SIZE = 12;
 type SortChoice = 'newest' | 'price_asc' | 'price_desc' | 'best_selling';
+
+function isSortChoice(value: string): value is SortChoice {
+  return value === 'newest' || value === 'price_asc' || value === 'price_desc' || value === 'best_selling';
+}
 
 export function PopularProducts() {
   const { t } = useTranslation('catalog');
@@ -34,7 +39,9 @@ export function PopularProducts() {
   });
 
   return (
-    <section aria-labelledby="home-products" className={styles.section}>
+    <>
+      <HomeDiscovery categories={categories.data ?? []} products={list.items} />
+      <section aria-labelledby="home-products" className={styles.section}>
       <div className={styles.sectionHeader}>
         <div>
           <h2 id="home-products" className={styles.sectionTitle}>
@@ -56,7 +63,7 @@ export function PopularProducts() {
       >
         <label className={styles.homeFilterField}>
           <span>{tr('التصنيف', 'Category', 'Catégorie')}</span>
-          <select value={category} onChange={(event) => setCategory(event.target.value)}>
+          <select value={category} onChange={(event) => { setCategory(event.target.value); }}>
             <option value="">
               {tr('جميع التصنيفات', 'All categories', 'Toutes les catégories')}
             </option>
@@ -69,7 +76,10 @@ export function PopularProducts() {
         </label>
         <label className={styles.homeFilterField}>
           <span>{tr('ترتيب حسب', 'Sort by', 'Trier par')}</span>
-          <select value={sort} onChange={(event) => setSort(event.target.value as SortChoice)}>
+          <select value={sort} onChange={(event) => {
+              const value = event.target.value;
+              if (isSortChoice(value)) setSort(value);
+            }}>
             <option value="newest">{tr('الأحدث أولاً', 'Newest first', 'Plus récents')}</option>
             <option value="price_asc">
               {tr('السعر: الأقل أولاً', 'Price: low to high', 'Prix croissant')}
@@ -87,7 +97,7 @@ export function PopularProducts() {
             type="checkbox"
             checked={inStock && zoneId !== null}
             disabled={zoneId === null}
-            onChange={(event) => setInStock(event.target.checked)}
+            onChange={(event) => { setInStock(event.target.checked); }}
           />
           <span>{tr('المتوفر فقط', 'In stock only', 'En stock seulement')}</span>
         </label>
@@ -120,6 +130,7 @@ export function PopularProducts() {
           />
         }
       />
-    </section>
+      </section>
+    </>
   );
 }
