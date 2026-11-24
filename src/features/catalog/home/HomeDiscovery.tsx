@@ -1,3 +1,4 @@
+import { useEffect, useState } from 'react';
 import { Link } from 'react-router';
 import { formatMoney, useLanguage } from '@/shared/i18n';
 import { routePaths, routeTo } from '@/shared/lib';
@@ -11,7 +12,28 @@ type Props = {
   products: readonly ProductSummary[];
 };
 
-const MAX_CATEGORIES = 4;
+const CATEGORY_ATLAS = '/images/categories/home-category-atlas.webp';
+
+// Photo order matches the user-supplied 3x3 category atlas.
+const featuredCategories = [
+  { key: 'personal', ar: 'العناية الشخصية', en: 'Personal care', fr: 'Soins personnels', search: 'shampoo', keys: ['personal care', 'hygiene', 'shampoo', 'شامبو', 'العناية الشخصية'] },
+  { key: 'makeup', ar: 'مستحضرات التجميل', en: 'Makeup', fr: 'Maquillage', search: 'makeup', keys: ['makeup', 'cosmetic', 'مكياج', 'مستحضرات التجميل'] },
+  { key: 'perfume', ar: 'العطور', en: 'Perfumes', fr: 'Parfums', search: 'perfume', keys: ['perfume', 'fragrance', 'عطور', 'عطر'] },
+  { key: 'stationery', ar: 'الأدوات المكتبية', en: 'Stationery', fr: 'Papeterie', search: 'stationery', keys: ['stationery', 'office supplies', 'مكتبية', 'قرطاسية'] },
+  { key: 'school', ar: 'المستلزمات المدرسية', en: 'School supplies', fr: 'Fournitures scolaires', search: 'school', keys: ['school supplies', 'school', 'مدرسية', 'لوازم مدرسية'] },
+  { key: 'detergents', ar: 'المنظفات', en: 'Cleaning products', fr: 'Produits nettoyants', search: 'cleaning', keys: ['cleaning products', 'detergent', 'منظفات', 'مواد تنظيف'] },
+  { key: 'tools', ar: 'أدوات التنظيف', en: 'Cleaning tools', fr: 'Matériel de nettoyage', search: 'cleaning tools', keys: ['cleaning tools', 'أدوات تنظيف', 'مماسح', 'مكانس'] },
+  { key: 'kitchen', ar: 'أدوات المطبخ', en: 'Kitchenware', fr: 'Ustensiles de cuisine', search: 'kitchen', keys: ['kitchen', 'cookware', 'مطبخ', 'أواني'] },
+  { key: 'groceries', ar: 'الخضار والفواكه', en: 'Groceries & fresh produce', fr: 'Fruits et légumes', search: 'vegetables', keys: ['grocery', 'vegetable', 'fruit', 'produce', 'خضار', 'فواكه', 'بقالة'] },
+] as const;
+
+function matchCategory(categories: readonly Category[], keys: readonly string[]) {
+  return categories.find((category) => {
+    const values = [category.slug, category.name.ar, category.name.en].filter(Boolean).join(' ').toLowerCase();
+    return keys.some((key) => values.includes(key));
+  });
+}
+
 const MAX_HIGHLIGHTS = 6;
 
 /** Editorial shelves using only actual catalogue records: no invented offers or delivery promises. */
@@ -22,13 +44,20 @@ export function HomeDiscovery({ categories, products }: Props) {
   const tr = (arabic: string, english: string, french: string) =>
     ar ? arabic : fr ? french : english;
   const highlights = products.slice(0, MAX_HIGHLIGHTS);
-  const shortcuts = categories.slice(0, MAX_CATEGORIES);
+  const [atlasLoaded, setAtlasLoaded] = useState(false);
 
-  if (shortcuts.length === 0 && highlights.length === 0) return null;
+  useEffect(() => {
+    const image = new Image();
+    image.onload = () => setAtlasLoaded(true);
+    image.onerror = () => setAtlasLoaded(false);
+    image.src = CATEGORY_ATLAS;
+    return () => { image.onload = null; image.onerror = null; };
+  }, []);
+
 
   return (
     <div className={styles.discovery}>
-      {shortcuts.length > 0 && (
+      {featuredCategories.length > 0 && (
         <section className={styles.section} aria-labelledby="home-discover-categories">
           <div className={styles.headingRow}>
             <div>
@@ -43,21 +72,37 @@ export function HomeDiscovery({ categories, products }: Props) {
             </Link>
           </div>
           <div className={styles.categoryGrid}>
-            {shortcuts.map((category, index) => (
-              <Link
-                to={routeTo.categoryProducts(category.slug)}
-                className={styles.categoryCard}
-                key={category.id}
-                aria-label={tr('استكشف ', 'Explore ', 'Explorer ') + pickText(category.name, language)}
-              >
-                <span className={styles.categoryImage}>
-                  <CatalogImage src={category.image_url} alt="" size={144} eager={index < 2} />
-                </span>
-                <span className={styles.categoryName}>{pickText(category.name, language)}</span>
-                <span className={styles.categoryArrow} aria-hidden="true">↗</span>
-              </Link>
-            ))}
-          </div>
+            {featuredCategories.map((item, index) => {
+              const category = matchCategory(categories, item.keys);
+              const label = ar ? item.ar : fr ? item.fr : item.en;
+              const destination = category
+                ? routeTo.categoryProducts(category.slug)
+                : `${routePaths.search}?q=${encodeURIComponent(item.search)}`;
+              return (
+                <Link
+                  to={destination}
+                  className={styles.categoryCard}
+                  key={item.key}
+                  aria-label={tr('استكشف ', 'Explore ', 'Explorer ') + label}
+                >
+                  <span className={styles.categoryImage}>
+                    {category && <CatalogImage src={category.image_url} alt="" size={144} eager={index < 2} />}
+                    {atlasLoaded && (
+                      <span
+                        className={styles.categoryPhoto}
+                        aria-hidden="true"
+                        style={{
+                          backgroundImage: `url(${CATEGORY_ATLAS})`,
+                          backgroundPosition: `${(index % 3) * 50}% ${Math.floor(index / 3) * 50}%`,
+                        }}
+                      />
+                    )}
+                  </span>
+                  <span className={styles.categoryName}>{label}</span>
+                  <span className={styles.categoryArrow} aria-hidden="true">↗</span>
+                </Link>
+              );
+            })}         </div>
         </section>
       )}
 
