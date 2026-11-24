@@ -223,32 +223,7 @@
   .categoryCard:hover, .offerCard:hover, .productCard:hover { transform: translateY(-2px); }
 }
 
-/* Promotional editorial language inspired by compact mobile shopping apps,
-   without reproducing other brands or making unverified discount promises. */
-.promoHero {
-  position: relative;
-  isolation: isolate;
-  display: grid;
-  grid-template-columns: minmax(0, 1.2fr) minmax(8rem, .8fr);
-  align-items: center;
-  min-height: 13rem;
-  overflow: hidden;
-  border-radius: 1.35rem;
-  background: linear-gradient(115deg, #f9f9aa 0%, #f5f4b2 58%, #dcefa7 100%);
-  color: #243d2b;
-  padding: clamp(1.15rem, 3vw, 2.25rem);
-}
-.promoCopy { position: relative; z-index: 1; display: grid; gap: .55rem; justify-items: start; }
-.eyebrow { font-size: .69rem; font-weight: 850; letter-spacing: .065em; text-transform: uppercase; color: #377553; }
-.promoCopy h2 { margin: 0; max-width: 13ch; font-size: clamp(1.45rem, 4.8vw, 2.65rem); line-height: 1.09; letter-spacing: -.025em; font-weight: 900; }
-.promoCopy p { margin: 0; font-size: clamp(.76rem, 2.4vw, .95rem); line-height: 1.45; max-width: 27ch; }
-.promoAction { display: inline-flex; gap: .6rem; align-items: center; justify-content: center; min-height: 2.55rem; margin-top: .3rem; border-radius: 999px; background: #17553b; color: white; padding: .55rem 1.1rem; font-size: .82rem; font-weight: 800; text-decoration: none; }
-.promoArtwork { position: relative; height: 100%; min-height: 10.5rem; }
-.promoImagePrimary, .promoImageSecondary { position: absolute; display: grid; place-items: center; border: 3px solid rgba(255,255,255,.8); border-radius: 1.2rem; background: white; box-shadow: 0 12px 26px rgba(30,59,35,.11); }
-.promoImagePrimary { width: 67%; height: 75%; inset-inline-start: 8%; top: 6%; transform: rotate(-7deg); }
-.promoImageSecondary { width: 60%; height: 67%; inset-inline-end: 0; bottom: 1%; transform: rotate(8deg); }
-.promoImagePrimary img, .promoImageSecondary img { width: 92%; height: 92%; object-fit: contain; }
-.promoSparkle { position: absolute; font-size: 2rem; color: #4f9f6d; inset-inline-start: 1%; bottom: 0; }
+/* Featured grocery and recommendation shelves. */
 .groceryPromo { display: flex; align-items: center; gap: .8rem; padding: .85rem 1rem; text-decoration: none; color: #164a39; background: linear-gradient(95deg, #e6f5df, #f5f9e8); border: 1px solid #c9e4cd; border-radius: 1.15rem; }
 .groceryPromoIcon { width: 2.8rem; height: 2.8rem; flex-shrink: 0; border-radius: .8rem; display: grid; place-items: center; font-size: 1.6rem; background: #b7e49d; }
 .groceryPromoText { display: grid; gap: .12rem; flex: 1; min-width: 0; }
@@ -257,21 +232,16 @@
 .groceryPromoArrow { font-size: 1.25rem; transform: scaleX(var(--rtl-arrow-flip, 1)); }
 .pickedIntro { display: flex; align-items: center; gap: .5rem; padding: .65rem .85rem; border-radius: .8rem; background: var(--color-surface-mint); color: var(--color-brand-text); font-size: .8rem; font-weight: 750; }
 .pickedIcon { font-size: 1.15rem; }
-.promoAction:focus-visible, .groceryPromo:focus-visible { outline: 3px solid var(--color-brand); outline-offset: 3px; }
+.groceryPromo:focus-visible { outline: 3px solid var(--color-brand); outline-offset: 3px; }
 @media (max-width: 359px) {
-  .promoHero { grid-template-columns: minmax(0, 1.3fr) minmax(6rem, .7fr); padding: .9rem; }
-  .promoCopy h2 { font-size: 1.35rem; }
-  .promoCopy p { font-size: .7rem; }
   .offerRail { grid-auto-columns: minmax(9.25rem, 72%); }
 }
 @media (min-width: 48rem) {
-  .promoHero { min-height: 18rem; }
-  .promoArtwork { min-height: 15rem; max-width: 23rem; width: 100%; justify-self: end; }
   .offerRail { grid-auto-columns: minmax(12.5rem, 24%); }
   .offerCardVisual { height: 16rem; }
   .categoryGrid { grid-template-columns: repeat(9, minmax(0, 1fr)); gap: .8rem; }
 }
 @media (prefers-reduced-motion: no-preference) {
-  .promoAction, .groceryPromo { transition: transform .18s ease, filter .18s ease; }
-  .promoAction:hover, .groceryPromo:hover { transform: translateY(-2px); filter: brightness(1.02); }
+  .groceryPromo { transition: transform .18s ease, filter .18s ease; }
+  .groceryPromo:hover { transform: translateY(-2px); filter: brightness(1.02); }
 }
