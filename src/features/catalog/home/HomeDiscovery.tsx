@@ -138,7 +138,7 @@ export function HomeDiscovery({ categories, products }: Props) {
           <p>{tr('تصفح المنتجات والتصنيفات واكتشف ما يناسبك.', 'Browse real products and find what works for you.', 'Parcourez les produits et trouvez ce qui vous convient.')}</p>
         </div>
         <Link to={routePaths.categories} className={styles.ctaLink}>
-          {tr('تصفح التصنيفات', 'Browse categories', 'Voir les catégories')}
+          {tr('اكتشف المزيد من الأقسام', 'Explore more departments', 'Découvrir plus de rayons')}
         </Link>
       </div>
     </div>
