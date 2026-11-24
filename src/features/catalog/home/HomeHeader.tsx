@@ -23,6 +23,7 @@ export function HomeHeader() {
       </Link>
       <div className={styles.hero}>
         <div className={styles.copy}>
+          <span className={styles.eyebrow}>{language === 'ar' ? 'كل احتياجاتك اليومية' : language === 'fr' ? 'VOTRE QUOTIDIEN' : 'EVERYDAY ESSENTIALS'}</span>
           <h1 className={styles.title}>{t('home.heading')}</h1>
           <div className={styles.promise}>
             {store.data ? (
@@ -36,6 +37,10 @@ export function HomeHeader() {
               store.isPending && <Skeleton width="100%" height="2rem" />
             )}
           </div>
+          <Link to={routePaths.search} className={styles.shopNow}>
+            {language === 'ar' ? 'تسوق الآن' : language === 'fr' ? 'Découvrir' : 'Shop now'}
+            <span aria-hidden="true">↗</span>
+          </Link>
         </div>
         <HeroProducts />
       </div>
