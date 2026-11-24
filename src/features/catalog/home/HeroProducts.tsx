@@ -10,7 +10,7 @@ export function HeroProducts() {
   // API calls and inconsistent error/retry behavior between hero and products.
   const products = useProductList({ zoneId, perPage: 12, sort: 'newest' });
   const photos = products.items.filter((product) => product.image_url !== null).slice(0, 2);
-  if (!photos?.length) return null;
+  if (photos.length === 0) return null;
 
   return (
     <div className={styles.art} aria-hidden="true">
