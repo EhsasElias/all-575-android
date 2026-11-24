@@ -51,7 +51,7 @@
 
 .categoryGrid {
   display: grid;
-  grid-template-columns: repeat(4, minmax(0, 1fr));
+  grid-template-columns: repeat(3, minmax(0, 1fr));
   gap: .65rem;
 }
 
@@ -72,11 +72,20 @@
 .categoryCard:nth-child(4n + 1) { background: var(--color-surface-mint); }
 .categoryCard:nth-child(4n + 2) { background: var(--color-surface-pill); }
 .categoryImage {
+  position: relative;
   display: block;
   aspect-ratio: 1.1;
   min-width: 0;
   overflow: hidden;
   border-radius: .7rem;
+}
+
+.categoryPhoto {
+  position: absolute;
+  inset: 0;
+  background-size: 300% 300%;
+  background-repeat: no-repeat;
+  background-color: white;
 }
 
 .categoryImage > div,
@@ -183,7 +192,7 @@
   outline-offset: 2px;
 }
 @media (min-width: 45rem) {
-  .categoryGrid { gap: .95rem; }
+  .categoryGrid { grid-template-columns: repeat(5, minmax(0, 1fr)); gap: .95rem; }
   .categoryCard { padding: .9rem; }
   .productRail { grid-auto-columns: minmax(10rem, 21%); }
 }
