@@ -4,7 +4,7 @@ import { describe, expect, it } from 'vitest';
 import type { Language } from '@/shared/i18n';
 import { renderApp } from '@/test/render';
 import { installCatalogApi, queriesOf } from '../testApi';
-import { biscuits, page } from '../testData';
+import { page } from '../testData';
 
 function renderHome(language: Language = 'en') {
   return renderApp({ route: '/home', seenWelcome: true, language });
