@@ -54,7 +54,6 @@ export function HomeDiscovery({ categories, products }: Props) {
     return () => { image.onload = null; image.onerror = null; };
   }, []);
 
-
   return (
     <div className={styles.discovery}>
       {featuredCategories.length > 0 && (
@@ -102,7 +101,8 @@ export function HomeDiscovery({ categories, products }: Props) {
                   <span className={styles.categoryArrow} aria-hidden="true">↗</span>
                 </Link>
               );
-            })}         </div>
+            })}
+          </div>
         </section>
       )}
 
