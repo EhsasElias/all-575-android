@@ -118,7 +118,7 @@ describe('Delivery area chip', () => {
       expect(api.requests()).not.toContain('GET /zones/resolve');
       expect(getPreference('deliveryZone')).toBeNull();
       // Browsing still works.
-      expect(screen.getByRole('link', { name: 'Biscuits' })).toBeVisible();
+      expect(screen.getByRole('link', { name: 'Explore Personal care' })).toBeVisible();
     },
   );
 
@@ -175,7 +175,7 @@ describe('Delivery area chip', () => {
     await act(async () => {
       await router.navigate('/home');
     });
-    await screen.findByRole('link', { name: 'Biscuits' });
+    await screen.findByRole('link', { name: 'Explore Personal care' });
 
     const zones = queriesOf(api, 'GET /products').map((query) => query.get('zone_id'));
     expect(zones.length).toBeGreaterThanOrEqual(1);
@@ -305,7 +305,7 @@ describe('Delivery area of a signed-in customer', () => {
     const api = signedIn({ 'GET /addresses': { status: 500, body: { message: 'Boom' } } });
     await renderApp({ route: '/home', seenWelcome: true, signedIn: true });
 
-    expect(await screen.findByRole('link', { name: 'Biscuits' })).toBeVisible();
+    expect(await screen.findByRole('link', { name: 'Explore Personal care' })).toBeVisible();
     await waitFor(() => {
       expect(api.requests()).toContain('GET /addresses');
     });
@@ -316,7 +316,7 @@ describe('Delivery area of a signed-in customer', () => {
   it('does not ask for addresses when nobody is signed in', async () => {
     const api = signedIn();
     await renderApp({ route: '/home', seenWelcome: true });
-    await screen.findByRole('link', { name: 'Biscuits' });
+    await screen.findByRole('link', { name: 'Explore Personal care' });
 
     expect(api.requests()).not.toContain('GET /addresses');
   });
