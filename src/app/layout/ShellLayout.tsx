@@ -157,7 +157,7 @@ export function ShellLayout() {
           </main>
         </div>
       ) : (
-        <main id={MAIN_CONTENT_ID} tabIndex={-1} className={styles.main}>
+        <main id={MAIN_CONTENT_ID} tabIndex={-1} className={`${styles.main} ${pathname === routePaths.home ? styles.homeMain : ''} `}>
           <Outlet />
         </main>
       )}
