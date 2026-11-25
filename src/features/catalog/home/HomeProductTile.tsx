@@ -9,6 +9,7 @@ import { useToast } from '@/shared/ui';
 import type { ProductDetail, ProductSummary } from '../api/types';
 import { CatalogImage } from '../components/CatalogImage';
 import { pickText } from '../lib/localized';
+import { SaveProduct } from '../saved/SaveProduct';
 import styles from './HomeDiscovery.module.css';
 
 type Props = { product: ProductSummary };
@@ -65,6 +66,7 @@ export function HomeProductTile({ product }: Props) {
 
   return (
     <article className={styles.productCard}>
+      <div className={styles.favoriteAction}><SaveProduct slug={product.slug} compact /></div>
       <Link className={styles.productMainLink} to={routeTo.product(product.slug)}>
         <span className={styles.productImage}>
           <CatalogImage src={product.image_url} alt="" size={180} />
