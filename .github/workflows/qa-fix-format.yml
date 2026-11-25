@@ -1,0 +1,37 @@
+name: Apply formatting to QA branch (one-time guarded)
+
+on:
+  push:
+    branches: [fix/qa-home-reference-layout-20261124]
+
+permissions:
+  contents: write
+
+jobs:
+  prettier:
+    if: contains(github.event.head_commit.message, '[format-fix]')
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: true
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: npm
+      - run: npm ci
+      - name: Apply repository's own Prettier configuration
+        run: |
+          npx prettier --write .
+          npm run format:check
+          git diff --check
+      - name: Push only formatting changes, never force
+        run: |
+          git config user.name 'ALL 5.75 QA Bot'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add -u
+          if ! git diff --cached --quiet; then
+            git commit -m 'Format customer journey QA files with project Prettier'
+            git push origin HEAD:fix/qa-home-reference-layout-20261124
+          fi
