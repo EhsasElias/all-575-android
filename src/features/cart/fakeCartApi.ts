@@ -38,10 +38,14 @@ export function createFakeCartApi(
   stock: StockAt = () => 'in_stock',
 ) {
   let lines: CartLineResource[] = [...initial];
-  const body = () => ({ data: cartResource(lines.map((line) => ({
-    ...line,
-    availability: stock(line.variant_id, null),
-  }))) });
+  const body = () => ({
+    data: cartResource(
+      lines.map((line) => ({
+        ...line,
+        availability: stock(line.variant_id, null),
+      })),
+    ),
+  });
 
   const routes: FakeRoutes = {
     // Cart availability is globally known before a delivery address is selected.

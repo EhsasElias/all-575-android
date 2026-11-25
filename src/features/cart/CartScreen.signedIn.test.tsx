@@ -156,7 +156,7 @@ describe('lines that cannot be bought', () => {
     return serveCart(
       { 'GET /addresses': { body: { data: [address] } } },
       [serverLine(BISCUITS, 2), serverLine(CHOCOLATE, 1), serverLine(NOTEBOOK, 1)],
-      (variantId) => outOfStock.includes(variantId) ? 'out_of_stock' : 'in_stock',
+      (variantId) => (outOfStock.includes(variantId) ? 'out_of_stock' : 'in_stock'),
     );
   }
 

@@ -160,8 +160,7 @@ const fr: Translations<typeof en> = {
   add: {
     button: 'Ajouter au panier',
     outOfStock: 'Rupture de stock',
-    outOfStockHint:
-      'Ce produit est actuellement en rupture de stock.',
+    outOfStockHint: 'Ce produit est actuellement en rupture de stock.',
     limit: "Vous pouvez commander jusqu'à {{max}} exemplaires de chaque article.",
     added: 'Ajouté à votre panier : {{name}}. Quantité dans le panier : {{quantity}}.',
     capped:
