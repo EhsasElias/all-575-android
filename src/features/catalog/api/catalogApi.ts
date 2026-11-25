@@ -10,7 +10,7 @@ export async function fetchCategories(signal: AbortSignal): Promise<Category[]> 
   return data;
 }
 
-/** The zone is optional: without it the server answers "unknown" for availability. */
+/** The legacy zone parameter is optional; stock availability is global across active seller branches. */
 export async function fetchProduct(
   slug: string,
   zoneId: number | null,
