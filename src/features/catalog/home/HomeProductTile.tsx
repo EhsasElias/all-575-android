@@ -1,11 +1,12 @@
 import { useState } from 'react';
+import { http, type Data } from '@/shared/api';
 import { Link } from 'react-router';
 import { useCart } from '@/features/cart/useCart';
 import { useRefusalMessage } from '@/features/cart/useRefusalMessage';
 import { formatMoney, useLanguage } from '@/shared/i18n';
 import { routeTo } from '@/shared/lib';
 import { useToast } from '@/shared/ui';
-import type { ProductSummary } from '../api/types';
+import type { ProductDetail, ProductSummary } from '../api/types';
 import { CatalogImage } from '../components/CatalogImage';
 import { pickText } from '../lib/localized';
 import styles from './HomeDiscovery.module.css';
@@ -32,19 +33,31 @@ export function HomeProductTile({ product }: Props) {
     setPending(true);
     setError(null);
     try {
+      // Recheck the selected variant on the details endpoint before adding,
+      // since prices and availability can change after the homepage loaded.
+      const { data: latest } = await http.get<Data<ProductDetail>>(
+        `/products/${encodeURIComponent(product.slug)}`,
+      );
+      const variant = latest.variants.find((entry) => entry.id === product.purchase_variant_id);
+      if (!variant || variant.availability === 'out_of_stock' || variant.availability === 'unknown') {
+        setError(tr('هذا المنتج غير متوفر حاليًا', 'This item is currently unavailable', 'Ce produit est actuellement indisponible'));
+        return;
+      }
       const result = await cart.addItem({
-        variantId: product.purchase_variant_id,
+        variantId: variant.id,
         productSlug: product.slug,
-        name: product.name,
-        variantName: null,
-        imageUrl: product.image_url,
-        unitPrice: product.price.net,
+        name: latest.name,
+        variantName: variant.name,
+        imageUrl: latest.image_url,
+        unitPrice: variant.price.net,
       }, 1);
       if (result.ok) {
         showToast({ message: tr('تمت الإضافة إلى السلة', 'Added to cart', 'Ajouté au panier'), variant: 'success' });
       } else {
         setError(refusalMessage(result.reason));
       }
+    } catch {
+      setError(tr('تعذرت الإضافة، حاول مجددًا', 'Could not add item. Please retry.', 'Impossible d’ajouter ce produit. Réessayez.'));
     } finally {
       setPending(false);
     }
