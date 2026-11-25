@@ -4,7 +4,7 @@ import { describe, expect, it } from 'vitest';
 import type { Language } from '@/shared/i18n';
 import { renderApp } from '@/test/render';
 import { installCatalogApi, queriesOf } from '../testApi';
-import { page } from '../testData';
+import { makeProduct, page } from '../testData';
 
 function renderHome(language: Language = 'en') {
   return renderApp({ route: '/home', seenWelcome: true, language });
@@ -81,6 +81,25 @@ describe('Home - reference shopping layout', () => {
       expect(request.has('before_id')).toBe(false);
       expect(request.get('in_stock')).toBe('1');
     }
+  });
+
+  it('shows real seller names and stocked branch details for homepage products', async () => {
+    installCatalogApi({
+      'GET /products': { body: page([
+        {
+          ...makeProduct({
+            availability: 'in_stock',
+            stock_branch: { ar: 'فرع شمال الرياض', en: 'North Riyadh branch' },
+            purchase_variant_id: 17,
+          }),
+        },
+      ]) },
+    });
+    await renderHome();
+    const picks = screen.getByRole('region', { name: 'Picked For You' });
+    expect(await within(picks).findByText('Home Store')).toBeVisible();
+    expect(within(picks).getByText('North Riyadh branch')).toBeVisible();
+    expect(within(picks).getByRole('button', { name: '+ Add to cart' })).toBeEnabled();
   });
 
   it('links the search bar to the real search screen', async () => {
