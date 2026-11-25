@@ -102,3 +102,12 @@
   max-inline-size: 100%;
   box-shadow: 0 2px 10px rgb(0 0 0 / .1);
 }
+
+.sellerDetails {
+  display: grid;
+  gap: .2rem;
+  min-inline-size: 0;
+  max-inline-size: 100%;
+}
+.sellerDetails .seller { margin: 0; line-height: 1.45; }
+.sellerDetails .seller > span { color: #30724e; font-weight: 750; }
