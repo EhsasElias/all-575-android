@@ -45,6 +45,11 @@ export function ProductCard({
         eager={eager}
         className={styles.image}
       />
+      {product.availability === 'out_of_stock' && (
+        <div className={styles.stockOverlay}>
+          <AvailabilityBadge availability="out_of_stock" />
+        </div>
+      )}
       <div className={styles.body}>
         <p className={styles.name}>
           <Link ref={linkRef} to={routeTo.product(product.slug)} className={styles.link}>
@@ -54,7 +59,9 @@ export function ProductCard({
         <p className={styles.seller}>{pickText(product.seller.name, language)}</p>
         <RatingSummary average={product.rating.average} count={product.rating.count} compact />
         <p className={styles.price}>{formatMoney(product.price.net, language)}</p>
-        {showAvailability && <AvailabilityBadge availability={product.availability} />}
+        {showAvailability && product.availability !== 'out_of_stock' && (
+          <AvailabilityBadge availability={product.availability} />
+        )}
       </div>
     </article>
   );
