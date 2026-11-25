@@ -103,6 +103,15 @@ describe('ProductCard', () => {
     expect(screen.getByText('Home Store')).toBeVisible();
   });
 
+  it('shows the seller and actual stocked branch when supplied by the API', () => {
+    inRouter(<ProductCard product={makeProduct({
+      stock_branch: { ar: 'فرع الرياض', en: 'Riyadh branch' },
+      purchase_variant_id: 4,
+    })} />);
+    expect(screen.getByText('Home Store')).toBeVisible();
+    expect(screen.getByText('Riyadh branch')).toBeVisible();
+  });
+
   it('shows the availability it was given', () => {
     inRouter(<ProductCard product={makeProduct({ availability: 'out_of_stock' })} />);
 
