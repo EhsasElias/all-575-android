@@ -427,3 +427,79 @@
 @media (prefers-reduced-motion: reduce) {
   .categoryPhoto { transition: none; }
 }
+
+/* Actionable merchandised product tiles, usable at 320px and desktop widths. */
+.productRail { align-items: stretch; }
+.productRail > li { min-inline-size: 0; }
+.productRail .productCard {
+  display: flex;
+  flex-direction: column;
+  gap: .5rem;
+  min-block-size: 100%;
+  box-sizing: border-box;
+  padding: .75rem;
+}
+.productMainLink {
+  display: grid;
+  gap: .5rem;
+  min-inline-size: 0;
+  text-decoration: none;
+  color: var(--color-text);
+}
+.productMainLink:focus-visible { outline: 3px solid #258a5c; outline-offset: 3px; border-radius: .5rem; }
+.productMainLink .productImage { display: block; }
+.storeMeta {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr);
+  gap: .1rem .4rem;
+  align-items: baseline;
+  color: var(--color-text-muted);
+  font-size: .73rem;
+  line-height: 1.35;
+}
+.storeMetaLabel { color: #32815a; font-weight: 750; white-space: nowrap; }
+.storeMetaValue { min-inline-size: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.productRail .productPrice { margin-block-start: auto; color: #126743; font-weight: 850; }
+.available, .unavailable {
+  display: inline-flex;
+  align-items: center;
+  align-self: start;
+  padding: .25rem .6rem;
+  border-radius: 99px;
+  font-size: .69rem;
+  line-height: 1.4;
+  font-weight: 800;
+}
+.available { color: #14683b; background: #e5f6e8; }
+.unavailable { color: #9b322c; background: #fff0ef; }
+.addButton, .addLink {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  inline-size: 100%;
+  min-block-size: 2.65rem;
+  margin-block-start: .2rem;
+  box-sizing: border-box;
+  padding: .55rem .65rem;
+  border: none;
+  border-radius: .75rem;
+  background: #176c43;
+  color: #fff;
+  font-family: inherit;
+  font-size: .8rem;
+  font-weight: 850;
+  text-align: center;
+  text-decoration: none;
+  cursor: pointer;
+}
+.addButton:disabled { cursor: not-allowed; background: #e6ebe5; color: #687469; }
+.addButton:focus-visible, .addLink:focus-visible { outline: 3px solid #258a5c; outline-offset: 3px; }
+.cardError { margin: 0; color: #aa302b; font-size: .75rem; line-height: 1.4; }
+@media (max-width: 359px) {
+  .productRail { grid-auto-columns: minmax(9.5rem, 70%); }
+  .productRail .productCard { padding: .6rem; }
+}
+@media (min-width: 64rem) {
+  .productRail { grid-auto-columns: minmax(11.2rem, 19%); }
+  .productRail .productCard { padding: .8rem; }
+}
