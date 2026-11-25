@@ -151,15 +151,12 @@ describe('the cart screen when signed in', () => {
 describe('lines that cannot be bought', () => {
   const address = { id: 5, is_default: true, serviceable: true, service_zone_id: 1 };
 
-  /** The customer has a default address, and the server says which variants it cannot deliver there. */
+  /** The API reports stock from all active seller-owned branches, regardless of address. */
   function serveWithStockAt(outOfStock: number[]) {
     return serveCart(
       { 'GET /addresses': { body: { data: [address] } } },
       [serverLine(BISCUITS, 2), serverLine(CHOCOLATE, 1), serverLine(NOTEBOOK, 1)],
-      (variantId, addressId) => {
-        if (addressId !== address.id) return 'unknown';
-        return outOfStock.includes(variantId) ? 'out_of_stock' : 'in_stock';
-      },
+      (variantId) => outOfStock.includes(variantId) ? 'out_of_stock' : 'in_stock',
     );
   }
 
@@ -212,7 +209,7 @@ describe('lines that cannot be bought', () => {
     expect(screen.queryByRole('link', { name: 'Checkout' })).not.toBeInTheDocument();
   });
 
-  it('flags nothing, and still works, when the customer has no address yet', async () => {
+  it('checks stock and allows checkout even when the customer has no address yet', async () => {
     serveCart({ 'GET /addresses': { body: { data: [] } } }, [serverLine(CHOCOLATE, 1)]);
     await renderApp(OPTIONS);
 
