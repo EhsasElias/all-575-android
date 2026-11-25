@@ -1,0 +1,35 @@
+name: Customer critical flow regression tests
+
+on:
+  push:
+    branches: [fix/qa-home-reference-layout-20261124]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  critical:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: npm
+      - run: npm ci
+      - name: Checkout and homepage critical regressions
+        run: >-
+          npx vitest run
+          src/features/cart/CartScreen.signedIn.test.tsx
+          src/features/catalog/home/HomeScreen.test.tsx
+          src/features/catalog/delivery/DeliveryZone.flows.test.tsx
+          src/app/layout/SidebarLanguages.test.tsx
+          src/features/cart/cartScreenModel.test.ts
+          src/features/cart/CheckoutBar.test.tsx
+          --reporter=verbose
+      - name: Types
+        run: npm run typecheck
+      - name: Build
+        run: npm run build
