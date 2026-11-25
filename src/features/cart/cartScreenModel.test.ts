@@ -79,4 +79,20 @@ describe('checkout eligibility', () => {
     const discontinued = toScreenLines(lines, new Map(), new Set([NOTEBOOK.variantId]));
     expect(mayCheckout(discontinued)).toBe(false);
   });
+
+  it('blocks signed-in checkout until the API confirms the stock status', () => {
+    const unverified = toScreenLines(lines, new Map(), new Set()).map((line) => ({
+      ...line,
+      availability: 'unknown' as const,
+    }));
+    expect(mayCheckout(unverified, true)).toBe(false);
+    // A guest can reach sign-in; the server then checks stock before payment.
+    expect(mayCheckout(unverified, false)).toBe(true);
+
+    const verified = unverified.map((line) => ({
+      ...line,
+      availability: 'in_stock' as const,
+    }));
+    expect(mayCheckout(verified, true)).toBe(true);
+  });
 });
