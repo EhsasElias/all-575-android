@@ -56,7 +56,18 @@ export function ProductCard({
             {pickText(product.name, language)}
           </Link>
         </p>
-        <p className={styles.seller}>{pickText(product.seller.name, language)}</p>
+        <div className={styles.sellerDetails}>
+          <p className={styles.seller}>
+            <span>{language === 'ar' ? 'الشركة' : language === 'fr' ? 'Boutique' : 'Store'}: </span>
+            {pickText(product.seller.name, language)}
+          </p>
+          {product.stock_branch && (
+            <p className={styles.seller}>
+              <span>{language === 'ar' ? 'الفرع' : language === 'fr' ? 'Agence' : 'Branch'}: </span>
+              {pickText(product.stock_branch, language)}
+            </p>
+          )}
+        </div>
         <RatingSummary average={product.rating.average} count={product.rating.count} compact />
         <p className={styles.price}>{formatMoney(product.price.net, language)}</p>
         {showAvailability && product.availability !== 'out_of_stock' && (
