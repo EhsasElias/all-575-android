@@ -88,7 +88,7 @@ function GroceryProducts({ category }: { category: Category | undefined }) {
   // Request only products classified in the chosen real grocery category.
   // Never substitute an unrelated catalogue product if the category does not exist.
   const list = useProductList(
-    { zoneId, category: category?.slug, perPage: 6, sort: 'newest' },
+    { zoneId, inStock: zoneId !== null, category: category?.slug, perPage: 6, sort: 'newest' },
     category !== undefined,
   );
   if (!category || list.items.length === 0) return null;
