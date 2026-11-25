@@ -1,8 +1,7 @@
 import { useState } from 'react';
 import { http, type Data } from '@/shared/api';
 import { Link } from 'react-router';
-import { useCart } from '@/features/cart/useCart';
-import { useRefusalMessage } from '@/features/cart/useRefusalMessage';
+import { useCart, useRefusalMessage } from '@/features/cart';
 import { formatMoney, useLanguage } from '@/shared/i18n';
 import { routeTo } from '@/shared/lib';
 import { useToast } from '@/shared/ui';
