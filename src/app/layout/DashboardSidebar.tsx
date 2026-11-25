@@ -24,7 +24,7 @@ export function DashboardSidebar({ onNavigate }: { onNavigate?: () => void }) {
   // A Super Admin keeps their dashboard navigation when visiting the separate
   // reviewer route. Dedicated reviewers retain their own Approvals navigation.
   useEffect(() => {
-    if (![routePaths.sellerReview, routePaths.superAdminDashboard, routePaths.platformAdminDashboard].includes(pathname)
+    if (!(pathname === routePaths.sellerReview || pathname === routePaths.superAdminDashboard || pathname === routePaths.platformAdminDashboard)
       || status !== 'signed-in' || !userId) return;
     let active = true;
     void Promise.allSettled([superAdminDashboard(), adminDashboard()]).then(([superResult, operationsResult]) => {
