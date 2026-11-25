@@ -21,12 +21,20 @@ export function HomeHeader() {
       </Link>
       <div className={styles.hero}>
         <div className={styles.copy}>
-          <span className={styles.eyebrow}>{language === 'ar' ? 'كل احتياجاتك اليومية' : language === 'fr' ? 'VOTRE QUOTIDIEN' : 'ALL 5.75 • EVERYDAY ESSENTIALS'}</span>
+          <span className={styles.eyebrow}>
+            {language === 'ar'
+              ? 'كل احتياجاتك اليومية'
+              : language === 'fr'
+                ? 'VOTRE QUOTIDIEN'
+                : 'ALL 5.75 • EVERYDAY ESSENTIALS'}
+          </span>
           <h1 className={styles.title}>{t('home.heading')}</h1>
           <p className={styles.heroDescription}>
-            {language === 'ar' ? 'العناية والجمال والمنزل وكل ما تحتاجه في مكان واحد.' :
-              language === 'fr' ? 'Beauté, maison et essentiels du quotidien au même endroit.' :
-                'Beauty, home and everyday essentials—all in one place.'}
+            {language === 'ar'
+              ? 'العناية والجمال والمنزل وكل ما تحتاجه في مكان واحد.'
+              : language === 'fr'
+                ? 'Beauté, maison et essentiels du quotidien au même endroit.'
+                : 'Beauty, home and everyday essentials—all in one place.'}
           </p>
           <Link to={routePaths.search} className={styles.shopNow}>
             {language === 'ar' ? 'تسوق الآن' : language === 'fr' ? 'Découvrir' : 'Shop now'}

@@ -7,20 +7,20 @@ all-575-api QA branch `fix/qa-zone-stock-checkout-20261125`.
 
 ## Customer journey verification matrix
 
-| Step | Source-reviewed behavior | Evidence / remaining QA |
-| --- | --- | --- |
-| 1. Launch, splash, welcome | Intro and welcome routes exist in the frontend | Test first install, every reopen, saved guest state; browser/mobile not executed |
-| 2. Register / sign in | API accepts email/password with OTP-confirmed email, and separate email OTP flow; token is scoped to the customer | Verify valid/expired/wrong OTP, consent versions, retry/rate limit, email delivery with test accounts |
-| 3. Browse, search, categories | Public products endpoint filters published listings; stock status from active branches no longer requires a delivery zone | Test stock 0, low, reserved, disabled seller/branch, AR/EN/FR, pagination, filters |
-| 4. Product page | Variant availability is supplied from API; Add to Cart is disabled on `out_of_stock` | Test rapid taps, stock changes between viewing and adding, variants, images |
-| 5. Guest/signed-in cart | Guest cart persists locally and merges after sign-in; signed-in cart now reads quantity-specific availability from the same authoritative `/cart` response | Regression fix: remove stale secondary stock query; block signed-in checkout when stock is unknown, gone or insufficient; guest must sign in and revalidate |
-| 6. Address | Server validates address fields and resolves a delivery zone | **Unresolved business rule:** stock is global but delivery fees/slots still require a configured service zone. Must design courier coverage outside defined zones before enabling arbitrary-address checkout |
-| 7. Slot, quote and promo | Quote builder reprices on server (SAR halalas, VAT, delivery fee), checks every line and exposes `can_checkout`; slots scoped to address's zone | Verify discounts, VAT rounding, expiry, invalid code, slot full, stale address; do not use real payment |
-| 8. Place order | Server rechecks quote fingerprint, idempotency key, stock and slot under transaction; conditional stock hold protects concurrency | Test repeated POST, concurrent last-item purchase, quote_changed, payment errors, rollback on disposable DB |
-| 9. Payment | Payment redirect is restricted to HTTPS; server verifies provider callbacks; cash-on-delivery uses separate confirmation | Test fake provider success/failure/retry, callback duplication; never charge real card |
-| 10. Orders / tracking | Customer `/orders` and `/orders/{id}` scoped to authenticated owner | Verify order timeline, seller, courier assignment, delivery-code security, cancel status |
-| 11. Aftercare | Customer cases and messages, reviews, order cancellation and spending report endpoints are owner-scoped | Test delivered/non-delivered eligibility, quantity caps, duplicate refund requests, review permission, exports |
-| 12. Logout / return visit | Logout revokes current token; server supports session revocation | Test expiry, multi-device, account switch, cache isolation, splash reopening |
+| Step                          | Source-reviewed behavior                                                                                                                                   | Evidence / remaining QA                                                                                                                                                                                      |
+| ----------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| 1. Launch, splash, welcome    | Intro and welcome routes exist in the frontend                                                                                                             | Test first install, every reopen, saved guest state; browser/mobile not executed                                                                                                                             |
+| 2. Register / sign in         | API accepts email/password with OTP-confirmed email, and separate email OTP flow; token is scoped to the customer                                          | Verify valid/expired/wrong OTP, consent versions, retry/rate limit, email delivery with test accounts                                                                                                        |
+| 3. Browse, search, categories | Public products endpoint filters published listings; stock status from active branches no longer requires a delivery zone                                  | Test stock 0, low, reserved, disabled seller/branch, AR/EN/FR, pagination, filters                                                                                                                           |
+| 4. Product page               | Variant availability is supplied from API; Add to Cart is disabled on `out_of_stock`                                                                       | Test rapid taps, stock changes between viewing and adding, variants, images                                                                                                                                  |
+| 5. Guest/signed-in cart       | Guest cart persists locally and merges after sign-in; signed-in cart now reads quantity-specific availability from the same authoritative `/cart` response | Regression fix: remove stale secondary stock query; block signed-in checkout when stock is unknown, gone or insufficient; guest must sign in and revalidate                                                  |
+| 6. Address                    | Server validates address fields and resolves a delivery zone                                                                                               | **Unresolved business rule:** stock is global but delivery fees/slots still require a configured service zone. Must design courier coverage outside defined zones before enabling arbitrary-address checkout |
+| 7. Slot, quote and promo      | Quote builder reprices on server (SAR halalas, VAT, delivery fee), checks every line and exposes `can_checkout`; slots scoped to address's zone            | Verify discounts, VAT rounding, expiry, invalid code, slot full, stale address; do not use real payment                                                                                                      |
+| 8. Place order                | Server rechecks quote fingerprint, idempotency key, stock and slot under transaction; conditional stock hold protects concurrency                          | Test repeated POST, concurrent last-item purchase, quote_changed, payment errors, rollback on disposable DB                                                                                                  |
+| 9. Payment                    | Payment redirect is restricted to HTTPS; server verifies provider callbacks; cash-on-delivery uses separate confirmation                                   | Test fake provider success/failure/retry, callback duplication; never charge real card                                                                                                                       |
+| 10. Orders / tracking         | Customer `/orders` and `/orders/{id}` scoped to authenticated owner                                                                                        | Verify order timeline, seller, courier assignment, delivery-code security, cancel status                                                                                                                     |
+| 11. Aftercare                 | Customer cases and messages, reviews, order cancellation and spending report endpoints are owner-scoped                                                    | Test delivered/non-delivered eligibility, quantity caps, duplicate refund requests, review permission, exports                                                                                               |
+| 12. Logout / return visit     | Logout revokes current token; server supports session revocation                                                                                           | Test expiry, multi-device, account switch, cache isolation, splash reopening                                                                                                                                 |
 
 ## Confirmed source-level findings and fixes
 
@@ -41,6 +41,7 @@ all-575-api QA branch `fix/qa-zone-stock-checkout-20261125`.
 ## QA commands (disposable backend DB only)
 
 Frontend:
+
 ```sh
 npm ci
 npx vitest run src/features/cart/cartScreenModel.test.ts src/features/cart/CheckoutBar.test.tsx src/features/catalog/components/ProductParts.test.tsx
@@ -53,6 +54,7 @@ npm run api:check
 
 Backend: check `APP_ENV=testing`, `DB_CONNECTION=sqlite`, `DB_DATABASE=:memory:`
 before running any tests; never run these against staging/production databases.
+
 ```sh
 php artisan test --filter=CustomerCatalogStockFlowTest
 php artisan test --filter=ZoneAvailabilityMatchesReservationTest
@@ -65,16 +67,17 @@ Run screen-level checks at 320, 360, 393, 768 and 1440 px in
 Arabic RTL, English and French, on light/dark themes. Verify browser
 network errors and missing/out-of-stock controls before production rollout.
 
-
 ## Re-audit following homepage and branch-name changes (2026-11-25)
 
 CI evidence:
+
 - Frontend commit `9a7ce3f`: Mobile UI checks completed **successfully** in GitHub Actions run `45672972810`.
 - Frontend CI run `45672972727`: secret scan passed; API contract/type regeneration check passed **after removing hand-edited generated fields**; `format:check` failed on 21 files, and the job therefore did **not** reach lint/typecheck/unit tests/build. The formatting gate must be fixed and a **new run** must pass before deployment.
 - The prior frontend run `45668915909` failed to build because of three TypeScript errors (dashboard route includes, nullable API error status, and variant localized text). Code fixes were committed afterward, but are **not independently proven** by the earlier CI run.
 - Container GitHub DNS lookup fails, so no local isolated build was available. Do not claim a complete browser-to-real-API customer checkout was executed.
 
 Additional code-level safeguards:
+
 - Product tiles display the actual seller name plus a branch derived from available stock. The shown branch is informational: checkout can allocate a different seller-owned active branch.
 - Quick-add re-fetches current detail, stock and variant price before adding. Products with **multiple active variants** now expose no quick-add variant and must go to detail selection, preventing an arbitrary color/size purchase.
 - Catalog stock queries and reservation protect seller ownership.

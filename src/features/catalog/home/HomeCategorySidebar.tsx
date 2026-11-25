@@ -13,7 +13,10 @@ export function HomeCategorySidebar() {
     language === 'ar' ? ar : language === 'fr' ? fr : en;
 
   return (
-    <aside className={styles.categorySidebar} aria-label={tr('تصفح الأقسام', 'Browse categories', 'Parcourir les catégories')}>
+    <aside
+      className={styles.categorySidebar}
+      aria-label={tr('تصفح الأقسام', 'Browse categories', 'Parcourir les catégories')}
+    >
       <Link className={styles.sidebarTitle} to={routePaths.categories}>
         <span aria-hidden="true">☰</span>
         {tr('جميع الأقسام', 'All categories', 'Toutes les catégories')}
@@ -23,9 +26,13 @@ export function HomeCategorySidebar() {
         {(categories.data ?? []).slice(0, 10).map((category) => (
           <li key={category.id}>
             <Link to={routeTo.categoryProducts(category.slug)} className={styles.sidebarLink}>
-              <span className={styles.sidebarBullet} aria-hidden="true">✦</span>
+              <span className={styles.sidebarBullet} aria-hidden="true">
+                ✦
+              </span>
               <span>{pickText(category.name, language)}</span>
-              <span className={styles.sidebarChevron} aria-hidden="true">›</span>
+              <span className={styles.sidebarChevron} aria-hidden="true">
+                ›
+              </span>
             </Link>
           </li>
         ))}

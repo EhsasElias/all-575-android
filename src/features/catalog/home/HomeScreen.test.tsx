@@ -15,8 +15,12 @@ describe('Home - reference shopping layout', () => {
     installCatalogApi();
     await renderHome();
 
-    expect(screen.getByRole('heading', { level: 1, name: 'What do you need today?' })).toBeVisible();
-    expect(screen.getByRole('heading', { name: 'What would you like to shop today?' })).toBeVisible();
+    expect(
+      screen.getByRole('heading', { level: 1, name: 'What do you need today?' }),
+    ).toBeVisible();
+    expect(
+      screen.getByRole('heading', { name: 'What would you like to shop today?' }),
+    ).toBeVisible();
     expect(screen.getByRole('heading', { name: 'Explore our collections' })).toBeVisible();
     expect(screen.getByRole('heading', { name: 'Grocery & fresh' })).toBeVisible();
     expect(screen.getByRole('heading', { name: 'Picked For You' })).toBeVisible();
@@ -27,7 +31,10 @@ describe('Home - reference shopping layout', () => {
     expect(screen.queryByRole('checkbox', { name: 'In stock only' })).not.toBeInTheDocument();
     expect(screen.queryByText('20 mins')).not.toBeInTheDocument();
     expect(screen.queryByText(/% off/i)).not.toBeInTheDocument();
-    expect(screen.getByRole('link', { name: 'All categories' })).toHaveAttribute('href', '/categories');
+    expect(screen.getByRole('link', { name: 'All categories' })).toHaveAttribute(
+      'href',
+      '/categories',
+    );
   });
 
   it('shows the nine supplied category photos with the matching individual names', async () => {
@@ -49,10 +56,7 @@ describe('Home - reference shopping layout', () => {
     for (const [name, image] of pairs) {
       const card = within(shelf).getByRole('link', { name: `Explore ${name}` });
       expect(card).toBeVisible();
-      expect(card.querySelector('img')).toHaveAttribute(
-        'src',
-        `/images/categories/${image}.webp`,
-      );
+      expect(card.querySelector('img')).toHaveAttribute('src', `/images/categories/${image}.webp`);
     }
   });
 
@@ -85,15 +89,17 @@ describe('Home - reference shopping layout', () => {
 
   it('shows real seller names and stocked branch details for homepage products', async () => {
     installCatalogApi({
-      'GET /products': { body: page([
-        {
-          ...makeProduct({
-            availability: 'in_stock',
-            stock_branch: { ar: 'فرع شمال الرياض', en: 'North Riyadh branch' },
-            purchase_variant_id: 17,
-          }),
-        },
-      ]) },
+      'GET /products': {
+        body: page([
+          {
+            ...makeProduct({
+              availability: 'in_stock',
+              stock_branch: { ar: 'فرع شمال الرياض', en: 'North Riyadh branch' },
+              purchase_variant_id: 17,
+            }),
+          },
+        ]),
+      },
     });
     await renderHome();
     const picks = screen.getByRole('region', { name: 'Picked For You' });
@@ -121,7 +127,9 @@ describe('Home - reference shopping layout', () => {
   it('keeps the four blocks visible when no products are available', async () => {
     installCatalogApi({ 'GET /products': { body: page([]) } });
     await renderHome();
-    expect(screen.getByRole('heading', { name: 'What would you like to shop today?' })).toBeVisible();
+    expect(
+      screen.getByRole('heading', { name: 'What would you like to shop today?' }),
+    ).toBeVisible();
     expect(screen.getByRole('heading', { name: 'Explore our collections' })).toBeVisible();
     expect(screen.getByRole('heading', { name: 'Grocery & fresh' })).toBeVisible();
     expect(screen.getByRole('heading', { name: 'Picked For You' })).toBeVisible();
@@ -136,17 +144,27 @@ describe('Home - reference shopping layout', () => {
     expect(screen.getByRole('heading', { name: 'اكتشف مجموعاتنا' })).toBeVisible();
     expect(screen.getByRole('heading', { name: 'البقالة والخضار والفواكه' })).toBeVisible();
     expect(screen.getByRole('heading', { name: 'اخترنا لك' })).toBeVisible();
-    expect(await within(screen.getByRole('region', { name: 'اخترنا لك' })).findByRole('link', { name: /بسكويت/ })).toBeVisible();
+    expect(
+      await within(screen.getByRole('region', { name: 'اخترنا لك' })).findByRole('link', {
+        name: /بسكويت/,
+      }),
+    ).toBeVisible();
   });
 
   it('supports French LTR and the same four shelves', async () => {
     installCatalogApi();
     await renderHome('fr');
     expect(document.documentElement).toHaveAttribute('dir', 'ltr');
-    expect(screen.getByRole('heading', { name: 'Que souhaitez-vous acheter aujourd’hui ?' })).toBeVisible();
+    expect(
+      screen.getByRole('heading', { name: 'Que souhaitez-vous acheter aujourd’hui ?' }),
+    ).toBeVisible();
     expect(screen.getByRole('heading', { name: 'Découvrez nos collections' })).toBeVisible();
     expect(screen.getByRole('heading', { name: 'Épicerie et produits frais' })).toBeVisible();
     expect(screen.getByRole('heading', { name: 'Sélection pour vous' })).toBeVisible();
-    expect(await within(screen.getByRole('region', { name: 'Sélection pour vous' })).findByRole('link', { name: /Biscuits/ })).toBeVisible();
+    expect(
+      await within(screen.getByRole('region', { name: 'Sélection pour vous' })).findByRole('link', {
+        name: /Biscuits/,
+      }),
+    ).toBeVisible();
   });
 });

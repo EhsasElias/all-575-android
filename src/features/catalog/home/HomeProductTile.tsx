@@ -26,8 +26,10 @@ export function HomeProductTile({ product }: Props) {
     language === 'ar' ? ar : language === 'fr' ? fr : en;
   const name = pickText(product.name, language);
   const branch = product.stock_branch ? pickText(product.stock_branch, language) : null;
-  const canAdd = product.availability !== 'out_of_stock' && product.availability !== 'unknown'
-    && product.purchase_variant_id != null;
+  const canAdd =
+    product.availability !== 'out_of_stock' &&
+    product.availability !== 'unknown' &&
+    product.purchase_variant_id != null;
 
   const add = async (): Promise<void> => {
     if (pending || !canAdd || product.purchase_variant_id == null) return;
@@ -40,27 +42,49 @@ export function HomeProductTile({ product }: Props) {
         `/products/${encodeURIComponent(product.slug)}`,
       );
       const variant = latest.variants.find((entry) => entry.id === product.purchase_variant_id);
-      if (!variant || variant.availability === 'out_of_stock' || variant.availability === 'unknown') {
-        setError(tr('هذا المنتج غير متوفر حاليًا', 'This item is currently unavailable', 'Ce produit est actuellement indisponible'));
+      if (
+        !variant ||
+        variant.availability === 'out_of_stock' ||
+        variant.availability === 'unknown'
+      ) {
+        setError(
+          tr(
+            'هذا المنتج غير متوفر حاليًا',
+            'This item is currently unavailable',
+            'Ce produit est actuellement indisponible',
+          ),
+        );
         return;
       }
-      const result = await cart.addItem({
-        variantId: variant.id,
-        productSlug: product.slug,
-        name: latest.name,
-        variantName: variant.name
-          ? { ar: variant.name.ar ?? '', en: variant.name.en ?? '' }
-          : null,
-        imageUrl: latest.image_url,
-        unitPrice: variant.price.net,
-      }, 1);
+      const result = await cart.addItem(
+        {
+          variantId: variant.id,
+          productSlug: product.slug,
+          name: latest.name,
+          variantName: variant.name
+            ? { ar: variant.name.ar ?? '', en: variant.name.en ?? '' }
+            : null,
+          imageUrl: latest.image_url,
+          unitPrice: variant.price.net,
+        },
+        1,
+      );
       if (result.ok) {
-        showToast({ message: tr('تمت الإضافة إلى السلة', 'Added to cart', 'Ajouté au panier'), variant: 'success' });
+        showToast({
+          message: tr('تمت الإضافة إلى السلة', 'Added to cart', 'Ajouté au panier'),
+          variant: 'success',
+        });
       } else {
         setError(refusalMessage(result.reason));
       }
     } catch {
-      setError(tr('تعذرت الإضافة، حاول مجددًا', 'Could not add item. Please retry.', 'Impossible d’ajouter ce produit. Réessayez.'));
+      setError(
+        tr(
+          'تعذرت الإضافة، حاول مجددًا',
+          'Could not add item. Please retry.',
+          'Impossible d’ajouter ce produit. Réessayez.',
+        ),
+      );
     } finally {
       setPending(false);
     }
@@ -68,7 +92,9 @@ export function HomeProductTile({ product }: Props) {
 
   return (
     <article className={styles.productCard}>
-      <div className={styles.favoriteAction}><SaveProduct slug={product.slug} compact /></div>
+      <div className={styles.favoriteAction}>
+        <SaveProduct slug={product.slug} compact />
+      </div>
       <Link className={styles.productMainLink} to={routeTo.product(product.slug)}>
         <span className={styles.productImage}>
           <CatalogImage src={product.image_url} alt="" size={180} />
@@ -87,7 +113,11 @@ export function HomeProductTile({ product }: Props) {
       </div>
       <span className={styles.productPrice}>{formatMoney(product.price.net, language)}</span>
       {product.availability !== 'unknown' && (
-        <span className={product.availability === 'out_of_stock' ? styles.unavailable : styles.available}>
+        <span
+          className={
+            product.availability === 'out_of_stock' ? styles.unavailable : styles.available
+          }
+        >
           {product.availability === 'out_of_stock'
             ? tr('غير متوفر', 'Out of stock', 'Rupture de stock')
             : product.availability === 'low_stock'
@@ -96,7 +126,12 @@ export function HomeProductTile({ product }: Props) {
         </span>
       )}
       {canAdd ? (
-        <button className={styles.addButton} type="button" disabled={pending} onClick={() => void add()}>
+        <button
+          className={styles.addButton}
+          type="button"
+          disabled={pending}
+          onClick={() => void add()}
+        >
           {pending
             ? tr('جار الإضافة…', 'Adding…', 'Ajout…')
             : tr('+ أضف للسلة', '+ Add to cart', '+ Ajouter')}
@@ -110,7 +145,11 @@ export function HomeProductTile({ product }: Props) {
           {tr('عرض المنتج', 'View product', 'Voir le produit')}
         </Link>
       )}
-      {error && <p className={styles.cardError} role="alert">{error}</p>}
+      {error && (
+        <p className={styles.cardError} role="alert">
+          {error}
+        </p>
+      )}
     </article>
   );
 }

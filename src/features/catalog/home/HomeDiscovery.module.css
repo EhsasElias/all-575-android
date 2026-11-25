@@ -23,16 +23,16 @@
   display: flex;
   justify-content: space-between;
   align-items: center;
-  gap: .6rem;
+  gap: 0.6rem;
 }
 
 .more {
   display: inline-flex;
-  gap: .3rem;
+  gap: 0.3rem;
   align-items: center;
   flex-shrink: 0;
   min-height: 2.75rem;
-  font-size: .8rem;
+  font-size: 0.8rem;
   font-weight: 700;
   text-decoration: none;
   color: var(--color-brand-text);
@@ -41,14 +41,14 @@
 .categoryGrid {
   display: grid;
   grid-template-columns: repeat(4, minmax(0, 1fr));
-  gap: 1rem .65rem;
+  gap: 1rem 0.65rem;
 }
 
 .categoryCard {
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: .5rem;
+  gap: 0.5rem;
   min-width: 0;
   text-align: center;
   color: var(--color-text);
@@ -74,7 +74,7 @@
 }
 
 .categoryName {
-  font-size: .79rem;
+  font-size: 0.79rem;
   line-height: 1.3;
   font-weight: 750;
   overflow-wrap: break-word;
@@ -88,14 +88,17 @@
   overflow-x: auto;
   overscroll-behavior-inline: contain;
   scroll-snap-type: x proximity;
-  gap: .75rem;
+  gap: 0.75rem;
   scrollbar-width: none;
-  padding: .1rem .05rem .5rem;
+  padding: 0.1rem 0.05rem 0.5rem;
   margin: 0;
   min-width: 0;
 }
 
-.offerRail { grid-auto-columns: minmax(10.25rem, 43%); padding-block: .15rem .8rem; }
+.offerRail {
+  grid-auto-columns: minmax(10.25rem, 43%);
+  padding-block: 0.15rem 0.8rem;
+}
 .offerCard {
   min-width: 0;
   display: block;
@@ -113,26 +116,77 @@
   overflow: hidden;
   border-radius: 1.2rem;
   border: 3px solid var(--color-surface);
-  box-shadow: 0 0 0 1px var(--color-border), 0 8px 24px rgba(16, 63, 46, .08);
+  box-shadow:
+    0 0 0 1px var(--color-border),
+    0 8px 24px rgba(16, 63, 46, 0.08);
   background: linear-gradient(150deg, #f0b99f 0%, #a85c48 100%);
 }
-.offerCard:nth-child(2) .offerCardVisual { background: linear-gradient(155deg, #b0c5ca, #6d9a9f); }
-.offerCard:nth-child(3) .offerCardVisual { background: linear-gradient(155deg, #eec6d6, #b77893); }
-.offerCard:nth-child(4) .offerCardVisual { background: linear-gradient(155deg, #b1dcbc, #438970); }
-.offerEyebrow { position: relative; z-index: 2; font-size: .66rem; letter-spacing: .06em; color: #233d34; font-weight: 800; }
-.offerTitle { position: relative; z-index: 2; font-size: clamp(1.1rem, 3vw, 1.45rem); line-height: 1.18; color: #172e28; max-width: 82%; text-shadow: 0 1px 0 rgba(255,255,255,.25); }
-.offerPhoto { position: absolute; inset-inline: 17%; bottom: .2rem; height: 68%; display: flex; align-items: end; justify-content: center; }
-.offerPhoto .categoryPhoto { object-fit: contain; width: 100%; height: 100%; background: transparent; filter: drop-shadow(0 10px 8px rgba(0,0,0,.15)); }
-.offerExplore { position: absolute; inset-inline-end: .65rem; inset-block-end: .65rem; z-index: 2; display: grid; place-items: center; width: 1.9rem; height: 1.9rem; border-radius: 50%; color: #174e3a; background: rgba(255,255,255,.9); }
-.groceryGrid { grid-auto-columns: minmax(7.2rem, 30%); }
+.offerCard:nth-child(2) .offerCardVisual {
+  background: linear-gradient(155deg, #b0c5ca, #6d9a9f);
+}
+.offerCard:nth-child(3) .offerCardVisual {
+  background: linear-gradient(155deg, #eec6d6, #b77893);
+}
+.offerCard:nth-child(4) .offerCardVisual {
+  background: linear-gradient(155deg, #b1dcbc, #438970);
+}
+.offerEyebrow {
+  position: relative;
+  z-index: 2;
+  font-size: 0.66rem;
+  letter-spacing: 0.06em;
+  color: #233d34;
+  font-weight: 800;
+}
+.offerTitle {
+  position: relative;
+  z-index: 2;
+  font-size: clamp(1.1rem, 3vw, 1.45rem);
+  line-height: 1.18;
+  color: #172e28;
+  max-width: 82%;
+  text-shadow: 0 1px 0 rgba(255, 255, 255, 0.25);
+}
+.offerPhoto {
+  position: absolute;
+  inset-inline: 17%;
+  bottom: 0.2rem;
+  height: 68%;
+  display: flex;
+  align-items: end;
+  justify-content: center;
+}
+.offerPhoto .categoryPhoto {
+  object-fit: contain;
+  width: 100%;
+  height: 100%;
+  background: transparent;
+  filter: drop-shadow(0 10px 8px rgba(0, 0, 0, 0.15));
+}
+.offerExplore {
+  position: absolute;
+  inset-inline-end: 0.65rem;
+  inset-block-end: 0.65rem;
+  z-index: 2;
+  display: grid;
+  place-items: center;
+  width: 1.9rem;
+  height: 1.9rem;
+  border-radius: 50%;
+  color: #174e3a;
+  background: rgba(255, 255, 255, 0.9);
+}
+.groceryGrid {
+  grid-auto-columns: minmax(7.2rem, 30%);
+}
 .groceryCard {
   display: grid;
-  gap: .45rem;
+  gap: 0.45rem;
   align-content: start;
   text-decoration: none;
   min-width: 0;
   color: var(--color-text);
-  font-size: .83rem;
+  font-size: 0.83rem;
   font-weight: 700;
   scroll-snap-align: start;
 }
@@ -143,7 +197,7 @@
   aspect-ratio: 1;
   overflow: hidden;
   border: 1px solid var(--color-border);
-  border-radius: .9rem;
+  border-radius: 0.9rem;
   background: var(--color-surface);
 }
 
@@ -157,13 +211,16 @@
   list-style: none;
 }
 
-.productRail > li { min-width: 0; scroll-snap-align: start; }
+.productRail > li {
+  min-width: 0;
+  scroll-snap-align: start;
+}
 
 .productCard {
   display: grid;
-  gap: .4rem;
+  gap: 0.4rem;
   height: 100%;
-  padding: .55rem;
+  padding: 0.55rem;
   border: 1px solid var(--color-border);
   border-radius: 1rem;
   color: var(--color-text);
@@ -175,13 +232,16 @@
   display: block;
   aspect-ratio: 1.2;
   overflow: hidden;
-  border-radius: .75rem;
+  border-radius: 0.75rem;
 }
 
-.productImage > div { width: 100%; height: 100%; }
+.productImage > div {
+  width: 100%;
+  height: 100%;
+}
 
 .productName {
-  font-size: .8rem;
+  font-size: 0.8rem;
   font-weight: 650;
   line-height: 1.4;
   display: -webkit-box;
@@ -190,8 +250,15 @@
   overflow: hidden;
 }
 
-.productPrice { color: var(--color-brand-text); font-size: .82rem; font-weight: 800; }
-.helper { color: var(--color-text-muted); font-size: .82rem; }
+.productPrice {
+  color: var(--color-brand-text);
+  font-size: 0.82rem;
+  font-weight: 800;
+}
+.helper {
+  color: var(--color-text-muted);
+  font-size: 0.82rem;
+}
 
 .categoryCard:focus-visible,
 .offerCard:focus-visible,
@@ -203,76 +270,205 @@
 }
 
 @media (min-width: 48rem) {
-  .categoryGrid { grid-template-columns: repeat(5, minmax(0, 1fr)); gap: 1.15rem; }
-  .categoryImage { max-width: 10rem; }
-  .offerRail { grid-auto-columns: minmax(11rem, 25%); }
-  .groceryGrid { grid-auto-columns: minmax(10rem, 23%); }
-  .productRail { grid-auto-columns: minmax(11rem, 25%); }
+  .categoryGrid {
+    grid-template-columns: repeat(5, minmax(0, 1fr));
+    gap: 1.15rem;
+  }
+  .categoryImage {
+    max-width: 10rem;
+  }
+  .offerRail {
+    grid-auto-columns: minmax(11rem, 25%);
+  }
+  .groceryGrid {
+    grid-auto-columns: minmax(10rem, 23%);
+  }
+  .productRail {
+    grid-auto-columns: minmax(11rem, 25%);
+  }
 }
 
 @media (max-width: 359px) {
-  .categoryGrid { gap: .55rem .3rem; }
-  .categoryName { font-size: .7rem; }
-  .offerRail { grid-auto-columns: minmax(8rem, 67%); }
-  .productRail { grid-auto-columns: minmax(8.5rem, 63%); }
+  .categoryGrid {
+    gap: 0.55rem 0.3rem;
+  }
+  .categoryName {
+    font-size: 0.7rem;
+  }
+  .offerRail {
+    grid-auto-columns: minmax(8rem, 67%);
+  }
+  .productRail {
+    grid-auto-columns: minmax(8.5rem, 63%);
+  }
 }
 
 @media (prefers-reduced-motion: no-preference) {
-  .offerRail, .productRail, .groceryGrid { scroll-behavior: smooth; }
-  .categoryCard, .offerCard, .productCard { transition: transform .15s ease; }
-  .categoryCard:hover, .offerCard:hover, .productCard:hover { transform: translateY(-2px); }
+  .offerRail,
+  .productRail,
+  .groceryGrid {
+    scroll-behavior: smooth;
+  }
+  .categoryCard,
+  .offerCard,
+  .productCard {
+    transition: transform 0.15s ease;
+  }
+  .categoryCard:hover,
+  .offerCard:hover,
+  .productCard:hover {
+    transform: translateY(-2px);
+  }
 }
 
 /* Featured grocery and recommendation shelves. */
-.groceryPromo { display: flex; align-items: center; gap: .8rem; padding: .85rem 1rem; text-decoration: none; color: #164a39; background: linear-gradient(95deg, #e6f5df, #f5f9e8); border: 1px solid #c9e4cd; border-radius: 1.15rem; }
-.groceryPromoIcon { width: 2.8rem; height: 2.8rem; flex-shrink: 0; border-radius: .8rem; display: grid; place-items: center; font-size: 1.6rem; background: #b7e49d; }
-.groceryPromoText { display: grid; gap: .12rem; flex: 1; min-width: 0; }
-.groceryPromoText strong { font-size: clamp(.96rem, 2.5vw, 1.2rem); line-height: 1.25; }
-.groceryPromoText small { font-size: .75rem; color: #476b59; }
-.groceryPromoArrow { font-size: 1.25rem; transform: scaleX(var(--rtl-arrow-flip, 1)); }
-.pickedIntro { display: flex; align-items: center; gap: .5rem; padding: .65rem .85rem; border-radius: .8rem; background: var(--color-surface-mint); color: var(--color-brand-text); font-size: .8rem; font-weight: 750; }
-.pickedIcon { font-size: 1.15rem; }
-.groceryPromo:focus-visible { outline: 3px solid var(--color-brand); outline-offset: 3px; }
+.groceryPromo {
+  display: flex;
+  align-items: center;
+  gap: 0.8rem;
+  padding: 0.85rem 1rem;
+  text-decoration: none;
+  color: #164a39;
+  background: linear-gradient(95deg, #e6f5df, #f5f9e8);
+  border: 1px solid #c9e4cd;
+  border-radius: 1.15rem;
+}
+.groceryPromoIcon {
+  width: 2.8rem;
+  height: 2.8rem;
+  flex-shrink: 0;
+  border-radius: 0.8rem;
+  display: grid;
+  place-items: center;
+  font-size: 1.6rem;
+  background: #b7e49d;
+}
+.groceryPromoText {
+  display: grid;
+  gap: 0.12rem;
+  flex: 1;
+  min-width: 0;
+}
+.groceryPromoText strong {
+  font-size: clamp(0.96rem, 2.5vw, 1.2rem);
+  line-height: 1.25;
+}
+.groceryPromoText small {
+  font-size: 0.75rem;
+  color: #476b59;
+}
+.groceryPromoArrow {
+  font-size: 1.25rem;
+  transform: scaleX(var(--rtl-arrow-flip, 1));
+}
+.pickedIntro {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.65rem 0.85rem;
+  border-radius: 0.8rem;
+  background: var(--color-surface-mint);
+  color: var(--color-brand-text);
+  font-size: 0.8rem;
+  font-weight: 750;
+}
+.pickedIcon {
+  font-size: 1.15rem;
+}
+.groceryPromo:focus-visible {
+  outline: 3px solid var(--color-brand);
+  outline-offset: 3px;
+}
 @media (max-width: 359px) {
-  .offerRail { grid-auto-columns: minmax(9.25rem, 72%); }
+  .offerRail {
+    grid-auto-columns: minmax(9.25rem, 72%);
+  }
 }
 @media (min-width: 48rem) {
-  .offerRail { grid-auto-columns: minmax(12.5rem, 24%); }
-  .offerCardVisual { height: 16rem; }
+  .offerRail {
+    grid-auto-columns: minmax(12.5rem, 24%);
+  }
+  .offerCardVisual {
+    height: 16rem;
+  }
 }
 @media (min-width: 64rem) {
-  .categoryGrid { grid-template-columns: repeat(9, minmax(0, 1fr)); gap: clamp(.65rem, 1.1vw, 1.2rem); }
-  .categoryCard { gap: .7rem; }
-  .categoryName { font-size: .9rem; line-height: 1.25; overflow-wrap: normal; }
-  .categoryImage { max-width: none; }
-  .offerRail { grid-auto-columns: minmax(13.5rem, 24%); gap: 1rem; }
-  .offerCardVisual { height: 17rem; }
-  .productRail { grid-auto-columns: minmax(12rem, 22%); }
-  .groceryGrid { grid-auto-columns: minmax(12rem, 23%); }
+  .categoryGrid {
+    grid-template-columns: repeat(9, minmax(0, 1fr));
+    gap: clamp(0.65rem, 1.1vw, 1.2rem);
+  }
+  .categoryCard {
+    gap: 0.7rem;
+  }
+  .categoryName {
+    font-size: 0.9rem;
+    line-height: 1.25;
+    overflow-wrap: normal;
+  }
+  .categoryImage {
+    max-width: none;
+  }
+  .offerRail {
+    grid-auto-columns: minmax(13.5rem, 24%);
+    gap: 1rem;
+  }
+  .offerCardVisual {
+    height: 17rem;
+  }
+  .productRail {
+    grid-auto-columns: minmax(12rem, 22%);
+  }
+  .groceryGrid {
+    grid-auto-columns: minmax(12rem, 23%);
+  }
 }
 @media (prefers-reduced-motion: no-preference) {
-  .groceryPromo { transition: transform .18s ease, filter .18s ease; }
-  .groceryPromo:hover { transform: translateY(-2px); filter: brightness(1.02); }
+  .groceryPromo {
+    transition:
+      transform 0.18s ease,
+      filter 0.18s ease;
+  }
+  .groceryPromo:hover {
+    transform: translateY(-2px);
+    filter: brightness(1.02);
+  }
 }
 
 /* ALL 5.75 storefront design system: soft mint, warm cream, crisp white,
    large editorial cards, and a mobile-first product discovery hierarchy. */
-.sectionHeading { display: grid; gap: .28rem; min-inline-size: 0; }
+.sectionHeading {
+  display: grid;
+  gap: 0.28rem;
+  min-inline-size: 0;
+}
 .kicker {
-  font-size: .69rem;
+  font-size: 0.69rem;
   font-weight: 800;
-  letter-spacing: .09em;
+  letter-spacing: 0.09em;
   color: #32815b;
   line-height: 1.2;
 }
-.section { row-gap: 1rem; }
-.section h2 { font-size: clamp(1.28rem, 3.7vw, 1.8rem); letter-spacing: -.018em; }
-.headingRow { align-items: end; gap: .9rem; }
-.more { white-space: nowrap; color: #176444; }
-.categoryGrid { gap: 1.1rem .75rem; }
+.section {
+  row-gap: 1rem;
+}
+.section h2 {
+  font-size: clamp(1.28rem, 3.7vw, 1.8rem);
+  letter-spacing: -0.018em;
+}
+.headingRow {
+  align-items: end;
+  gap: 0.9rem;
+}
+.more {
+  white-space: nowrap;
+  color: #176444;
+}
+.categoryGrid {
+  gap: 1.1rem 0.75rem;
+}
 .categoryCard {
-  gap: .68rem;
-  padding: .2rem .08rem;
+  gap: 0.68rem;
+  padding: 0.2rem 0.08rem;
 }
 .categoryImage {
   display: grid;
@@ -281,70 +477,91 @@
   border: none;
   border-radius: 1.15rem;
   background: #f5f7f2;
-  box-shadow: 0 1px 0 rgba(28, 76, 50, .07);
+  box-shadow: 0 1px 0 rgba(28, 76, 50, 0.07);
 }
 .categoryPhoto {
-  padding: .18rem;
+  padding: 0.18rem;
   box-sizing: border-box;
   object-fit: contain;
   background: transparent;
-  transition: transform .2s ease;
+  transition: transform 0.2s ease;
 }
-.categoryCard:hover .categoryPhoto { transform: scale(1.045); }
+.categoryCard:hover .categoryPhoto {
+  transform: scale(1.045);
+}
 .categoryName {
   text-wrap: balance;
   overflow-wrap: normal;
   hyphens: auto;
-  font-size: clamp(.72rem, 1.45vw, .94rem);
+  font-size: clamp(0.72rem, 1.45vw, 0.94rem);
   font-weight: 750;
   line-height: 1.35;
 }
 .offerRail,
 .productRail,
-.groceryGrid { padding: .3rem .2rem 1rem; gap: 1rem; }
+.groceryGrid {
+  padding: 0.3rem 0.2rem 1rem;
+  gap: 1rem;
+}
 .offerRail::-webkit-scrollbar,
 .productRail::-webkit-scrollbar,
-.groceryGrid::-webkit-scrollbar { display: none; }
-.offerRail { grid-auto-columns: minmax(12.5rem, 72%); }
+.groceryGrid::-webkit-scrollbar {
+  display: none;
+}
+.offerRail {
+  grid-auto-columns: minmax(12.5rem, 72%);
+}
 .offerCardVisual {
   min-block-size: 15rem;
   block-size: clamp(15rem, 34vw, 19rem);
   border-radius: 1.35rem;
   padding: 1.25rem;
   box-shadow: none;
-  border: 1px solid rgba(30, 54, 43, .08);
+  border: 1px solid rgba(30, 54, 43, 0.08);
   background: linear-gradient(145deg, #f5dfbb, #e7b493);
 }
-.offerCard:nth-child(2) .offerCardVisual { background: linear-gradient(145deg, #d9e8f2, #a7c6d9); }
-.offerCard:nth-child(3) .offerCardVisual { background: linear-gradient(145deg, #f6dce2, #e3b7ce); }
-.offerCard:nth-child(4) .offerCardVisual { background: linear-gradient(145deg, #e5efca, #b6d9ae); }
-.offerCard:nth-child(5) .offerCardVisual { background: linear-gradient(145deg, #f3e5c9, #d2c4ae); }
-.offerEyebrow { font-size: .65rem; letter-spacing: .085em; color: #365244; }
+.offerCard:nth-child(2) .offerCardVisual {
+  background: linear-gradient(145deg, #d9e8f2, #a7c6d9);
+}
+.offerCard:nth-child(3) .offerCardVisual {
+  background: linear-gradient(145deg, #f6dce2, #e3b7ce);
+}
+.offerCard:nth-child(4) .offerCardVisual {
+  background: linear-gradient(145deg, #e5efca, #b6d9ae);
+}
+.offerCard:nth-child(5) .offerCardVisual {
+  background: linear-gradient(145deg, #f3e5c9, #d2c4ae);
+}
+.offerEyebrow {
+  font-size: 0.65rem;
+  letter-spacing: 0.085em;
+  color: #365244;
+}
 .offerTitle {
   max-inline-size: 100%;
   font-size: clamp(1.24rem, 2.8vw, 1.8rem);
   color: #1e392a;
   font-weight: 850;
-  letter-spacing: -.02em;
+  letter-spacing: -0.02em;
 }
 .offerPhoto {
   inset-inline: 8%;
   block-size: 64%;
-  bottom: .55rem;
+  bottom: 0.55rem;
   align-items: center;
 }
 .offerPhoto .categoryPhoto {
-  padding: .15rem;
-  filter: drop-shadow(0 10px 14px rgba(39, 59, 39, .12));
+  padding: 0.15rem;
+  filter: drop-shadow(0 10px 14px rgba(39, 59, 39, 0.12));
 }
 .offerExplore {
   inline-size: 2.3rem;
   block-size: 2.3rem;
-  inset-inline-end: .95rem;
-  inset-block-end: .95rem;
+  inset-inline-end: 0.95rem;
+  inset-block-end: 0.95rem;
   font-size: 1.08rem;
   color: #175e40;
-  box-shadow: 0 2px 8px rgba(20, 48, 32, .12);
+  box-shadow: 0 2px 8px rgba(20, 48, 32, 0.12);
 }
 .groceryPromo {
   min-block-size: 6.5rem;
@@ -361,9 +578,17 @@
   overflow: hidden;
   background: #fbfcf6;
 }
-.groceryPromoIcon .categoryPhoto { padding: .1rem; }
-.groceryPromoText strong { font-size: clamp(1.08rem, 2.4vw, 1.6rem); letter-spacing: -.015em; }
-.groceryPromoText small { font-size: .82rem; line-height: 1.45; }
+.groceryPromoIcon .categoryPhoto {
+  padding: 0.1rem;
+}
+.groceryPromoText strong {
+  font-size: clamp(1.08rem, 2.4vw, 1.6rem);
+  letter-spacing: -0.015em;
+}
+.groceryPromoText small {
+  font-size: 0.82rem;
+  line-height: 1.45;
+}
 .groceryPromoArrow {
   display: grid;
   place-items: center;
@@ -377,134 +602,230 @@
 .groceryCard {
   border: 1px solid #e0e8df;
   border-radius: 1.1rem;
-  padding: .65rem;
+  padding: 0.65rem;
   background: var(--color-surface);
-  font-size: .84rem;
+  font-size: 0.84rem;
   font-weight: 750;
 }
-.groceryImage { border: none; background: #f8faf6; }
+.groceryImage {
+  border: none;
+  background: #f8faf6;
+}
 .pickedIntro {
-  padding: .8rem 1rem;
+  padding: 0.8rem 1rem;
   border-radius: 1rem;
   background: #f2f8ef;
   border: 1px solid #dceadc;
 }
 .productCard {
-  padding: .75rem;
-  gap: .55rem;
+  padding: 0.75rem;
+  gap: 0.55rem;
   border-radius: 1.1rem;
   border-color: #dce6dc;
-  box-shadow: 0 2px 11px rgba(20, 55, 37, .035);
+  box-shadow: 0 2px 11px rgba(20, 55, 37, 0.035);
 }
 .productImage {
   aspect-ratio: 1.15;
   background: #f7f9f5;
-  border-radius: .85rem;
+  border-radius: 0.85rem;
 }
-.productName { font-size: .84rem; font-weight: 750; }
-.productPrice { font-size: .92rem; }
+.productName {
+  font-size: 0.84rem;
+  font-weight: 750;
+}
+.productPrice {
+  font-size: 0.92rem;
+}
 @media (max-width: 359px) {
-  .offerRail { grid-auto-columns: minmax(11rem, 80%); }
-  .categoryGrid { gap: .8rem .35rem; }
-  .categoryName { font-size: .7rem; }
-  .groceryPromoText small { font-size: .7rem; }
-  .groceryPromoArrow { inline-size: 2rem; block-size: 2rem; }
+  .offerRail {
+    grid-auto-columns: minmax(11rem, 80%);
+  }
+  .categoryGrid {
+    gap: 0.8rem 0.35rem;
+  }
+  .categoryName {
+    font-size: 0.7rem;
+  }
+  .groceryPromoText small {
+    font-size: 0.7rem;
+  }
+  .groceryPromoArrow {
+    inline-size: 2rem;
+    block-size: 2rem;
+  }
 }
 @media (min-width: 48rem) {
-  .categoryGrid { grid-template-columns: repeat(5, minmax(0, 1fr)); }
-  .offerRail { grid-auto-columns: minmax(13.5rem, 31%); }
-  .groceryGrid { grid-auto-columns: minmax(11rem, 24%); }
-  .productRail { grid-auto-columns: minmax(11.5rem, 24%); }
+  .categoryGrid {
+    grid-template-columns: repeat(5, minmax(0, 1fr));
+  }
+  .offerRail {
+    grid-auto-columns: minmax(13.5rem, 31%);
+  }
+  .groceryGrid {
+    grid-auto-columns: minmax(11rem, 24%);
+  }
+  .productRail {
+    grid-auto-columns: minmax(11.5rem, 24%);
+  }
 }
 @media (min-width: 64rem) {
-  .categoryGrid { grid-template-columns: repeat(9, minmax(0, 1fr)); gap: 1.05rem; }
-  .categoryName { font-size: .86rem; }
-  .offerRail { grid-auto-columns: minmax(13.8rem, 24%); }
-  .offerCardVisual { block-size: 18rem; }
-  .groceryGrid { grid-auto-columns: minmax(13rem, 24%); }
-  .productRail { grid-auto-columns: minmax(12rem, 19%); }
+  .categoryGrid {
+    grid-template-columns: repeat(9, minmax(0, 1fr));
+    gap: 1.05rem;
+  }
+  .categoryName {
+    font-size: 0.86rem;
+  }
+  .offerRail {
+    grid-auto-columns: minmax(13.8rem, 24%);
+  }
+  .offerCardVisual {
+    block-size: 18rem;
+  }
+  .groceryGrid {
+    grid-auto-columns: minmax(13rem, 24%);
+  }
+  .productRail {
+    grid-auto-columns: minmax(12rem, 19%);
+  }
 }
 @media (prefers-reduced-motion: reduce) {
-  .categoryPhoto { transition: none; }
+  .categoryPhoto {
+    transition: none;
+  }
 }
 
 /* Actionable merchandised product tiles, usable at 320px and desktop widths. */
-.productRail { align-items: stretch; }
-.productRail > li { min-inline-size: 0; }
+.productRail {
+  align-items: stretch;
+}
+.productRail > li {
+  min-inline-size: 0;
+}
 .productRail .productCard {
   display: flex;
   flex-direction: column;
-  gap: .5rem;
+  gap: 0.5rem;
   min-block-size: 100%;
   box-sizing: border-box;
-  padding: .75rem;
+  padding: 0.75rem;
 }
 .productMainLink {
   display: grid;
-  gap: .5rem;
+  gap: 0.5rem;
   min-inline-size: 0;
   text-decoration: none;
   color: var(--color-text);
 }
-.productMainLink:focus-visible { outline: 3px solid #258a5c; outline-offset: 3px; border-radius: .5rem; }
-.productMainLink .productImage { display: block; }
+.productMainLink:focus-visible {
+  outline: 3px solid #258a5c;
+  outline-offset: 3px;
+  border-radius: 0.5rem;
+}
+.productMainLink .productImage {
+  display: block;
+}
 .storeMeta {
   display: grid;
   grid-template-columns: auto minmax(0, 1fr);
-  gap: .1rem .4rem;
+  gap: 0.1rem 0.4rem;
   align-items: baseline;
   color: var(--color-text-muted);
-  font-size: .73rem;
+  font-size: 0.73rem;
   line-height: 1.35;
 }
-.storeMetaLabel { color: #32815a; font-weight: 750; white-space: nowrap; }
-.storeMetaValue { min-inline-size: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
-.productRail .productPrice { margin-block-start: auto; color: #126743; font-weight: 850; }
-.available, .unavailable {
+.storeMetaLabel {
+  color: #32815a;
+  font-weight: 750;
+  white-space: nowrap;
+}
+.storeMetaValue {
+  min-inline-size: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.productRail .productPrice {
+  margin-block-start: auto;
+  color: #126743;
+  font-weight: 850;
+}
+.available,
+.unavailable {
   display: inline-flex;
   align-items: center;
   align-self: start;
-  padding: .25rem .6rem;
+  padding: 0.25rem 0.6rem;
   border-radius: 99px;
-  font-size: .69rem;
+  font-size: 0.69rem;
   line-height: 1.4;
   font-weight: 800;
 }
-.available { color: #14683b; background: #e5f6e8; }
-.unavailable { color: #9b322c; background: #fff0ef; }
-.addButton, .addLink {
+.available {
+  color: #14683b;
+  background: #e5f6e8;
+}
+.unavailable {
+  color: #9b322c;
+  background: #fff0ef;
+}
+.addButton,
+.addLink {
   display: flex;
   align-items: center;
   justify-content: center;
   inline-size: 100%;
   min-block-size: 2.65rem;
-  margin-block-start: .2rem;
+  margin-block-start: 0.2rem;
   box-sizing: border-box;
-  padding: .55rem .65rem;
+  padding: 0.55rem 0.65rem;
   border: none;
-  border-radius: .75rem;
+  border-radius: 0.75rem;
   background: #176c43;
   color: #fff;
   font-family: inherit;
-  font-size: .8rem;
+  font-size: 0.8rem;
   font-weight: 850;
   text-align: center;
   text-decoration: none;
   cursor: pointer;
 }
-.addButton:disabled { cursor: not-allowed; background: #e6ebe5; color: #687469; }
-.addButton:focus-visible, .addLink:focus-visible { outline: 3px solid #258a5c; outline-offset: 3px; }
-.cardError { margin: 0; color: #aa302b; font-size: .75rem; line-height: 1.4; }
+.addButton:disabled {
+  cursor: not-allowed;
+  background: #e6ebe5;
+  color: #687469;
+}
+.addButton:focus-visible,
+.addLink:focus-visible {
+  outline: 3px solid #258a5c;
+  outline-offset: 3px;
+}
+.cardError {
+  margin: 0;
+  color: #aa302b;
+  font-size: 0.75rem;
+  line-height: 1.4;
+}
 @media (max-width: 359px) {
-  .productRail { grid-auto-columns: minmax(9.5rem, 70%); }
-  .productRail .productCard { padding: .6rem; }
+  .productRail {
+    grid-auto-columns: minmax(9.5rem, 70%);
+  }
+  .productRail .productCard {
+    padding: 0.6rem;
+  }
 }
 @media (min-width: 64rem) {
-  .productRail { grid-auto-columns: minmax(11.2rem, 19%); }
-  .productRail .productCard { padding: .8rem; }
+  .productRail {
+    grid-auto-columns: minmax(11.2rem, 19%);
+  }
+  .productRail .productCard {
+    padding: 0.8rem;
+  }
 }
 
-.productRail .productCard { position: relative; }
+.productRail .productCard {
+  position: relative;
+}
 .favoriteAction {
   position: absolute;
   inset-block-start: 1rem;

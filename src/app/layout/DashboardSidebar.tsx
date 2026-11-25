@@ -18,20 +18,33 @@ export function DashboardSidebar({ onNavigate }: { onNavigate?: () => void }) {
     pathname === routePaths.notifications ? new URLSearchParams(search).get('workspace') : null;
   const { status, user } = useSession();
   const [superAccess, setSuperAccess] = useState<{ userId: string; allowed: boolean } | null>(null);
-  const [operationsAccess, setOperationsAccess] = useState<{ userId: string; allowed: boolean } | null>(null);
+  const [operationsAccess, setOperationsAccess] = useState<{
+    userId: string;
+    allowed: boolean;
+  } | null>(null);
   const userId = user?.id === undefined ? null : String(user.id);
 
   // A Super Admin keeps their dashboard navigation when visiting the separate
   // reviewer route. Dedicated reviewers retain their own Approvals navigation.
   useEffect(() => {
-    if (!(pathname === routePaths.sellerReview || pathname === routePaths.superAdminDashboard || pathname === routePaths.platformAdminDashboard)
-      || status !== 'signed-in' || !userId) return;
+    if (
+      !(
+        pathname === routePaths.sellerReview ||
+        pathname === routePaths.superAdminDashboard ||
+        pathname === routePaths.platformAdminDashboard
+      ) ||
+      status !== 'signed-in' ||
+      !userId
+    )
+      return;
     let active = true;
-    void Promise.allSettled([superAdminDashboard(), adminDashboard()]).then(([superResult, operationsResult]) => {
-      if (!active) return;
-      setSuperAccess({ userId, allowed: superResult.status === 'fulfilled' });
-      setOperationsAccess({ userId, allowed: operationsResult.status === 'fulfilled' });
-    });
+    void Promise.allSettled([superAdminDashboard(), adminDashboard()]).then(
+      ([superResult, operationsResult]) => {
+        if (!active) return;
+        setSuperAccess({ userId, allowed: superResult.status === 'fulfilled' });
+        setOperationsAccess({ userId, allowed: operationsResult.status === 'fulfilled' });
+      },
+    );
     return () => {
       active = false;
     };
@@ -58,32 +71,42 @@ export function DashboardSidebar({ onNavigate }: { onNavigate?: () => void }) {
               ? 'courier'
               : 'customer';
 
-  const canManage = status === 'signed-in' && userId !== null &&
-    superAccess?.userId === userId && superAccess.allowed;
-  const canOperate = status === 'signed-in' && userId !== null &&
-    operationsAccess?.userId === userId && operationsAccess.allowed;
+  const canManage =
+    status === 'signed-in' &&
+    userId !== null &&
+    superAccess?.userId === userId &&
+    superAccess.allowed;
+  const canOperate =
+    status === 'signed-in' &&
+    userId !== null &&
+    operationsAccess?.userId === userId &&
+    operationsAccess.allowed;
   const managementLinks = superAdmin.map((item) => ({
     ...item,
     to: item.to.startsWith(routePaths.superAdminDashboard)
-      ? item.to.replace(routePaths.superAdminDashboard, routePaths.platformAdminDashboard + '?view=management')
+      ? item.to.replace(
+          routePaths.superAdminDashboard,
+          routePaths.platformAdminDashboard + '?view=management',
+        )
       : item.to,
   }));
   const operationsLinks = admin.map((item) => ({
     ...item,
-    to: item.to.replace(routePaths.platformAdminDashboard, routePaths.platformAdminDashboard + '?view=operations'),
+    to: item.to.replace(
+      routePaths.platformAdminDashboard,
+      routePaths.platformAdminDashboard + '?view=operations',
+    ),
   }));
-  const sections = workspace === 'super' || workspace === 'admin'
-    ? [
-        ...(canManage ? managementLinks : []),
-        ...(canOperate ? operationsLinks : []),
-      ]
-    : workspace === 'review'
-      ? review
-      : workspace === 'seller'
-        ? seller
-        : workspace === 'courier'
-          ? courier
-          : customer;
+  const sections =
+    workspace === 'super' || workspace === 'admin'
+      ? [...(canManage ? managementLinks : []), ...(canOperate ? operationsLinks : [])]
+      : workspace === 'review'
+        ? review
+        : workspace === 'seller'
+          ? seller
+          : workspace === 'courier'
+            ? courier
+            : customer;
   const title =
     workspace === 'super' || workspace === 'admin'
       ? tr('الإدارة', 'Admin', 'Administration')

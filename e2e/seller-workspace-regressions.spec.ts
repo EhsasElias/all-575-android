@@ -95,7 +95,9 @@ test('seller imports the same selected file again and safely edits stock at diff
       quantity = 6;
       await route.fulfill({ json: { data: { on_hand: quantity } } });
     } else if (pathname === '/api/v1/products') {
-      await route.fulfill({ json: { data: [], links: { next: null }, meta: { next_cursor: null } } });
+      await route.fulfill({
+        json: { data: [], links: { next: null }, meta: { next_cursor: null } },
+      });
     } else {
       await route.fulfill({ json: { data: responses[pathname] ?? [] } });
     }

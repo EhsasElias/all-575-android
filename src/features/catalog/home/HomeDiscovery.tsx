@@ -26,15 +26,87 @@ type HomeCategory = {
 };
 
 const categoryCards: readonly HomeCategory[] = [
-  { key: 'personal', image: '/images/categories/personal-care.webp', ar: 'العناية الشخصية', en: 'Personal care', fr: 'Soins personnels', search: 'shampoo', keys: ['personal care', 'hygiene', 'shampoo', 'شامبو', 'العناية الشخصية'] },
-  { key: 'makeup', image: '/images/categories/makeup.webp', ar: 'مستحضرات التجميل', en: 'Makeup', fr: 'Maquillage', search: 'makeup', keys: ['makeup', 'cosmetic', 'مكياج', 'مستحضرات التجميل'] },
-  { key: 'perfume', image: '/images/categories/perfumes.webp', ar: 'العطور', en: 'Perfumes', fr: 'Parfums', search: 'perfume', keys: ['perfume', 'fragrance', 'عطور', 'عطر'] },
-  { key: 'stationery', image: '/images/categories/stationery.webp', ar: 'الأدوات المكتبية', en: 'Stationery', fr: 'Papeterie', search: 'stationery', keys: ['stationery', 'office supplies', 'مكتبية', 'قرطاسية'] },
-  { key: 'school', image: '/images/categories/school-supplies.webp', ar: 'المستلزمات المدرسية', en: 'School supplies', fr: 'Fournitures scolaires', search: 'school', keys: ['school supplies', 'school', 'مدرسية', 'لوازم مدرسية'] },
-  { key: 'detergents', image: '/images/categories/cleaning-products.webp', ar: 'المنظفات', en: 'Cleaning products', fr: 'Produits nettoyants', search: 'cleaning', keys: ['cleaning products', 'detergent', 'منظفات', 'مواد تنظيف'] },
-  { key: 'tools', image: '/images/categories/cleaning-tools.webp', ar: 'أدوات التنظيف', en: 'Cleaning tools', fr: 'Matériel de nettoyage', search: 'cleaning tools', keys: ['cleaning tools', 'أدوات تنظيف', 'مماسح', 'مكانس'] },
-  { key: 'kitchen', image: '/images/categories/kitchenware.webp', ar: 'أدوات المطبخ', en: 'Kitchenware', fr: 'Ustensiles de cuisine', search: 'kitchen', keys: ['kitchen', 'cookware', 'مطبخ', 'أواني'] },
-  { key: 'groceries', image: '/images/categories/groceries-fresh.webp', ar: 'الخضار والفواكه', en: 'Groceries & fresh produce', fr: 'Fruits et légumes', search: 'vegetables', keys: ['grocery', 'vegetable', 'fruit', 'produce', 'خضار', 'فواكه', 'بقالة'] },
+  {
+    key: 'personal',
+    image: '/images/categories/personal-care.webp',
+    ar: 'العناية الشخصية',
+    en: 'Personal care',
+    fr: 'Soins personnels',
+    search: 'shampoo',
+    keys: ['personal care', 'hygiene', 'shampoo', 'شامبو', 'العناية الشخصية'],
+  },
+  {
+    key: 'makeup',
+    image: '/images/categories/makeup.webp',
+    ar: 'مستحضرات التجميل',
+    en: 'Makeup',
+    fr: 'Maquillage',
+    search: 'makeup',
+    keys: ['makeup', 'cosmetic', 'مكياج', 'مستحضرات التجميل'],
+  },
+  {
+    key: 'perfume',
+    image: '/images/categories/perfumes.webp',
+    ar: 'العطور',
+    en: 'Perfumes',
+    fr: 'Parfums',
+    search: 'perfume',
+    keys: ['perfume', 'fragrance', 'عطور', 'عطر'],
+  },
+  {
+    key: 'stationery',
+    image: '/images/categories/stationery.webp',
+    ar: 'الأدوات المكتبية',
+    en: 'Stationery',
+    fr: 'Papeterie',
+    search: 'stationery',
+    keys: ['stationery', 'office supplies', 'مكتبية', 'قرطاسية'],
+  },
+  {
+    key: 'school',
+    image: '/images/categories/school-supplies.webp',
+    ar: 'المستلزمات المدرسية',
+    en: 'School supplies',
+    fr: 'Fournitures scolaires',
+    search: 'school',
+    keys: ['school supplies', 'school', 'مدرسية', 'لوازم مدرسية'],
+  },
+  {
+    key: 'detergents',
+    image: '/images/categories/cleaning-products.webp',
+    ar: 'المنظفات',
+    en: 'Cleaning products',
+    fr: 'Produits nettoyants',
+    search: 'cleaning',
+    keys: ['cleaning products', 'detergent', 'منظفات', 'مواد تنظيف'],
+  },
+  {
+    key: 'tools',
+    image: '/images/categories/cleaning-tools.webp',
+    ar: 'أدوات التنظيف',
+    en: 'Cleaning tools',
+    fr: 'Matériel de nettoyage',
+    search: 'cleaning tools',
+    keys: ['cleaning tools', 'أدوات تنظيف', 'مماسح', 'مكانس'],
+  },
+  {
+    key: 'kitchen',
+    image: '/images/categories/kitchenware.webp',
+    ar: 'أدوات المطبخ',
+    en: 'Kitchenware',
+    fr: 'Ustensiles de cuisine',
+    search: 'kitchen',
+    keys: ['kitchen', 'cookware', 'مطبخ', 'أواني'],
+  },
+  {
+    key: 'groceries',
+    image: '/images/categories/groceries-fresh.webp',
+    ar: 'الخضار والفواكه',
+    en: 'Groceries & fresh produce',
+    fr: 'Fruits et légumes',
+    search: 'vegetables',
+    keys: ['grocery', 'vegetable', 'fruit', 'produce', 'خضار', 'فواكه', 'بقالة'],
+  },
 ];
 
 const categorySlugs: Readonly<Record<string, string>> = {
@@ -54,7 +126,10 @@ function matchCategory(categories: readonly Category[], item: HomeCategory) {
   const exact = categories.find((category) => category.slug === exactSlug);
   if (exact) return exact;
   return categories.find((category) => {
-    const values = [category.slug, category.name.ar, category.name.en].filter(Boolean).join(' ').toLowerCase();
+    const values = [category.slug, category.name.ar, category.name.en]
+      .filter(Boolean)
+      .join(' ')
+      .toLowerCase();
     return item.keys.some((key) => values.includes(key));
   });
 }
@@ -107,25 +182,40 @@ function GroceryProducts({ category }: { category: Category | undefined }) {
 /** Four mobile-first shelves, driven only by actual category and product records. */
 export function HomeDiscovery({ categories, products }: Props) {
   const { language } = useLanguage();
-  const tr = (ar: string, en: string, fr: string) => language === 'ar' ? ar : language === 'fr' ? fr : en;
+  const tr = (ar: string, en: string, fr: string) =>
+    language === 'ar' ? ar : language === 'fr' ? fr : en;
   const featured = categoryCards.map((item) => ({
     item,
     category: matchCategory(categories, item),
   }));
   const grocery = featured.find((item) => item.item.key === 'groceries');
-  const groceryOptions = categories.filter((category) => {
-    const values = [category.slug, category.name.ar, category.name.en].join(' ').toLowerCase();
-    return ['vegetable', 'fruit', 'grocery', 'produce', 'خضار', 'فواكه', 'بقالة'].some((key) => values.includes(key));
-  }).slice(0, 4);
-  const dailyCards = featured.filter(({ item }) => ['personal', 'makeup', 'perfume', 'detergents', 'kitchen'].includes(item.key));
+  const groceryOptions = categories
+    .filter((category) => {
+      const values = [category.slug, category.name.ar, category.name.en].join(' ').toLowerCase();
+      return ['vegetable', 'fruit', 'grocery', 'produce', 'خضار', 'فواكه', 'بقالة'].some((key) =>
+        values.includes(key),
+      );
+    })
+    .slice(0, 4);
+  const dailyCards = featured.filter(({ item }) =>
+    ['personal', 'makeup', 'perfume', 'detergents', 'kitchen'].includes(item.key),
+  );
 
   return (
     <div className={styles.discovery}>
       <section className={styles.section} aria-labelledby="home-discover-categories">
         <div className={styles.headingRow}>
           <div className={styles.sectionHeading}>
-            <span className={styles.kicker}>{tr('تسوّق حسب احتياجك', 'EXPLORE CATEGORIES', 'EXPLORER LES CATÉGORIES')}</span>
-            <h2 id="home-discover-categories">{tr('ماذا تحب أن تتسوق اليوم؟', 'What would you like to shop today?', 'Que souhaitez-vous acheter aujourd’hui ?')}</h2>
+            <span className={styles.kicker}>
+              {tr('تسوّق حسب احتياجك', 'EXPLORE CATEGORIES', 'EXPLORER LES CATÉGORIES')}
+            </span>
+            <h2 id="home-discover-categories">
+              {tr(
+                'ماذا تحب أن تتسوق اليوم؟',
+                'What would you like to shop today?',
+                'Que souhaitez-vous acheter aujourd’hui ?',
+              )}
+            </h2>
           </div>
           <Link className={styles.more} to={routePaths.categories}>
             {tr('جميع الأقسام', 'All categories', 'Toutes les catégories')}
@@ -140,7 +230,9 @@ export function HomeDiscovery({ categories, products }: Props) {
               to={target(category, item.search)}
               aria-label={tr('تصفح ', 'Explore ', 'Explorer ') + label(item, language)}
             >
-              <span className={styles.categoryImage}><CategoryPhoto item={item} eager={index < 4} /></span>
+              <span className={styles.categoryImage}>
+                <CategoryPhoto item={item} eager={index < 4} />
+              </span>
               <span className={styles.categoryName}>{label(item, language)}</span>
             </Link>
           ))}
@@ -150,21 +242,32 @@ export function HomeDiscovery({ categories, products }: Props) {
       <section className={styles.section} aria-labelledby="home-daily-offers">
         <div className={styles.headingRow}>
           <div className={styles.sectionHeading}>
-            <span className={styles.kicker}>{tr('مختارات تستحق الاكتشاف', 'FEATURED COLLECTIONS', 'SÉLECTIONS DU JOUR')}</span>
-            <h2 id="home-daily-offers">{tr('اكتشف مجموعاتنا', 'Explore our collections', 'Découvrez nos collections')}</h2>
+            <span className={styles.kicker}>
+              {tr('مختارات تستحق الاكتشاف', 'FEATURED COLLECTIONS', 'SÉLECTIONS DU JOUR')}
+            </span>
+            <h2 id="home-daily-offers">
+              {tr('اكتشف مجموعاتنا', 'Explore our collections', 'Découvrez nos collections')}
+            </h2>
           </div>
           <Link to={routePaths.search} className={styles.more}>
-            {tr('تصفح المنتجات', 'Browse products', 'Voir les produits')} <span aria-hidden="true">›</span>
+            {tr('تصفح المنتجات', 'Browse products', 'Voir les produits')}{' '}
+            <span aria-hidden="true">›</span>
           </Link>
         </div>
         <div className={styles.offerRail}>
           {dailyCards.map(({ item, category }) => (
             <Link key={item.key} className={styles.offerCard} to={target(category, item.search)}>
               <span className={styles.offerCardVisual}>
-                <span className={styles.offerEyebrow}>{tr('تسوّق الآن', 'SHOP THE COLLECTION', 'DÉCOUVRIR')}</span>
+                <span className={styles.offerEyebrow}>
+                  {tr('تسوّق الآن', 'SHOP THE COLLECTION', 'DÉCOUVRIR')}
+                </span>
                 <strong className={styles.offerTitle}>{label(item, language)}</strong>
-                <span className={styles.offerPhoto}><CategoryPhoto item={item} /></span>
-                <span className={styles.offerExplore} aria-hidden="true">↗</span>
+                <span className={styles.offerPhoto}>
+                  <CategoryPhoto item={item} />
+                </span>
+                <span className={styles.offerExplore} aria-hidden="true">
+                  ↗
+                </span>
               </span>
             </Link>
           ))}
@@ -173,15 +276,33 @@ export function HomeDiscovery({ categories, products }: Props) {
 
       <section className={styles.section} aria-labelledby="home-grocery">
         <Link className={styles.groceryPromo} to={target(grocery?.category, 'vegetables')}>
-          <span className={styles.groceryPromoIcon} aria-hidden="true">{grocery && <CategoryPhoto item={grocery.item} />}</span>
-          <span className={styles.groceryPromoText}>
-            <strong>{tr('بقالتك اليومية، واختيارات طازجة', 'Your grocery essentials, freshly picked', 'Vos essentiels du quotidien, fraîchement choisis')}</strong>
-            <small>{tr('تسوق الخضار والفواكه ومستلزمات المنزل', 'Browse fruit, vegetables and household essentials', 'Découvrez fruits, légumes et essentiels de maison')}</small>
+          <span className={styles.groceryPromoIcon} aria-hidden="true">
+            {grocery && <CategoryPhoto item={grocery.item} />}
           </span>
-          <span className={styles.groceryPromoArrow} aria-hidden="true">→</span>
+          <span className={styles.groceryPromoText}>
+            <strong>
+              {tr(
+                'بقالتك اليومية، واختيارات طازجة',
+                'Your grocery essentials, freshly picked',
+                'Vos essentiels du quotidien, fraîchement choisis',
+              )}
+            </strong>
+            <small>
+              {tr(
+                'تسوق الخضار والفواكه ومستلزمات المنزل',
+                'Browse fruit, vegetables and household essentials',
+                'Découvrez fruits, légumes et essentiels de maison',
+              )}
+            </small>
+          </span>
+          <span className={styles.groceryPromoArrow} aria-hidden="true">
+            →
+          </span>
         </Link>
         <div className={styles.headingRow}>
-          <h2 id="home-grocery">{tr('البقالة والخضار والفواكه', 'Grocery & fresh', 'Épicerie et produits frais')}</h2>
+          <h2 id="home-grocery">
+            {tr('البقالة والخضار والفواكه', 'Grocery & fresh', 'Épicerie et produits frais')}
+          </h2>
           <Link className={styles.more} to={target(grocery?.category, 'vegetables')}>
             {tr('تصفح', 'Explore', 'Explorer')} <span aria-hidden="true">›</span>
           </Link>
@@ -189,7 +310,11 @@ export function HomeDiscovery({ categories, products }: Props) {
         {groceryOptions.length > 0 ? (
           <div className={styles.groceryGrid}>
             {groceryOptions.map((category) => (
-              <Link key={category.id} className={styles.groceryCard} to={routeTo.categoryProducts(category.slug)}>
+              <Link
+                key={category.id}
+                className={styles.groceryCard}
+                to={routeTo.categoryProducts(category.slug)}
+              >
                 <span className={styles.groceryImage}>
                   <CatalogImage src={category.image_url} alt="" size={140} />
                 </span>
@@ -199,7 +324,11 @@ export function HomeDiscovery({ categories, products }: Props) {
           </div>
         ) : (
           <Link className={styles.groceryCard} to={target(grocery?.category, 'vegetables')}>
-            {grocery && <span className={styles.groceryImage}><CategoryPhoto item={grocery.item} /></span>}
+            {grocery && (
+              <span className={styles.groceryImage}>
+                <CategoryPhoto item={grocery.item} />
+              </span>
+            )}
             <span>{tr('الخضار والفواكه', 'Fruits & vegetables', 'Fruits et légumes')}</span>
           </Link>
         )}
@@ -208,11 +337,21 @@ export function HomeDiscovery({ categories, products }: Props) {
 
       <section className={styles.section} aria-labelledby="home-picked-for-you">
         <div className={styles.pickedIntro}>
-          <span className={styles.pickedIcon} aria-hidden="true">✦</span>
-          <span>{tr('مقترحات من المنتجات المتوفرة', 'Discover more available products', 'Découvrez davantage de produits disponibles')}</span>
+          <span className={styles.pickedIcon} aria-hidden="true">
+            ✦
+          </span>
+          <span>
+            {tr(
+              'مقترحات من المنتجات المتوفرة',
+              'Discover more available products',
+              'Découvrez davantage de produits disponibles',
+            )}
+          </span>
         </div>
         <div className={styles.headingRow}>
-          <h2 id="home-picked-for-you">{tr('اخترنا لك', 'Picked For You', 'Sélection pour vous')}</h2>
+          <h2 id="home-picked-for-you">
+            {tr('اخترنا لك', 'Picked For You', 'Sélection pour vous')}
+          </h2>
           <Link to={routePaths.search} className={styles.more}>
             {tr('المزيد', 'More', 'Plus')} <span aria-hidden="true">›</span>
           </Link>
@@ -226,7 +365,13 @@ export function HomeDiscovery({ categories, products }: Props) {
             ))}
           </ul>
         ) : (
-          <p className={styles.helper}>{tr('تصفح التصنيفات لاكتشاف المنتجات المتاحة.', 'Explore categories to find available products.', 'Parcourez les catégories pour découvrir les produits.')}</p>
+          <p className={styles.helper}>
+            {tr(
+              'تصفح التصنيفات لاكتشاف المنتجات المتاحة.',
+              'Explore categories to find available products.',
+              'Parcourez les catégories pour découvrir les produits.',
+            )}
+          </p>
         )}
       </section>
     </div>
