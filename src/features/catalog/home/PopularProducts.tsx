@@ -8,7 +8,7 @@ export function PopularProducts() {
   const { zoneId } = useDeliveryZone();
   const categories = useCategories();
   // Never promote unavailable items once the customer's delivery zone is known.
-  const products = useProductList({ zoneId, inStock: zoneId !== null, perPage: 12, sort: 'newest' });
+  const products = useProductList({ zoneId, inStock: true, perPage: 12, sort: 'newest' });
 
   return <HomeDiscovery categories={categories.data ?? []} products={products.items} />;
 }
