@@ -30,7 +30,7 @@ export function AdminWorkspaceScreen() {
       setFailed(
         [superResult, adminResult].some(
           (result) => result.status === 'rejected' &&
-            (!isApiError(result.reason) || ![401, 403].includes(result.reason.status)),
+            (!isApiError(result.reason) || result.reason.status == null || ![401, 403].includes(result.reason.status)),
         ),
       );
     });
