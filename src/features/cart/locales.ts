@@ -14,7 +14,7 @@ const en = {
   },
   lines: {
     each: '{{price}} each',
-    outOfStock: 'Out of stock for your delivery address.',
+    outOfStock: 'This item is currently out of stock.',
     gone: 'This item is no longer available.',
     remove: 'Remove',
     removeNamed: 'Remove {{name}} from the cart',
@@ -37,7 +37,7 @@ const en = {
   add: {
     button: 'Add to cart',
     outOfStock: 'Out of stock',
-    outOfStockHint: 'This item is out of stock for your delivery area right now.',
+    outOfStockHint: 'This item is currently out of stock.',
     limit: 'You can order up to {{max}} of each item.',
     added: 'Added to your cart: {{name}}. Quantity in cart: {{quantity}}.',
     capped:
@@ -75,7 +75,7 @@ const ar: Translations<typeof en> = {
   },
   lines: {
     each: '{{price}} للقطعة',
-    outOfStock: 'غير متوفر في عنوان التوصيل الخاص بك.',
+    outOfStock: 'هذا المنتج غير متوفر حاليًا.',
     gone: 'لم يعد هذا المنتج متاحًا.',
     remove: 'حذف',
     removeNamed: 'حذف {{name}} من السلة',
@@ -98,7 +98,7 @@ const ar: Translations<typeof en> = {
   add: {
     button: 'أضف إلى السلة',
     outOfStock: 'نفدت الكمية',
-    outOfStockHint: 'هذا المنتج غير متوفر حاليًا في منطقة التوصيل الخاصة بك.',
+    outOfStockHint: 'هذا المنتج غير متوفر حاليًا.',
     limit: 'يمكنك طلب حتى {{max}} من كل منتج.',
     added: 'تمت الإضافة إلى السلة: {{name}}. الكمية في السلة: {{quantity}}.',
     capped: 'الحد الأقصى للمنتج الواحد هو {{max}}. كمية {{name}} في سلتك الآن {{max}}.',
@@ -136,7 +136,7 @@ const fr: Translations<typeof en> = {
   },
   lines: {
     each: "{{price}} l'unité",
-    outOfStock: 'En rupture de stock pour votre adresse de livraison.',
+    outOfStock: 'Ce produit est actuellement en rupture de stock.',
     gone: "Cet article n'est plus disponible.",
     remove: 'Retirer',
     removeNamed: 'Retirer {{name}} du panier',
@@ -161,7 +161,7 @@ const fr: Translations<typeof en> = {
     button: 'Ajouter au panier',
     outOfStock: 'Rupture de stock',
     outOfStockHint:
-      'Cet article est actuellement en rupture de stock dans votre zone de livraison.',
+      'Ce produit est actuellement en rupture de stock.',
     limit: "Vous pouvez commander jusqu'à {{max}} exemplaires de chaque article.",
     added: 'Ajouté à votre panier : {{name}}. Quantité dans le panier : {{quantity}}.',
     capped:
