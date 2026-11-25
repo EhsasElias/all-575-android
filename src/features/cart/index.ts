@@ -3,5 +3,7 @@ export { cartLocales } from './locales';
 export { CartScreen } from './CartScreen';
 export { cartRoutes } from './routes';
 export { useCartItemCount } from './useCartItemCount';
+export { useCart } from './useCart';
+export { useRefusalMessage } from './useRefusalMessage';
 export { GuestCartMerger } from './GuestCartMerger';
 export { cartQueryKey } from './queryKeys';
