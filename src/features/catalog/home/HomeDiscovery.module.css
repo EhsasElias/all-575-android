@@ -503,3 +503,11 @@
   .productRail { grid-auto-columns: minmax(11.2rem, 19%); }
   .productRail .productCard { padding: .8rem; }
 }
+
+.productRail .productCard { position: relative; }
+.favoriteAction {
+  position: absolute;
+  inset-block-start: 1rem;
+  inset-inline-end: 1rem;
+  z-index: 3;
+}
