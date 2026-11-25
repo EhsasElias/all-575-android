@@ -1,9 +1,10 @@
 import { Link } from 'react-router';
-import { formatMoney, useLanguage } from '@/shared/i18n';
+import { useLanguage } from '@/shared/i18n';
 import { routePaths, routeTo } from '@/shared/lib';
 import type { Category, ProductSummary } from '../api/types';
 import { useProductList } from '../api/useProductList';
 import { CatalogImage } from '../components/CatalogImage';
+import { HomeProductTile } from './HomeProductTile';
 import { useDeliveryZone } from '../delivery/useDeliveryZone';
 import { pickText } from '../lib/localized';
 import styles from './HomeDiscovery.module.css';
@@ -84,7 +85,6 @@ function CategoryPhoto({ item, eager = false }: { item: HomeCategory; eager?: bo
 
 function GroceryProducts({ category }: { category: Category | undefined }) {
   const { zoneId } = useDeliveryZone();
-  const { language } = useLanguage();
   // Request only products classified in the chosen real grocery category.
   // Never substitute an unrelated catalogue product if the category does not exist.
   const list = useProductList(
@@ -97,13 +97,7 @@ function GroceryProducts({ category }: { category: Category | undefined }) {
     <ul className={styles.productRail}>
       {list.items.map((product) => (
         <li key={product.id}>
-          <Link className={styles.productCard} to={routeTo.product(product.slug)}>
-            <span className={styles.productImage}>
-              <CatalogImage src={product.image_url} alt="" size={160} />
-            </span>
-            <span className={styles.productName}>{pickText(product.name, language)}</span>
-            <span className={styles.productPrice}>{formatMoney(product.price.net, language)}</span>
-          </Link>
+          <HomeProductTile product={product} />
         </li>
       ))}
     </ul>
@@ -227,13 +221,7 @@ export function HomeDiscovery({ categories, products }: Props) {
           <ul className={styles.productRail}>
             {products.slice(0, 8).map((product) => (
               <li key={product.id}>
-                <Link className={styles.productCard} to={routeTo.product(product.slug)}>
-                  <span className={styles.productImage}>
-                    <CatalogImage src={product.image_url} alt="" size={180} />
-                  </span>
-                  <span className={styles.productName}>{pickText(product.name, language)}</span>
-                  <span className={styles.productPrice}>{formatMoney(product.price.net, language)}</span>
-                </Link>
+                <HomeProductTile product={product} />
               </li>
             ))}
           </ul>
