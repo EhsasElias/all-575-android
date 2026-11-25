@@ -4,7 +4,6 @@ import { formatMoney, useLanguage } from '@/shared/i18n';
 import type { ProductDetail } from '../api/types';
 import { AvailabilityBadge } from '../components/AvailabilityBadge';
 import { DeliveryChip } from '../delivery/DeliveryChip';
-import { useDeliveryZone } from '../delivery/useDeliveryZone';
 import { useSelectedVariant } from './useSelectedVariant';
 import { VariantPicker } from './VariantPicker';
 import styles from './ProductBuyBox.module.css';
@@ -13,7 +12,6 @@ import styles from './ProductBuyBox.module.css';
 export function ProductBuyBox({ product }: { product: ProductDetail }) {
   const { t } = useTranslation('catalog');
   const { language } = useLanguage();
-  const { zoneId } = useDeliveryZone();
   const { selected, select } = useSelectedVariant(product.variants);
 
   // The server prices every variant the same today, but the shown price always comes from the chosen one.
@@ -36,9 +34,6 @@ export function ProductBuyBox({ product }: { product: ProductDetail }) {
       <div className={styles.availability}>
         <AvailabilityBadge availability={availability} />
         <DeliveryChip />
-        {availability === 'unknown' && zoneId === null && (
-          <p className={styles.hint}>{t('availability.chooseArea')}</p>
-        )}
       </div>
 
       {selected && <AddToCart product={product} variant={selected} />}
