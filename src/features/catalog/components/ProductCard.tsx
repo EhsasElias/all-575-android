@@ -58,7 +58,7 @@ export function ProductCard({
         </p>
         <div className={styles.sellerDetails}>
           <p className={styles.seller}>
-            <span>{language === 'ar' ? 'الشركة' : language === 'fr' ? 'Boutique' : 'Store'}: </span>
+            <span>{language === 'ar' ? 'الشركة' : language === 'fr' ? 'Entreprise' : 'Company'}: </span>
             {pickText(product.seller.name, language)}
           </p>
           {product.stock_branch && (
