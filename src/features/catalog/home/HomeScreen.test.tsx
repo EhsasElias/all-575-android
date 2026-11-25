@@ -31,7 +31,10 @@ describe('Home - reference shopping layout', () => {
     expect(screen.queryByRole('checkbox', { name: 'In stock only' })).not.toBeInTheDocument();
     expect(screen.queryByText('20 mins')).not.toBeInTheDocument();
     expect(screen.queryByText(/% off/i)).not.toBeInTheDocument();
-    expect(screen.getByRole('link', { name: 'All categories' })).toHaveAttribute(
+    const categoryShelf = screen.getByRole('region', {
+      name: 'What would you like to shop today?',
+    });
+    expect(within(categoryShelf).getByRole('link', { name: 'All categories' })).toHaveAttribute(
       'href',
       '/categories',
     );
