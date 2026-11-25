@@ -48,7 +48,9 @@ export function HomeProductTile({ product }: Props) {
         variantId: variant.id,
         productSlug: product.slug,
         name: latest.name,
-        variantName: variant.name,
+        variantName: variant.name
+          ? { ar: variant.name.ar ?? '', en: variant.name.en ?? '' }
+          : null,
         imageUrl: latest.image_url,
         unitPrice: variant.price.net,
       }, 1);
