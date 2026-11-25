@@ -155,18 +155,9 @@ export function AccountSidebar({ onNavigate }: { onNavigate?: () => void }) {
             {tr('مساحة مندوب التوصيل', 'Courier workspace', 'Espace livreur')}
           </Link>
         )}
-        {workspaces.includes('admin') && (
+        {(workspaces.includes('admin') || workspaces.includes('super')) && (
           <Link className={styles.link} to={routePaths.platformAdminDashboard} onClick={onNavigate}>
             {tr('لوحة الإدارة', 'Admin dashboard', 'Tableau de bord administrateur')}
-          </Link>
-        )}
-        {workspaces.includes('super') && (
-          <Link className={styles.link} to={routePaths.superAdminDashboard} onClick={onNavigate}>
-            {tr(
-              'لوحة السوبر أدمن',
-              'Super Admin dashboard',
-              'Tableau de bord super administrateur',
-            )}
           </Link>
         )}
         {workspaces.includes('reviewer') && !workspaces.includes('super') && (
