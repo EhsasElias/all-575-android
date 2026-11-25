@@ -29,6 +29,7 @@ all-575-api QA branch `fix/qa-zone-stock-checkout-20261125`.
 3. Frontend had an extra inventory query which could return **stale line availability after quantity edits**, overriding the fresh `/cart` response. Removed this duplicate read from `useCartScreen`; the server cart now drives checkout eligibility.
 4. A signed-in cart with unknown availability could pass a simple no-error check. Strict readiness now blocks signed-in checkout until each line is definitely available. Guest goes to login then server validation.
 5. Customer catalogue homepage recommendations now request in-stock products without requiring a delivery zone.
+6. Global inventory checks and reservations on the backend now require the inventory branch to belong to the product's seller, preventing accidental cross-seller stock fulfilment. Added a dedicated regression test.
 
 ## Release blockers, not claimed resolved
 
