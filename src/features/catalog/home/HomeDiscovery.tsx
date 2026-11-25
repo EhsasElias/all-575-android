@@ -173,7 +173,7 @@ export function HomeDiscovery({ categories, products }: Props) {
 
       <section className={styles.section} aria-labelledby="home-grocery">
         <Link className={styles.groceryPromo} to={target(grocery?.category, 'vegetables')}>
-          <span className={styles.groceryPromoIcon} aria-hidden="true"><CategoryPhoto item={categoryCards[8]} /></span>
+          <span className={styles.groceryPromoIcon} aria-hidden="true">{grocery && <CategoryPhoto item={grocery.item} />}</span>
           <span className={styles.groceryPromoText}>
             <strong>{tr('بقالتك اليومية، واختيارات طازجة', 'Your grocery essentials, freshly picked', 'Vos essentiels du quotidien, fraîchement choisis')}</strong>
             <small>{tr('تسوق الخضار والفواكه ومستلزمات المنزل', 'Browse fruit, vegetables and household essentials', 'Découvrez fruits, légumes et essentiels de maison')}</small>
