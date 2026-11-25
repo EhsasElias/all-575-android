@@ -62,13 +62,19 @@ export function DashboardSidebar({ onNavigate }: { onNavigate?: () => void }) {
     superAccess?.userId === userId && superAccess.allowed;
   const canOperate = status === 'signed-in' && userId !== null &&
     operationsAccess?.userId === userId && operationsAccess.allowed;
+  const managementLinks = superAdmin.map((item) => ({
+    ...item,
+    to: item.to.startsWith(routePaths.superAdminDashboard)
+      ? item.to.replace(routePaths.superAdminDashboard, routePaths.platformAdminDashboard + '?view=management')
+      : item.to,
+  }));
   const operationsLinks = admin.map((item) => ({
     ...item,
     to: item.to.replace(routePaths.platformAdminDashboard, routePaths.platformAdminDashboard + '?view=operations'),
   }));
   const sections = workspace === 'super' || workspace === 'admin'
     ? [
-        ...(canManage ? superAdmin : []),
+        ...(canManage ? managementLinks : []),
         ...(canOperate ? operationsLinks : []),
       ]
     : workspace === 'review'
