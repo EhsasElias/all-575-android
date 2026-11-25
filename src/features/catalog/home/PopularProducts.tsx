@@ -7,7 +7,8 @@ import { HomeDiscovery } from './HomeDiscovery';
 export function PopularProducts() {
   const { zoneId } = useDeliveryZone();
   const categories = useCategories();
-  const products = useProductList({ zoneId, perPage: 12, sort: 'newest' });
+  // Never promote unavailable items once the customer's delivery zone is known.
+  const products = useProductList({ zoneId, inStock: zoneId !== null, perPage: 12, sort: 'newest' });
 
   return <HomeDiscovery categories={categories.data ?? []} products={products.items} />;
 }
