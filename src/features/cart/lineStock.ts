@@ -18,9 +18,8 @@ export async function fetchDeliveryAddressId(signal: AbortSignal): Promise<numbe
 }
 
 /** GET /cart with an address is the only call that reports stock per line. */
-export async function fetchLineStock(addressId: number, signal: AbortSignal): Promise<LineStock[]> {
+export async function fetchLineStock(signal: AbortSignal): Promise<LineStock[]> {
   const { data } = await http.get<Data<CartResource>>('/cart', {
-    query: { address_id: addressId },
     signal,
   });
   return data.lines.map((line) => ({

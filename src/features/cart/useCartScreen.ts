@@ -2,11 +2,10 @@ import { useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useLanguage } from '@/shared/i18n';
 import { useToast } from '@/shared/ui';
-import { payable, toScreenLines } from './cartScreenModel';
+import { mayCheckout, payable, toScreenLines } from './cartScreenModel';
 import type { CartChange } from './cartTypes';
 import { pickText } from './localizedText';
 import { useCart } from './useCart';
-import { useLineAvailability } from './useLineAvailability';
 import { useRefusalMessage } from './useRefusalMessage';
 import type { ScreenLine } from './cartScreenModel';
 
@@ -17,11 +16,12 @@ export function useCartScreen() {
   const { showToast } = useToast();
   const refusalMessage = useRefusalMessage();
   const cart = useCart();
-  const stock = useLineAvailability(cart.kind === 'server' && cart.status === 'ready');
+  // /cart includes availability for each *requested quantity*. A second independent
+  // stock query can become stale after quantity edits and mask an out-of-stock response.
   // Variants the server refused as no longer sold. Their lines are flagged instead of disappearing.
   const [gone, setGone] = useState<ReadonlySet<number>>(new Set());
 
-  const lines = useMemo(() => toScreenLines(cart.lines, stock, gone), [cart.lines, stock, gone]);
+  const lines = useMemo(() => toScreenLines(cart.lines, new Map(), gone), [cart.lines, gone]);
   const buyable = useMemo(() => payable(lines), [lines]);
 
   const explainRefusal = (change: CartChange, variantId: number): void => {
@@ -50,6 +50,9 @@ export function useCartScreen() {
     isGuest: cart.kind === 'guest',
     lines,
     buyableItems: buyable.items,
+    // Guest checkout first signs in and rechecks via the API. A signed-in cart
+    // must have a definitive stock answer before it can continue to payment.
+    canCheckout: mayCheckout(lines, cart.kind === 'server'),
     subtotal: buyable.subtotal,
     hasUnavailableLines: lines.some((line) => line.problem !== null),
     changeQuantity,

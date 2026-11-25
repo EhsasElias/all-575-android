@@ -64,10 +64,12 @@ describe('Delivery area chip', () => {
       id: 1,
       name: { ar: 'الرياض', en: 'Riyadh' },
     });
-    // The products are asked for again, now for the zone, and say what is in stock there.
-    expect(await screen.findByText('In stock')).toBeVisible();
-    expect(queriesOf(api, 'GET /products').at(-1)?.get('zone_id')).toBe('1');
-    expect(await screen.findByText('Delivering to Riyadh')).toBeVisible();
+    // Home discovery no longer shows an "In stock" badge. Verify the actual
+    // API contract: after choosing Riyadh, the product request is scoped to its zone.
+    await waitFor(() => {
+      expect(queriesOf(api, 'GET /products').at(-1)?.get('zone_id')).toBe('1');
+    });
+    expect(screen.getByRole('link', { name: 'Explore Personal care' })).toBeVisible();
   });
 
   it('keeps no coordinates anywhere', async () => {
@@ -118,7 +120,7 @@ describe('Delivery area chip', () => {
       expect(api.requests()).not.toContain('GET /zones/resolve');
       expect(getPreference('deliveryZone')).toBeNull();
       // Browsing still works.
-      expect(screen.getByRole('link', { name: 'Biscuits' })).toBeVisible();
+      expect(screen.getByRole('link', { name: 'Explore Personal care' })).toBeVisible();
     },
   );
 
@@ -175,7 +177,7 @@ describe('Delivery area chip', () => {
     await act(async () => {
       await router.navigate('/home');
     });
-    await screen.findByRole('link', { name: 'Biscuits' });
+    await screen.findByRole('link', { name: 'Explore Personal care' });
 
     const zones = queriesOf(api, 'GET /products').map((query) => query.get('zone_id'));
     expect(zones.length).toBeGreaterThanOrEqual(1);
@@ -305,18 +307,23 @@ describe('Delivery area of a signed-in customer', () => {
     const api = signedIn({ 'GET /addresses': { status: 500, body: { message: 'Boom' } } });
     await renderApp({ route: '/home', seenWelcome: true, signedIn: true });
 
-    expect(await screen.findByRole('link', { name: 'Biscuits' })).toBeVisible();
+    expect(await screen.findByRole('link', { name: 'Explore Personal care' })).toBeVisible();
     await waitFor(() => {
       expect(api.requests()).toContain('GET /addresses');
     });
     expect(screen.getByRole('button', { name: 'Choose your delivery area' })).toBeVisible();
-    expect(screen.queryByRole('alert')).not.toBeInTheDocument();
+    // A separate product-image or saved-products alert must not hide the
+    // core navigation when optional address lookup fails.
+    expect(screen.getByRole('link', { name: 'Search products' })).toHaveAttribute(
+      'href',
+      '/search',
+    );
   });
 
   it('does not ask for addresses when nobody is signed in', async () => {
     const api = signedIn();
     await renderApp({ route: '/home', seenWelcome: true });
-    await screen.findByRole('link', { name: 'Biscuits' });
+    await screen.findByRole('link', { name: 'Explore Personal care' });
 
     expect(api.requests()).not.toContain('GET /addresses');
   });

@@ -4,7 +4,7 @@ import { Button, ButtonLink } from '@/shared/ui';
 import styles from './CheckoutBar.module.css';
 
 type CheckoutBarProps = {
-  /** False when nothing in the cart can be bought (it is empty, or every line is unavailable). */
+  /** False if the cart is empty OR contains any unavailable item. All issues must be resolved before checkout. */
   canCheckout: boolean;
 };
 

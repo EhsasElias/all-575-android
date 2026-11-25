@@ -42,7 +42,7 @@ function mockCustomer() {
 }
 
 describe('every account and dashboard navigation language', () => {
-  it('keeps the Super Admin sidebar on seller review screens', async () => {
+  it('keeps the unified Admin sidebar on seller review screens', async () => {
     installFakeApi({
       'GET /me': { body: { data: customer } },
       'GET /store': { body: { data: testStore } },
@@ -56,14 +56,14 @@ describe('every account and dashboard navigation language', () => {
       language: 'en',
     });
     const menu = await screen.findByRole('navigation', { name: 'Dashboard navigation' });
-    await waitFor(() => expect(within(menu).getByText('Super Admin')).toBeInTheDocument());
+    await waitFor(() => expect(within(menu).getByText('Admin')).toBeInTheDocument());
     expect(within(menu).getByRole('link', { name: 'Admin approvals' })).toHaveAttribute(
       'href',
-      '/account/super-admin#admin-applications',
+      '/account/admin?view=management#admin-applications',
     );
     expect(within(menu).getByRole('link', { name: 'Courier approvals' })).toHaveAttribute(
       'href',
-      '/account/super-admin#courier-approvals',
+      '/account/admin?view=management#courier-approvals',
     );
     expect(within(menu).getByRole('link', { name: 'Seller applications' })).toHaveAttribute(
       'href',

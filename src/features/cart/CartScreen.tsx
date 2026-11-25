@@ -67,7 +67,7 @@ export function CartScreen() {
             ))}
           </ul>
           <CartSummary items={cart.buyableItems} subtotal={cart.subtotal} isGuest={cart.isGuest} />
-          <CheckoutBar canCheckout={cart.buyableItems > 0} />
+          <CheckoutBar canCheckout={cart.canCheckout} />
         </>
       )}
     </div>

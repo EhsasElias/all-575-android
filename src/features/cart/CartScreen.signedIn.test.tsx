@@ -151,23 +151,20 @@ describe('the cart screen when signed in', () => {
 describe('lines that cannot be bought', () => {
   const address = { id: 5, is_default: true, serviceable: true, service_zone_id: 1 };
 
-  /** The customer has a default address, and the server says which variants it cannot deliver there. */
+  /** The API reports stock from all active seller-owned branches, regardless of address. */
   function serveWithStockAt(outOfStock: number[]) {
     return serveCart(
       { 'GET /addresses': { body: { data: [address] } } },
       [serverLine(BISCUITS, 2), serverLine(CHOCOLATE, 1), serverLine(NOTEBOOK, 1)],
-      (variantId, addressId) => {
-        if (addressId !== address.id) return 'unknown';
-        return outOfStock.includes(variantId) ? 'out_of_stock' : 'in_stock';
-      },
+      (variantId) => (outOfStock.includes(variantId) ? 'out_of_stock' : 'in_stock'),
     );
   }
 
-  it('flags a line that is out of stock at the delivery address, and keeps it in the list', async () => {
+  it('flags a line that is out of stock across active branches, and keeps it in the list', async () => {
     serveWithStockAt([CHOCOLATE.variantId]);
     await renderApp(OPTIONS);
 
-    expect(await screen.findByText('Out of stock for your delivery address.')).toBeInTheDocument();
+    expect(await screen.findByText('This item is currently out of stock.')).toBeInTheDocument();
 
     expect(screen.getByRole('link', { name: 'Chocolate' })).toBeInTheDocument();
     expect(screen.queryByRole('group', { name: 'Quantity of Chocolate' })).not.toBeInTheDocument();
@@ -180,7 +177,7 @@ describe('lines that cannot be bought', () => {
   it('leaves the flagged line out of the items and subtotal', async () => {
     serveWithStockAt([CHOCOLATE.variantId]);
     await renderApp(OPTIONS);
-    await screen.findByText('Out of stock for your delivery address.');
+    await screen.findByText('This item is currently out of stock.');
 
     const summary = screen.getByRole('region', { name: 'Order summary' });
     expect(summary).toHaveTextContent('Items3');
@@ -192,7 +189,7 @@ describe('lines that cannot be bought', () => {
     const { api } = serveWithStockAt([CHOCOLATE.variantId]);
     await renderApp(OPTIONS);
     // The shortcut is a different button from the plain trash icon, so wait until the line is flagged.
-    await screen.findByText('Out of stock for your delivery address.');
+    await screen.findByText('This item is currently out of stock.');
 
     await user.click(screen.getByRole('button', { name: 'Remove Chocolate from the cart' }));
 
@@ -206,18 +203,18 @@ describe('lines that cannot be bought', () => {
   it('disables Checkout when nothing in the cart can be bought', async () => {
     serveWithStockAt([1, 2, 7]);
     await renderApp(OPTIONS);
-    await screen.findAllByText('Out of stock for your delivery address.');
+    await screen.findAllByText('This item is currently out of stock.');
 
     expect(screen.getByRole('button', { name: 'Checkout' })).toBeDisabled();
     expect(screen.queryByRole('link', { name: 'Checkout' })).not.toBeInTheDocument();
   });
 
-  it('flags nothing, and still works, when the customer has no address yet', async () => {
+  it('checks stock and allows checkout even when the customer has no address yet', async () => {
     serveCart({ 'GET /addresses': { body: { data: [] } } }, [serverLine(CHOCOLATE, 1)]);
     await renderApp(OPTIONS);
 
     expect(await screen.findByRole('link', { name: 'Chocolate' })).toBeInTheDocument();
-    expect(screen.queryByText('Out of stock for your delivery address.')).not.toBeInTheDocument();
+    expect(screen.queryByText('This item is currently out of stock.')).not.toBeInTheDocument();
     expect(screen.getByRole('link', { name: 'Checkout' })).toBeInTheDocument();
   });
 

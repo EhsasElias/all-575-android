@@ -1,0 +1,38 @@
+name: Customer journey QA (isolated checks)
+
+on:
+  push:
+    branches:
+      - fix/qa-home-reference-layout-20261124
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  qa:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    strategy:
+      fail-fast: false
+      matrix:
+        check: [format, lint, types, build, unit, locale, api]
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: npm
+      - run: npm ci
+      - name: Execute independent QA gate
+        shell: bash
+        run: |
+          case "${{ matrix.check }}" in
+            format) npm run format:check ;;
+            lint) npm run lint ;;
+            types) npm run typecheck ;;
+            build) npm run build ;;
+            unit) npm test ;;
+            locale) npm run locales:audit ;;
+            api) npm run api:check && npm run api:types && git diff --exit-code -- src/shared/api/schema.d.ts ;;
+          esac

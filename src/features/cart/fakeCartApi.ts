@@ -3,7 +3,7 @@ import { MAX_QUANTITY_PER_LINE } from './cartRules';
 import type { LineAvailability } from './cartTypes';
 import { CATALOG, cartResource, serverLine, type CartLineResource } from './testData';
 
-/** What the server says about a variant's stock for an address (null when the request names none). */
+/** Global stock for each variant; a delivery address does not affect inventory. */
 export type StockAt = (variantId: number, addressId: number | null) => LineAvailability;
 
 type QuantityBody = { quantity: number };
@@ -35,21 +35,21 @@ function lineFor(variantId: number, quantity: number): CartLineResource | null {
  */
 export function createFakeCartApi(
   initial: readonly CartLineResource[] = [],
-  stock: StockAt = () => 'unknown',
+  stock: StockAt = () => 'in_stock',
 ) {
   let lines: CartLineResource[] = [...initial];
-  const body = () => ({ data: cartResource(lines) });
+  const body = () => ({
+    data: cartResource(
+      lines.map((line) => ({
+        ...line,
+        availability: stock(line.variant_id, null),
+      })),
+    ),
+  });
 
   const routes: FakeRoutes = {
-    // Stock is only known for a delivery address, as in the real API.
-    'GET /cart': ({ query }) => {
-      const addressId = query.has('address_id') ? Number(query.get('address_id')) : null;
-      const known = lines.map((line) => ({
-        ...line,
-        availability: stock(line.variant_id, addressId),
-      }));
-      return { body: { data: cartResource(known) } };
-    },
+    // Cart availability is globally known before a delivery address is selected.
+    'GET /cart': () => ({ body: body() }),
     'PUT /cart/items/:variant': (request) => {
       const variantId = Number(request.params.variant);
       if (!isQuantityBody(request.body)) return { status: 422, body: { message: 'Invalid' } };

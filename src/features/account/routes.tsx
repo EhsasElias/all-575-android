@@ -12,7 +12,7 @@ import { SellerApplicationScreen } from './SellerApplicationScreen';
 import { SellerWorkspaceScreen } from './SellerWorkspaceScreen';
 import { SellerReviewScreen } from './SellerReviewScreen';
 import { SuperAdminDashboardScreen } from './SuperAdminDashboardScreen';
-import { PlatformAdminDashboardScreen } from './PlatformAdminDashboardScreen';
+import { AdminWorkspaceScreen } from './AdminWorkspaceScreen';
 import { CourierWorkspaceScreen } from './CourierWorkspaceScreen';
 import { RoleApplicationScreen } from './RoleApplicationScreen';
 
@@ -55,7 +55,7 @@ export const protectedAccountRoutes: RouteObject[] = [
   },
   {
     path: routePaths.platformAdminDashboard,
-    element: <PlatformAdminDashboardScreen />,
+    element: <AdminWorkspaceScreen />,
     handle: titled((t) => t('nav.account')),
   },
   {
