@@ -312,7 +312,9 @@ describe('Delivery area of a signed-in customer', () => {
       expect(api.requests()).toContain('GET /addresses');
     });
     expect(screen.getByRole('button', { name: 'Choose your delivery area' })).toBeVisible();
-    expect(screen.queryByRole('alert')).not.toBeInTheDocument();
+    // A separate product-image or saved-products alert must not hide the
+    // core navigation when optional address lookup fails.
+    expect(screen.getByRole('link', { name: 'Search products' })).toHaveAttribute('href', '/search');
   });
 
   it('does not ask for addresses when nobody is signed in', async () => {
