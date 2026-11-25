@@ -2848,12 +2848,6 @@ export interface components {
             };
             image_url: string | null;
             seller: components["schemas"]["SellerResource"];
-            /** Optional while older deployed APIs still omit this field. */
-            stock_branch?: {
-                ar: string;
-                en: string;
-            } | null;
-            purchase_variant_id?: number | null;
             category: {
                 slug: string;
                 name: {
@@ -2890,12 +2884,6 @@ export interface components {
             };
             image_url: string | null;
             seller: components["schemas"]["SellerResource"];
-            /** Optional while older deployed APIs still omit this field. */
-            stock_branch?: {
-                ar: string;
-                en: string;
-            } | null;
-            purchase_variant_id?: number | null;
             category: {
                 slug: string;
                 name: {
