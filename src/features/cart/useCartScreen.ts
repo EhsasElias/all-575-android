@@ -52,7 +52,7 @@ export function useCartScreen() {
     buyableItems: buyable.items,
     // Guest checkout first signs in and rechecks via the API. A signed-in cart
     // must have a definitive stock answer before it can continue to payment.
-    canCheckout: mayCheckout(lines) && (cart.kind !== 'server' || lines.every((line) => line.availability !== 'unknown')),
+    canCheckout: mayCheckout(lines, cart.kind === 'server'),
     subtotal: buyable.subtotal,
     hasUnavailableLines: lines.some((line) => line.problem !== null),
     changeQuantity,
