@@ -38,6 +38,14 @@ export function ProductDetails({ product }: { product: ProductDetail }) {
             {pickText(product.seller.name, language)}
           </Link>
         </p>
+        {product.stock_branch && (
+          <p className={styles.meta}>
+            <Icon name="store" size={16} />
+            {' '}
+            {language === 'ar' ? 'الفرع المتوفر فيه المنتج' : language === 'fr' ? 'Agence disposant du produit' : 'Stocked at branch'}:{' '}
+            <strong>{pickText(product.stock_branch, language)}</strong>
+          </p>
+        )}
         <RatingSummary average={product.rating.average} count={product.rating.count} />
       </div>
 
