@@ -33,7 +33,7 @@ function toQuery({
 }: ProductFilters) {
   return {
     sort,
-    in_stock: inStock && zoneId !== null ? 1 : undefined,
+    in_stock: inStock ? 1 : undefined,
     min_price: minPrice,
     max_price: maxPrice,
     category,
