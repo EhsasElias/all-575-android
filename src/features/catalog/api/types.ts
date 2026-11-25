@@ -2,8 +2,13 @@ import type { Schemas } from '@/shared/api';
 import type { paths } from '@/shared/api/schema';
 
 export type Category = Schemas['CategoryResource'];
-export type ProductSummary = Schemas['ProductListResource'];
-export type ProductDetail = Schemas['ProductDetailResource'];
+/** Optional until all API installations expose the representative stocked branch. */
+export type StorefrontStock = {
+  stock_branch?: { ar: string; en: string } | null;
+  purchase_variant_id?: number | null;
+};
+export type ProductSummary = Schemas['ProductListResource'] & StorefrontStock;
+export type ProductDetail = Schemas['ProductDetailResource'] & StorefrontStock;
 export type Variant = Schemas['VariantResource'];
 export type Seller = Schemas['SellerResource'];
 export type Review = Schemas['ReviewResource'];
