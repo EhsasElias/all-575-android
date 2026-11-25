@@ -2,7 +2,7 @@ import { useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useLanguage } from '@/shared/i18n';
 import { useToast } from '@/shared/ui';
-import { payable, toScreenLines } from './cartScreenModel';
+import { mayCheckout, payable, toScreenLines } from './cartScreenModel';
 import type { CartChange } from './cartTypes';
 import { pickText } from './localizedText';
 import { useCart } from './useCart';
@@ -50,6 +50,7 @@ export function useCartScreen() {
     isGuest: cart.kind === 'guest',
     lines,
     buyableItems: buyable.items,
+    canCheckout: mayCheckout(lines),
     subtotal: buyable.subtotal,
     hasUnavailableLines: lines.some((line) => line.problem !== null),
     changeQuantity,
