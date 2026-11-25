@@ -64,3 +64,21 @@ composer lint
 Run screen-level checks at 320, 360, 393, 768 and 1440 px in
 Arabic RTL, English and French, on light/dark themes. Verify browser
 network errors and missing/out-of-stock controls before production rollout.
+
+
+## Re-audit following homepage and branch-name changes (2026-11-25)
+
+CI evidence:
+- Frontend commit `9a7ce3f`: Mobile UI checks completed **successfully** in GitHub Actions run `45672972810`.
+- Frontend CI run `45672972727`: secret scan passed; API contract/type regeneration check passed **after removing hand-edited generated fields**; `format:check` failed on 21 files, and the job therefore did **not** reach lint/typecheck/unit tests/build. The formatting gate must be fixed and a **new run** must pass before deployment.
+- The prior frontend run `45668915909` failed to build because of three TypeScript errors (dashboard route includes, nullable API error status, and variant localized text). Code fixes were committed afterward, but are **not independently proven** by the earlier CI run.
+- Container GitHub DNS lookup fails, so no local isolated build was available. Do not claim a complete browser-to-real-API customer checkout was executed.
+
+Additional code-level safeguards:
+- Product tiles display the actual seller name plus a branch derived from available stock. The shown branch is informational: checkout can allocate a different seller-owned active branch.
+- Quick-add re-fetches current detail, stock and variant price before adding. Products with **multiple active variants** now expose no quick-add variant and must go to detail selection, preventing an arbitrary color/size purchase.
+- Catalog stock queries and reservation protect seller ownership.
+- Favorites on homepage use the existing authenticated saved-products endpoint; guests are directed to sign in.
+- Frontend regression tests for branch labels and availability and backend branch/variant tests added, but not yet executed.
+
+Remaining mandatory QA: formatting, frontend `npm run lint`, `npm run typecheck`, `npm test`, `npm run build`, `npm run locales:audit`, `npm run api:check`, frontend Playwright (after rebasing to latest code), backend `php artisan test`, mocked gateway success/failure, and staging browser checkout with test accounts only. Delivery outside configured delivery zones remains blocked until fee/slot dispatch policy is provided.
