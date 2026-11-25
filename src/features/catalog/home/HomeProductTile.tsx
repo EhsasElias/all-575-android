@@ -59,7 +59,7 @@ export function HomeProductTile({ product }: Props) {
         <span className={styles.productName}>{name}</span>
       </Link>
       <div className={styles.storeMeta}>
-        <span className={styles.storeMetaLabel}>{tr('الشركة', 'Store', 'Boutique')}</span>
+        <span className={styles.storeMetaLabel}>{tr('الشركة', 'Company', 'Entreprise')}</span>
         <span className={styles.storeMetaValue}>{pickText(product.seller.name, language)}</span>
         {branch && (
           <>
