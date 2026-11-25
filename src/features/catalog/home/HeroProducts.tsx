@@ -8,7 +8,7 @@ export function HeroProducts() {
   const { zoneId } = useDeliveryZone();
   // Share the same first-page request as the home catalogue, avoiding duplicate
   // API calls and inconsistent error/retry behavior between hero and products.
-  const products = useProductList({ zoneId, perPage: 12, sort: 'newest' });
+  const products = useProductList({ zoneId, inStock: true, perPage: 12, sort: 'newest' });
   const photos = products.items.filter((product) => product.image_url !== null).slice(0, 2);
   if (photos.length === 0) return null;
 
