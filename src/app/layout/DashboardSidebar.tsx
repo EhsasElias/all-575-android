@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react';
 import { Link, useLocation } from 'react-router';
 import { useSession } from '@/shared/session';
 import { superAdminDashboard } from '@/features/account/superAdminApi';
+import { adminDashboard } from '@/features/account/platformAdminApi';
 import { useTranslation } from 'react-i18next';
 import { routePaths } from '@/shared/lib';
 import styles from './AccountSidebar.module.css';
@@ -17,20 +18,20 @@ export function DashboardSidebar({ onNavigate }: { onNavigate?: () => void }) {
     pathname === routePaths.notifications ? new URLSearchParams(search).get('workspace') : null;
   const { status, user } = useSession();
   const [superAccess, setSuperAccess] = useState<{ userId: string; allowed: boolean } | null>(null);
+  const [operationsAccess, setOperationsAccess] = useState<{ userId: string; allowed: boolean } | null>(null);
   const userId = user?.id === undefined ? null : String(user.id);
 
   // A Super Admin keeps their dashboard navigation when visiting the separate
   // reviewer route. Dedicated reviewers retain their own Approvals navigation.
   useEffect(() => {
-    if (pathname !== routePaths.sellerReview || status !== 'signed-in' || !userId) return;
+    if (![routePaths.sellerReview, routePaths.superAdminDashboard, routePaths.platformAdminDashboard].includes(pathname)
+      || status !== 'signed-in' || !userId) return;
     let active = true;
-    void superAdminDashboard()
-      .then(() => {
-        if (active) setSuperAccess({ userId, allowed: true });
-      })
-      .catch(() => {
-        if (active) setSuperAccess({ userId, allowed: false });
-      });
+    void Promise.allSettled([superAdminDashboard(), adminDashboard()]).then(([superResult, operationsResult]) => {
+      if (!active) return;
+      setSuperAccess({ userId, allowed: superResult.status === 'fulfilled' });
+      setOperationsAccess({ userId, allowed: operationsResult.status === 'fulfilled' });
+    });
     return () => {
       active = false;
     };
@@ -57,30 +58,36 @@ export function DashboardSidebar({ onNavigate }: { onNavigate?: () => void }) {
               ? 'courier'
               : 'customer';
 
-  const sections =
-    workspace === 'super'
-      ? superAdmin
-      : workspace === 'admin'
-        ? admin
-        : workspace === 'review'
-          ? review
-          : workspace === 'seller'
-            ? seller
-            : workspace === 'courier'
-              ? courier
-              : customer;
+  const canManage = status === 'signed-in' && userId !== null &&
+    superAccess?.userId === userId && superAccess.allowed;
+  const canOperate = status === 'signed-in' && userId !== null &&
+    operationsAccess?.userId === userId && operationsAccess.allowed;
+  const operationsLinks = admin.map((item) => ({
+    ...item,
+    to: item.to.replace(routePaths.platformAdminDashboard, routePaths.platformAdminDashboard + '?view=operations'),
+  }));
+  const sections = workspace === 'super' || workspace === 'admin'
+    ? [
+        ...(canManage ? superAdmin : []),
+        ...(canOperate ? operationsLinks : []),
+      ]
+    : workspace === 'review'
+      ? review
+      : workspace === 'seller'
+        ? seller
+        : workspace === 'courier'
+          ? courier
+          : customer;
   const title =
-    workspace === 'super'
-      ? tr('السوبر أدمن', 'Super Admin', 'Super administrateur')
-      : workspace === 'admin'
-        ? tr('الإدارة', 'Admin', 'Administration')
-        : workspace === 'review'
-          ? tr('الموافقات', 'Approvals', 'Approbations')
-          : workspace === 'seller'
-            ? tr('البائع', 'Seller', 'Vendeur')
-            : workspace === 'courier'
-              ? tr('المندوب', 'Courier', 'Livreur')
-              : tr('العميل', 'Customer', 'Client');
+    workspace === 'super' || workspace === 'admin'
+      ? tr('الإدارة', 'Admin', 'Administration')
+      : workspace === 'review'
+        ? tr('الموافقات', 'Approvals', 'Approbations')
+        : workspace === 'seller'
+          ? tr('البائع', 'Seller', 'Vendeur')
+          : workspace === 'courier'
+            ? tr('المندوب', 'Courier', 'Livreur')
+            : tr('العميل', 'Customer', 'Client');
 
   const isActive = (to: string) => {
     const [pathAndQuery = '', targetHash] = to.split('#');
