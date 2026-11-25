@@ -39,3 +39,10 @@ export function payable(lines: readonly ScreenLine[]): Payable {
       { items: 0, subtotal: 0 },
     );
 }
+
+/** Never enter checkout with an unresolved/unavailable cart line.
+ * The server quote and order reservation make the final stock decision.
+ */
+export function mayCheckout(lines: readonly ScreenLine[]): boolean {
+  return lines.length > 0 && lines.every((line) => line.problem === null);
+}
