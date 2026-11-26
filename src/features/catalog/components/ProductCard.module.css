@@ -86,3 +86,34 @@
   font-size: var(--font-size-lead);
   font-weight: var(--font-weight-bold);
 }
+
+/* Put delivery-zone stock status in view before the user opens a product.
+   A label is preferred to a grayed-out image so the item remains identifiable. */
+.stockOverlay {
+  position: absolute;
+  z-index: 2;
+  inset-block-start: 0.6rem;
+  inset-inline-start: 0.6rem;
+  pointer-events: none;
+  max-inline-size: calc(100% - 1.2rem);
+}
+.stockOverlay > span {
+  display: inline-flex;
+  max-inline-size: 100%;
+  box-shadow: 0 2px 10px rgb(0 0 0 / 0.1);
+}
+
+.sellerDetails {
+  display: grid;
+  gap: 0.2rem;
+  min-inline-size: 0;
+  max-inline-size: 100%;
+}
+.sellerDetails .seller {
+  margin: 0;
+  line-height: 1.45;
+}
+.sellerDetails .seller > span {
+  color: #30724e;
+  font-weight: 750;
+}

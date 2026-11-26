@@ -685,8 +685,11 @@ export function SellerProductManagement({ products, memberships, onUpdated }: Pr
     setBusy(true);
     setError('');
     try {
+      const language = ar ? 'ar' : fr ? 'fr' : 'en';
       const file =
-        format === 'xlsx' ? await sellerCatalogExcelTemplate() : await sellerCatalogTemplate();
+        format === 'xlsx'
+          ? await sellerCatalogExcelTemplate(language)
+          : await sellerCatalogTemplate(language);
       const objectUrl = URL.createObjectURL(file.blob);
       const anchor = document.createElement('a');
       anchor.href = objectUrl;
@@ -792,6 +795,15 @@ export function SellerProductManagement({ products, memberships, onUpdated }: Pr
             : tr(
                 `تم استيراد ${created} منتج بنجاح كمسودات.`,
                 `Successfully imported ${created} products as drafts.`,
+              );
+        }
+        const stockCount = result.data.stock_records_created ?? 0;
+        if (stockCount > 0) {
+          message += fr
+            ? ` ${stockCount} produit(s) ajouté(s) au stock.`
+            : tr(
+                ` تمت إضافة مخزون لـ ${stockCount} منتج.`,
+                ` Stock added for ${stockCount} products.`,
               );
         }
         setSuccess(message);
@@ -1010,66 +1022,40 @@ export function SellerProductManagement({ products, memberships, onUpdated }: Pr
       )}
       <div style={{ ...controls, marginBottom: 12 }}>
         {sellerIds.length > 0 && (
-          <button
-            type="button"
-            style={button}
-            onClick={() => {
-              newProduct();
-            }}
-          >
+          <button type="button" style={button} onClick={() => newProduct()}>
             {tr('إضافة منتج جديد', 'Add new product')}
           </button>
         )}
-        <button
-          type="button"
-          style={button}
-          disabled={busy}
-          onClick={() => void downloadTemplate('xlsx')}
-        >
-          {tr('تحميل قالب Excel بالقوائم المنسدلة', 'Download Excel template with dropdowns')}
-        </button>
-        <button
-          type="button"
-          style={button}
-          disabled={busy}
-          onClick={() => void downloadTemplate('csv')}
-        >
-          {tr('تحميل قالب CSV', 'Download CSV template')}
+        <button type="button" style={button} disabled={busy} onClick={() => void downloadTemplate('xlsx')}>
+          {tr('تحميل قالب Excel', 'Download Excel template')}
         </button>
       </div>
       {sellerIds.length > 0 && (
         <div className="seller-import-card" style={card}>
-          <h3>{tr('استيراد المنتجات عبر Excel أو CSV', 'Import products using Excel or CSV')}</h3>
+          <h3>{tr('استيراد المنتجات', 'Import products')}</h3>
           <p className="seller-required-hint">
             {tr(
-              'في القالب: SKU والتصنيف والاسمان والسعر وفئة الضريبة إجبارية. المتجر والوصف والباركود اختيارية؛ المتجر يُحدد من هذه الصفحة.',
-              'In the template, SKU, category, both names, price and VAT class are required. Store, descriptions and barcode are optional; the store is selected on this page.',
+              'حمّل الملف، أضف المنتجات والكميات، ثم ارفعه هنا.',
+              'Download the template, add your products and quantities, then upload it.',
             )}
           </p>
-          <p className="seller-required-hint">
-            {tr(
-              'قالبا CSV وExcel يحتويان على بيانات المنتج واسمَي وحدة البيع ورابط صورة HTTPS الاختياري. ويدعم Excel إضافة صورة من إدراج > صور > وضع فوق الخلايا في عمود الصورة، مع قوائم منسدلة للمتجر والتصنيف والضريبة.',
-              'Both templates include product fields, optional variant names, and a HTTPS image URL column. Excel additionally supports pictures placed over cells in the image column, plus dropdowns for store, category and VAT.',
-            )}
-          </p>
-          <p>
-            {tr(
-              'في Excel ضع الصورة فوق الخلية في العمود N بنفس صف المنتج (بدون دالة IMAGE). CSV يدعم روابط الصور فقط. ويمكن تعديل الصورة من بطاقة المرفقات بعد الاستيراد.',
-              'In Excel, place each picture over column N in the matching product row (not as an IMAGE() formula). CSV supports image URLs only. You can also change a cover image from the product attachment card after import.',
-            )}
-          </p>
-          <p>
-            {tr(
-              'أعمدة القالب تطابق حقول «منتج جديد». اختر المتجر عند الاستيراد، واكتب اسم التصنيف أو رقمه والسعر قبل الضريبة بالريال (مثال: 5.00؛ تُضاف الضريبة عند الدفع). يمكن ترك خانة المتجر فارغة في الملف.',
-              'The columns match Add Product. Choose the store at import time; enter a category name or number and the net price in SAR (e.g. 5.00; VAT is added at checkout). The Store cell can be blank.',
-            )}
-          </p>
-          <p>
-            {tr(
-              'قائمة الضريبة في Excel وCSV: قياسية (15%)، صفرية (0%)، معفى من الضريبة. للحالات الصفرية والمعفاة املأ عمود السبب النظامي (O) بما لا يقل عن 15 حرفًا؛ ستُنشأ مسودات تتطلب مراجعة الإدارة. الوصف والباركود اختياريان.',
-              'Excel and CSV VAT options: Standard (15%), Zero-rated (0%), Exempt. For zero-rated or exempt products, complete column O with a legal justification of at least 15 characters. Imported drafts require administrative review.',
-            )}
-          </p>
+          <details style={{ marginBottom: 12 }}>
+            <summary style={{ cursor: 'pointer' }}>
+              {tr('مساعدة', 'Help')}
+            </summary>
+            <p>
+              {tr(
+                'املأ البيانات المطلوبة. لإضافة مخزون، اكتب الكمية واختر الفرع. يمكنك إضافة صورة لكل منتج.',
+                'Fill in the required fields. To add stock, enter a quantity and choose a branch. You can also add a product image.',
+              )}
+            </p>
+            <p>
+              {tr(
+                'إذا اخترت ضريبة صفرية أو إعفاء، اكتب السبب في الملف.',
+                'For zero VAT or exempt products, add the reason in the file.',
+              )}
+            </p>
+          </details>
           <div className="seller-import-fields" style={controls}>
             <label style={field}>
               {tr('المتجر', 'Store')}
@@ -1115,30 +1101,26 @@ export function SellerProductManagement({ products, memberships, onUpdated }: Pr
               type="button"
               style={button}
               disabled={busy || importFile === null}
-              onClick={() => void uploadCsv(true)}
+              onClick={() => setConfirmation({ kind: 'import' })}
             >
-              {tr('فحص ومعاينة الملف', 'Validate & preview file')}
+              {tr('استيراد المنتجات', 'Import products')}
             </button>
-            <button
-              type="button"
-              style={button}
-              disabled={busy || importFile === null}
-              onClick={() => {
-                setConfirmation({ kind: 'import' });
-              }}
-            >
-              {tr('استيراد المسودات', 'Import drafts')}
-            </button>
-            <button
-              type="button"
-              style={button}
-              disabled={busy || importFile === null}
-              onClick={() => {
-                setConfirmation({ kind: 'importSubmit' });
-              }}
-            >
-              {tr('استيراد ونشر مباشرة', 'Import & publish now')}
-            </button>
+            <details>
+              <summary style={{ cursor: 'pointer', padding: 10 }}>
+                {tr('خيارات أخرى', 'Other options')}
+              </summary>
+              <div style={{ ...controls, marginTop: 8 }}>
+                <button type="button" style={button} disabled={busy} onClick={() => void downloadTemplate('csv')}>
+                  {tr('تحميل قالب CSV', 'Download CSV template')}
+                </button>
+                <button type="button" style={button} disabled={busy || importFile === null} onClick={() => void uploadCsv(true)}>
+                  {tr('فحص الملف فقط', 'Check file only')}
+                </button>
+                <button type="button" style={button} disabled={busy || importFile === null} onClick={() => setConfirmation({ kind: 'importSubmit' })}>
+                  {tr('استيراد وإرسال للمراجعة', 'Import and send for review')}
+                </button>
+              </div>
+            </details>
           </div>
           {importIssues.length > 0 && (
             <div className="seller-import-issues" role="alert" aria-live="assertive">
@@ -1181,6 +1163,8 @@ export function SellerProductManagement({ products, memberships, onUpdated }: Pr
                     <th>{tr('رمز المنتج (SKU)', 'Product code (SKU)')}</th>
                     <th>{tr('اسم المنتج', 'Product')}</th>
                     <th>{tr('السعر (ر.س)', 'Price (SAR)')}</th>
+                    <th>{fr ? 'Succursale' : tr('الفرع', 'Branch')}</th>
+                    <th>{fr ? 'Quantité' : tr('الكمية', 'Quantity')}</th>
                   </tr>
                 </thead>
                 <tbody>
@@ -1189,6 +1173,8 @@ export function SellerProductManagement({ products, memberships, onUpdated }: Pr
                       <td>{row.sku}</td>
                       <td>{ar ? row.name_ar : row.name_en}</td>
                       <td>{(row.price_halalas / 100).toFixed(2)}</td>
+                      <td>{row.inventory_branch_id ?? '—'}</td>
+                      <td>{row.inventory_quantity ?? '—'}</td>
                     </tr>
                   ))}
                 </tbody>

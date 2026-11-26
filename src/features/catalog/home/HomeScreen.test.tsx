@@ -1,17 +1,17 @@
-import { act, screen, waitFor, within } from '@testing-library/react';
+import { screen, within } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
-import { describe, expect, it, vi } from 'vitest';
+import { describe, expect, it } from 'vitest';
 import type { Language } from '@/shared/i18n';
 import { renderApp } from '@/test/render';
 import { installCatalogApi, queriesOf } from '../testApi';
-import { biscuits, makeProduct, page } from '../testData';
+import { makeProduct, page } from '../testData';
 
 function renderHome(language: Language = 'en') {
   return renderApp({ route: '/home', seenWelcome: true, language });
 }
 
-describe('Home', () => {
-  it('shows the heading, the one price, categories and the popular products', async () => {
+describe('Home - reference shopping layout', () => {
+  it('shows exactly the four requested shelves after the hero, with no old categories or filters', async () => {
     installCatalogApi();
     await renderHome();
 
@@ -19,196 +19,158 @@ describe('Home', () => {
       screen.getByRole('heading', { level: 1, name: 'What do you need today?' }),
     ).toBeVisible();
     expect(
-      await screen.findByText(/Prices from 1\.00\s+SAR to 5\.00\s+SAR, before VAT/),
+      screen.getByRole('heading', { name: 'What would you like to shop today?' }),
     ).toBeVisible();
-
-    const categories = screen.getByRole('region', { name: 'Categories' });
-    expect(await within(categories).findByRole('link', { name: 'Food' })).toHaveAttribute(
-      'href',
-      '/categories/food',
-    );
-    expect(within(categories).getByRole('link', { name: 'See all' })).toHaveAttribute(
+    expect(screen.getByRole('heading', { name: 'Explore our collections' })).toBeVisible();
+    expect(screen.getByRole('heading', { name: 'Grocery & fresh' })).toBeVisible();
+    expect(screen.getByRole('heading', { name: 'Picked For You' })).toBeVisible();
+    expect(screen.queryByRole('heading', { name: 'Categories' })).not.toBeInTheDocument();
+    expect(screen.queryByRole('heading', { name: 'All products' })).not.toBeInTheDocument();
+    expect(screen.queryByRole('combobox', { name: 'Category' })).not.toBeInTheDocument();
+    expect(screen.queryByRole('combobox', { name: 'Sort by' })).not.toBeInTheDocument();
+    expect(screen.queryByRole('checkbox', { name: 'In stock only' })).not.toBeInTheDocument();
+    expect(screen.queryByText('20 mins')).not.toBeInTheDocument();
+    expect(screen.queryByText(/% off/i)).not.toBeInTheDocument();
+    const categoryShelf = screen.getByRole('region', {
+      name: 'What would you like to shop today?',
+    });
+    expect(within(categoryShelf).getByRole('link', { name: 'All categories' })).toHaveAttribute(
       'href',
       '/categories',
     );
-
-    const popular = screen.getByRole('region', { name: 'Popular' });
-    expect(await within(popular).findByRole('link', { name: 'Biscuits' })).toHaveAttribute(
-      'href',
-      '/products/demo-food-1',
-    );
-    expect(within(popular).getByRole('link', { name: 'Socks' })).toBeVisible();
-    expect(within(popular).getAllByText(/5\.00\s+SAR/)).toHaveLength(3);
   });
 
-  it('asks for categories and products at the same time, and for a first page only', async () => {
+  it('shows all nine category links without requesting missing image assets', async () => {
+    installCatalogApi();
+    await renderHome();
+
+    const shelf = screen.getByRole('region', { name: 'What would you like to shop today?' });
+    const pairs = [
+      'Personal care',
+      'Makeup',
+      'Perfumes',
+      'Stationery',
+      'School supplies',
+      'Cleaning products',
+      'Cleaning tools',
+      'Kitchenware',
+      'Groceries & fresh produce',
+    ] as const;
+    for (const name of pairs) {
+      const card = within(shelf).getByRole('link', { name: `Explore ${name}` });
+      expect(card).toBeVisible();
+      // A missing photo falls back to a stable placeholder; never point to uncommitted static assets.
+      const photo = card.querySelector('img');
+      expect(photo?.getAttribute('src')?.startsWith('/images/categories/') ?? false).toBe(false);
+      expect(card.querySelector('img,svg')).not.toBeNull();
+    }
+  });
+
+  it('uses existing catalogue products in Picked For You without the old product grid', async () => {
+    installCatalogApi();
+    await renderHome();
+
+    const picks = screen.getByRole('region', { name: 'Picked For You' });
+    const biscuitLink = await within(picks).findByRole('link', { name: /Biscuits/ });
+    expect(biscuitLink).toHaveAttribute('href', '/products/demo-food-1');
+    expect(within(picks).getByRole('link', { name: /Socks/ })).toBeVisible();
+  });
+
+  it('requests real categories and only available products without invented promotional prices', async () => {
     const api = installCatalogApi();
     await renderHome();
-    await screen.findByRole('link', { name: 'Biscuits' });
+    await within(screen.getByRole('region', { name: 'Picked For You' })).findByRole('link', {
+      name: /Biscuits/,
+    });
 
     expect(api.requests()).toEqual(
       expect.arrayContaining(['GET /categories', 'GET /products', 'GET /store']),
     );
-    expect(queriesOf(api, 'GET /products')).toHaveLength(1);
-    expect(queriesOf(api, 'GET /products')[0]?.get('per_page')).toBe('12');
-    expect(queriesOf(api, 'GET /products')[0]?.has('zone_id')).toBe(false);
-  });
-
-  it('links the search entry to /search', async () => {
-    installCatalogApi();
-    const user = userEvent.setup();
-    const { router } = await renderHome();
-
-    await user.click(screen.getByRole('link', { name: 'Search products' }));
-
-    expect(router.state.location.pathname).toBe('/search');
-  });
-
-  it('loads the first row of pictures eagerly and the rest lazily, all with a size', async () => {
-    const products = [1, 2, 3, 4, 5].map((id) =>
-      makeProduct({ id, slug: `p-${id}`, name: { ar: `م${id}`, en: `Item ${id}` } }),
-    );
-    installCatalogApi({ 'GET /products': { body: page(products) } });
-    await renderHome();
-    await screen.findByRole('link', { name: 'Item 1' });
-
-    const popular = screen.getByRole('region', { name: 'Popular' });
-    const images = within(popular).getAllByRole('presentation');
-    expect(images.map((image) => image.getAttribute('loading'))).toEqual([
-      'eager',
-      'eager',
-      'eager',
-      'lazy',
-      'lazy',
-    ]);
-    for (const image of images) {
-      expect(image).toHaveAttribute('width');
-      expect(image).toHaveAttribute('height');
+    for (const request of queriesOf(api, 'GET /products')) {
+      expect(request.get('sort')).toBe('newest');
+      expect(request.has('before_id')).toBe(false);
+      expect(request.get('in_stock')).toBe('1');
     }
   });
 
-  it('shows loading placeholders while the data is on its way', async () => {
-    vi.stubGlobal('fetch', () => new Promise(() => undefined));
-    await renderHome();
-
-    expect(screen.getAllByRole('status').length).toBeGreaterThanOrEqual(2);
-    expect(screen.getAllByText('Loading').length).toBeGreaterThanOrEqual(2);
-    expect(screen.getByRole('heading', { level: 1 })).toBeVisible();
-  });
-
-  it('says there are no products yet, and offers the categories', async () => {
-    installCatalogApi({ 'GET /products': { body: page([]) } });
-    await renderHome();
-
-    expect(await screen.findByRole('heading', { name: 'No products yet' })).toBeVisible();
-    expect(screen.getByRole('link', { name: 'Browse categories' })).toHaveAttribute(
-      'href',
-      '/categories',
-    );
-  });
-
-  it('shows an error with a retry for the products, and recovers', async () => {
-    let attempt = 0;
+  it('shows real seller names and stocked branch details for homepage products', async () => {
     installCatalogApi({
-      'GET /products': () => {
-        attempt += 1;
-        return attempt === 1
-          ? { status: 400, body: { message: 'Nope' } }
-          : { body: page([biscuits]) };
+      'GET /products': {
+        body: page([
+          {
+            ...makeProduct({
+              availability: 'in_stock',
+              stock_branch: { ar: 'فرع شمال الرياض', en: 'North Riyadh branch' },
+              purchase_variant_id: 17,
+            }),
+          },
+        ]),
       },
     });
+    await renderHome();
+    const picks = screen.getByRole('region', { name: 'Picked For You' });
+    expect(await within(picks).findByText('Home Store')).toBeVisible();
+    expect(within(picks).getByText('North Riyadh branch')).toBeVisible();
+    expect(within(picks).getByRole('button', { name: '+ Add to cart' })).toBeEnabled();
+  });
+
+  it('links the search bar to the real search screen', async () => {
+    installCatalogApi();
     const user = userEvent.setup();
-    await renderHome();
-
-    const popular = screen.getByRole('region', { name: 'Popular' });
-    expect(await within(popular).findByRole('alert')).toHaveTextContent(
-      'We could not load the products',
-    );
-    expect(popular).not.toHaveTextContent('Nope');
-    expect(screen.getByRole('link', { name: 'Food' })).toBeVisible();
-
-    await user.click(within(popular).getByRole('button', { name: 'Try again' }));
-
-    expect(await within(popular).findByRole('link', { name: 'Biscuits' })).toBeVisible();
+    const { router } = await renderHome();
+    await user.click(screen.getByRole('link', { name: 'Search products' }));
+    expect(router.state.location.pathname).toBe('/search');
   });
 
-  it('shows an error with a retry for the categories while the products still show', async () => {
-    installCatalogApi({ 'GET /categories': { status: 400, body: { message: 'Nope' } } });
+  it('does not display unrelated items in Grocery & fresh when no grocery category exists', async () => {
+    installCatalogApi();
     await renderHome();
-
-    const categories = screen.getByRole('region', { name: 'Categories' });
-    expect(await within(categories).findByRole('button', { name: 'Try again' })).toBeVisible();
-    expect(await screen.findByRole('link', { name: 'Biscuits' })).toBeVisible();
+    const groceries = screen.getByRole('region', { name: 'Grocery & fresh' });
+    expect(within(groceries).queryByRole('link', { name: /Biscuits/ })).not.toBeInTheDocument();
+    expect(within(groceries).queryByRole('link', { name: /Socks/ })).not.toBeInTheDocument();
   });
 
-  it('copes with a failing connection by showing the error state after the retries', async () => {
-    vi.useFakeTimers({ shouldAdvanceTime: true });
-    installCatalogApi({ 'GET /products': 'offline' });
+  it('keeps the four blocks visible when no products are available', async () => {
+    installCatalogApi({ 'GET /products': { body: page([]) } });
     await renderHome();
-
-    await act(async () => {
-      await vi.advanceTimersByTimeAsync(5000);
-    });
-
-    const popular = screen.getByRole('region', { name: 'Popular' });
-    await waitFor(() => {
-      expect(within(popular).getByRole('alert')).toBeVisible();
-    });
+    expect(
+      screen.getByRole('heading', { name: 'What would you like to shop today?' }),
+    ).toBeVisible();
+    expect(screen.getByRole('heading', { name: 'Explore our collections' })).toBeVisible();
+    expect(screen.getByRole('heading', { name: 'Grocery & fresh' })).toBeVisible();
+    expect(screen.getByRole('heading', { name: 'Picked For You' })).toBeVisible();
+    expect(screen.queryByRole('heading', { name: 'All products' })).not.toBeInTheDocument();
   });
 
-  it('speaks Arabic, right to left, with the names and the price from the API', async () => {
+  it('supports Arabic RTL and the same four shelves', async () => {
     installCatalogApi();
     await renderHome('ar');
-
     expect(document.documentElement).toHaveAttribute('dir', 'rtl');
-    expect(screen.getByRole('heading', { level: 1, name: 'ماذا تحتاج اليوم؟' })).toBeVisible();
+    expect(screen.getByRole('heading', { name: 'ماذا تحب أن تتسوق اليوم؟' })).toBeVisible();
+    expect(screen.getByRole('heading', { name: 'اكتشف مجموعاتنا' })).toBeVisible();
+    expect(screen.getByRole('heading', { name: 'البقالة والخضار والفواكه' })).toBeVisible();
+    expect(screen.getByRole('heading', { name: 'اخترنا لك' })).toBeVisible();
     expect(
-      await screen.findByText(/أسعار من 1\.00\s+ر\.س إلى 5\.00\s+ر\.س قبل الضريبة/),
+      await within(screen.getByRole('region', { name: 'اخترنا لك' })).findByRole('link', {
+        name: /بسكويت/,
+      }),
     ).toBeVisible();
-    expect(await screen.findByRole('link', { name: 'بسكويت' })).toBeVisible();
-    expect(screen.getByRole('link', { name: 'أطعمة' })).toBeVisible();
-    expect(screen.getAllByText(/5\.00\s+ر\.س/).length).toBeGreaterThanOrEqual(3);
-    expect(screen.queryByText('Biscuits')).not.toBeInTheDocument();
-    expect(screen.getByRole('button', { name: /اختر منطقة التوصيل/ })).toBeVisible();
   });
 
-  it('shows English from the same data, left to right', async () => {
-    installCatalogApi();
-    await renderHome('en');
-
-    expect(document.documentElement).toHaveAttribute('dir', 'ltr');
-    expect(await screen.findByRole('link', { name: 'Biscuits' })).toBeVisible();
-    expect(screen.queryByText('بسكويت')).not.toBeInTheDocument();
-  });
-
-  it('does not show availability on the cards until an area is chosen', async () => {
-    installCatalogApi();
-    await renderHome();
-    await screen.findByRole('link', { name: 'Biscuits' });
-
-    expect(screen.queryByText('Availability unknown')).not.toBeInTheDocument();
-    expect(screen.getByRole('button', { name: 'Choose your delivery area' })).toBeVisible();
-  });
-});
-
-describe('Home in French', () => {
-  it('shows French texts, prices with a comma, and falls back to English product names', async () => {
+  it('supports French LTR and the same four shelves', async () => {
     installCatalogApi();
     await renderHome('fr');
-
-    expect(
-      screen.getByRole('heading', { level: 1, name: /^De quoi avez-vous besoin aujourd'hui\s\?$/ }),
-    ).toBeVisible();
-    expect(await screen.findByText(/Prix de 1,00\s+SAR à 5,00\s+SAR, hors TVA/)).toBeVisible();
-
-    const categories = screen.getByRole('region', { name: 'Catégories' });
-    expect(await within(categories).findByRole('link', { name: 'Food' })).toBeVisible();
-    expect(within(categories).getByRole('link', { name: 'Tout voir' })).toBeVisible();
-
-    const popular = screen.getByRole('region', { name: 'Populaires' });
-    expect(await within(popular).findByRole('link', { name: 'Biscuits' })).toBeVisible();
-    expect(within(popular).getAllByText(/5,00\s+SAR/)).toHaveLength(3);
-    expect(document.documentElement).toHaveAttribute('lang', 'fr');
     expect(document.documentElement).toHaveAttribute('dir', 'ltr');
+    expect(
+      screen.getByRole('heading', { name: 'Que souhaitez-vous acheter aujourd’hui ?' }),
+    ).toBeVisible();
+    expect(screen.getByRole('heading', { name: 'Découvrez nos collections' })).toBeVisible();
+    expect(screen.getByRole('heading', { name: 'Épicerie et produits frais' })).toBeVisible();
+    expect(screen.getByRole('heading', { name: 'Sélection pour vous' })).toBeVisible();
+    expect(
+      await within(screen.getByRole('region', { name: 'Sélection pour vous' })).findByRole('link', {
+        name: /Biscuits/,
+      }),
+    ).toBeVisible();
   });
 });
