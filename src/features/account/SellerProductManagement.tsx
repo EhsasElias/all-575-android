@@ -685,8 +685,11 @@ export function SellerProductManagement({ products, memberships, onUpdated }: Pr
     setBusy(true);
     setError('');
     try {
+      const language = ar ? 'ar' : fr ? 'fr' : 'en';
       const file =
-        format === 'xlsx' ? await sellerCatalogExcelTemplate() : await sellerCatalogTemplate();
+        format === 'xlsx'
+          ? await sellerCatalogExcelTemplate(language)
+          : await sellerCatalogTemplate(language);
       const objectUrl = URL.createObjectURL(file.blob);
       const anchor = document.createElement('a');
       anchor.href = objectUrl;
