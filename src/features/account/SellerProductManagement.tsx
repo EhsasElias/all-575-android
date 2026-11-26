@@ -1023,24 +1023,24 @@ export function SellerProductManagement({ products, memberships, onUpdated }: Pr
           <h3>{tr('استيراد المنتجات', 'Import products')}</h3>
           <p className="seller-required-hint">
             {tr(
-              'حمّل القالب، أضف المنتجات والكميات والفروع، ثم اختر الملف للاستيراد. ستُحفظ المنتجات كمسودات للمراجعة.',
-              'Download the template, enter products, quantities and branches, then upload it. Products are saved as drafts for review.',
+              'حمّل الملف، أضف المنتجات والكميات، ثم ارفعه هنا.',
+              'Download the template, add your products and quantities, then upload it.',
             )}
           </p>
           <details style={{ marginBottom: 12 }}>
             <summary style={{ cursor: 'pointer' }}>
-              {tr('تعليمات إضافية', 'More instructions')}
+              {tr('مساعدة', 'Help')}
             </summary>
             <p>
               {tr(
-                'حقول SKU والتصنيف والاسمين والسعر والضريبة مطلوبة. الكمية اختيارية، ولكن إذا أدخلتها فاختر فرع المخزون. للصور يمكنك استخدام رابط HTTPS أو صورة فوق الخلية في العمود N بملف Excel.',
-                'SKU, category, both names, price and VAT are required. Quantity is optional; if entered, choose its inventory branch. For images, use an HTTPS URL or place an image over column N in Excel.',
+                'املأ البيانات المطلوبة. لإضافة مخزون، اكتب الكمية واختر الفرع. يمكنك إضافة صورة لكل منتج.',
+                'Fill in the required fields. To add stock, enter a quantity and choose a branch. You can also add a product image.',
               )}
             </p>
             <p>
               {tr(
-                'للمنتجات المعفاة أو ذات الضريبة الصفرية، أضف السبب النظامي في العمود O. يُراجع النظام الملف قبل الحفظ.',
-                'For exempt or zero-rated products, add the legal justification in column O. The file is validated before saving.',
+                'إذا اخترت ضريبة صفرية أو إعفاء، اكتب السبب في الملف.',
+                'For zero VAT or exempt products, add the reason in the file.',
               )}
             </p>
           </details>
@@ -1105,7 +1105,7 @@ export function SellerProductManagement({ products, memberships, onUpdated }: Pr
                   {tr('فحص الملف فقط', 'Check file only')}
                 </button>
                 <button type="button" style={button} disabled={busy || importFile === null} onClick={() => setConfirmation({ kind: 'importSubmit' })}>
-                  {tr('استيراد وطلب النشر', 'Import and request publishing')}
+                  {tr('استيراد وإرسال للمراجعة', 'Import and send for review')}
                 </button>
               </div>
             </details>
