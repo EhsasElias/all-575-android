@@ -288,6 +288,7 @@ export const importSellerProductCsv = (
       created_drafts: number;
       published?: number;
       submitted_for_review?: number;
+      stock_records_created?: number;
     } & Partial<SellerCsvPreview>;
   }>('/seller/products/import', form);
 };
