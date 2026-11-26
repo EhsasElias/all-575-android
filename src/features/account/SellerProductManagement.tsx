@@ -797,6 +797,15 @@ export function SellerProductManagement({ products, memberships, onUpdated }: Pr
                 `Successfully imported ${created} products as drafts.`,
               );
         }
+        const stockCount = result.data.stock_records_created ?? 0;
+        if (stockCount > 0) {
+          message += fr
+            ? ` ${stockCount} produit(s) ajouté(s) au stock.`
+            : tr(
+                ` تمت إضافة مخزون لـ ${stockCount} منتج.`,
+                ` Stock added for ${stockCount} products.`,
+              );
+        }
         setSuccess(message);
         setImportSuccessMessage(message);
         onUpdated();
@@ -1154,6 +1163,8 @@ export function SellerProductManagement({ products, memberships, onUpdated }: Pr
                     <th>{tr('رمز المنتج (SKU)', 'Product code (SKU)')}</th>
                     <th>{tr('اسم المنتج', 'Product')}</th>
                     <th>{tr('السعر (ر.س)', 'Price (SAR)')}</th>
+                    <th>{fr ? 'Succursale' : tr('الفرع', 'Branch')}</th>
+                    <th>{fr ? 'Quantité' : tr('الكمية', 'Quantity')}</th>
                   </tr>
                 </thead>
                 <tbody>
@@ -1162,6 +1173,8 @@ export function SellerProductManagement({ products, memberships, onUpdated }: Pr
                       <td>{row.sku}</td>
                       <td>{ar ? row.name_ar : row.name_en}</td>
                       <td>{(row.price_halalas / 100).toFixed(2)}</td>
+                      <td>{row.inventory_branch_id ?? '—'}</td>
+                      <td>{row.inventory_quantity ?? '—'}</td>
                     </tr>
                   ))}
                 </tbody>
