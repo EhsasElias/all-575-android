@@ -60,7 +60,7 @@ export function SaveProduct({ slug, compact = false }: { slug: string; compact?:
       >
         {compact ? <Icon name="heart" size={19} /> : t(saved.data ? 'saved.remove' : 'saved.save')}
       </Button>
-      {(saved.isError || toggle.isError) && (
+      {(toggle.isError || (!compact && saved.isError)) && (
         <p role="alert">
           {t('saved.failed')}{' '}
           <Button variant="ghost" onClick={() => void saved.refetch()}>
