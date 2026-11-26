@@ -1,53 +1,14 @@
-import { useTranslation } from 'react-i18next';
-import { Link } from 'react-router';
-import { routePaths } from '@/shared/lib';
-import { ButtonLink, EmptyState, ErrorState } from '@/shared/ui';
-import { useFirstProducts } from '../api/useProductList';
-import { ProductGrid } from '../components/ProductGrid';
-import { ProductGridSkeleton } from '../components/ProductGridSkeleton';
+import { useCategories } from '../api/useCatalogQueries';
+import { useProductList } from '../api/useProductList';
 import { useDeliveryZone } from '../delivery/useDeliveryZone';
-import styles from './HomeSection.module.css';
+import { HomeDiscovery } from './HomeDiscovery';
 
-const SHELF_SIZE = 12;
-
-/** The first page of products, for the zone the customer chose. */
+/** The homepage is discovery-only; full catalogue filters remain on catalogue/search pages. */
 export function PopularProducts() {
-  const { t } = useTranslation('catalog');
   const { zoneId } = useDeliveryZone();
-  const products = useFirstProducts({ zoneId, perPage: SHELF_SIZE });
+  const categories = useCategories();
+  // Never promote unavailable items once the customer's delivery zone is known.
+  const products = useProductList({ zoneId, inStock: true, perPage: 12, sort: 'newest' });
 
-  return (
-    <section aria-labelledby="home-popular" className={styles.section}>
-      <div className={styles.sectionHeader}>
-        <h2 id="home-popular" className={styles.sectionTitle}>
-          {t('home.popularTitle')}
-        </h2>
-        <Link to={`${routePaths.search}?sort=best_selling`} className={styles.seeAll}>
-          {t('home.seeAll')}
-        </Link>
-      </div>
-      {products.isPending && <ProductGridSkeleton />}
-      {products.isError && (
-        <ErrorState
-          title={t('list.productsErrorTitle')}
-          headingLevel={3}
-          onRetry={() => {
-            void products.refetch();
-          }}
-        />
-      )}
-      {products.data?.length === 0 && (
-        <EmptyState
-          icon="package"
-          headingLevel={3}
-          title={t('home.emptyTitle')}
-          message={t('home.emptyMessage')}
-          action={<ButtonLink to={routePaths.categories}>{t('home.browseCategories')}</ButtonLink>}
-        />
-      )}
-      {products.data && products.data.length > 0 && (
-        <ProductGrid products={products.data} hideUnknownAvailability={zoneId === null} />
-      )}
-    </section>
-  );
+  return <HomeDiscovery categories={categories.data ?? []} products={products.items} />;
 }
