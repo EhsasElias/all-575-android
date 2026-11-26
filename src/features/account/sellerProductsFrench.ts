@@ -44,6 +44,8 @@ export const sellerProductsFrench: Record<string, string> = {
   'Download CSV template': 'Télécharger le modèle CSV',
   'Import products using Excel or CSV': 'Importer des produits par Excel ou CSV',
   'Import products': 'Importer des produits',
+  Branch: 'Succursale',
+  Quantity: 'Quantité',
   'Download Excel template': 'Télécharger le modèle Excel',
   'Help': 'Aide',
   'Download the template, add your products and quantities, then upload it.':
