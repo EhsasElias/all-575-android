@@ -17,7 +17,6 @@ type Props = {
 type LanguageKey = 'ar' | 'en' | 'fr';
 type HomeCategory = {
   key: string;
-  image: string;
   ar: string;
   en: string;
   fr: string;
@@ -28,7 +27,6 @@ type HomeCategory = {
 const categoryCards: readonly HomeCategory[] = [
   {
     key: 'personal',
-    image: '/images/categories/personal-care.webp',
     ar: 'العناية الشخصية',
     en: 'Personal care',
     fr: 'Soins personnels',
@@ -37,7 +35,6 @@ const categoryCards: readonly HomeCategory[] = [
   },
   {
     key: 'makeup',
-    image: '/images/categories/makeup.webp',
     ar: 'مستحضرات التجميل',
     en: 'Makeup',
     fr: 'Maquillage',
@@ -46,7 +43,6 @@ const categoryCards: readonly HomeCategory[] = [
   },
   {
     key: 'perfume',
-    image: '/images/categories/perfumes.webp',
     ar: 'العطور',
     en: 'Perfumes',
     fr: 'Parfums',
@@ -55,7 +51,6 @@ const categoryCards: readonly HomeCategory[] = [
   },
   {
     key: 'stationery',
-    image: '/images/categories/stationery.webp',
     ar: 'الأدوات المكتبية',
     en: 'Stationery',
     fr: 'Papeterie',
@@ -64,7 +59,6 @@ const categoryCards: readonly HomeCategory[] = [
   },
   {
     key: 'school',
-    image: '/images/categories/school-supplies.webp',
     ar: 'المستلزمات المدرسية',
     en: 'School supplies',
     fr: 'Fournitures scolaires',
@@ -73,7 +67,6 @@ const categoryCards: readonly HomeCategory[] = [
   },
   {
     key: 'detergents',
-    image: '/images/categories/cleaning-products.webp',
     ar: 'المنظفات',
     en: 'Cleaning products',
     fr: 'Produits nettoyants',
@@ -82,7 +75,6 @@ const categoryCards: readonly HomeCategory[] = [
   },
   {
     key: 'tools',
-    image: '/images/categories/cleaning-tools.webp',
     ar: 'أدوات التنظيف',
     en: 'Cleaning tools',
     fr: 'Matériel de nettoyage',
@@ -91,7 +83,6 @@ const categoryCards: readonly HomeCategory[] = [
   },
   {
     key: 'kitchen',
-    image: '/images/categories/kitchenware.webp',
     ar: 'أدوات المطبخ',
     en: 'Kitchenware',
     fr: 'Ustensiles de cuisine',
@@ -100,7 +91,6 @@ const categoryCards: readonly HomeCategory[] = [
   },
   {
     key: 'groceries',
-    image: '/images/categories/groceries-fresh.webp',
     ar: 'الخضار والفواكه',
     en: 'Groceries & fresh produce',
     fr: 'Fruits et légumes',
@@ -144,16 +134,15 @@ function label(item: HomeCategory, language: LanguageKey) {
   return item[language];
 }
 
-function CategoryPhoto({ item, eager = false }: { item: HomeCategory; eager?: boolean }) {
+function CategoryPhoto({ category, eager = false }: { category: Category | undefined; eager?: boolean }) {
+  // Render actual category photos, not paths to assets absent from this repository.
   return (
-    <img
+    <CatalogImage
       className={styles.categoryPhoto}
-      src={item.image}
+      src={category?.image_url ?? null}
       alt=""
-      width={160}
-      height={160}
-      loading={eager ? 'eager' : 'lazy'}
-      decoding="async"
+      size={160}
+      eager={eager}
     />
   );
 }
@@ -231,7 +220,7 @@ export function HomeDiscovery({ categories, products }: Props) {
               aria-label={tr('تصفح ', 'Explore ', 'Explorer ') + label(item, language)}
             >
               <span className={styles.categoryImage}>
-                <CategoryPhoto item={item} eager={index < 4} />
+                <CategoryPhoto category={category} eager={index < 4} />
               </span>
               <span className={styles.categoryName}>{label(item, language)}</span>
             </Link>
@@ -263,7 +252,7 @@ export function HomeDiscovery({ categories, products }: Props) {
                 </span>
                 <strong className={styles.offerTitle}>{label(item, language)}</strong>
                 <span className={styles.offerPhoto}>
-                  <CategoryPhoto item={item} />
+                  <CategoryPhoto category={category} />
                 </span>
                 <span className={styles.offerExplore} aria-hidden="true">
                   ↗
@@ -277,7 +266,7 @@ export function HomeDiscovery({ categories, products }: Props) {
       <section className={styles.section} aria-labelledby="home-grocery">
         <Link className={styles.groceryPromo} to={target(grocery?.category, 'vegetables')}>
           <span className={styles.groceryPromoIcon} aria-hidden="true">
-            {grocery && <CategoryPhoto item={grocery.item} />}
+            {grocery && <CategoryPhoto category={grocery.category} />}
           </span>
           <span className={styles.groceryPromoText}>
             <strong>
@@ -326,7 +315,7 @@ export function HomeDiscovery({ categories, products }: Props) {
           <Link className={styles.groceryCard} to={target(grocery?.category, 'vegetables')}>
             {grocery && (
               <span className={styles.groceryImage}>
-                <CategoryPhoto item={grocery.item} />
+                <CategoryPhoto category={grocery.category} />
               </span>
             )}
             <span>{tr('الخضار والفواكه', 'Fruits & vegetables', 'Fruits et légumes')}</span>
