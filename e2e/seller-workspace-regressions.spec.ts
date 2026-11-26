@@ -115,7 +115,7 @@ test('seller imports the same selected file again and safely edits stock at diff
   });
   await page.getByRole('button', { name: 'Retry', exact: true }).click();
   await expect(
-    page.getByRole('heading', { name: 'Import products using Excel or CSV' }),
+    page.getByRole('heading', { name: 'Import products', exact: true }),
   ).toBeVisible();
   expect(sellerSessionAttempts).toBe(2);
   expect(documentRequests).toBe(0);
@@ -126,11 +126,12 @@ test('seller imports the same selected file again and safely edits stock at diff
     buffer: Buffer.from('sku\nQA-SKU-01\n'),
   };
   const input = page.locator('input[type="file"]').first();
-  const preview = page.getByRole('button', { name: 'Validate & preview file' });
+  await page.getByText('Other options', { exact: true }).click();
+  const preview = page.getByRole('button', { name: 'Check file only' });
   await input.setInputFiles(file);
   await preview.click();
   await expect(page.getByText('File validated without importing products.')).toBeVisible();
-  await page.getByRole('button', { name: 'Import drafts', exact: true }).click();
+  await page.getByRole('button', { name: 'Import products', exact: true }).click();
   await page
     .getByRole('dialog', { name: 'Confirm product import' })
     .getByRole('button', { name: 'Import drafts' })
@@ -159,7 +160,7 @@ test('seller imports the same selected file again and safely edits stock at diff
   await setStorefrontPreferences(page, 'fr', 'dark');
   await expect(page.getByRole('heading', { name: 'Espace vendeur' })).toBeVisible();
   await expect(
-    page.getByRole('heading', { name: 'Importer des produits par Excel ou CSV' }),
+    page.getByRole('heading', { name: 'Importer des produits', exact: true }),
   ).toBeVisible();
   for (const width of [337, 770, 1348, 1440]) {
     await page.setViewportSize({ width, height: 900 });

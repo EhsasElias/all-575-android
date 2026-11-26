@@ -245,9 +245,10 @@ export const addSellerProductVariant = (
 export const submitSellerProduct = (productId: number) =>
   seller.post<{ data: SellerProduct }>('/seller/products/' + String(productId) + '/submit');
 
-export const sellerCatalogTemplate = () => seller.download('/seller/products/import/template.csv');
-export const sellerCatalogExcelTemplate = () =>
-  seller.download('/seller/products/import/template.xlsx');
+export const sellerCatalogTemplate = (language: 'ar' | 'en' | 'fr' = 'ar') =>
+  seller.download('/seller/products/import/template.csv?lang=' + language);
+export const sellerCatalogExcelTemplate = (language: 'ar' | 'en' | 'fr' = 'ar') =>
+  seller.download('/seller/products/import/template.xlsx?lang=' + language);
 
 export const uploadSellerProductImage = (productId: number, image: File | string) => {
   const form = new FormData();
@@ -268,6 +269,8 @@ export type SellerCsvPreview = {
     name_en: string;
     price_halalas: number;
     sku: string;
+    inventory_branch_id?: number | null;
+    inventory_quantity?: number | null;
   }[];
 };
 
@@ -287,6 +290,7 @@ export const importSellerProductCsv = (
       created_drafts: number;
       published?: number;
       submitted_for_review?: number;
+      stock_records_created?: number;
     } & Partial<SellerCsvPreview>;
   }>('/seller/products/import', form);
 };
