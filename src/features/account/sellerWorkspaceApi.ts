@@ -269,6 +269,8 @@ export type SellerCsvPreview = {
     name_en: string;
     price_halalas: number;
     sku: string;
+    inventory_branch_id?: number | null;
+    inventory_quantity?: number | null;
   }[];
 };
 
