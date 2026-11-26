@@ -43,6 +43,19 @@ export const sellerProductsFrench: Record<string, string> = {
   'Download Excel template with dropdowns': 'Télécharger le modèle Excel avec listes déroulantes',
   'Download CSV template': 'Télécharger le modèle CSV',
   'Import products using Excel or CSV': 'Importer des produits par Excel ou CSV',
+  'Import products': 'Importer des produits',
+  'Download Excel template': 'Télécharger le modèle Excel',
+  'Help': 'Aide',
+  'Download the template, add your products and quantities, then upload it.':
+    'Téléchargez le modèle, ajoutez les produits et les quantités, puis importez-le.',
+  'Fill in the required fields. To add stock, enter a quantity and choose a branch. You can also add a product image.':
+    'Remplissez les champs obligatoires. Pour ajouter du stock, indiquez la quantité et la succursale. Vous pouvez aussi ajouter une image.',
+  'For zero VAT or exempt products, add the reason in the file.':
+    'Pour les produits à TVA nulle ou exonérés, ajoutez la justification.',
+  'Other options': 'Autres options',
+  'Check file only': 'Vérifier le fichier',
+  'Import and send for review': 'Importer et envoyer pour validation',
+
   'Excel or CSV file *': 'Fichier Excel ou CSV *',
   'Choose Excel or CSV file': 'Choisir un fichier Excel ou CSV',
   'No file selected': 'Aucun fichier sélectionné',
